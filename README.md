@@ -95,13 +95,13 @@ entity.ts
    - `collide(entity)`
      <br> Called when the Actor object collides with another Entity.
    
-text.js
+text.ts
 -------
 
-tilemap.js
+tilemap.ts
 ----------
    
-geom.js
+geom.ts
 --------
  * `new Vec2(x, y)`
    <br> A 2D vector object.
@@ -176,7 +176,7 @@ geom.js
    - `rndpt()`
    - `collide(v, box)`
 
-utils.js
+utils.ts
 --------
  * `log(x)`
    <br> Prints a string to the console.
