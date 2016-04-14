@@ -86,7 +86,7 @@ function format(v: number, n=3, c=' ')
 }
 
 // removeElement(a, obj): remove an element from a.
-function removeElement(a: [any], obj: any)
+function removeElement<T>(a: [T], obj: T)
 {
     const i = a.indexOf(obj);
     if (0 <= i) {
@@ -96,7 +96,7 @@ function removeElement(a: [any], obj: any)
 }
 
 // removeElements(a, f): remove elements from a.
-function removeElements(a: [any], f: (x:any)=>void)
+function removeElements<T>(a: [T], f: (x:T)=>void)
 {
     for (let i = a.length-1; 0 <= i; i--) {
 	if (f(a[i])) {

@@ -5,13 +5,28 @@
 
 //  TileMap
 //
+interface TileFunc {
+    (c: number): boolean;
+}
+interface TilePosFunc {
+    (x: number, y: number, c: number): boolean;
+}
+interface TilePosValueFunc<T> {
+    (x: number, y: number, c: number, v: T): T;
+}
+interface TilePosTileFunc {
+    (x: number, y: number, c: number): number;
+}
+interface RangeMapMap {
+    [index: string]: RangeMap;
+}
 class TileMap {
 
     tilesize: number;
     map: [[number]];
     width: number;
     height: number;
-    rangemap: any;
+    rangemap: RangeMapMap;
 
     constructor(tilesize: number, map: [[number]]) {
 	this.tilesize = tilesize;
@@ -71,8 +86,7 @@ class TileMap {
 	}
     }
 
-    apply(f: (x:number, y:number, c:number)=>boolean,
-	  rect: Rect=null) {
+    apply(f: TilePosFunc, rect: Rect=null) {
 	if (rect === null) {
 	    rect = new Rect(0, 0, this.width, this.height);
 	}
@@ -89,16 +103,11 @@ class TileMap {
 	return null;
     }
 
-    findTile(f0: (c:number)=>boolean,
-	     rect: Rect) {
-	function f(x:number, y:number, c:number) {
-	    return f0(c);
-	}
-	return this.apply(f, this.coord2map(rect));
+    findTile(f0: TileFunc, rect: Rect) {
+	return this.apply((x,y,c)=>{return f0(c);}, this.coord2map(rect));
     }
 
-    reduce(f: (x:number, y:number, c:number, v:any)=>any,
-	   v: any, rect: Rect=null) {
+    reduce<T>(f: TilePosValueFunc<T>, v: T, rect: Rect=null) {
 	if (rect === null) {
 	    rect = new Rect(0, 0, this.width, this.height);
 	}
@@ -113,9 +122,7 @@ class TileMap {
 	return v;
     }
   
-    contactTile(rect: Rect,
-		f0: (c:number)=>boolean,
-		v0: Vec2): Vec2 {
+    contactTile(rect: Rect, f0: TileFunc, v0: Vec2): Vec2 {
 	let ts = this.tilesize;
 	function f(x:number, y:number, c:number, v:Vec2) {
 	    if (f0(c)) {
@@ -149,11 +156,11 @@ class TileMap {
 	}
     }
 
-    getRangeMap(f: (x:number)=>boolean) {
-	let map = this.rangemap[f as any];
+    getRangeMap(key:string, f: TileFunc) {
+	let map = this.rangemap[key];
 	if (map === undefined) {
 	    map = new RangeMap(this, f);
-	    this.rangemap[f as any] = map;
+	    this.rangemap[key] = map;
 	}
 	return map;
     }
@@ -162,7 +169,7 @@ class TileMap {
 	ctx: CanvasRenderingContext2D,
 	bx: number, by: number,
 	tiles: HTMLCanvasElement,
-	ft: (x:number, y:number, c:number)=>number,
+	ft: TilePosTileFunc,
 	x0: number, y0: number, w: number, h: number) {
 	// Align the pos to the bottom left corner.
 	let ts = this.tilesize;
@@ -188,7 +195,7 @@ class TileMap {
 	ctx: CanvasRenderingContext2D,
 	bx: number, by: number,
 	tiles: HTMLCanvasElement,
-	ft: (x:number, y:number, c:number)=>number,
+	ft: TilePosTileFunc,
 	x0: number, y0: number, w: number, h: number) {
 	// Align the pos to the bottom left corner.
 	let ts = this.tilesize;
@@ -221,7 +228,7 @@ class RangeMap {
     height: number;
     data: [Int32Array];
     
-    constructor(tilemap: TileMap, f: (x:number)=>boolean) {
+    constructor(tilemap: TileMap, f: TileFunc) {
 	let data = new Array(tilemap.height+1) as [Int32Array];
 	let row0 = new Int32Array(tilemap.width+1);
 	for (let x = 0; x < tilemap.width; x++) {

@@ -2,7 +2,7 @@
 
 // Browser interaction.
 
-function run(scene0:any)
+function run<T extends Scene>(scene0: { new(app:App):T; })
 {
     // [NO NEED TO CHANGE]
   
@@ -25,7 +25,7 @@ function run(scene0:any)
 		      audios as AudioDictionary,
 		      labels as DivDictionary);
     let ctx = getEdgeyContext(frame);
-    let timer: any;
+    let timer: number;
   
     function repaint() {
 	ctx.drawImage(app.screen,
@@ -127,9 +127,8 @@ function run(scene0:any)
 	ctx.restore();
     }
 
-    app.init(new scene0(app) as Scene);
+    app.init(new scene0(app));
     app.focus();
-    frame.focus();
     window.addEventListener('keydown', keydown);
     window.addEventListener('keyup', keyup);
     window.addEventListener('mousedown', mousedown);
@@ -138,4 +137,5 @@ function run(scene0:any)
     window.addEventListener('focus', focus);
     window.addEventListener('blur', blur);
     timer = window.setInterval(tick, 1000/framerate);
+    frame.focus();
 }
