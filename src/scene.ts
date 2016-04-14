@@ -36,7 +36,7 @@ class Scene {
 	// [OVERRIDE]
     }
 
-    set_dir(vx: number, vy: number) {
+    set_dir(v: Vec2) {
 	// [OVERRIDE]
     }
 

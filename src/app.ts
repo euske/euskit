@@ -115,22 +115,22 @@ class App {
 	case 'left':
 	    this._key_left = true;
 	    this.key_dir.x = -1;
-	    this.scene.set_dir(this.key_dir.x, 0);
+	    this.scene.set_dir(this.key_dir);
 	    break;
 	case 'right':
 	    this._key_right = true;
 	    this.key_dir.x = +1;
-	    this.scene.set_dir(this.key_dir.x, 0);
+	    this.scene.set_dir(this.key_dir);
 	    break;
 	case 'up':
 	    this._key_up = true;
 	    this.key_dir.y = -1;
-	    this.scene.set_dir(0, this.key_dir.y);
+	    this.scene.set_dir(this.key_dir);
 	    break;
 	case 'down':
 	    this._key_down = true;
 	    this.key_dir.y = +1;
-	    this.scene.set_dir(0, this.key_dir.y);
+	    this.scene.set_dir(this.key_dir);
 	    break;
 	case 'action':
 	    if (!this.key_action) {
@@ -163,22 +163,22 @@ class App {
 	case 'left':
 	    this._key_left = false;
 	    this.key_dir.x = (this._key_right) ? +1 : 0;
-	    this.scene.set_dir(this.key_dir.x, 0);
+	    this.scene.set_dir(this.key_dir);
 	    break;
 	case 'right':
 	    this._key_right = false;
 	    this.key_dir.x = (this._key_left) ? -1 : 0;
-	    this.scene.set_dir(this.key_dir.x, 0);
+	    this.scene.set_dir(this.key_dir);
 	    break;
 	case 'up':
 	    this._key_up = false;
 	    this.key_dir.y = (this._key_down) ? +1 : 0;
-	    this.scene.set_dir(0, this.key_dir.y);
+	    this.scene.set_dir(this.key_dir);
 	    break;
 	case 'down':
 	    this._key_down = false;
 	    this.key_dir.y = (this._key_up) ? -1 : 0;
-	    this.scene.set_dir(0, this.key_dir.y);
+	    this.scene.set_dir(this.key_dir);
 	    break;
 	case 'action':
 	    if (this.key_action) {

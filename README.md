@@ -44,7 +44,7 @@ scene.ts
      <br> Called when the scene needs to be painted.
      [A game specific code goes here.]
    
-   - `set_dir(vx, vy)`
+   - `set_dir(v)`
      <br> Receives the controller input.
      
    - `set_action(action)`
