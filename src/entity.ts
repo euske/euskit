@@ -274,13 +274,16 @@ class Projectile extends Entity {
 
 //  PhysicalEntity
 //
+interface JumpFunc {
+    (vy:number, t:number): number;
+}
 class PhysicalEntity extends Entity {
 
     velocity: Vec2;
-    jumpfunc: Function;
+    jumpfunc: JumpFunc;
     
-    private _jumpt: number;
-    private _jumpend: number;
+    protected _jumpt: number;
+    protected _jumpend: number;
 
     constructor(bounds: Rect, src: ImageSource=null, hitbox: Rect=null) {
 	super(bounds, src, hitbox);
