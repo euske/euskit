@@ -27,7 +27,7 @@ class Font {
     protected _height0: number;
     private _glyphs: HTMLCanvasElement;
     
-    constructor(glyphs: HTMLImageElement, color: string=null, scale: number=1) {
+    constructor(glyphs: HTMLImageElement, color: string=null, scale=1) {
 	this._width0 = glyphs.height;
 	this._height0 = glyphs.height;
 	this.width = scale*this._width0;
@@ -66,8 +66,8 @@ class ShadowFont extends Font {
     shadowdist: number;
     private _glyphs2: HTMLCanvasElement;
     
-    constructor(glyphs: HTMLImageElement, color: string=null, scale: number=1,
-		shadowcolor: string='black', shadowdist: number=1) {
+    constructor(glyphs: HTMLImageElement, color: string=null, scale=1,
+		shadowcolor='black', shadowdist=1) {
 	super(glyphs, color, scale);
 	this._glyphs2 = MakeGlyphs(glyphs, shadowcolor);
 	this.shadowdist = shadowdist;
@@ -118,24 +118,20 @@ class TextBox extends Sprite {
     frame: Rect;
     font: Font;
     header: string;
-    linespace: number;
-    padding: number;
-    background: string;
-    segments: [TextSegment];
+    linespace: number = 0;
+    padding: number = 0;
+    background: string = null;
+    segments: [TextSegment] = [] as [TextSegment];
     
-    constructor(frame: Rect, font: Font, header: string='') {
+    constructor(frame: Rect, font: Font, header='') {
 	super(null);
 	this.frame = frame;
 	this.font = font;
 	this.header = header;
-	this.linespace = 0;
-	this.padding = 0;
-	this.background = null;
-	this.segments = [] as [TextSegment];
     }
 
     toString() {
-	return '<TextBox: '+this.segments+'>';
+	return '<TextBox: '+this.frame+'>';
     }
 
     getSize(lines: [string], font: Font=null) {
@@ -275,8 +271,8 @@ class TextBox extends Sprite {
     }
 
     putText(lines: [string],
-	    halign: string='left',
-	    valign: string='top',
+	    halign='left',
+	    valign='top',
 	    font: Font=null) {
 	font = (font !== null)? font : this.font;
 	let y = this.frame.y;
@@ -352,17 +348,14 @@ class DisplayTask extends TextTask {
 
     text: string;
     font: Font;
-    interval: number;
-    sound: HTMLAudioElement;
-    private _index: number;
+    interval: number = 0;
+    sound: HTMLAudioElement = null;
+    private _index: number = 0;
 
     constructor(dialog: DialogBox, text: string) {
 	super(dialog);
 	this.text = text;
 	this.font = dialog.font;
-	this.interval = 0;
-	this.sound = null;
-	this._index = 0;
     }
 
     tick() {
@@ -500,21 +493,15 @@ class MenuTask extends TextTask {
 //
 class DialogBox extends TextBox {
 
-    interval: number;
-    autohide: boolean;
-    sound: HTMLAudioElement;
-    queue: [TextTask];
-    cursor: TextSegment;
-    blinking: number;
+    interval: number = 0;
+    autohide: boolean = false;
+    sound: HTMLAudioElement = null;
+    queue: [TextTask] = [] as [TextTask];
+    cursor: TextSegment = null;
+    blinking: number = 0;
     
-    constructor(frame: Rect, font: Font, header: string='') {
+    constructor(frame: Rect, font: Font, header='') {
 	super(frame, font, header);
-	this.interval = 0;
-	this.autohide = false;
-	this.sound = null;
-	this.queue = [] as [TextTask];
-	this.cursor = null;
-	this.blinking = 0;
     }
 
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
@@ -608,7 +595,7 @@ class DialogBox extends TextBox {
 	return task;
     }
 
-    addDisplay(text: string, interval: number=-1,
+    addDisplay(text: string, interval=-1,
 	       sound: HTMLAudioElement=null, font: Font=null) {
 	let task = new DisplayTask(this, text);
 	task.interval = (0 <= interval)? interval : this.interval;

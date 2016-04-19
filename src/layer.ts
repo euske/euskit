@@ -69,7 +69,7 @@ class Layer {
 	}
 	if (obj instanceof Sprite) {
 	    this.sprites.push(obj);
-	    this.sprites.sort(function (a:Sprite, b:Sprite) { return a.zorder-b.zorder; });
+	    this.sprites.sort((a:Sprite, b:Sprite) => { return a.zorder-b.zorder; });
 	}
 	if (obj instanceof Entity) {
 	    this.entities.push(obj);
@@ -105,8 +105,7 @@ class Layer {
     }
     
     cleanObjects(objs: [Task]) {
-	function f(obj: Task) { return !obj.alive; }
-	removeElements(objs, f);
+	removeElements(objs, (obj: Task) => { return !obj.alive; });
     }
 
     findObjects(rect: Rect,
@@ -169,7 +168,7 @@ class ScrollLayer extends Layer {
 	for (let i = 0; i < this.sprites.length; i++) {
 	    let obj = this.sprites[i];
 	    if (obj.alive && obj.visible) {
-		if (obj.bounds.overlap(this.window)) {
+		if (obj.bounds === null || obj.bounds.overlap(this.window)) {
 		    obj.render(ctx, bx, by);
 		}
 	    }
@@ -180,8 +179,8 @@ class ScrollLayer extends Layer {
 	ctx: CanvasRenderingContext2D,
 	bx: number, by: number,
 	tilemap: TileMap,
-	tiles: HTMLCanvasElement,
-	ft: (x:number, y:number, c:number)=>number) {
+	tiles: SpriteSheet,
+	ft: TilePosTileFunc) {
 	let window = this.window;
 	let ts = tilemap.tilesize;
 	let x0 = Math.floor(window.x/ts);
@@ -199,8 +198,8 @@ class ScrollLayer extends Layer {
 	ctx: CanvasRenderingContext2D,
 	bx: number, by: number,
 	tilemap: TileMap,
-	tiles: HTMLCanvasElement,
-	ft: (x:number, y:number, c:number)=>number) {
+	tiles: SpriteSheet,
+	ft: TilePosTileFunc) {
 	let window = this.window;
 	let ts = tilemap.tilesize;
 	let x0 = Math.floor(window.x/ts);
@@ -234,7 +233,7 @@ class StarsLayer extends Layer {
     color: string;
     velocity: Vec2;
     maxdepth: number;
-    private _stars: [Star];
+    private _stars: [Star] = [] as [Star];
 
     constructor(frame: Rect, nstars: number,
 		color='white', velocity=new Vec2(-1,0), maxdepth=3) {
@@ -243,7 +242,6 @@ class StarsLayer extends Layer {
 	this.color = color;
 	this.velocity = velocity;
 	this.maxdepth = maxdepth;
-	this._stars = [] as [Star];
 	for (let i = 0; i < nstars; i++) {
 	    let star = new Star();
 	    star.init(this.maxdepth);

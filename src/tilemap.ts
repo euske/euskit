@@ -26,16 +26,24 @@ class TileMap {
     map: [[number]];
     width: number;
     height: number;
-    rangemap: RangeMapMap;
+    world: Rect;
+
+    private _rangemap: RangeMapMap = {};
 
     constructor(tilesize: number, map: [[number]]) {
 	this.tilesize = tilesize;
 	this.map = map;
 	this.width = map[0].length;
 	this.height = map.length;
-	this.rangemap = {};
+	this.world = new Rect(0, 0,
+			      this.width*this.tilesize,
+			      this.height*this.tilesize);
     }
 
+    toString() {
+	return '<TileMap: '+this.width+','+this.height+'>';
+    }
+  
     get(x: number, y: number) {
 	if (0 <= x && 0 <= y && x < this.width && y < this.height) {
 	    return this.map[y][x];
@@ -47,8 +55,22 @@ class TileMap {
     set(x: number, y: number, v: number) {
 	if (0 <= x && 0 <= y && x < this.width && y < this.height) {
 	    this.map[y][x] = v;
+	    this._rangemap = {};
 	}
-	this.rangemap = {};
+    }
+
+    fill(v: number, rect: Rect=null) {
+	if (rect === null) {
+	    rect = new Rect(0, 0, this.width, this.height);
+	}
+	for (let dy = 0; dy < rect.height; dy++) {
+	    const y = rect.y+dy;
+	    for (let dx = 0; dx < rect.width; dx++) {
+		const x = rect.x+dx;
+		this.map[y][x] = v;
+	    }
+	}
+	this._rangemap = {};
     }
 
     copy() {
@@ -122,7 +144,7 @@ class TileMap {
 	return v;
     }
   
-    contactTile(rect: Rect, f0: TileFunc, v0: Vec2): Vec2 {
+    contactTile(rect: Rect, f0: TileFunc, v0: Vec2, range:Rect=null): Vec2 {
 	let ts = this.tilesize;
 	function f(x:number, y:number, c:number, v:Vec2) {
 	    if (f0(c)) {
@@ -131,8 +153,10 @@ class TileMap {
 	    }
 	    return v;
 	}
-	let r = rect.add(v0).union(rect);
-	return this.reduce(f, v0, this.coord2map(r));
+	if (range === null) {
+	    range = rect.add(v0).union(rect);
+	}
+	return this.reduce(f, v0, this.coord2map(range));
     }
   
     scroll(rect: Rect, vx: number, vy: number) {
@@ -157,10 +181,10 @@ class TileMap {
     }
 
     getRangeMap(key:string, f: TileFunc) {
-	let map = this.rangemap[key];
+	let map = this._rangemap[key];
 	if (map === undefined) {
 	    map = new RangeMap(this, f);
-	    this.rangemap[key] = map;
+	    this._rangemap[key] = map;
 	}
 	return map;
     }
@@ -168,13 +192,11 @@ class TileMap {
     renderFromBottomLeft(
 	ctx: CanvasRenderingContext2D,
 	bx: number, by: number,
-	tiles: HTMLCanvasElement,
+	tiles: SpriteSheet,
 	ft: TilePosTileFunc,
 	x0: number, y0: number, w: number, h: number) {
 	// Align the pos to the bottom left corner.
 	let ts = this.tilesize;
-	let tw = tiles.height;
-	by = by+ts-tw;
 	// Draw tiles from the bottom-left first.
 	for (let dy = h-1; 0 <= dy; dy--) {
 	    let y = y0+dy;
@@ -183,9 +205,17 @@ class TileMap {
 		let c = this.get(x, y);
 		c = ft(x, y, c);
 		if (0 <= c) {
-		    ctx.drawImage(tiles,
-				  tw*c, 0, tw, tw,
-				  bx+ts*dx, by+ts*dy, tw, tw);
+		    let src = tiles.get(c);
+		    if (src instanceof DummyImageSource) {
+			ctx.fillStyle = (src as DummyImageSource).color;
+			ctx.fillRect(bx+ts*dx, by+ts*dy, ts, ts);
+		    } else {
+			let rect = (src as HTMLImageSource).bounds;
+			ctx.drawImage((src as HTMLImageSource).image,
+				      rect.x, rect.y, rect.width, rect.height,
+				      bx+ts*dx, by+ts*dy+ts-rect.height,
+				      rect.width, rect.height);
+		    }
 		}
 	    }
 	}
@@ -194,13 +224,11 @@ class TileMap {
     renderFromTopRight(
 	ctx: CanvasRenderingContext2D,
 	bx: number, by: number,
-	tiles: HTMLCanvasElement,
+	tiles: SpriteSheet,
 	ft: TilePosTileFunc,
 	x0: number, y0: number, w: number, h: number) {
 	// Align the pos to the bottom left corner.
 	let ts = this.tilesize;
-	let tw = tiles.height;
-	by = by+ts-tw;
 	// Draw tiles from the top-right first.
 	for (let dy = 0; dy < h; dy++) {
 	    let y = y0+dy;
@@ -209,9 +237,17 @@ class TileMap {
 		let c = this.get(x, y);
 		c = ft(x, y, c);
 		if (0 <= c) {
-		    ctx.drawImage(tiles,
-				  tw*c, 0, tw, tw,
-				  bx+ts*dx, by+ts*dy, tw, tw);
+		    let src = tiles.get(c);
+		    if (src instanceof DummyImageSource) {
+			ctx.fillStyle = (src as DummyImageSource).color;
+			ctx.fillRect(bx+ts*dx, by+ts*dy, ts, ts);
+		    } else {
+			let rect = (src as HTMLImageSource).bounds;
+			ctx.drawImage((src as HTMLImageSource).image,
+				      rect.x, rect.y, rect.width, rect.height,
+				      bx+ts*dx, by+ts*dy+ts-rect.height,
+				      rect.width, rect.height);
+		    }
 		}
 	    }
 	}

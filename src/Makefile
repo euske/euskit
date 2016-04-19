@@ -13,6 +13,8 @@ SRCS=$(SRCDIR)/utils.ts \
 	$(SRCDIR)/geom.ts \
 	$(SRCDIR)/entity.ts \
 	$(SRCDIR)/tilemap.ts \
+	$(SRCDIR)/planmap.ts \
+	$(SRCDIR)/planrunner.ts \
 	$(SRCDIR)/text.ts \
 	$(SRCDIR)/layer.ts \
 	$(SRCDIR)/scene.ts \

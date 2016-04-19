@@ -14,15 +14,22 @@
 class Player extends Entity {
 
     scene: Game;
+    usermove: Vec2;
 
     constructor(scene: Game, pos: Vec2) {
 	let bounds = pos.expand(16, 16);
 	super(bounds, scene.sheet.get(0), bounds);
 	this.scene = scene;
+	this.usermove = new Vec2();
     }
 
+    update() {
+	super.update();
+	this.moveIfPossible(this.usermove, true);
+    }
+    
     setMove(v: Vec2) {
-	this.movement = v.copy();
+	this.usermove = v.scale(4);
     }
     
     getConstraintsFor(hitbox: Rect, force: boolean) {
@@ -40,7 +47,7 @@ class Game extends GameScene {
 
     constructor(app: App) {
 	super(app);
-	this.sheet = new SpriteSheet(app.images['sprites'], new Vec2(16,16));
+	this.sheet = new ImageSpriteSheet(app.images['sprites'], new Vec2(16,16));
     }
     
     init() {

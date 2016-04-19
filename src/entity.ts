@@ -8,19 +8,20 @@
 //
 class Task {
 
-    alive: boolean;
-    layer: Layer;
-    ticks: number;
+    alive: boolean = true;
+    layer: Layer = null;
+    ticks: number = 0;
+    duration: number = 0;
     died: Slot;
-    duration: number;
 
     constructor() {
-	this.layer = null;
-	this.alive = true;
 	this.died = new Slot(this);
-	this.duration = 0;
     }
 
+    toString() {
+	return '<Task: ticks='+this.ticks+'>';
+    }
+  
     start(layer: Layer) {
 	this.layer = layer;
 	this.ticks = 0;
@@ -88,26 +89,23 @@ class Queue extends Task {
 //
 class Sprite extends Task {
 
-    visible: boolean;
-    zorder: number;
     bounds: Rect;
     src: ImageSource;
-    scale: Vec2;
+    visible: boolean = true;
+    zorder: number = 0;
+    scale: Vec2 = new Vec2(1, 1);
 
     constructor(bounds: Rect, src: ImageSource=null) {
 	super();
-	this.visible = true;
-	this.zorder = 0;
 	this.bounds = (bounds)? bounds.copy() : null;
 	this.src = src;
-	this.scale = new Vec2(1, 1);
     }
     
     toString() {
 	return '<Sprite: '+this.bounds+'>';
     }
   
-    move(v: Vec2) {
+    movePos(v: Vec2) {
 	// [OVERRIDE]
 	this.bounds = this.bounds.add(v);
     }
@@ -141,11 +139,10 @@ class Sprite extends Task {
 //
 class TiledSprite extends Sprite {
 
-    offset: Vec2;
+    offset: Vec2 = new Vec2();
     
     constructor(bounds: Rect, src: ImageSource) {
 	super(bounds, src);
-	this.offset = new Vec2();
     }
 
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
@@ -178,14 +175,10 @@ class TiledSprite extends Sprite {
 class Entity extends Sprite {
 
     hitbox: Rect;
-    maxspeed: Vec2;
-    movement: Vec2;
 
     constructor(bounds: Rect, src: ImageSource=null, hitbox: Rect=null) {
 	super(bounds, src);
 	this.hitbox = (hitbox)? hitbox.copy() : null;
-	this.maxspeed = new Vec2(16, 16);
-	this.movement = new Vec2();
     }
 
     toString() {
@@ -196,21 +189,24 @@ class Entity extends Sprite {
 	// [OVERRIDE]
     }
 
-    update() {
-	super.update();
-	this.move(this.getMove(this.movement, this.hitbox, true));
+    moveIfPossible(v: Vec2, force: boolean) {
+	this.movePos(this.getMove(v, this.hitbox, force));
     }
-  
-    move(v: Vec2) {
-	super.move(v);
+    
+    movePos(v: Vec2) {
+	super.movePos(v);
 	if (this.hitbox !== null) {
 	    this.hitbox = this.hitbox.add(v);
 	}
     }
-  
+
     isMovable(v0: Vec2) {
-	let v1 = this.getMove(v0, this.hitbox, true);
-	return v1.equals(v0);
+	if (this.hitbox !== null) {
+	    let v1 = this.getMove(v0, this.hitbox, true);
+	    return v1.equals(v0);
+	} else {
+	    return true;
+	}
     }
 
     getMove(v: Vec2, hitbox: Rect, force: boolean) {
@@ -254,6 +250,7 @@ class Entity extends Sprite {
 class Projectile extends Entity {
     
     frame: Rect;
+    movement: Vec2 = new Vec2();
 
     constructor(frame: Rect, bounds: Rect,
 		src: ImageSource, hitbox: Rect,
@@ -265,6 +262,7 @@ class Projectile extends Entity {
 
     update() {
 	super.update();
+	this.moveIfPossible(this.movement, true);
 	if (!this.hitbox.overlap(this.frame)) {
 	    this.die();
 	}
@@ -279,25 +277,30 @@ interface JumpFunc {
 }
 class PhysicalEntity extends Entity {
 
-    velocity: Vec2;
+    velocity: Vec2 = new Vec2();
+    maxspeed: Vec2 = new Vec2(6,6);
     jumpfunc: JumpFunc;
     
     protected _jumpt: number;
     protected _jumpend: number;
+    protected _landed: boolean;
 
+    static jumpfunc: JumpFunc = (
+	(vy:number, t:number) => { return (0 <= t && t <= 5)? -4 : vy+1; }
+    );
+    
     constructor(bounds: Rect, src: ImageSource=null, hitbox: Rect=null) {
 	super(bounds, src, hitbox);
-	this.velocity = new Vec2();
-	this.jumpfunc = (
-	    function (vy:number, t:number) { return (0 <= t && t <= 4)? -10 : vy+2; }
-	);
 	this._jumpt = Infinity;
 	this._jumpend = 0;
+	this._landed = false;
+	this.jumpfunc = PhysicalEntity.jumpfunc;
     }
 
     setJump(jumpend: number) {
 	if (0 < jumpend) {
 	    if (this.isLanded()) {
+		this.jump();
 		this._jumpt = 0;
 	    }
 	}
@@ -316,19 +319,61 @@ class PhysicalEntity extends Entity {
   
     fall() {
 	if (!this.isHolding()) {
-	    this.velocity.y = this.jumpfunc(this.velocity.y, this._jumpt);
-	    this.velocity = this.getMove(this.velocity, this.hitbox, false);
-	    this.move(this.velocity);
+	    let vy = this.jumpfunc(this.velocity.y, this._jumpt);
+	    this.velocity = this.getMove(new Vec2(this.velocity.x, vy), this.hitbox, false);
+	    this.movePos(this.velocity);
+	    let landed = (0 < vy && this.velocity.y == 0);
+	    if (!this._landed && landed) {
+		this.land();
+	    }
+	    this._landed = landed;
 	}
     }
 
+    land() {
+	// [OVERRIDE]
+    }
+
+    jump() {
+	// [OVERRIDE]
+    }
+
     isLanded() {
-	let v = this.getMove(new Vec2(0, 1), this.hitbox, false);
-	return (0 <= this.velocity.y && v.y == 0);
+	return this._landed;
     }
 
     isHolding() {
 	return false;
     }
 
+}
+
+
+//  PlatformerEntity
+//
+class PlatformerEntity extends PhysicalEntity {
+    
+    tilemap: TileMap;
+    
+    static isObstacle: TileFunc;
+    static isGrabbable: TileFunc;
+    static isStoppable: TileFunc;
+
+    constructor(tilemap: TileMap, bounds: Rect,
+		src: ImageSource=null, hitbox: Rect=null) {
+	super(bounds, src, hitbox);
+	this.tilemap = tilemap;
+    }
+    
+    isHolding() {
+	return (this.tilemap.findTile(PlatformerEntity.isGrabbable, this.hitbox) !== null);
+    }
+
+    getContactFor(v: Vec2, hitbox: Rect, force: boolean, range: Rect): Vec2 {
+	let f = ((force || this.isHolding())?
+		 PlatformerEntity.isObstacle :
+		 PlatformerEntity.isStoppable);
+	return this.tilemap.contactTile(hitbox, f, v, range);
+    }
+  
 }

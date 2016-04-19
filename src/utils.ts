@@ -70,6 +70,12 @@ function rnd(a: number, b=0)
     return int(frnd(a, b));
 }
 
+// choice(a)
+function choice<T>(a: [T])
+{
+    return a[rnd(a.length)];
+}
+
 // format: pretty print a number.
 function format(v: number, n=3, c=' ')
 {
@@ -243,11 +249,10 @@ interface Action {
 class Slot {
 
     object: any;
-    receivers: [Action];
+    receivers: [Action] = [] as [Action];
     
     constructor(object: any) {
 	this.object = object;
-	this.receivers = [] as [Action];
     }
 	
     toString() {
@@ -282,7 +287,7 @@ class Color {
     b: number;
     a: number;
 
-    constructor(r: number, g: number, b: number, a: number=-1.0) {
+    constructor(r: number, g: number, b: number, a=-1.0) {
 	this.r = r;
 	this.g = g;
 	this.b = b;
@@ -314,7 +319,8 @@ class Color {
 //  ImageSource
 //
 class ImageSource {
-    _dummy() {} // to force generate a prototype.
+    constructor() {
+    }
 }
 
 class HTMLImageSource extends ImageSource {
@@ -341,11 +347,20 @@ class DummyImageSource extends ImageSource {
 //  SpriteSheet
 // 
 class SpriteSheet {
+    constructor() {
+    }
+    
+    get(x:number, y=0) {
+	return null as ImageSource;
+    }
+}
 
+class ImageSpriteSheet extends SpriteSheet {
     image: HTMLImageElement;
     size: Vec2;
 
     constructor(image: HTMLImageElement, size: Vec2) {
+	super();
 	this.image = image;
 	this.size = size;
     }
@@ -353,5 +368,18 @@ class SpriteSheet {
     get(x:number, y=0) {
 	let rect = new Rect(x*this.size.x, y*this.size.y, this.size.x, this.size.y);
 	return new HTMLImageSource(this.image, rect);
+    }
+}
+
+class DummySpriteSheet extends SpriteSheet {
+    colors: [string];
+
+    constructor(colors: [string]) {
+	super();
+	this.colors = colors;
+    }
+
+    get(x:number, y=0) {
+	return new DummyImageSource(this.colors[x]);
     }
 }
