@@ -194,9 +194,11 @@ class TileMap {
 	bx: number, by: number,
 	tiles: SpriteSheet,
 	ft: TilePosTileFunc,
-	x0: number, y0: number, w: number, h: number) {
+	x0=0, y0=0, w=0, h=0) {
 	// Align the pos to the bottom left corner.
 	let ts = this.tilesize;
+	w = (w != 0)? w : this.width;
+	h = (h != 0)? h : this.height;
 	// Draw tiles from the bottom-left first.
 	for (let dy = h-1; 0 <= dy; dy--) {
 	    let y = y0+dy;
@@ -226,9 +228,11 @@ class TileMap {
 	bx: number, by: number,
 	tiles: SpriteSheet,
 	ft: TilePosTileFunc,
-	x0: number, y0: number, w: number, h: number) {
+	x0=0, y0=0, w=0, h=0) {
 	// Align the pos to the bottom left corner.
 	let ts = this.tilesize;
+	w = (w != 0)? w : this.width;
+	h = (h != 0)? h : this.height;
 	// Draw tiles from the top-right first.
 	for (let dy = 0; dy < h; dy++) {
 	    let y = y0+dy;
