@@ -252,13 +252,9 @@ class PlanningEntity extends PlatformerEntity implements PlanActor {
     stoppable: RangeMap;
     movement: Vec2;
 
-    static debug: boolean;
-    static gridsize: number;
+    static debug: boolean = false;
+    static gridsize: number = 16;
 
-    static initialize(gridsize:number, speed=4) {
-	PlanningEntity.gridsize = gridsize;
-    }
-    
     constructor(tilemap: TileMap, bounds: Rect,
 		src: ImageSource=null, hitbox: Rect=null,
 		speed=4, timeout=30) {

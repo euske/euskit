@@ -113,7 +113,7 @@ class Game extends GameScene {
 	this.player = new Player(this, this.screen.center());
 	this.addObject(this.player);
 	
-	PlanningEntity.initialize(16);
+	PlanningEntity.gridsize = 16;
 	let monster = new Monster(this, this.screen.center())
 	monster.target = this.player;
 	this.addObject(monster);
