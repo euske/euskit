@@ -18,6 +18,19 @@ PlatformerEntity.isGrabbable = isGrabbable;
 PlatformerEntity.isStoppable = isStoppable;
 
 
+//  WorldObject
+//
+class WorldObject {
+    
+    scene: Game;
+    
+    getConstraintsFor(hitbox: Rect, force: boolean) {
+	return this.scene.screen;
+    }
+    
+}
+
+
 //  Player
 //
 class Player extends PlatformerEntity {
@@ -40,11 +53,8 @@ class Player extends PlatformerEntity {
     setMove(v: Vec2) {
 	this.usermove = v.scale(4);
     }
-    
-    getConstraintsFor(hitbox: Rect, force: boolean) {
-	return this.scene.screen;
-    }
 }
+applyMixins(Player, [WorldObject]);
 
 
 //  Monster
@@ -71,6 +81,7 @@ class Monster extends PlanningEntity {
 	this.move();
     }
 }
+applyMixins(Player, [WorldObject]);
 
 
 //  Game
