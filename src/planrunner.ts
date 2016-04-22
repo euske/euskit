@@ -240,10 +240,12 @@ class PlanActionRunner {
 //
 class PlanningEntity extends PlatformerEntity implements PlanActor {
 
+    jumppts: [Vec2];
+    fallpts: [Vec2];
     timeout: number;
+    speed: number;
     runner: PlanActionRunner;
     grid: PlanGrid;
-    plan: PlanMap;
     gridbox: Rect;
     obstacle: RangeMap;
     grabbable: RangeMap;
@@ -252,17 +254,9 @@ class PlanningEntity extends PlatformerEntity implements PlanActor {
 
     static debug: boolean;
     static gridsize: number;
-    static speed: number;
-    static jumppts: [Vec2];
-    static fallpts: [Vec2];
 
     static initialize(gridsize:number, speed=4) {
 	PlanningEntity.gridsize = gridsize;
-	PlanningEntity.speed = speed;
-	PlanningEntity.jumppts = calcJumpRange(gridsize, speed, PhysicalEntity.jumpfunc);
-	PlanningEntity.fallpts = calcFallRange(gridsize, speed, PhysicalEntity.jumpfunc);
-	//log("jumppts="+PlanningEntity.jumppts);
-	//log("fallpts="+PlanningEntity.fallpts);
     }
     
     constructor(tilemap: TileMap, bounds: Rect,
@@ -270,6 +264,7 @@ class PlanningEntity extends PlatformerEntity implements PlanActor {
 		speed=4, timeout=30) {
 	super(tilemap, bounds, src, hitbox);
 	this.timeout = timeout;
+	this.speed = speed;
 	this.runner = null;
 	this.movement = new Vec2();
 	let gs = PlanningEntity.gridsize;
@@ -277,7 +272,10 @@ class PlanningEntity extends PlatformerEntity implements PlanActor {
 				Math.ceil(hitbox.width/gs)*gs,
 				Math.ceil(hitbox.height/gs)*gs);
 	this.grid = new PlanGrid(gs);
-	this.plan = new PlanMap(this, this.grid, this.tilemap);
+	this.jumppts = calcJumpRange(gs, this.speed, PhysicalEntity.jumpfunc);
+	this.fallpts = calcFallRange(gs, this.speed, PhysicalEntity.jumpfunc);
+	//log("jumppts="+PlanningEntity.jumppts);
+	//log("fallpts="+PlanningEntity.fallpts);
     }
 
     updateRangeMaps() {
@@ -340,10 +338,10 @@ class PlanningEntity extends PlatformerEntity implements PlanActor {
     // PlanActor methods
     
     getJumpPoints() {
-	return PlanningEntity.jumppts;
+	return this.jumppts;
     }
     getFallPoints() {
-	return PlanningEntity.fallpts;
+	return this.fallpts;
     }
     getGridPos() {
 	return this.grid.coord2grid(this.hitbox.center());
@@ -422,8 +420,8 @@ class PlanningEntity extends PlatformerEntity implements PlanActor {
     moveToward(p: Vec2) {
 	let r = this.getGridBoxAt(p);
 	let v = r.diff(this.hitbox);
-	v.x = clamp(-PlanningEntity.speed, v.x, +PlanningEntity.speed);
-	v.y = clamp(-PlanningEntity.speed, v.y, +PlanningEntity.speed);
+	v.x = clamp(-this.speed, v.x, +this.speed);
+	v.y = clamp(-this.speed, v.y, +this.speed);
 	this.movement = v;
     }
     
