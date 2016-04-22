@@ -1,4 +1,7 @@
-// main.ts
+/// <reference path="utils.ts" />
+/// <reference path="scene.ts" />
+/// <reference path="app.ts" />
+
 
 // Browser interaction.
 

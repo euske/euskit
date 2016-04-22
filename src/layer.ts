@@ -1,8 +1,7 @@
-// layer.ts
-//   requires: utils.ts
-//   requires: geom.ts
-//   requires: entity.ts
-//   requires: tilemap.ts
+/// <reference path="utils.ts" />
+/// <reference path="geom.ts" />
+/// <reference path="entity.ts" />
+/// <reference path="tilemap.ts" />
 
 
 //  Layer

@@ -1,11 +1,7 @@
-// app.ts
-//   requires: utils.ts
-//   requires: geom.ts
-//   requires: entity.ts
-//   requires: tilemap.ts
-//   requires: text.ts
-//   requires: layer.ts
-//   requires: scene.ts
+/// <reference path="utils.ts" />
+/// <reference path="geom.ts" />
+/// <reference path="text.ts" />
+/// <reference path="scene.ts" />
 
 
 interface ImageDictionary {

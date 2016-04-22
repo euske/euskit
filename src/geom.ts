@@ -1,6 +1,5 @@
-// geom.ts
-// Geometric functions.
-//   requires: utils.ts
+/// <reference path="utils.ts" />
+
 
 //  Vec2
 //

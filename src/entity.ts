@@ -1,6 +1,5 @@
-// entity.ts
-//   requires: utils.ts
-//   requires: geom.ts
+/// <reference path="utils.ts" />
+/// <reference path="geom.ts" />
 
 
 //  Task

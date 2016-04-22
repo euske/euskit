@@ -1,9 +1,8 @@
-// planrunner.ts
-//   requires: utils.ts
-//   requires: geom.ts
-//   requires: tilemap.ts
-//   requires: entity.ts
-//   requires: planmap.ts
+/// <reference path="utils.ts" />
+/// <reference path="geom.ts" />
+/// <reference path="tilemap.ts" />
+/// <reference path="entity.ts" />
+/// <reference path="planmap.ts" />
 
 
 //  PointSet

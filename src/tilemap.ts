@@ -1,7 +1,6 @@
-// tilemap.ts
-// TileMap is a generic class that handles a scrollable map.
-//   requires: utils.ts
-//   requires: geom.ts
+/// <reference path="utils.ts" />
+/// <reference path="geom.ts" />
+
 
 //  TileMap
 //

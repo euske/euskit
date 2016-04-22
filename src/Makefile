@@ -10,17 +10,17 @@ TSFLAGS=--noEmitOnError \
 
 SRCDIR=.
 SRCS=$(SRCDIR)/utils.ts \
-	$(SRCDIR)/geom.ts \
-	$(SRCDIR)/entity.ts \
-	$(SRCDIR)/tilemap.ts \
-	$(SRCDIR)/planmap.ts \
-	$(SRCDIR)/planrunner.ts \
-	$(SRCDIR)/text.ts \
-	$(SRCDIR)/layer.ts \
-	$(SRCDIR)/scene.ts \
-	$(SRCDIR)/app.ts \
-	$(SRCDIR)/main.ts \
-	$(SRCDIR)/game.ts
+       $(SRCDIR)/geom.ts \
+       $(SRCDIR)/entity.ts \
+       $(SRCDIR)/tilemap.ts \
+       $(SRCDIR)/planmap.ts \
+       $(SRCDIR)/planrunner.ts \
+       $(SRCDIR)/text.ts \
+       $(SRCDIR)/layer.ts \
+       $(SRCDIR)/scene.ts \
+       $(SRCDIR)/app.ts \
+       $(SRCDIR)/main.ts \
+       $(SRCDIR)/game.ts
 
 OUTDIR=../js
 OUTFILE=$(OUTDIR)/out.js

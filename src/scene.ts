@@ -1,10 +1,7 @@
-// scene.ts
-// Scene object takes care of every in-game object and the scrollable map.
-//   requires: utils.ts
-//   requires: geom.ts
-//   requires: entity.ts
-//   requires: tilemap.ts
-//   requires: layer.ts
+/// <reference path="utils.ts" />
+/// <reference path="geom.ts" />
+/// <reference path="entity.ts" />
+/// <reference path="layer.ts" />
 
 
 //  Scene

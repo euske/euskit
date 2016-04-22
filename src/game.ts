@@ -1,14 +1,14 @@
-// game.ts
-//   requires: utils.ts
-//   requires: geom.ts
-//   requires: entity.ts
-//   requires: tilemap.ts
-//   requires: text.ts
-//   requires: layer.ts
-//   requires: scene.ts
-//   requires: planmap.ts
-//   requires: planrunner.ts
-//   requires: app.ts
+/// <reference path="utils.ts" />
+/// <reference path="geom.ts" />
+/// <reference path="entity.ts" />
+/// <reference path="tilemap.ts" />
+/// <reference path="text.ts" />
+/// <reference path="layer.ts" />
+/// <reference path="scene.ts" />
+/// <reference path="app.ts" />
+/// <reference path="planmap.ts" />
+/// <reference path="planrunner.ts" />
+
 
 function isObstacle(c:number) { return c == 1; }
 function isGrabbable(c:number) { return c == 2; }

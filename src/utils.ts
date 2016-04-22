@@ -1,4 +1,3 @@
-// utils.ts
 // Misc. routines.
 
 // aliases
@@ -20,6 +19,15 @@ function assert(x: boolean, msg: string)
     if (!x) {
 	throw new Error(msg);
     }
+}
+
+// applyMixins(class, [baseclass, ...]): create a mixin class.
+function applyMixins(derivedCtor: any, baseCtors: any[]) {
+    baseCtors.forEach(baseCtor => {
+	Object.getOwnPropertyNames(baseCtor.prototype).forEach(name => {
+	    derivedCtor.prototype[name] = baseCtor.prototype[name];
+	});
+    });
 }
 
 // fmod(x, y):
