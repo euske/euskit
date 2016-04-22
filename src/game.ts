@@ -16,6 +16,7 @@ function isStoppable(c:number) { return c != 0; }
 PlatformerEntity.isObstacle = isObstacle;
 PlatformerEntity.isGrabbable = isGrabbable;
 PlatformerEntity.isStoppable = isStoppable;
+PlanningEntity.debug = true;
 
 
 //  WorldObject
@@ -96,7 +97,7 @@ class Game extends GameScene {
     constructor(app: App) {
 	super(app);
 	this.sheet = new DummySpriteSheet(['green','red']);
-	this.tiles = new DummySpriteSheet(['black','gray','yellow']);
+	this.tiles = new DummySpriteSheet(['black','gray','orange']);
     }
     
     init() {
@@ -110,14 +111,14 @@ class Game extends GameScene {
 
 	    [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
 	    [0,0,0,0, 1,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
-	    [0,0,0,0, 0,1,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
-	    [0,0,0,0, 0,0,1,0, 0,0,0,1, 1,0,0,0, 0,0,0,0],
-	    [0,0,1,1, 0,0,0,0, 1,1,0,0, 0,0,1,1, 0,0,0,0],
+	    [0,0,0,0, 0,1,0,0, 0,0,2,0, 0,0,0,0, 0,0,0,0],
+	    [0,0,0,0, 0,0,1,0, 0,0,2,1, 1,0,0,0, 0,0,0,0],
+	    [0,0,1,1, 0,0,0,0, 1,1,2,0, 0,0,1,1, 0,0,0,0],
 	    
-	    [0,0,0,0, 0,0,1,0, 0,0,0,0, 0,1,0,0, 0,1,0,0],
-	    [0,0,0,0, 0,1,1,0, 0,0,0,0, 0,1,1,0, 0,0,0,1],
-	    [0,0,0,1, 0,0,0,0, 0,1,1,0, 0,1,1,1, 0,0,1,0],
-	    [0,0,1,1, 1,0,0,0, 0,0,0,0, 0,1,1,1, 1,0,0,0],
+	    [0,0,0,0, 0,0,1,0, 0,0,2,0, 0,1,0,0, 0,1,0,0],
+	    [0,0,0,0, 0,1,1,0, 0,0,2,0, 0,1,1,0, 0,0,0,1],
+	    [0,0,0,1, 0,0,0,0, 0,1,1,2, 0,1,1,1, 0,0,1,0],
+	    [0,0,1,1, 1,0,0,0, 0,0,0,2, 0,1,1,1, 1,0,0,0],
 	    [1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1],
 	]);
 	
