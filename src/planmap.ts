@@ -86,41 +86,45 @@ class PlanActionEntry {
     }
 }
 
-class PlanGrid {
+class PlanProfile {
+    
     gridsize: number;
+    offset: number;
 
-    constructor(gridsize: number) {
-	this.gridsize = gridsize;
+    constructor(tilemap:TileMap, scale=1) {
+	this.gridsize = tilemap.tilesize/scale;
+	this.offset = fmod(this.gridsize, tilemap.tilesize)/2;
     }
 
     coord2grid(p: Vec2) {
-	let gs = this.gridsize;
-	return new Vec2(int(p.x/gs),
-			int(p.y/gs));
+	return new Vec2(
+	    int((p.x-this.offset)/this.gridsize),
+	    int((p.y-this.offset)/this.gridsize));
     }
 
     grid2coord(p: Vec2) {
-	let gs = this.gridsize;
-	return new Vec2(int((p.x+.5)*gs), int((p.y+.5)*gs));
+	return new Vec2(
+	    int((p.x+.5)*this.gridsize)+this.offset,
+	    int((p.y+.5)*this.gridsize)+this.offset);
     }
 }
 
 class PlanMap {
 
-    actor: PlanActor;
+    profile: PlanProfile;
     tilemap: TileMap;
+    actor: PlanActor;
 
-    grid: PlanGrid;
     start: Vec2;
     goal: Vec2;
     
     private _map: PlanActionMap;
     private _queue: [PlanActionEntry];
     
-    constructor(actor: PlanActor, grid: PlanGrid, tilemap: TileMap) {
-	this.actor = actor;
-	this.grid = grid;
+    constructor(profile: PlanProfile, tilemap: TileMap, actor: PlanActor) {
+	this.profile = profile;
 	this.tilemap = tilemap;
+	this.actor = actor;
 	this.start = null;
 	this.goal = null;
     }
@@ -150,13 +154,13 @@ class PlanMap {
     }
 
     render(ctx:CanvasRenderingContext2D, bx:number, by:number) {
-	let grid = this.grid;
-	let gs = grid.gridsize;
+	let profile = this.profile;
+	let gs = profile.gridsize;
 	let rs = gs/2;
 	ctx.lineWidth = 1;
 	for (let k in this._map) {
 	    let a = this._map[k];
-	    let p0 = grid.grid2coord(a.p);
+	    let p0 = profile.grid2coord(a.p);
 	    switch (a.type) {
 	    case ActionType.WALK:
 		ctx.strokeStyle = 'white';
@@ -177,7 +181,7 @@ class PlanMap {
 			   by+p0.y-rs/2+.5,
 			   rs, rs);
 	    if (a.next !== null) {
-		let p1 = grid.grid2coord(a.next.p);
+		let p1 = profile.grid2coord(a.next.p);
 		ctx.beginPath();
 		ctx.moveTo(bx+p0.x+.5, by+p0.y+.5);
 		ctx.lineTo(bx+p1.x+.5, by+p1.y+.5);
@@ -185,14 +189,14 @@ class PlanMap {
 	    }
 	}
 	if (this.start !== null) {
-	    let p = grid.grid2coord(this.start);
+	    let p = profile.grid2coord(this.start);
 	    ctx.strokeStyle = '#ff0000';
 	    ctx.strokeRect(bx+p.x-gs/2+.5,
 			   by+p.y-gs/2+.5,
 			   gs, gs);
 	}
 	if (this.goal !== null) {
-	    let p = grid.grid2coord(this.goal);
+	    let p = profile.grid2coord(this.goal);
 	    ctx.strokeStyle = '#00ff00';
 	    ctx.strokeRect(bx+p.x-gs/2+.5,
 			   by+p.y-gs/2+.5,

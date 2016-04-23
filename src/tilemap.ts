@@ -26,6 +26,10 @@ class TileMap {
     width: number;
     height: number;
     world: Rect;
+    
+    isObstacle: TileFunc;
+    isGrabbable: TileFunc;
+    isStoppable: TileFunc;
 
     private _rangemap: RangeMapMap = {};
 

@@ -10,12 +10,6 @@
 /// <reference path="planrunner.ts" />
 
 
-function isObstacle(c:number) { return c == 1; }
-function isGrabbable(c:number) { return c == 2; }
-function isStoppable(c:number) { return c != 0; }
-PlatformerEntity.isObstacle = isObstacle;
-PlatformerEntity.isGrabbable = isGrabbable;
-PlatformerEntity.isStoppable = isStoppable;
 PlanningEntity.debug = true;
 
 
@@ -67,7 +61,7 @@ class Monster extends PlanningEntity {
 
     constructor(scene: Game, pos: Vec2) {
 	let bounds = pos.expand(16, 16);
-	super(scene.tilemap, bounds, scene.sheet.get(1), bounds);
+	super(scene.profile, scene.tilemap, bounds, scene.sheet.get(1), bounds);
 	this.scene = scene;
     }
 
@@ -89,8 +83,9 @@ applyMixins(Player, [WorldObject]);
 // 
 class Game extends GameScene {
 
-    player: Player;
     tilemap: TileMap;
+    player: Player;
+    profile: PlanProfile;
     sheet: SpriteSheet;
     tiles: SpriteSheet;
 
@@ -121,11 +116,14 @@ class Game extends GameScene {
 	    [0,0,1,1, 1,0,0,0, 0,0,0,2, 0,1,1,1, 1,0,0,0],
 	    [1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1],
 	]);
+	this.tilemap.isObstacle = ((c:number) => { return c == 1; });
+	this.tilemap.isGrabbable = ((c:number) => { return c == 2; });
+	this.tilemap.isStoppable = ((c:number) => { return c != 0; });
+	this.profile = new PlanProfile(this.tilemap);
 	
 	this.player = new Player(this, this.screen.center());
 	this.addObject(this.player);
-	
-	PlanningEntity.gridsize = 16;
+
 	let monster = new Monster(this, this.screen.center())
 	monster.target = this.player;
 	this.addObject(monster);
