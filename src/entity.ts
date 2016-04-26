@@ -123,9 +123,10 @@ class Sprite extends Task {
 	    ctx.fillRect(bx+this.bounds.x, by+this.bounds.y, w, h);
 	} else if (this.src instanceof HTMLImageSource) {
 	    let rect = (this.src as HTMLImageSource).bounds;
+	    let offset = (this.src as HTMLImageSource).offset;
 	    drawImageScaled(ctx, (this.src as HTMLImageSource).image,
 			    rect.x, rect.y, rect.width, rect.height,
-			    bx+this.bounds.x, by+this.bounds.y,
+			    bx+this.bounds.x-offset.x, by+this.bounds.y-offset.y,
 			    w*this.scale.x, h*this.scale.y);
 	}
     }

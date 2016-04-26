@@ -1,10 +1,5 @@
 // Misc. routines.
 
-// aliases
-const int = Math.floor;
-const upperbound = Math.min;
-const lowerbound = Math.max;
-
 // log(...): display a thing in the console (Firefox only, maybe)
 function log(...params: any[])
 {
@@ -36,6 +31,15 @@ function fmod(x: number, y: number)
     const v = x % y;
     return (0 <= v)? v : v+y;
 }
+
+// int(x):
+const int = Math.floor;
+
+// upperbound(x):
+const upperbound = Math.min;
+
+// lowerbound(x):
+const lowerbound = Math.max;
 
 // clamp(v0, v, v1): limit the value within v0-v1.
 function clamp(v0: number, v: number, v1: number)
@@ -334,11 +338,13 @@ class ImageSource {
 class HTMLImageSource extends ImageSource {
     image: HTMLImageElement;
     bounds: Rect;
+    offset: Vec2;
     
-    constructor(image: HTMLImageElement, bounds: Rect) {
+    constructor(image: HTMLImageElement, bounds: Rect, offset: Vec2=null) {
 	super();
 	this.image = image;
 	this.bounds = bounds;
+	this.offset = (offset !== null)? offset : new Vec2();
     }
 }
 
@@ -366,16 +372,18 @@ class SpriteSheet {
 class ImageSpriteSheet extends SpriteSheet {
     image: HTMLImageElement;
     size: Vec2;
+    offset: Vec2;
 
-    constructor(image: HTMLImageElement, size: Vec2) {
+    constructor(image: HTMLImageElement, size: Vec2, offset: Vec2=null) {
 	super();
 	this.image = image;
 	this.size = size;
+	this.offset = offset;
     }
 
     get(x:number, y=0) {
 	let rect = new Rect(x*this.size.x, y*this.size.y, this.size.x, this.size.y);
-	return new HTMLImageSource(this.image, rect);
+	return new HTMLImageSource(this.image, rect, this.offset);
     }
 }
 

@@ -22,7 +22,7 @@ interface RangeMapMap {
 class TileMap {
 
     tilesize: number;
-    map: [[number]];
+    map: [Int32Array];
     width: number;
     height: number;
     world: Rect;
@@ -33,7 +33,7 @@ class TileMap {
 
     private _rangemap: RangeMapMap = {};
 
-    constructor(tilesize: number, map: [[number]]) {
+    constructor(tilesize: number, map: [Int32Array]) {
 	this.tilesize = tilesize;
 	this.map = map;
 	this.width = map[0].length;
@@ -77,9 +77,9 @@ class TileMap {
     }
 
     copy() {
-	let map = [] as [[number]];
+	let map = [] as [Int32Array];
 	for (let i = 0; i < this.map.length; i++) {
-	    map.push(this.map[i].slice() as [number]);
+	    map.push(this.map[i].slice());
 	}
 	return new TileMap(this.tilesize, map);
     }
@@ -162,15 +162,15 @@ class TileMap {
 	return this.reduce(f, v0, this.coord2map(range));
     }
   
-    scroll(rect: Rect, vx: number, vy: number) {
+    scroll(vx: number, vy: number, rect: Rect=null) {
 	if (rect === null) {
 	    rect = new Rect(0, 0, this.width, this.height);
 	}
-	let src:[[number]] = [] as [[number]];
+	let src:[Int32Array] = [] as [Int32Array];
 	for (let dy = 0; dy < rect.height; dy++) {
-	    let a:[number] = [] as [number];
+	    let a = new Int32Array(rect.width);
 	    for (let dx = 0; dx < rect.width; dx++) {
-		a.push(this.map[rect.y+dy][rect.x+dx]);
+		a[dx] = this.map[rect.y+dy][rect.x+dx];
 	    }
 	    src.push(a);
 	}
@@ -178,7 +178,7 @@ class TileMap {
 	    for (let dx = 0; dx < rect.width; dx++) {
 		let x = (dx+vx + rect.width) % rect.width;
 		let y = (dy+vy + rect.height) % rect.height;
-		this.map[rect.y+dy][rect.x+dx] = src[y][x];
+		this.map[rect.y+y][rect.x+x] = src[dy][dx];
 	    }
 	}
     }
@@ -216,9 +216,10 @@ class TileMap {
 			ctx.fillRect(bx+ts*dx, by+ts*dy, ts, ts);
 		    } else {
 			let rect = (src as HTMLImageSource).bounds;
+			let offset = (src as HTMLImageSource).offset;
 			ctx.drawImage((src as HTMLImageSource).image,
 				      rect.x, rect.y, rect.width, rect.height,
-				      bx+ts*dx, by+ts*dy+ts-rect.height,
+				      bx+ts*dx-offset.x, by+ts*dy-offset.y,
 				      rect.width, rect.height);
 		    }
 		}
@@ -250,9 +251,10 @@ class TileMap {
 			ctx.fillRect(bx+ts*dx, by+ts*dy, ts, ts);
 		    } else {
 			let rect = (src as HTMLImageSource).bounds;
+			let offset = (src as HTMLImageSource).offset;
 			ctx.drawImage((src as HTMLImageSource).image,
 				      rect.x, rect.y, rect.width, rect.height,
-				      bx+ts*dx, by+ts*dy+ts-rect.height,
+				      bx+ts*dx-offset.x, by+ts*dy-offset.y,
 				      rect.width, rect.height);
 		    }
 		}

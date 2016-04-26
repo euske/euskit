@@ -253,7 +253,6 @@ class PlanningEntity extends PlatformerEntity implements PlanActor {
     movement: Vec2;
 
     static debug: boolean = false;
-    static gridsize: number = 16;
 
     constructor(profile:PlanProfile, tilemap: TileMap, bounds: Rect,
 		src: ImageSource=null, hitbox: Rect=null,

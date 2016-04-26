@@ -222,12 +222,12 @@ class App {
 	// [OVERRIDE]
 	removeChildren(this.frame.parentNode, 'div');
 	
-	this.set_music(null);
+	this.set_music();
 	this.scene = scene;
 	this.scene.init();
     }
 
-    set_music(music: HTMLAudioElement, start=0, end=0) {
+    set_music(music: HTMLAudioElement=null, start=0, end=0) {
 	if (this._music !== null) {
 	    this._music.pause();
 	}
