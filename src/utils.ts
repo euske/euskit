@@ -182,7 +182,7 @@ function image2array(img: HTMLImageElement)
     }
     const map = new Array(height-header);
     for (let y = 0; y < height-header; y++) {
-	const a = new Array(width);
+	const a = new Int32Array(width);
 	for (let x = 0; x < width; x++, i+=4) {
 	    let c = ((data[i] << 16) | (data[i+1] << 8) | data[i+2]); // RGBA
 	    a[x] = c2v[c];
@@ -190,6 +190,16 @@ function image2array(img: HTMLImageElement)
 	map[y] = a;
     }
     return map;
+}
+
+// str2array(str): converts a string to an array.
+function str2array(s: string, f: (c:string)=>number=parseInt)
+{
+    const a = new Int32Array(s.length);
+    for (let i = 0; i < s.length; i++) {
+	a[i] = f(s[i]);
+    }
+    return a;
 }
 
 // drawImageScaled: draw a scaled image.

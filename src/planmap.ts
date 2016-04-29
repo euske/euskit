@@ -15,6 +15,9 @@ interface PlanActor {
     getGridBoxAt(p: Vec2): Rect;
     getJumpPoints(): Vec2[];
     getFallPoints(): Vec2[];
+    moveToward(p: Vec2): void;
+    jumpToward(p: Vec2): void;
+    
     canMoveTo(p: Vec2): boolean;
     canGrabAt(p: Vec2): boolean;
     canStandAt(p: Vec2): boolean;
@@ -22,8 +25,6 @@ interface PlanActor {
     canClimbDown(p: Vec2): boolean;
     canFall(p0: Vec2, p1: Vec2): boolean;
     canJump(p0: Vec2, p1: Vec2): boolean;
-    moveToward(p: Vec2): void;
-    jumpToward(p: Vec2): void;
 }
 
 
@@ -35,7 +36,6 @@ enum ActionType {
     FALL,
     JUMP,
     CLIMB,
-    MOVETO,
 };
 
 function getKey(x: number, y: number, context: string=null)
@@ -91,8 +91,8 @@ class PlanProfile {
     gridsize: number;
     offset: number;
 
-    constructor(tilemap:TileMap, scale=1) {
-	this.gridsize = tilemap.tilesize/scale;
+    constructor(tilemap:TileMap, resolution=1) {
+	this.gridsize = tilemap.tilesize/resolution;
 	this.offset = fmod(this.gridsize, tilemap.tilesize)/2;
     }
 
