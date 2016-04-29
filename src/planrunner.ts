@@ -27,7 +27,7 @@ class PointSet {
     }
 
     toList() {
-	let a = [] as [Vec2];
+	let a:Vec2[] = [];
 	for (var k in this._pts) {
 	    a.push(this._pts[k]);
 	}
@@ -185,7 +185,7 @@ class PlanActionRunner {
     //   returns null if no such path exists. This function takes O(w*h).
     //   Note: this returns only a straightforward path without any detour.
     findSimplePath(p0: Vec2, p1: Vec2) {
-	let a = [] as [[PathEntry]];
+	let a:PathEntry[][] = []
 	let w = Math.abs(p1.x-p0.x);
 	let h = Math.abs(p1.y-p0.y);
 	let INF = (w+h+1)*2;
@@ -194,7 +194,7 @@ class PlanActionRunner {
 	let actor = this.actor;
 	
 	for (let dy = 0; dy <= h; dy++) {
-	    a.push([] as [PathEntry]);
+	    a.push([]);
 	    // y: y0...y1
 	    let y = p0.y+dy*vy;
 	    for (let dx = 0; dx <= w; dx++) {
@@ -225,7 +225,7 @@ class PlanActionRunner {
 	    }
 	}
 	// trace them in a reverse order: from goal to start.
-	let r = [] as [Vec2];
+	let r:Vec2[] = [];
 	let e = a[h][w];
 	while (e !== null) {
 	    r.push(e.p);
@@ -241,8 +241,8 @@ class PlanActionRunner {
 class PlanningEntity extends PlatformerEntity implements PlanActor {
 
     profile: PlanProfile;
-    jumppts: [Vec2];
-    fallpts: [Vec2];
+    jumppts: Vec2[];
+    fallpts: Vec2[];
     timeout: number;
     speed: number;
     runner: PlanActionRunner;

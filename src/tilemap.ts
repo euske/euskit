@@ -22,7 +22,7 @@ interface RangeMapMap {
 class TileMap {
 
     tilesize: number;
-    map: [Int32Array];
+    map: Int32Array[];
     width: number;
     height: number;
     world: Rect;
@@ -33,7 +33,7 @@ class TileMap {
 
     private _rangemap: RangeMapMap = {};
 
-    constructor(tilesize: number, map: [Int32Array]) {
+    constructor(tilesize: number, map: Int32Array[]) {
 	this.tilesize = tilesize;
 	this.map = map;
 	this.width = map[0].length;
@@ -77,7 +77,7 @@ class TileMap {
     }
 
     copy() {
-	let map = [] as [Int32Array];
+	let map:Int32Array[] = [];
 	for (let i = 0; i < this.map.length; i++) {
 	    map.push(this.map[i].slice());
 	}
@@ -166,7 +166,7 @@ class TileMap {
 	if (rect === null) {
 	    rect = new Rect(0, 0, this.width, this.height);
 	}
-	let src:[Int32Array] = [] as [Int32Array];
+	let src:Int32Array[] = [];
 	for (let dy = 0; dy < rect.height; dy++) {
 	    let a = new Int32Array(rect.width);
 	    for (let dx = 0; dx < rect.width; dx++) {
@@ -271,10 +271,10 @@ class RangeMap {
 
     width: number;
     height: number;
-    data: [Int32Array];
+    data: Int32Array[];
     
     constructor(tilemap: TileMap, f: TileFunc) {
-	let data = new Array(tilemap.height+1) as [Int32Array];
+	let data = new Array(tilemap.height+1);
 	let row0 = new Int32Array(tilemap.width+1);
 	for (let x = 0; x < tilemap.width; x++) {
 	    row0[x+1] = 0;

@@ -13,8 +13,8 @@ interface PlanActor {
     getGridPos(): Vec2;
     getGridBox(): Rect;
     getGridBoxAt(p: Vec2): Rect;
-    getJumpPoints(): [Vec2];
-    getFallPoints(): [Vec2];
+    getJumpPoints(): Vec2[];
+    getFallPoints(): Vec2[];
     canMoveTo(p: Vec2): boolean;
     canGrabAt(p: Vec2): boolean;
     canStandAt(p: Vec2): boolean;
@@ -119,7 +119,7 @@ class PlanMap {
     goal: Vec2;
     
     private _map: PlanActionMap;
-    private _queue: [PlanActionEntry];
+    private _queue: PlanActionEntry[];
     
     constructor(profile: PlanProfile, tilemap: TileMap, actor: PlanActor) {
 	this.profile = profile;
@@ -206,8 +206,8 @@ class PlanMap {
 
     initPlan(goal: Vec2) {
 	this.goal = goal;
-	this._map = {} as PlanActionMap;
-	this._queue = [] as [PlanActionEntry];
+	this._map = {};
+	this._queue = [];
 	this.addAction(null, new PlanAction(goal));
     }
 

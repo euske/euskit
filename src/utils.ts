@@ -83,7 +83,7 @@ function rnd(a: number, b=0)
 }
 
 // choice(a)
-function choice<T>(a: [T])
+function choice<T>(a: T[])
 {
     return a[rnd(a.length)];
 }
@@ -104,7 +104,7 @@ function format(v: number, n=3, c=' ')
 }
 
 // removeElement(a, obj): remove an element from a.
-function removeElement<T>(a: [T], obj: T)
+function removeElement<T>(a: T[], obj: T)
 {
     const i = a.indexOf(obj);
     if (0 <= i) {
@@ -114,7 +114,7 @@ function removeElement<T>(a: [T], obj: T)
 }
 
 // removeElements(a, f): remove elements from a.
-function removeElements<T>(a: [T], f: (x:T)=>void)
+function removeElements<T>(a: T[], f: (x:T)=>void)
 {
     for (let i = a.length-1; 0 <= i; i--) {
 	if (f(a[i])) {
@@ -261,7 +261,7 @@ interface Action {
 class Slot {
 
     object: any;
-    receivers: [Action] = [] as [Action];
+    receivers: Action[] = [];
     
     constructor(object: any) {
 	this.object = object;
@@ -388,9 +388,9 @@ class ImageSpriteSheet extends SpriteSheet {
 }
 
 class DummySpriteSheet extends SpriteSheet {
-    colors: [string];
+    colors: string[];
 
-    constructor(colors: [string]) {
+    constructor(colors: string[]) {
 	super();
 	this.colors = colors;
     }

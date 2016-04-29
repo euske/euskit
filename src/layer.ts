@@ -8,18 +8,18 @@
 // 
 class Layer {
 
-    tasks: [Task];
-    sprites: [Sprite];
-    entities: [Entity];
+    tasks: Task[];
+    sprites: Sprite[];
+    entities: Entity[];
 
     constructor() {
 	this.init();
     }
 
     init() {
-	this.tasks = [] as [Task];
-	this.sprites = [] as [Sprite];
-	this.entities = [] as [Entity];
+	this.tasks = [];
+	this.sprites = [];
+	this.entities = [];
     }
   
     tick() {
@@ -87,7 +87,7 @@ class Layer {
 	}
     }
 
-    collideObjects(objs: [Entity]) {
+    collideObjects(objs: Entity[]) {
 	for (let i = 0; i < objs.length; i++) {
 	    let obj0 = objs[i];
 	    if (obj0.alive && obj0.hitbox !== null) {
@@ -103,13 +103,13 @@ class Layer {
 	}
     }
     
-    cleanObjects(objs: [Task]) {
+    cleanObjects(objs: Task[]) {
 	removeElements(objs, (obj: Task) => { return !obj.alive; });
     }
 
     findObjects(rect: Rect,
 		f: (e:Entity)=>boolean=null) {
-	let a:[Entity] = [] as [Entity];
+	let a:Entity[] = [];
 	for (let i = 0; i < this.entities.length; i++) {
 	    let obj1 = this.entities[i];
 	    if (obj1.alive && obj1.hitbox !== null &&
@@ -232,7 +232,7 @@ class StarsLayer extends Layer {
     color: string;
     velocity: Vec2;
     maxdepth: number;
-    private _stars: [Star] = [] as [Star];
+    private _stars: Star[] = [];
 
     constructor(frame: Rect, nstars: number,
 		color='white', velocity=new Vec2(-1,0), maxdepth=3) {

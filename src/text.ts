@@ -120,7 +120,7 @@ class TextBox extends Sprite {
     linespace: number = 0;
     padding: number = 0;
     background: string = null;
-    segments: [TextSegment] = [] as [TextSegment];
+    segments: TextSegment[] = [];
     
     constructor(frame: Rect, font: Font, header='') {
 	super(null);
@@ -133,7 +133,7 @@ class TextBox extends Sprite {
 	return '<TextBox: '+this.frame+'>';
     }
 
-    getSize(lines: [string], font: Font=null) {
+    getSize(lines: string[], font: Font=null) {
 	font = (font !== null)? font : this.font;
 	let w = 0, h = 0;
 	for (let i = 0; i < lines.length; i++) {
@@ -161,7 +161,7 @@ class TextBox extends Sprite {
     }
 
     clear() {
-	this.segments = [] as [TextSegment];
+	this.segments = [];
     }
 
     add(seg: TextSegment) {
@@ -231,7 +231,7 @@ class TextBox extends Sprite {
 	font = (font !== null)? font : this.font;
 	header = (header !== null)? header : this.header;
 	let line = '';
-	let a:[string] = [] as [string];
+	let a:string[] = [];
 	let word = /\w+\W*/;
 	while (true) {
 	    let m = word.exec(text);
@@ -269,7 +269,7 @@ class TextBox extends Sprite {
 	return s;
     }
 
-    putText(lines: [string],
+    putText(lines: string[],
 	    halign='left',
 	    valign='top',
 	    font: Font=null) {
@@ -403,20 +403,16 @@ class MenuTask extends TextTask {
 
     font: Font;
     cursor: TextSegment;
-    vertical: boolean;
-    items: [MenuItem];
-    current: MenuItem;
-    sound: HTMLAudioElement;
     selected: Slot;
+    vertical: boolean = false;
+    items: MenuItem[] = [];
+    current: MenuItem = null;
+    sound: HTMLAudioElement = null;
     
     constructor(dialog: DialogBox) {
 	super(dialog);
 	this.font = dialog.font;
 	this.cursor = new TextSegment(new Vec2(), '>', this.font);
-	this.vertical = false;
-	this.items = [] as [MenuItem];
-	this.current = null;
-	this.sound = null;
 	this.selected = new Slot(this);
     }
 
@@ -495,7 +491,7 @@ class DialogBox extends TextBox {
     interval: number = 0;
     autohide: boolean = false;
     sound: HTMLAudioElement = null;
-    queue: [TextTask] = [] as [TextTask];
+    queue: TextTask[] = [];
     cursor: TextSegment = null;
     blinking: number = 0;
     
@@ -521,7 +517,7 @@ class DialogBox extends TextBox {
 
     clear() {
 	super.clear();
-	this.queue = [] as [TextTask];
+	this.queue = [];
 	this.cursor = null;
     }
 

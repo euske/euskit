@@ -116,8 +116,8 @@ class HTMLScene extends Scene {
 class GameScene extends Scene {
 
     layer: Layer;
-    sprites: [Sprite];
-    entities: [Entity];
+    sprites: Sprite[];
+    entities: Entity[];
 
     constructor(app: App) {
 	super(app);

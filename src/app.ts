@@ -38,7 +38,7 @@ class App {
     key_dir: Vec2 = new Vec2();
     key_action: boolean = false;
     
-    private _msgs: [Action] = [] as [Action];
+    private _msgs: Action[] = [];
     private _music: HTMLAudioElement = null;
     private _loop_start: number = 0;
     private _loop_end: number = 0;
