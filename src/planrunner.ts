@@ -15,7 +15,7 @@ class PointSet {
     _pts: PointMap;
 
     constructor() {
-	this._pts = {} as PointMap;
+	this._pts = {};
     }
 
     add(p: Vec2) {
@@ -89,17 +89,6 @@ function calcFallRange(
 
 //  PlanActionRunner
 //
-class PathEntry {
-    p: Vec2;
-    d: number;
-    next: PathEntry;
-    constructor(p: Vec2, d: number, next:PathEntry) {
-	this.p = p;
-	this.d = d;
-	this.next = next;
-    }
-}
-
 class PlanActionRunner {
 
     plan: PlanMap;
@@ -185,10 +174,21 @@ class PlanActionRunner {
     //   returns null if no such path exists. This function takes O(w*h).
     //   Note: this returns only a straightforward path without any detour.
     findSimplePath(p0: Vec2, p1: Vec2) {
+	
+	class PathEntry {
+	    p: Vec2;
+	    d: number;
+	    next: PathEntry;
+	    constructor(p: Vec2, d: number, next:PathEntry) {
+		this.p = p;
+		this.d = d;
+		this.next = next;
+	    }
+	}
+	
 	let a:PathEntry[][] = []
 	let w = Math.abs(p1.x-p0.x);
 	let h = Math.abs(p1.y-p0.y);
-	let INF = (w+h+1)*2;
 	let vx = (p0.x <= p1.x)? +1 : -1;
 	let vy = (p0.y <= p1.y)? +1 : -1;
 	let actor = this.actor;
@@ -207,18 +207,17 @@ class PlanActionRunner {
 		if (dx === 0 && dy === 0) {
 		    d = 0;
 		} else {
-		    d = INF;
+		    d = Infinity;
 		    if (actor.canMoveTo(p)) {
 			if (0 < dx && a[dy][dx-1].d < d) {
 			    e = a[dy][dx-1];
-			    d = e.d;
+			    d = e.d+1;
 			}
 			if (0 < dy && a[dy-1][dx].d < d) {
 			    e = a[dy-1][dx];
-			    d = e.d;
+			    d = e.d+1;
 			}
 		    }
-		    d++;
 		}
 		// populate a[dy][dx].
 		a[dy].push(new PathEntry(p, d, e));

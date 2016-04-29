@@ -54,7 +54,7 @@ class Queue extends Task {
 
     tasks: Task[];
 
-    constructor(tasks: Task[]) {
+    constructor(tasks: Task[]=null) {
 	super();
 	this.tasks = tasks;
     }

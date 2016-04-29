@@ -171,10 +171,10 @@ function image2array(img: HTMLImageElement)
     ctx.drawImage(img, 0, 0);
     const data = ctx.getImageData(0, 0, width, height).data;
     let i = 0;
-    let c2v:ColorMap = {} as ColorMap;
+    let c2v:ColorMap = {};
     for (let y = 0; y < header; y++) {
 	for (let x = 0; x < width; x++, i+=4) {
-	    let c = ((data[i] << 16) | (data[i+1] << 8) | data[i+2]); // RGBA
+	    const c = ((data[i] << 16) | (data[i+1] << 8) | data[i+2]); // RGBA
 	    if (!c2v.hasOwnProperty(c.toString())) {
 		c2v[c] = y*width + x;
 	    }
@@ -184,7 +184,7 @@ function image2array(img: HTMLImageElement)
     for (let y = 0; y < height-header; y++) {
 	const a = new Int32Array(width);
 	for (let x = 0; x < width; x++, i+=4) {
-	    let c = ((data[i] << 16) | (data[i+1] << 8) | data[i+2]); // RGBA
+	    const c = ((data[i] << 16) | (data[i+1] << 8) | data[i+2]); // RGBA
 	    a[x] = c2v[c];
 	}
 	map[y] = a;
@@ -392,7 +392,7 @@ class ImageSpriteSheet extends SpriteSheet {
     }
 
     get(x:number, y=0) {
-	let rect = new Rect(x*this.size.x, y*this.size.y, this.size.x, this.size.y);
+	const rect = new Rect(x*this.size.x, y*this.size.y, this.size.x, this.size.y);
 	return new HTMLImageSource(this.image, rect, this.offset);
     }
 }

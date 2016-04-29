@@ -29,7 +29,6 @@ class Layer {
 		obj.tick();
 	    }
 	}
-	this.collideObjects(this.entities);
 	this.cleanObjects(this.tasks);
 	this.cleanObjects(this.sprites);
 	this.cleanObjects(this.entities);
@@ -87,37 +86,39 @@ class Layer {
 	}
     }
 
-    collideObjects(objs: Entity[]) {
-	for (let i = 0; i < objs.length; i++) {
-	    let obj0 = objs[i];
+    checkCollisions() {
+	for (let i = 0; i < this.entities.length; i++) {
+	    let obj0 = this.entities[i];
 	    if (obj0.alive && obj0.hitbox !== null) {
-		for (let j = i+1; j < objs.length; j++) {
-		    let obj1 = objs[j];
-		    if (obj1.alive && obj1.hitbox !== null &&
-			obj1 !== obj0 && obj1.hitbox.overlap(obj0.hitbox)) {
-			obj0.collide(obj1);
-			obj1.collide(obj0);
-		    }
+		let a = this.findObjects(obj0.hitbox, this.entities.slice(i+1));
+		for (let j = 0; j < a.length; j++) {
+		    let obj1 = a[j];
+		    obj0.collide(obj1);
+		    obj1.collide(obj0);
 		}
 	    }
 	}
     }
     
-    cleanObjects(objs: Task[]) {
-	removeElements(objs, (obj: Task) => { return !obj.alive; });
-    }
-
     findObjects(rect: Rect,
+		objs: Entity[]=null,
 		f: (e:Entity)=>boolean=null) {
+	if (objs === null) {
+	    objs = this.entities;
+	}
 	let a:Entity[] = [];
-	for (let i = 0; i < this.entities.length; i++) {
-	    let obj1 = this.entities[i];
+	for (let i = 0; i < objs.length; i++) {
+	    let obj1 = objs[i];
 	    if (obj1.alive && obj1.hitbox !== null &&
-		(f === null || f(obj1)) && obj1.hitbox.overlap(rect)) {
+		obj1.hitbox.overlap(rect) && (f === null || f(obj1))) {
 		a.push(obj1);
 	    }
 	}
 	return a;
+    }
+
+    private cleanObjects(objs: Task[]) {
+	removeElements(objs, (obj: Task) => { return !obj.alive; });
     }
 
 }
