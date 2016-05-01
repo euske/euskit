@@ -10,7 +10,7 @@ dst="$1"
 # dirname of the script.
 src=${0%/*}/..
 # basename of the destdir.
-name=${dst##*\/}
+name=${dst##*/}
 [ -d "$dst" ] || ( echo "usage: $0 dst" && exit 1 )
 
 echo "src: $src"
@@ -18,7 +18,7 @@ echo "dst: $dst"
 
 # create .rsyn
 cat > "$dst/.rsyn" <<EOF
-opts='--exclude *.wav --exclude *.md --exclude tmp --exclude tmp --exclude tools --exclude Makefile'
+opts='--exclude *.wav --exclude *.md --exclude src --exclude tmp --exclude tools --exclude Makefile'
 remote='tabesugi:public/file/ludumdare.tabesugi.net/$name'
 EOF
 mkdir "$dst"/src || :  # ignore errors
