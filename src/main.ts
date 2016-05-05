@@ -5,10 +5,10 @@
 
 // Browser interaction.
 
-function run<T extends Scene>(scene0: { new(app:App):T; })
+function run<T extends Scene>(
+    scene0: { new(app:App):T; },
+    canvasId='main', scale=2, framerate=30)
 {
-    // [NO NEED TO CHANGE]
-  
     function getprops(a: NodeListOf<Element>) {
 	let d:any = {};
 	for (let i = 0; i < a.length; i++) {
@@ -17,16 +17,11 @@ function run<T extends Scene>(scene0: { new(app:App):T; })
 	return d;
     }
   
-    let framerate = 30;
-    let scale = 2;
-    let images = getprops(document.getElementsByTagName('img'));
-    let audios = getprops(document.getElementsByTagName('audio'));
-    let labels = getprops(document.getElementsByClassName('label'));
-    let frame:HTMLCanvasElement = document.getElementById('main') as HTMLCanvasElement;
-    let app = new App(framerate, scale, frame,
-		      images as ImageDictionary,
-		      audios as AudioDictionary,
-		      labels as DivDictionary);
+    let images = getprops(document.getElementsByTagName('img')) as ImageDictionary;
+    let audios = getprops(document.getElementsByTagName('audio')) as AudioDictionary;
+    let labels = getprops(document.getElementsByClassName('label')) as DivDictionary;
+    let frame = document.getElementById(canvasId) as HTMLCanvasElement;
+    let app = new App(framerate, scale, frame, images, audios, labels);
     let ctx = getEdgeyContext(frame);
     let timer: number;
   

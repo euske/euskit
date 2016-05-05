@@ -331,7 +331,7 @@ class PauseTask extends TextTask {
 
     constructor(dialog: DialogBox, duration: number) {
 	super(dialog);
-	this.duration = duration;
+	this.lifetime = duration;
     }
 
     ff() {

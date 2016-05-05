@@ -118,7 +118,6 @@ class PlanActionRunner {
 	
 	let plan = this.plan;
 	let actor = this.actor;
-	let tilemap = plan.tilemap;
 	let cur = actor.getGridPos();
 	let dst = this.action.next.p;
 
@@ -139,8 +138,9 @@ class PlanActionRunner {
 	case ActionType.FALL:
 	    let path = this.findSimplePath(cur, dst);
 	    for (let i = 0; i < path.length; i++) {
-		let r = actor.getGridBoxAt(path[i]);
-		let v = r.diff(actor.getGridBox());
+		let r0 = actor.getGridBoxAt(path[i]);
+		let r1 = actor.getGridBox();
+		let v = new Vec2(r0.x-r1.x, r0.y-r1.y);
 		if (actor.isMovable(v)) {
 		    actor.moveToward(path[i]);
 		    break;
@@ -244,32 +244,34 @@ class PlanningEntity extends PlatformerEntity implements PlanActor {
     fallpts: Vec2[];
     timeout: number;
     speed: number;
-    runner: PlanActionRunner;
     gridbox: Rect;
     obstacle: RangeMap;
     grabbable: RangeMap;
     stoppable: RangeMap;
-    movement: Vec2;
+    runner: PlanActionRunner = null;
+    movement: Vec2 = new Vec2();
 
     static debug: boolean = false;
 
-    constructor(profile:PlanProfile, tilemap: TileMap, bounds: Rect,
+    constructor(profile:PlanProfile, bounds: Rect,
 		src: ImageSource=null, hitbox: Rect=null,
 		speed=4, timeout=30) {
-	super(tilemap, bounds, src, hitbox);
+	super(profile.tilemap, bounds, src, hitbox);
 	this.profile = profile;
 	this.timeout = timeout;
 	this.speed = speed;
-	this.runner = null;
-	this.movement = new Vec2();
 	let gs = this.profile.gridsize;
 	this.gridbox = new Rect(0, 0,
 				Math.ceil(hitbox.width/gs)*gs,
 				Math.ceil(hitbox.height/gs)*gs);
-	this.jumppts = calcJumpRange(gs, this.speed, PhysicalEntity.jumpfunc);
-	this.fallpts = calcFallRange(gs, this.speed, PhysicalEntity.jumpfunc);
-	//log("jumppts="+PlanningEntity.jumppts);
-	//log("fallpts="+PlanningEntity.fallpts);
+    }
+
+    setJumpFunc(jumpfunc: JumpFunc) {
+	super.setJumpFunc(jumpfunc);
+	this.jumppts = calcJumpRange(this.profile.gridsize, this.speed, jumpfunc);
+	this.fallpts = calcFallRange(this.profile.gridsize, this.speed, jumpfunc);
+	//log("jumppts="+this.jumppts);
+	//log("fallpts="+this.fallpts);
     }
 
     updateRangeMaps() {
@@ -303,7 +305,7 @@ class PlanningEntity extends PlatformerEntity implements PlanActor {
 	let range = goal.expand(size, size);
 	let start = this.getGridPos();
 	this.updateRangeMaps();
-	let plan = new PlanMap(this.profile, this.tilemap, this);
+	let plan = new PlanMap(this.profile, this);
 	plan.initPlan(goal);
 	if (plan.fillPlan(range, start, maxcost)) {
 	    return new PlanActionRunner(plan, this, this.timeout);
@@ -413,7 +415,7 @@ class PlanningEntity extends PlatformerEntity implements PlanActor {
 
     moveToward(p: Vec2) {
 	let r = this.getGridBoxAt(p);
-	let v = r.diff(this.hitbox);
+	let v = new Vec2(r.x-this.hitbox.x, r.y-this.hitbox.y);
 	v.x = clamp(-this.speed, v.x, +this.speed);
 	v.y = clamp(-this.speed, v.y, +this.speed);
 	this.movement = v;

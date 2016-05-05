@@ -88,10 +88,12 @@ class PlanActionEntry {
 
 class PlanProfile {
     
+    tilemap: TileMap;
     gridsize: number;
     offset: number;
 
     constructor(tilemap:TileMap, resolution=1) {
+	this.tilemap = tilemap;
 	this.gridsize = tilemap.tilesize/resolution;
 	this.offset = fmod(this.gridsize, tilemap.tilesize)/2;
     }
@@ -112,7 +114,6 @@ class PlanProfile {
 class PlanMap {
 
     profile: PlanProfile;
-    tilemap: TileMap;
     actor: PlanActor;
 
     start: Vec2;
@@ -121,9 +122,8 @@ class PlanMap {
     private _map: PlanActionMap;
     private _queue: PlanActionEntry[];
     
-    constructor(profile: PlanProfile, tilemap: TileMap, actor: PlanActor) {
+    constructor(profile: PlanProfile, actor: PlanActor) {
 	this.profile = profile;
-	this.tilemap = tilemap;
 	this.actor = actor;
 	this.start = null;
 	this.goal = null;

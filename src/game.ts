@@ -11,6 +11,10 @@
 
 
 PlanningEntity.debug = true;
+function jumpfunc (vy:number, t:number) {
+    return (0 <= t && t <= 5)? -4 : vy+1;
+}
+
 
 
 //  WorldObject
@@ -18,7 +22,6 @@ PlanningEntity.debug = true;
 class WorldObject {
     
     scene: Game;
-    
     getConstraintsFor(hitbox: Rect, force: boolean) {
 	return this.scene.screen;
     }
@@ -38,6 +41,7 @@ class Player extends PlatformerEntity {
 	super(scene.tilemap, bounds, scene.sheet.get(0), bounds);
 	this.scene = scene;
 	this.usermove = new Vec2();
+	this.setJumpFunc(jumpfunc);
     }
 
     update() {
@@ -61,8 +65,9 @@ class Monster extends PlanningEntity {
 
     constructor(scene: Game, pos: Vec2) {
 	let bounds = pos.expand(16, 16);
-	super(scene.profile, scene.tilemap, bounds, scene.sheet.get(1), bounds);
+	super(scene.profile, bounds, scene.sheet.get(1), bounds);
 	this.scene = scene;
+	this.setJumpFunc(jumpfunc);
     }
 
     update() {
@@ -76,7 +81,7 @@ class Monster extends PlanningEntity {
 	this.move();
     }
 }
-applyMixins(Player, [WorldObject]);
+applyMixins(Monster, [WorldObject]);
 
 
 //  Game
@@ -132,7 +137,7 @@ class Game extends GameScene {
 	// show a banner.
 	let textbox = new TextBox(this.screen, this.app.font);
 	textbox.linespace = 2;
-	textbox.duration = 30;
+	textbox.lifetime = 30;
 	textbox.putText(['GAEM!!1'], 'center', 'center');
 	this.addObject(textbox);
     }

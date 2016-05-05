@@ -17,6 +17,10 @@ class Vec2 {
 	return '('+this.x+', '+this.y+')';
     }
 
+    copy() {
+	return new Vec2(this.x, this.y);
+    }
+    
     equals(p: Vec2) {
 	return (this.x == p.x && this.y == p.y);
     }
@@ -25,15 +29,11 @@ class Vec2 {
 	return (this.x == 0 && this.y == 0);
     }
     
-    copy() {
-	return new Vec2(this.x, this.y);
-    }
-    
-    norm2() {
+    len2() {
 	return (this.x*this.x + this.y*this.y);
     }
     
-    norm() {
+    len() {
 	return Math.sqrt(this.x*this.x + this.y*this.y);
     }
     
@@ -49,28 +49,28 @@ class Vec2 {
 	return new Vec2(this.x-v.x, this.y-v.y);
     }
     
-    scale(v: number) {
-	return new Vec2(this.x*v, this.y*v);
+    scale(n: number) {
+	return new Vec2(this.x*n, this.y*n);
     }
     
     distance(v: Vec2) {
-	return this.sub(v).norm();
+	return this.sub(v).len();
     }
     
-    clamp(v: Vec2) {
+    clamp(bounds: Vec2) {
 	return new Vec2(
-	    clamp(-v.x, this.x, +v.x),
-	    clamp(-v.y, this.y, +v.y));
+	    clamp(-bounds.x, this.x, +bounds.x),
+	    clamp(-bounds.y, this.y, +bounds.y));
     }
     
     move(dx: number, dy: number) {
 	return new Vec2(this.x+dx, this.y+dy);
     }
     
-    rot90(v: number) {
-	if (v < 0) {
+    rot90(d: number) {
+	if (d < 0) {
 	    return new Vec2(this.y, -this.x);
-	} else if (0 < v) {
+	} else if (0 < d) {
 	    return new Vec2(-this.y, this.x);
 	} else {
 	    return this.copy();
@@ -102,6 +102,10 @@ class Vec3 {
 	return '('+this.x+', '+this.y+', '+this.z+')';
     }
     
+    copy() {
+	return new Vec3(this.x, this.y, this.z);
+    }
+    
     equals(p: Vec3) {
 	return (this.x == p.x && this.y == p.y && this.z == p.z);
     }
@@ -110,15 +114,11 @@ class Vec3 {
 	return (this.x == 0 && this.y == 0 && this.z == 0);
     }
     
-    copy() {
-	return new Vec3(this.x, this.y, this.z);
-    }
-    
-    norm2() {
+    len2() {
 	return (this.x*this.x + this.y*this.y + this.z*this.z);
     }
     
-    norm() {
+    len() {
 	return Math.sqrt(this.x*this.x + this.y*this.y + this.z*this.z);
     }
     
@@ -139,14 +139,14 @@ class Vec3 {
     }
     
     distance(v: Vec3) {
-	return this.sub(v).norm();
+	return this.sub(v).len();
     }
     
-    clamp(v: Vec3) {
+    clamp(bounds: Vec3) {
 	return new Vec3(
-	    clamp(-v.x, this.x, +v.x),
-	    clamp(-v.y, this.y, +v.y),
-	    clamp(-v.z, this.z, +v.z));
+	    clamp(-bounds.x, this.x, +bounds.x),
+	    clamp(-bounds.y, this.y, +bounds.y),
+	    clamp(-bounds.z, this.z, +bounds.z));
     }
     
     move(dx: number, dy: number, dz: number) {
@@ -176,9 +176,17 @@ class Rect {
 	return '('+this.x+', '+this.y+', '+this.width+', '+this.height+')';
     }
     
+    copy() {
+	return new Rect(this.x, this.y, this.width, this.height);
+    }
+    
     equals(rect: Rect) {
 	return (this.x == rect.x && this.y == rect.y &&
 		this.width == rect.width && this.height == rect.height);
+    }
+    
+    isZero() {
+	return (this.width == 0 && this.height == 0);
     }
     
     right() {
@@ -193,24 +201,23 @@ class Rect {
     centery() {
 	return this.y+this.height/2;
     }
-    
-    topleft() {
-	return new Vec2(this.x, this.y);
-    }
-    topright() {
-	return new Vec2(this.x+this.width, this.y);
-    }
-    bottomleft() {
-	return new Vec2(this.x, this.y+this.height);
-    }
-    bottomright() {
-	return new Vec2(this.x+this.width, this.y+this.height);
-    }
     center() {
 	return new Vec2(this.x+this.width/2, this.y+this.height/2);
     }
     
-    anchor(vx: number, vy: number) {
+    move(dx: number, dy: number) {
+	return new Rect(this.x+dx, this.y+dy, this.width, this.height);  
+    }
+    
+    add(v: Vec2) {
+	return new Rect(this.x+v.x, this.y+v.y, this.width, this.height);  
+    }
+    
+    inflate(dw: number, dh: number) {
+	return new Rect(this.x-dw, this.y-dh, this.width+dw*2, this.height+dh*2);
+    }
+    
+    anchor(vx=0, vy=0) {
 	let x: number, y: number;
 	if (0 < vx) {
 	    x = this.x;
@@ -227,26 +234,6 @@ class Rect {
 	    y = this.y+this.height/2;
 	}
 	return new Vec2(x, y);
-    }
-    
-    copy() {
-	return new Rect(this.x, this.y, this.width, this.height);
-    }
-    
-    move(dx: number, dy: number) {
-	return new Rect(this.x+dx, this.y+dy, this.width, this.height);  
-    }
-    
-    add(v: Vec2) {
-	return new Rect(this.x+v.x, this.y+v.y, this.width, this.height);  
-    }
-    
-    diff(rect: Rect) {
-	return new Vec2(this.x-rect.x, this.y-rect.y);
-    }
-    
-    inflate(dw: number, dh: number) {
-	return new Rect(this.x-dw, this.y-dh, this.width+dw*2, this.height+dh*2);
     }
     
     expand(dw: number, dh: number, vx=0, vy=0) {
@@ -266,6 +253,25 @@ class Rect {
 	    y = this.y-dh/2;
 	}
 	return new Rect(x, y, this.width+dw, this.height+dh);
+    }
+    
+    resize(w: number, h: number, vx=0, vy=0) {
+	let x: number, y: number;
+	if (0 < vx) {
+	    x = this.x;
+	} else if (vx < 0) {
+	    x = this.x+this.width-w;
+	} else {
+	    x = this.x+(this.width-w)/2;
+	}
+	if (0 < vy) {
+	    y = this.y;
+	} else if (vy < 0) {
+	    y = this.y+this.height-h;
+	} else {
+	    y = this.y+(this.height-h)/2;
+	}
+	return new Rect(x, y, w, h);
     }
     
     contains(p: Vec2) {
@@ -289,12 +295,7 @@ class Rect {
 			this.y-(rect.y+rect.height));
     }
     
-    distance(rect: Rect) {
-	return new Vec2(this.xdistance(rect),
-			this.ydistance(rect));
-    }
-    
-    overlap(rect: Rect) {
+    overlaps(rect: Rect) {
 	return (this.xdistance(rect) < 0 &&
 		this.ydistance(rect) < 0);
     }
@@ -315,11 +316,11 @@ class Rect {
 	return new Rect(x0, y0, x1-x0, y1-y0);
     }
     
-    clamp(rect: Rect) {
-	let x = ((rect.width < this.width)? rect.centerx() :
-		 clamp(rect.x, this.x, rect.x+rect.width-this.width));
-	let y = ((rect.height < this.height)? rect.centery() :
-		 clamp(rect.y, this.y, rect.y+rect.height-this.height));
+    clamp(bounds: Rect) {
+	let x = ((bounds.width < this.width)? bounds.centerx() :
+		 clamp(bounds.x, this.x, bounds.x+bounds.width-this.width));
+	let y = ((bounds.height < this.height)? bounds.centery() :
+		 clamp(bounds.y, this.y, bounds.y+bounds.height-this.height));
 	return new Rect(x, y, this.width, this.height);
     }
     
@@ -328,9 +329,9 @@ class Rect {
 			this.y+rnd(this.height));
     }
     
-    modpt(v: Vec2) {
-	return new Vec2(this.x+fmod(v.x-this.x, this.width),
-			this.y+fmod(v.y-this.y, this.height));
+    modpt(p: Vec2) {
+	return new Vec2(this.x+fmod(p.x-this.x, this.width),
+			this.y+fmod(p.y-this.y, this.height));
     }
     
     contactVLine(v: Vec2, x: number, y0: number, y1: number) {
@@ -376,7 +377,7 @@ class Rect {
     }
     
     contact(v: Vec2, rect: Rect) {
-	assert(!this.overlap(rect), 'rect overlapped');
+	assert(!this.overlaps(rect), 'rect overlapped');
 	
 	if (0 < v.x) {
 	    v = this.contactVLine(v, rect.x, rect.y, rect.y+rect.height);
@@ -388,6 +389,22 @@ class Rect {
 	    v = this.contactHLine(v, rect.y, rect.x, rect.x+rect.width);
 	} else if (v.y < 0) {
 	    v = this.contactHLine(v, rect.y+rect.height, rect.x, rect.x+rect.width);
+	}
+
+	return v;
+    }
+
+    contactWithin(v: Vec2, rect: Rect) {
+	if (0 < v.x) {
+	    v = this.contactVLine(v, rect.x+rect.width, -Infinity, +Infinity);
+	} else if (v.x < 0) {
+	    v = this.contactVLine(v, rect.x, -Infinity, +Infinity);
+	}
+
+	if (0 < v.y) {
+	    v = this.contactHLine(v, rect.y+rect.height, -Infinity, +Infinity);
+	} else if (v.y < 0) {
+	    v = this.contactHLine(v, rect.y, -Infinity, +Infinity);
 	}
 
 	return v;
@@ -412,9 +429,17 @@ class Box {
 	return '('+this.origin+', '+this.size+')';
     }
     
+    copy() {
+	return new Box(this.origin.copy(), this.size.copy());
+    }
+    
     equals(box: Box) {
 	return (this.origin.equals(box.origin) &&
 		this.size.equals(box.size));
+    }
+    
+    isZero() {
+	return this.size.isZero();
     }
     
     center() {
@@ -423,8 +448,30 @@ class Box {
 			this.origin.z+this.size.z/2);
     }
     
-    copy() {
-	return new Box(this.origin.copy(), this.size.copy());
+    anchor(vx=0, vy=0, vz=0) {
+	let x: number, y: number, z: number;
+	if (0 < vx) {
+	    x = this.origin.x;
+	} else if (vx < 0) {
+	    x = this.origin.x+this.size.x;
+	} else {
+	    x = this.origin.x+this.size.x/2;
+	}
+	if (0 < vy) {
+	    y = this.origin.y;
+	} else if (vy < 0) {
+	    y = this.origin.y+this.size.y;
+	} else {
+	    y = this.origin.y+this.size.y/2;
+	}
+	if (0 < vz) {
+	    z = this.origin.z;
+	} else if (vz < 0) {
+	    z = this.origin.z+this.size.z;
+	} else {
+	    z = this.origin.z+this.size.z/2;
+	}
+	return new Vec3(x, y, z);
     }
     
     move(dx: number, dy: number, dz: number) {
@@ -435,8 +482,9 @@ class Box {
 	return new Box(this.origin.add(v), this.size);
     }
     
-    diff(box: Box) {
-	return this.origin.sub(box.origin);
+    inflate(dx: number, dy: number, dz: number) {
+	return new Box(this.origin.move(-dx, -dy, -dz),
+		       this.size.move(dx*2, dy*2, dz*2));
     }
     
     xdistance(box: Box) {
@@ -454,11 +502,6 @@ class Box {
 			this.origin.z-(box.origin.z+box.size.z));
     }
     
-    inflate(dx: number, dy: number, dz: number) {
-	return new Box(this.origin.move(-dx, -dy, -dz),
-		       this.size.move(dx*2, dy*2, dz*2));
-    }
-    
     contains(p: Vec3) {
 	return (this.origin.x <= p.x && this.origin.y <= p.y && this.origin.z <= p.z &&
 		p.x <= this.origin.x+this.size.x &&
@@ -466,7 +509,7 @@ class Box {
 		p.z <= this.origin.z+this.size.z);
     }
     
-    overlap(box: Box) {
+    overlaps(box: Box) {
 	return (this.xdistance(box) < 0 &&
 		this.ydistance(box) < 0 &&
 		this.zdistance(box) < 0);
@@ -494,13 +537,19 @@ class Box {
 		       new Vec3(x1-x0, y1-y0, z1-z0));
     }
     
-    clamp(box: Box) {
-	let x = ((box.size.x < this.size.x)? (box.origin.x+box.size.x/2) :
-		 clamp(box.origin.x, this.origin.x, box.origin.x+box.size.x-this.size.x));
-	let y = ((box.size.y < this.size.y)? (box.origin.y+box.size.y/2) :
-		 clamp(box.origin.y, this.origin.y, box.origin.y+box.size.y-this.size.y));
-	let z = ((box.size.z < this.size.z)? (box.origin.z+box.size.z/2) :
-		 clamp(box.origin.z, this.origin.z, box.origin.z+box.size.z-this.size.z));
+    clamp(bounds: Box) {
+	let x = ((bounds.size.x < this.size.x)?
+		 (bounds.origin.x+bounds.size.x/2) :
+		 clamp(bounds.origin.x, this.origin.x,
+		       bounds.origin.x+bounds.size.x-this.size.x));
+	let y = ((bounds.size.y < this.size.y)?
+		 (bounds.origin.y+bounds.size.y/2) :
+		 clamp(bounds.origin.y, this.origin.y,
+		       bounds.origin.y+bounds.size.y-this.size.y));
+	let z = ((bounds.size.z < this.size.z)?
+		 (bounds.origin.z+bounds.size.z/2) :
+		 clamp(bounds.origin.z, this.origin.z,
+		       bounds.origin.z+bounds.size.z-this.size.z));
 	return new Box(new Vec3(x, y, z), this.size);
     }
     
@@ -595,7 +644,7 @@ class Box {
     }
     
     contact(v: Vec3, box: Box) {
-	assert(!this.overlap(box), 'box overlapped');
+	assert(!this.overlaps(box), 'box overlapped');
 	
 	if (0 < v.x) {
 	    v = this.contactYZPlane(v, box.origin.x, 

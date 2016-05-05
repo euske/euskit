@@ -1,15 +1,10 @@
 // Misc. routines.
 
-// log(...): display a thing in the console (Firefox only, maybe)
-function log(...params: any[])
-{
-    if (window.console !== undefined) {
-	window.console.log.apply(window.console, params);
-    }
-}
+// log(...): alias of window.console.log()
+const log = window.console.log.bind(window.console);
 
-// assert(x, msg): throw an exception if the condition is not met.
-function assert(x: boolean, msg: string)
+// assert(x, msg): raises an exception if the condition is not met.
+function assert(x: boolean, msg="assertion error")
 {
     if (!x) {
 	throw new Error(msg);
@@ -35,10 +30,10 @@ function fmod(x: number, y: number)
 // int(x):
 const int = Math.floor;
 
-// upperbound(x):
+// upperbound(x, y):
 const upperbound = Math.min;
 
-// lowerbound(x):
+// lowerbound(x, y):
 const lowerbound = Math.max;
 
 // clamp(v0, v, v1): limit the value within v0-v1.
@@ -59,11 +54,11 @@ function sign(v: number)
     }
 }
 
-// blink(t, d): returns true if t is within the on interval.
-function blink(t: number, d: number)
+// blink(t, duration): returns true if t is within the on interval.
+function blink(t: number, duration: number)
 {
-    if (d === 0) return true;
-    return ((t % d) < d/2);
+    if (duration === 0) return true;
+    return ((t % duration) < duration/2);
 }
 
 // rnd(a, b): returns a random number.
@@ -82,12 +77,6 @@ function rnd(a: number, b=0)
     return int(frnd(a, b));
 }
 
-// choice(a)
-function choice<T>(a: T[])
-{
-    return a[rnd(a.length)];
-}
-
 // format: pretty print a number.
 function format(v: number, n=3, c=' ')
 {
@@ -103,6 +92,12 @@ function format(v: number, n=3, c=' ')
     return s;
 }
 
+// choice(a)
+function choice<T>(a: T[])
+{
+    return a[rnd(a.length)];
+}
+
 // removeElement(a, obj): remove an element from a.
 function removeElement<T>(a: T[], obj: T)
 {
@@ -114,7 +109,7 @@ function removeElement<T>(a: T[], obj: T)
 }
 
 // removeElements(a, f): remove elements from a.
-function removeElements<T>(a: T[], f: (x:T)=>void)
+function removeElements<T>(a: T[], f: (x:T)=>boolean)
 {
     for (let i = a.length-1; 0 <= i; i--) {
 	if (f(a[i])) {
@@ -124,15 +119,25 @@ function removeElements<T>(a: T[], f: (x:T)=>void)
     return a;
 }
 
-// removeChildren(n, name): remove all child nodes with the given name.
-function removeChildren(n: Node, name: string)
+// str2array(str): converts a string to an array.
+function str2array(s: string, f: (c:string)=>number=parseInt)
+{
+    const a = new Int32Array(s.length);
+    for (let i = 0; i < s.length; i++) {
+	a[i] = f(s[i]);
+    }
+    return a;
+}
+
+// removeChildren(node, name): remove all child nodes with the given name.
+function removeChildren(node: Node, name: string)
 {
     name = name.toLowerCase();
     // Iterate backwards to simplify array removal. (thanks to @the31)
-    for (let i = n.childNodes.length-1; 0 <= i; i--) {
-	const c = n.childNodes[i];
+    for (let i = node.childNodes.length-1; 0 <= i; i--) {
+	const c = node.childNodes[i];
 	if (c.nodeName.toLowerCase() === name) {
-	    n.removeChild(c);
+	    node.removeChild(c);
 	}
     }
 }
@@ -192,16 +197,6 @@ function image2array(img: HTMLImageElement)
     return map;
 }
 
-// str2array(str): converts a string to an array.
-function str2array(s: string, f: (c:string)=>number=parseInt)
-{
-    const a = new Int32Array(s.length);
-    for (let i = 0; i < s.length; i++) {
-	a[i] = f(s[i]);
-    }
-    return a;
-}
-
 // drawImageScaled: draw a scaled image.
 function drawImageScaled(
     ctx: CanvasRenderingContext2D,
@@ -220,9 +215,9 @@ function drawImageScaled(
 }
 
 // playSound(sound): play a sound resource.
-function playSound(sound: HTMLAudioElement)
+function playSound(sound: HTMLAudioElement, start=0)
 {
-    sound.currentTime = 0;
+    sound.currentTime = start;
     sound.play();
 }
 
@@ -270,15 +265,15 @@ interface Action {
 }
 class Slot {
 
-    object: any;
+    sender: any;
     receivers: Action[] = [];
     
-    constructor(object: any) {
-	this.object = object;
+    constructor(sender: any) {
+	this.sender = sender;
     }
 	
     toString() {
-	return ('<Slot('+this.object+') '+this.receivers+'>');
+	return ('<Slot('+this.sender+') '+this.receivers+'>');
     }
   
     subscribe(recv: Action) {
@@ -292,7 +287,7 @@ class Slot {
     signal(...params: any[]) {
 	for (let i = 0; i < this.receivers.length; i++) {
 	    const args = Array.prototype.slice.call(arguments);
-	    args.unshift(this.object);
+	    args.unshift(this.sender);
 	    this.receivers[i].apply(null, args);
 	}
     }

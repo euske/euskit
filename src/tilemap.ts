@@ -84,7 +84,7 @@ class TileMap {
 	return new TileMap(this.tilesize, map);
     }
 
-    coord2map(rect: Rect) {
+    coord2map(rect: Vec2|Rect) {
 	const ts = this.tilesize;
 	if (rect instanceof Rect) {
 	    const x0 = Math.floor(rect.x/ts);
@@ -262,6 +262,42 @@ class TileMap {
 	}
     }
 
+
+    renderWindowFromBottomLeft(
+	ctx: CanvasRenderingContext2D,
+	bx: number, by: number,
+	window: Rect,
+	tiles: SpriteSheet,
+	ft: TilePosTileFunc) {
+	let ts = this.tilesize;
+	let x0 = Math.floor(window.x/ts);
+	let y0 = Math.floor(window.y/ts);
+	let x1 = Math.ceil((window.x+window.width)/ts);
+	let y1 = Math.ceil((window.y+window.height)/ts);
+	let fx = x0*ts-window.x;
+	let fy = y0*ts-window.y;
+	this.renderFromBottomLeft(
+	    ctx, bx+fx, by+fy, tiles, ft, 
+	    x0, y0, x1-x0+1, y1-y0+1);
+    }
+
+    renderWindowFromTopRight(
+	ctx: CanvasRenderingContext2D,
+	bx: number, by: number,
+	window: Rect,
+	tiles: SpriteSheet,
+	ft: TilePosTileFunc) {
+	let ts = this.tilesize;
+	let x0 = Math.floor(window.x/ts);
+	let y0 = Math.floor(window.y/ts);
+	let x1 = Math.ceil((window.x+window.width)/ts);
+	let y1 = Math.ceil((window.y+window.height)/ts);
+	let fx = x0*ts-window.x;
+	let fy = y0*ts-window.y;
+	this.renderFromTopRight(
+	    ctx, bx+fx, by+fy, tiles, ft, 
+	    x0, y0, x1-x0+1, y1-y0+1);
+    }
 }
 
 
@@ -271,7 +307,8 @@ class RangeMap {
 
     width: number;
     height: number;
-    data: Int32Array[];
+
+    private _data: Int32Array[];
     
     constructor(tilemap: TileMap, f: TileFunc) {
 	let data = new Array(tilemap.height+1);
@@ -294,7 +331,7 @@ class RangeMap {
 	}
 	this.width = tilemap.width;
 	this.height = tilemap.height;
-	this.data = data;
+	this._data = data;
     }
 
     get(x0: number, y0: number, x1: number, y1: number) {
@@ -311,8 +348,8 @@ class RangeMap {
 	y0 = clamp(0, y0, this.height);
 	x1 = clamp(0, x1, this.width);
 	y1 = clamp(0, y1, this.height);
-	return (this.data[y1][x1] - this.data[y1][x0] -
-		this.data[y0][x1] + this.data[y0][x0]);
+	return (this._data[y1][x1] - this._data[y1][x0] -
+		this._data[y0][x1] + this._data[y0][x0]);
     }
 
     exists(rect: Rect) {

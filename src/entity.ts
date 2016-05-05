@@ -10,7 +10,7 @@ class Task {
     alive: boolean = true;
     layer: Layer = null;
     ticks: number = 0;
-    duration: number = 0;
+    lifetime: number = Infinity;
     died: Slot;
 
     constructor() {
@@ -26,18 +26,17 @@ class Task {
 	this.ticks = 0;
     }
 
-    die() {
-	this.alive = false;
-	this.died.signal();
-    }
-  
     tick() {
 	this.ticks++;
 	this.update();
-	if (this.alive && 0 < this.duration &&
-	    this.duration < this.ticks) {
+	if (this.alive && this.lifetime < this.ticks) {
 	    this.die();
 	}
+    }
+  
+    die() {
+	this.alive = false;
+	this.died.signal();
     }
   
     update() {
@@ -91,7 +90,7 @@ class Sprite extends Task {
     bounds: Rect;
     src: ImageSource;
     visible: boolean = true;
-    zorder: number = 0;
+    zOrder: number = 0;
     scale: Vec2 = new Vec2(1, 1);
 
     constructor(bounds: Rect, src: ImageSource=null) {
@@ -169,6 +168,73 @@ class TiledSprite extends Sprite {
 }
 
 
+//  StarSprite
+//
+class Star {
+    z: number;
+    s: number;
+    p: Vec2;
+    init(maxdepth: number) {
+	this.z = Math.random()*maxdepth+1;
+	this.s = (Math.random()*2+1) / this.z;
+    }
+}
+class StarSprite extends Sprite {
+    
+    velocity: Vec2;
+    maxdepth: number;
+    
+    private _stars: Star[] = [];
+
+    constructor(bounds: Rect, src: ImageSource, nstars: number,
+		velocity=new Vec2(-1,0), maxdepth=3) {
+	super(bounds, src);
+	this.velocity = velocity;
+	this.maxdepth = maxdepth;
+	for (let i = 0; i < nstars; i++) {
+	    let star = new Star();
+	    star.init(this.maxdepth);
+	    star.p = this.bounds.rndpt();
+	    this._stars.push(star);
+	}
+    }
+
+    update() {
+	super.update();
+	for (let i = 0; i < this._stars.length; i++) {
+	    let star = this._stars[i];
+	    star.p.x += this.velocity.x/star.z;
+	    star.p.y += this.velocity.y/star.z;
+	    let rect = star.p.expand(star.s, star.s);
+	    if (!this.bounds.overlaps(rect)) {
+		star.init(this.maxdepth);
+		star.p = this.bounds.modpt(star.p);
+	    }
+	}
+    }
+
+    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
+	bx += this.bounds.x;
+	by += this.bounds.y;
+	for (let i = 0; i < this._stars.length; i++) {
+	    let star = this._stars[i];
+	    let dst = star.p.expand(star.s, star.s);
+	    if (this.src instanceof DummyImageSource) {
+		ctx.fillStyle = (this.src as DummyImageSource).color;
+		ctx.fillRect(bx+dst.x, by+dst.y, dst.width, dst.height);
+	    } else if (this.src instanceof HTMLImageSource) {
+		let rect = (this.src as HTMLImageSource).bounds;
+		let offset = (this.src as HTMLImageSource).offset;
+		drawImageScaled(ctx, (this.src as HTMLImageSource).image,
+				rect.x, rect.y, rect.width, rect.height,
+				bx+dst.x-offset.x, by+dst.y-offset.y,
+				dst.width*this.scale.x, dst.height*this.scale.y);
+	    }
+	}
+    }
+}
+
+
 //  Entity
 //  A character that can interact with other characters.
 //
@@ -229,7 +295,8 @@ class Entity extends Sprite {
 	if (bounds !== null) {
 	    hitbox = hitbox.clamp(bounds);
 	}
-	return hitbox.diff(this.hitbox);
+	return new Vec2(hitbox.x-this.hitbox.x,
+			hitbox.y-this.hitbox.y);
     }
   
     getContactFor(v: Vec2, hitbox: Rect, force: boolean, range: Rect): Vec2 {
@@ -263,7 +330,7 @@ class Projectile extends Entity {
     update() {
 	super.update();
 	this.moveIfPossible(this.movement, true);
-	if (!this.hitbox.overlap(this.frame)) {
+	if (!this.hitbox.overlaps(this.frame)) {
 	    this.die();
 	}
     }
@@ -284,17 +351,19 @@ class PhysicalEntity extends Entity {
     protected _jumpt: number;
     protected _jumpend: number;
     protected _landed: boolean;
-
-    static jumpfunc: JumpFunc = (
-	(vy:number, t:number) => { return (0 <= t && t <= 5)? -4 : vy+1; }
-    );
     
     constructor(bounds: Rect, src: ImageSource=null, hitbox: Rect=null) {
 	super(bounds, src, hitbox);
 	this._jumpt = Infinity;
 	this._jumpend = 0;
 	this._landed = false;
-	this.jumpfunc = PhysicalEntity.jumpfunc;
+	this.jumpfunc = (
+	    (vy:number, t:number) => { return (0 <= t && t <= 5)? -4 : vy+1; }
+	);
+    }
+
+    setJumpFunc(jumpfunc: JumpFunc) {
+	this.jumpfunc = jumpfunc;
     }
 
     setJump(jumpend: number) {
