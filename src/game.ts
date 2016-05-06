@@ -22,8 +22,9 @@ function jumpfunc (vy:number, t:number) {
 class WorldObject {
     
     scene: Game;
-    getConstraintsFor(hitbox: Rect, force: boolean) {
-	return this.scene.screen;
+    
+    getFencesFor(range: Rect, force: boolean): Rect[] {
+	return [this.scene.screen];
     }
     
 }

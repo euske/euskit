@@ -1,6 +1,17 @@
 /// <reference path="utils.ts" />
 /// <reference path="geom.ts" />
 
+function getContact(hitbox: Rect, v: Vec2, rects: Rect[], rectsWithin: Rect[])
+{
+    for (let i = 0; i < rects.length; i++) {
+	v = hitbox.contact(v, rects[i]);
+    }
+    for (let i = 0; i < rectsWithin.length; i++) {
+	v = hitbox.contactWithin(v, rectsWithin[i]);
+    }
+    return v;
+}
+
 
 //  Task
 //  A single procedure that runs at each frame.
@@ -278,33 +289,31 @@ class Entity extends Sprite {
     getMove(v: Vec2, hitbox: Rect, force: boolean) {
 	if (hitbox === null) return v;
 	let range = hitbox.union(hitbox.add(v));
-	let d0 = this.getContactFor(v, hitbox, force, range);
-	v = v.sub(d0);
-	hitbox = hitbox.add(d0);
+	let obstacles = this.getObstaclesFor(range, force);
+	let fences = this.getFencesFor(range, force);
+	let d = getContact(hitbox, v, obstacles, fences);
+	v = v.sub(d);
+	hitbox = hitbox.add(d);
 	if (v.x != 0) {
-	    let d1 = this.getContactFor(new Vec2(v.x, 0), hitbox, force, range);
-	    v = v.sub(d1);
-	    hitbox = hitbox.add(d1);
+	    d = getContact(hitbox, new Vec2(v.x, 0), obstacles, fences);
+	    v = v.sub(d);
+	    hitbox = hitbox.add(d);
 	}
 	if (v.y != 0) {
-	    let d2 = this.getContactFor(new Vec2(0, v.y), hitbox, force, range);
-	    v = v.sub(d2);
-	    hitbox = hitbox.add(d2);
-	}
-	let bounds = this.getConstraintsFor(hitbox, force);
-	if (bounds !== null) {
-	    hitbox = hitbox.clamp(bounds);
+	    d = getContact(hitbox, new Vec2(0, v.y), obstacles, fences);
+	    v = v.sub(d);
+	    hitbox = hitbox.add(d);
 	}
 	return new Vec2(hitbox.x-this.hitbox.x,
 			hitbox.y-this.hitbox.y);
     }
   
-    getContactFor(v: Vec2, hitbox: Rect, force: boolean, range: Rect): Vec2 {
+    getObstaclesFor(range: Rect, force: boolean): Rect[] {
 	// [OVERRIDE]
-	return v;
+	return null;
     }
   
-    getConstraintsFor(hitbox: Rect, force: boolean): Rect {
+    getFencesFor(range: Rect, force: boolean): Rect[] {
 	// [OVERRIDE]
 	return null;
     }
@@ -434,11 +443,11 @@ class PlatformerEntity extends PhysicalEntity {
 	return (this.tilemap.findTile(this.tilemap.isGrabbable, this.hitbox) !== null);
     }
 
-    getContactFor(v: Vec2, hitbox: Rect, force: boolean, range: Rect): Vec2 {
+    getObstaclesFor(range: Rect, force: boolean): Rect[] {
 	let f = ((force || this.isHolding())?
 		 this.tilemap.isObstacle :
 		 this.tilemap.isStoppable);
-	return this.tilemap.contactTile(hitbox, f, v, range);
+	return this.tilemap.getTileRects(f, range);
     }
   
 }

@@ -128,10 +128,6 @@ class TileMap {
 	return null;
     }
 
-    findTile(f0: TileFunc, rect: Rect) {
-	return this.apply((x,y,c)=>{return f0(c);}, this.coord2map(rect));
-    }
-
     reduce<T>(f: TilePosValueFunc<T>, v: T, rect: Rect=null) {
 	if (rect === null) {
 	    rect = new Rect(0, 0, this.width, this.height);
@@ -147,19 +143,19 @@ class TileMap {
 	return v;
     }
   
-    contactTile(rect: Rect, f0: TileFunc, v0: Vec2, range:Rect=null): Vec2 {
+    findTile(f0: TileFunc, range: Rect) {
+	return this.apply((x,y,c)=>{return f0(c);}, this.coord2map(range));
+    }
+
+    getTileRects(f0: TileFunc, range:Rect): Rect[] {
 	let ts = this.tilesize;
-	function f(x:number, y:number, c:number, v:Vec2) {
+	function f(x:number, y:number, c:number, rects:Rect[]) {
 	    if (f0(c)) {
-		let bounds = new Rect(x*ts, y*ts, ts, ts);
-		v = rect.contact(v, bounds);
+		rects.push(new Rect(x*ts, y*ts, ts, ts));
 	    }
-	    return v;
+	    return rects;
 	}
-	if (range === null) {
-	    range = rect.add(v0).union(rect);
-	}
-	return this.reduce(f, v0, this.coord2map(range));
+	return this.reduce(f, [] as Rect[], this.coord2map(range));
     }
   
     scroll(vx: number, vy: number, rect: Rect=null) {
