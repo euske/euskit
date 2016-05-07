@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<style>
+h1 { border-bottom: 4pt solid; }
+h2 { border-bottom: 2pt solid; }
+h3 { border-bottom: 1pt solid; }
+table { border-collapse: collapse; }
+td { padding: 2px; }
+a { font-weight: bold; }
+.inherited { background: #cccccc; }
+.overridable { background: #ccffcc; }
+</style>
+<title>Euskit API Reference</title>
+</head>
+<body>
+<h1>Euskit API Reference</h1>
+
+<div>
+Functions:
+<a href="#main">Main</a>,
+<a href="#misc">Misc.</a>,
+<a href="#numeric">Numeric</a>,
+<a href="#array">Array</a>,
+<a href="#html5">HTML5</a>
+<br>Utiltiy Classes:
+<a href="#Slot"><code>Slot</code></a>,
+<a href="#Color"><code>Color</code></a>,
+<a href="#ImageSource"><code>ImageSource</code></a>,
+<a href="#SpriteSheet"><code>SpriteSheet</code></a>,
+<a href="#Vec2"><code>Vec2</code></a>,
+<a href="#Vec3"><code>Vec3</code></a>,
+<a href="#Rect"><code>Rect</code></a>,
+<a href="#Box"><code>Box</code></a>,
+<a href="#TileMap"><code>TileMap</code></a>,
+<a href="#RangeMap"><code>RangeMap</code></a>
+<br>Basic Classes:
+<a href="#Task"><code>Task</code></a>,
+<a href="#Sprite"><code>Sprite</code></a>,
+<a href="#Entity"><code>Entity</code></a>,
+<a href="#Layer"><code>Layer</code></a>,
+<a href="#Scene"><code>Scene</code></a>,
+<a href="#App"><code>App</code></a>
+<br>Special Classes:
+<a href="#Queue"><code>Queue</code></a>,
+<a href="#Projectile"><code>Projectile</code></a>,
+<a href="#TiledSprite"><code>TiledSprite</code></a>,
+<a href="#FlowSprite"><code>FlowSprite</code></a>,
+<a href="#PhysicalEntity"><code>PhysicalEntity</code></a>,
+<a href="#PlatformerEntity"><code>PlatformerEntity</code></a>,
+<a href="#ScrollLayer"><code>ScrollLayer</code></a>,
+<a href="#HTMLScene"><code>HTMLScene</code></a>,
+<a href="#GameScene"><code>GameScene</code></a>,
+<a href="#PlanActor"><code>PlanActor</code></a>,
+<a href="#PlanAction"><code>PlanAction</code></a>,
+<a href="#PlanProfile"><code>PlanProfile</code></a>,
+<a href="#PlanMap"><code>PlanMap</code></a>,
+<a href="#PlanActionRunner"><code>PlanActionRunner</code></a>,
+<a href="#PlanningEntity"><code>PlanningEntity</code></a>
+</div>
+
+<a name="concepts"><h2>Concepts</h2></a>
+<div style="position: relative;">
+  <svg xmlns="http://www.w3.org/2000/svg" 
+       xmlns:xlink="http://www.w3.org/1999/xlink"
+       version="1.1" width="250" height="150">
+    <g transform="translate(1.5,1.5)">
+      <g fill="none" stroke="black" stroke-width="1">
+	<line x1="140" y1="12" x2="55" y2="100" />
+	<line x1="140" y1="12" x2="175" y2="100" />
+	<rect x="0" y="55" width="110" height="90" fill="white" />
+	<rect x="120" y="55" width="110" height="90" fill="white" />
+	<ellipse cx="140" cy="12" rx="20" ry="12" fill="white" />
+	<rect x="18" y="60" width="80" height="60" fill="white" />
+	<rect x="14" y="64" width="80" height="60" fill="white" />
+	<rect x="10" y="68" width="80" height="60" fill="white" />
+	<circle cx="20" cy="80" r="5" />
+	<rect x="70" y="90" width="16" height="16" />
+	<rect x="20" y="110" width="15" height="15" />
+      </g>
+      <g style="font-size: 75%;">
+	<text x="140" y="15" text-anchor="middle">App</text>
+	<text x="28" y="85" text-anchor="begin">Task</text>
+	<text x="68" y="102" text-anchor="end">Sprite</text>
+	<text x="38" y="122" text-anchor="begin">Entity</text>
+	<text x="70" y="140" text-anchor="begin">Layer</text>
+	<text x="55" y="52" text-anchor="middle">Scene</text>
+	<text x="175" y="52" text-anchor="middle">Scene</text>
+	<text x="240" y="100" text-anchor="begin">...</text>
+	<text x="165" y="15">Images, ...</text>
+      </g>
+    </g>
+  </svg>
+  <div style="position: absolute; left: 270px; top: 0px;">
+    <a href="#App"><code>App</code></a>: 
+    Manages global states and shared resources (e.g. images).<br>
+    <a href="#Scene"><code>Scene</code></a>: 
+    Handles input events and character movements.<br>
+    <a href="#Layer"><code>Layer</code></a>: 
+    Contains a set of <code>Task</code>/<code>Sprite</code>/<code>Entity</code>.<br>
+    <a href="#Task"><code>Task</code></a>: 
+    A process that gets called for every frame.<br>
+    <a href="#Sprite"><code>Sprite</code></a>: 
+    A <code>Task</code> that is visible on screen.<br>
+    <a href="#Entity"><code>Entity</code></a>: 
+    A <code>Sprite</code> that has a hitbox and can collide another <code>Entity</code>.<br>
+  </div>
+</div>
+
+<a name="functions"><h2>Functions</h2></a>
+
+<a name="main"><h3>Main function (<code>main.ts</code>)</h3></a>
+<table border>
+<tr><td><code>run(ctor, <em>[canvasId, [scale, [framerate]]]</em>)</code></td>
+  <td>Starts a game from the Scene <code>ctor</code>.</td></tr>
+</table>
+
+<h4>How to Use</h4>
+<blockquote><pre>
+&lt;script&gt;
+  class Scene1 extends Scene { ... }
+&lt;/script&gt;
+&lt;body onload="run(Scene1, 'main', 2, 30);"&gt;
+&lt;canvas id="main" width="640" height="480"&gt;&lt;/canvas&gt;
+</pre></blockquote>
+
+<a name="misc"><h3>Misc. functions (<code>utils.ts</code>)</h3></a>
+<table border>
+<tr><td><code>log(...)</code></td>
+  <td>logging</td></tr>
+<tr><td><code>assert(x, <em>[msg]</em>)</code></td>
+  <td>assert</td></tr>
+<tr><td><code>applyMixins(ctor, bases)</code></td>
+  <td>Configure a new class.</td></tr>
+</table>
+
+<a name="numeric"><h3>Numeric functions (<code>utils.ts</code>)</h3></a>
+<table border>
+<tr><td><code>fmod(x, y)</code></td>
+  <td>= fmod</td></tr>
+<tr><td><code>int(x)</code></td>
+  <td>= Math.floor</td></tr>
+<tr><td><code>upperbound(x, y)</code></td>
+  <td>Limits a value to min(<code>x</code>, <code>y</code>).</td></tr>
+<tr><td><code>lowerbound(x, y)</code></td>
+  <td>Limits a value to max(<code>x</code>, <code>y</code>).</td></tr>
+<tr><td><code>clamp(v0, v, v1)</code></td>
+  <td>Limits a value to [<code>v0</code>, <code>v1</code>].</td></tr>
+<tr><td><code>sign(v)</code></td>
+  <td>-1, 0 or +1 based on the sign of <code>v</code>.</td></tr>
+<tr><td><code>blink(t, duration)</code></td>
+  <td><code>true</code> if <code>t</code> should be visible.</td></tr>
+<tr><td><code>frnd(a, <em>[b]</em>)</code></td>
+  <td>Generates a value [0,<code>a</code>) or [<code>a</code>,<code>b</code>)</td></tr>
+<tr><td><code>rnd(a, <em>[b]</em>)</code></td>
+  <td>Generates an integer value [0,<code>a</code>) or [<code>a</code>,<code>b</code>)</td></tr>
+<tr><td><code>format(v, <em>[n, [c]]</em>)</code></td>
+  <td>Formats a number as a string.</td></tr>
+</table>
+
+<a name="array"><h3>Array functions (<code>utils.ts</code>)</h3></a>
+<table border>
+<tr><td><code>choice(a)</code></td>
+  <td>A random element of <code>a</code>.</td></tr>
+<tr><td><code>removeElement(a, obj)</code></td>
+  <td>Removes an element from <code>a</code>.</td></tr>
+<tr><td><code>removeElements(a, f)</code></td>
+  <td>Removes elements from <code>a</code>. <code>f(x) =&gt; boolean</code></td></tr>
+<tr><td><code>str2array(img)</code></td>
+  <td>Converts a string to a number array.</td></tr>
+</table>
+
+<a name="html5"><h3>HTML5 functions (<code>utils.ts</code>)</h3></a>
+<table border>
+<tr><td><code>removeChildren(node, name)</code></td>
+  <td>Removes all child HTML nodes.</td></tr>
+<tr><td><code>createCanvas(width, height)</code></td>
+  <td>Creates a <code>&lt;canvas&gt;</code> element.</td></tr>
+<tr><td><code>getEdgeyContext(canvas)</code></td>
+  <td>Creates a <code>CanvasRenderingContext2D</code>.</td></tr>
+<tr><td><code>image2array(img)</code></td>
+  <td>Converts an image to an 2D array.</td></tr>
+<tr><td><code>drawImageScaled(ctx, src,<br>&nbsp; sx, sy, sw, sh,<br>&nbsp; dx, dy, dw, dh)</code></td>
+  <td>Draws a flipped image.</td></tr>
+<tr><td><code>playSound(sound, <em>[start]</em>)</code></td>
+  <td>Plays a sound.</td></tr>
+<tr><td><code>getKeySym(keyCode)</code></td>
+  <td>The keysym for <code>keyCode</code>.</td></tr>
+</table>
+
+<a name="utility-classes"><h2>Utility Classes</h2></a>
+
+<a name="Slot"><h3>Slot (<code>utils.ts</code>)</h3></a>
+<table border>
+<tr><td><code>new Slot(sender)</code></td>
+  <td>Creates a <code>Slot</code> for a <code>sender</code>.</td></tr>
+<tr><td><code>.receivers</code></td>
+  <td>A list of the receiver functions.</td></tr>
+<tr><td><code>.subscribe(receiver)</code></td>
+  <td>Adds <code>receiver</code> to the subscriber list.</td></tr>
+<tr><td><code>.unsubscribe(receiver)</code></td>
+  <td>Removes <code>receiver</code> from the subscriber list.</td></tr>
+<tr><td><code>.signal(...)</code></td>
+  <td>Sends a message to each subscriber.</td></tr>
+</table>
+
+<a name="Color"><h3>Color (<code>utils.ts</code>)</h3></a>
+<table border>
+<tr><td><code>new Color(r, g, b, <em>[a]</em>)</code></td>
+  <td>Creates a <code>Color</code> for RGBA values.</td></tr>
+<tr><td><code>.r</code></td>
+  <td>The red value.</td></tr>
+<tr><td><code>.g</code></td>
+  <td>The green value.</td></tr>
+<tr><td><code>.b</code></td>
+  <td>The blue value.</td></tr>
+<tr><td><code>.a</code></td>
+  <td>The alpha value.</td></tr>
+<tr><td><code>.setAlpha(a)</code></td>
+  <td>Creates a <code>Color</code> with a given alpha.</td></tr>
+</table>
+
+<a name="ImageSource"><h3>ImageSource (<code>utils.ts</code>)</h3></a>
+<table border>
+<tr><td><code>new HTMLImageSource(image, bounds, <em>[offset]</em>)</code></td>
+  <td>Creates a <code>ImageSource</code> from <code>&lt;img&gt;</code>.</td></tr>
+<tr><td><code>new DummyImageSource(color)</code></td>
+  <td>Creates a <code>ImageSource</code> with a solid color.</td></tr>
+</table>
+
+<a name="SpriteSheet"><h3>SpriteSheet (<code>utils.ts</code>)</h3></a>
+<table border>
+<tr><td><code>new ImageSpriteSheet(image, size, <em>[offset]</em>)</code></td>
+  <td>Creates a <code>SpriteSheet</code> from <code>&lt;img&gt;</code>.</td></tr>
+<tr><td><code>new DummySpriteSheet(colors)</code></td>
+  <td>Creates a <code>SpriteSheet</code> with solid colors.</td></tr>
+<tr><td><code>.get(i)</code></td>
+  <td>The <code>i</code>-th <code>ImageSource</code>.</td></tr>
+</table>
+
+<a name="Vec2"><h3>Vec2 (<code>geom.ts</code>)</h3></a>
+<table border>
+<tr><td><code>new Vec2(<em>[x, [y]]</em>)</code></td>
+  <td>Creates a vector (<code>x</code>, <code>y</code>).</td></tr>
+<tr><td><code>.x</code></td>
+  <td>The x value.</td></tr>
+<tr><td><code>.y</code></td>
+  <td>The y value.</td></tr>
+<tr><td><code>.copy()</code></td>
+  <td>Duplicates the vector.</td></tr>
+<tr><td><code>.equals(v)</code></td>
+  <td><code>true</code> if <code>v</code> is identical.</td></tr>
+<tr><td><code>.isZero()</code></td>
+  <td><code>true</code> if the vector is zero length.</td></tr>
+<tr><td><code>.len2()</code></td>
+  <td>The length<sup>2</sup> of the vector.</td></tr>
+<tr><td><code>.len()</code></td>
+  <td>The length of the vector.</td></tr>
+<tr><td><code>.sign()</code></td>
+  <td>(<code>sign(x)</code>, <code>sign(y)</code>).</td></tr>
+<tr><td><code>.add(v)</code></td>
+  <td>(<code>this</code> + <code>v</code>).</td></tr>
+<tr><td><code>.sub(v)</code></td>
+  <td>(<code>this</code> - <code>v</code>).</td></tr>
+<tr><td><code>.scale(n)</code></td>
+  <td>(<code>n</code> &sdot; <code>this</code>).</td></tr>
+<tr><td><code>.distance(v)</code></td>
+  <td>|<code>this</code> - <code>v</code>|.</td></tr>
+<tr><td><code>.clamp(bounds)</code></td>
+  <td>(<code>clamp(x)</code>, <code>clamp(y)</code>).</td></tr>
+<tr><td><code>.move(dx, dy)</code></td>
+  <td>(<code>x+dx</code>, <code>y+dy</code>).</td></tr>
+<tr><td><code>.rot90(d)</code></td>
+  <td>Creates a rotated vector (clockwise...0&lt;<code>d</code>)</td></tr>
+<tr><td><code>.expand(dw, dh, <em>[vx, [vy]]</em>)</code></td>
+  <td>Creates a <code>Rect</code> with the point as an anchor.</td></tr>
+</table>
+
+<a name="Vec3"><h3>Vec3 (<code>geom.ts</code>)</h3></a>
+<table border>
+<tr><td><code>new Vec3(<em>[x, [y, [z]]]</em>)</code></td>
+  <td>Creates a vector (<code>x</code>, <code>y</code>, <code>z</code>).</td></tr>
+<tr><td><code>.x</code></td>
+  <td>The x value.</td></tr>
+<tr><td><code>.y</code></td>
+  <td>The y value.</td></tr>
+<tr><td><code>.z</code></td>
+  <td>The z value.</td></tr>
+<tr><td><code>.copy()</code></td>
+  <td>Duplicates the vector.</td></tr>
+<tr><td><code>.equals(v)</code></td>
+  <td><code>true</code> if <code>v</code> is identical.</td></tr>
+<tr><td><code>.isZero()</code></td>
+  <td><code>true</code> if the vector is zero length.</td></tr>
+<tr><td><code>.len2()</code></td>
+  <td>The length<sup>2</sup> of the vector.</td></tr>
+<tr><td><code>.len()</code></td>
+  <td>The length of the vector.</td></tr>
+<tr><td><code>.sign()</code></td>
+  <td>(<code>sign(x)</code>, <code>sign(y)</code>, <code>sign(z)</code>).</td></tr>
+<tr><td><code>.add(v)</code></td>
+  <td>(<code>this</code> + <code>v</code>).</td></tr>
+<tr><td><code>.sub(v)</code></td>
+  <td>(<code>this</code> - <code>v</code>).</td></tr>
+<tr><td><code>.scale(n)</code></td>
+  <td>(<code>n</code> &sdot; <code>this</code>).</td></tr>
+<tr><td><code>.distance(v)</code></td>
+  <td>|<code>this</code> - <code>v</code>|.</td></tr>
+<tr><td><code>.clamp(bounds)</code></td>
+  <td>(<code>clamp(x)</code>, <code>clamp(y)</code>, <code>clamp(z)</code>).</td></tr>
+<tr><td><code>.move(dx, dy, dz)</code></td>
+  <td>(<code>x+dx</code>, <code>y+dy</code>, <code>z+dz</code>).</td></tr>
+</table>
+
+<a name="Rect"><h3>Rect (<code>geom.ts</code>)</h3></a>
+<table border>
+<tr><td><code>new Rect(<em>x, y, [w, [h]]</em>)</code></td>
+  <td>Creates a rectangle (<code>x</code>, <code>y</code>, <code>w</code>, <code>h</code>).</td></tr>
+<tr><td><code>.x</code></td>
+  <td>The x value of the topleft corner.</td></tr>
+<tr><td><code>.y</code></td>
+  <td>The y value of the topleft corner.</td></tr>
+<tr><td><code>.width</code></td>
+  <td>The width of the rectangle.</td></tr>
+<tr><td><code>.height</code></td>
+  <td>The height of the rectangle.</td></tr>
+<tr><td><code>.copy()</code></td>
+  <td>Duplicates the rectangle.</td></tr>
+<tr><td><code>.move(dx, dy)</code></td>
+  <td>Creates a rectangle moved by (<code>dx</code>, <code>dy</code>).</td></tr>
+<tr><td><code>.add(v)</code></td>
+  <td>Creates a rectangle moved by <code>v</code>.</td></tr>
+<tr><td><code>.inflate(dw, dh)</code></td>
+  <td>Creates a inflated/deflated rectangle by (<code>dw</code>, <code>dh</code>):
+    <div style="margin-left:1em;">
+      <svg xmlns="http://www.w3.org/2000/svg" 
+	   xmlns:xlink="http://www.w3.org/1999/xlink"
+	   version="1.1" width="100" height="48">
+	<g transform="translate(1.5,1.5)">
+	  <g fill="none" stroke="black" stroke-width="1">
+	    <rect x="20" y="12" width="50" height="20" />
+	    <rect x="0" y="0" width="90" height="44" />
+	    <line x1="0" y1="22" x2="20" y2="22" />
+	    <line x1="45" y1="0" x2="45" y2="12" />
+	    <circle cx="45" cy="22" r="2" />
+	  </g>
+	  <g style="font-size: 75%;">
+	    <text x="1" y="20">dw</text>
+	    <text x="46" y="10">dh</text>
+	  </g>
+	</g>
+      </svg>
+    </div>
+  </td></tr>
+<tr><td><code>.expand(dw, dh, <em>[vx, [vy]]</em>)</code></td>
+  <td>Creates an expanded rectangle by (<code>dw</code>, <code>dh</code>).</td></tr>
+<tr><td><code>.resize(w, h, <em>[vx, [vy]]</em>)</code></td>
+  <td>Creates a resized rectangle.</td></tr>
+<tr><td><code>.union(rect)</code></td>
+  <td>Combines two rectangles (union).</td></tr>
+<tr><td><code>.intersection(rect)</code></td>
+  <td>Combines two rectangles (intersection).</td></tr>
+<tr><td><code>.clamp(bounds)</code></td>
+  <td>Moves the rectangle so that it fits <code>bounds</code>.</td></tr>
+<tr><td><code>.equals(rect)</code></td>
+  <td><code>true</code> if <code>rect</code> is identical.</td></tr>
+<tr><td><code>.isZero()</code></td>
+  <td><code>true</code> if the rectangle is empty.</td></tr>
+<tr><td><code>.right()</code></td>
+  <td>The right edge of the rectangle.</td></tr>
+<tr><td><code>.bottom()</code></td>
+  <td>The bottom edge of the rectangle.</td></tr>
+<tr><td><code>.centerx()</code></td>
+  <td>The center-x of the rectangle.</td></tr>
+<tr><td><code>.centery()</code></td>
+  <td>The center-y of the rectangle.</td></tr>
+<tr><td><code>.center()</code></td>
+  <td>The center of the rectangle.</td></tr>
+<tr><td><code>.anchor(<em>[vx, [vy]]</em>)</code></td>
+  <td>The anchor point of the rectangle:
+    <div style="margin-left:1em;">
+      <svg xmlns="http://www.w3.org/2000/svg" 
+	   xmlns:xlink="http://www.w3.org/1999/xlink"
+	   version="1.1" width="125" height="49">
+	<g transform="translate(2.5,2.5)">
+	  <g fill="none" stroke="black" stroke-width="1">
+	    <rect x="0" y="0" width="120" height="44" />
+	    <circle cx="0" cy="0" r="2" />
+	    <circle cx="60" cy="0" r="2" />
+	    <circle cx="120" cy="0" r="2" />
+	    <circle cx="0" cy="22" r="2" />
+	    <circle cx="60" cy="22" r="2" />
+	    <circle cx="120" cy="22" r="2" />
+	    <circle cx="0" cy="44" r="2" />
+	    <circle cx="60" cy="44" r="2" />
+	    <circle cx="120" cy="44" r="2" />
+	  </g>
+	  <g style="font-size: 75%;">
+	    <text x="0" y="11" text-anchor="begin">(+1,+1)</text>
+	    <text x="60" y="11" text-anchor="middle">(0,+1)</text>
+	    <text x="120" y="11" text-anchor="end">(-1,+1)</text>
+	    <text x="0" y="26" text-anchor="begin">(+1,0)</text>
+	    <text x="120" y="26" text-anchor="end">(-1,0)</text>
+	    <text x="0" y="41" text-anchor="begin">(+1,-1)</text>
+	    <text x="60" y="41" text-anchor="middle">(0,-1)</text>
+	    <text x="120" y="41" text-anchor="end">(-1,-1)</text>
+	  </g>
+	</g>
+      </svg>
+    </div>
+  </td></tr>
+<tr><td><code>.rndpt()</code></td>
+  <td>Creates a random point within the rectangle.</td></tr>
+<tr><td><code>.modpt(p)</code></td>
+  <td>Creates a modulo point with the rectangle.</td></tr>
+<tr><td><code>.xdistance(rect)</code></td>
+  <td>The x-distance to <code>rect</code>.</td></tr>
+<tr><td><code>.ydistance(rect)</code></td>
+  <td>The y-distance to <code>rect</code>.</td></tr>
+<tr><td><code>.contains(p)</code></td>
+  <td><code>true</code> if the rectangle contains <code>p</code>.</td></tr>
+<tr><td><code>.containsRect(rect)</code></td>
+  <td><code>true</code> if the rectangle contains <code>rect</code>.</td></tr>
+<tr><td><code>.overlaps(rect)</code></td>
+  <td><code>true</code> if the rectangle overlaps <code>rect</code>.</td></tr>
+<tr><td><code>.contact(v, rect)</code></td>
+  <td>Trims a vector so that it doesn't collide <code>rect</code>.</td></tr>
+</table>
+
+<a name="Box"><h3>Box (<code>geom.ts</code>)</h3></a>
+<table border>
+<tr><td><code>new Box(<em>origin, [size]</em>)</code></td>
+  <td>Creates a box (<code>origin</code>, <code>size</code>).</td></tr>
+<tr><td><code>.origin</code></td>
+  <td>The origin of the box.</td></tr>
+<tr><td><code>.size</code></td>
+  <td>The size of the box.</td></tr>
+<tr><td><code>.copy()</code></td>
+  <td>Duplicates the box.</td></tr>
+<tr><td><code>.move(dx, dy, dz)</code></td>
+  <td>Creates a box moved by (<code>dx</code>, <code>dy</code>, <code>dz</code>).</td></tr>
+<tr><td><code>.add(v)</code></td>
+  <td>Creates a box moved by <code>v</code>.</td></tr>
+<tr><td><code>.inflate(dx, dy, dz)</code></td>
+  <td>Creates a inflated/deflated box by (<code>dx</code>, <code>dy</code>, <code>dz</code>).</td></tr>
+<tr><td><code>.union(box)</code></td>
+  <td>Combines two boxes (union).</td></tr>
+<tr><td><code>.intersection(box)</code></td>
+  <td>Combines two boxes (intersection).</td></tr>
+<tr><td><code>.clamp(bounds)</code></td>
+  <td>Moves the box so that it fits <code>bounds</code>.</td></tr>
+<tr><td><code>.equals(box)</code></td>
+  <td><code>true</code> if <code>box</code> is identical.</td></tr>
+<tr><td><code>.isZero()</code></td>
+  <td><code>true</code> if the box is empty.</td></tr>
+<tr><td><code>.center()</code></td>
+  <td>The center of the box.</td></tr>
+<tr><td><code>.anchor(<em>[vx, [vy, [vz]]]</em>)</code></td>
+  <td>The anchor point of the box.</td></tr>
+<tr><td><code>.rndpt()</code></td>
+  <td>Creates a random point within the box.</td></tr>
+<tr><td><code>.xdistance(box)</code></td>
+  <td>The x-distance to <code>box</code>.</td></tr>
+<tr><td><code>.ydistance(box)</code></td>
+  <td>The y-distance to <code>box</code>.</td></tr>
+<tr><td><code>.zdistance(box)</code></td>
+  <td>The z-distance to <code>box</code>.</td></tr>
+<tr><td><code>.contains(p)</code></td>
+  <td><code>true</code> if the box contains <code>p</code>.</td></tr>
+<tr><td><code>.overlaps(box)</code></td>
+  <td><code>true</code> if the box overlaps <code>box</code>.</td></tr>
+<tr><td><code>.contact(v, box)</code></td>
+  <td>Trims a vector so that it doesn't collide <code>box</code>.</td></tr>
+</table>
+
+<a name="TileMap"><h3>TileMap (<code>tilemap.ts</code>)</h3></a>
+<table border>
+<tr><td><code>new TileMap(tilesize, map)</code></td>
+  <td>Creates a new tilemap for a given array.</td></tr>
+<tr><td><code>.tilesize</code></td>
+  <td></td></tr>
+<tr><td><code>.map</code></td>
+  <td></td></tr>
+<tr><td><code>.width</code></td>
+  <td></td></tr>
+<tr><td><code>.height</code></td>
+  <td></td></tr>
+<tr><td><code>.world</code></td>
+  <td></td></tr>
+<tr><td><code>.isObstacle</code></td>
+  <td></td></tr>
+<tr><td><code>.isGrabbable</code></td>
+  <td></td></tr>
+<tr><td><code>.isStoppable</code></td>
+  <td></td></tr>
+<tr><td><code>.get(x, y)</code></td>
+  <td></td></tr>
+<tr><td><code>.get(x, y, v)</code></td>
+  <td></td></tr>
+<tr><td><code>.fill(v, <em>[rect]</em>)</code></td>
+  <td></td></tr>
+<tr><td><code>.copy()</code></td>
+  <td></td></tr>
+<tr><td><code>.coord2map(rect)</code></td>
+  <td></td></tr>
+<tr><td><code>.map2coord(rect)</code></td>
+  <td></td></tr>
+<tr><td><code>.apply(f, <em>[rect]</em>)</code></td>
+  <td></td></tr>
+<tr><td><code>.reduce(f, v, <em>[rect]</em>)</code></td>
+  <td></td></tr>
+<tr><td><code>.findTile(f, rect)</code></td>
+  <td></td></tr>
+<tr><td><code>.contactTile(rect, f, v, <em>[range]</em>)</code></td>
+  <td></td></tr>
+<tr><td><code>.scroll(vx, vy, <em>[rect]</em>)</code></td>
+  <td></td></tr>
+<tr><td><code>.getRangeMap(key, f)</code></td>
+  <td></td></tr>
+<tr><td><code>.renderFromBottomLeft(ctx, bx, by,<br>&nbsp; tiles, ft, x0, y0, w, h)</code></td>
+  <td></td></tr>
+<tr><td><code>.renderFromTopRight(ctx, bx, by,<br>&nbsp; tiles, ft, x0, y0, w, h)</code></td>
+  <td></td></tr>
+<tr><td><code>.renderWindowFromBottomLeft(ctx, bx, by,<br>&nbsp; window, tiles, ft)</code></td>
+  <td></td></tr>
+<tr><td><code>.renderWindowFromTopRight(ctx, bx, by,<br>&nbsp; window, tiles, ft)</code></td>
+  <td></td></tr>
+</table>
+
+<a name="RangeMap"><h3>RangeMap (<code>tilemap.ts</code>)</h3></a>
+<table border>
+<tr><td><code>new RangeMap(tilemap, f)</code></td>
+  <td>Creates a new rangemap for a tilemap.</td></tr>
+<tr><td><code>.width</code></td>
+  <td></td></tr>
+<tr><td><code>.height</code></td>
+  <td></td></tr>
+<tr><td><code>.get(x0, y0, x1, y1)</code></td>
+  <td></td></tr>
+<tr><td><code>.exists(rect)</code></td>
+  <td></td></tr>
+</table>
+
+<a name="basic-classes"><h2>Basic Classes</h2></a>
+
+<a name="Task"><h3>Task (<code>entity.ts</code>)</h3></a>
+<table border>
+<tr><td><code>new Task()</code></td>
+  <td>Creates a new task.</td></tr>
+<tr><td><code>.alive</code></td>
+  <td><code>true</code> if the task is running.</td></tr>
+<tr><td><code>.layer</code></td>
+  <td>The <code>Layer</code> that the task belongs to.</td></tr>
+<tr><td><code>.ticks</code></td>
+  <td>The elapsed time since the task started.</td></tr>
+<tr><td><code>.lifetime</code></td>
+  <td>The duration that the task can run.</td></tr>
+<tr><td><code>.died</code></td>
+  <td>A <code>Slot</code> that is signaled when the task dies.</td></tr>
+<tr><td><code>.die()</code></td>
+  <td>Kills the task.</td></tr>
+<tr class=overridable><td><code>.update()</code></td>
+  <td>Updates for the current frame.</td></tr>
+</table>
+
+<a name="Sprite"><h3>Sprite (<code>entity.ts</code>)</h3></a>
+<table border>
+<tr><td><code>new Sprite(bounds, <em>[src]</em>)</code></td>
+  <td>Creates a new sprite.</td></tr>
+<tr class=inherited><td><code>.alive</code></td>
+  <td><code>true</code> if the sprite is alive.</td></tr>
+<tr class=inherited><td><code>.layer</code></td>
+  <td>A <code>Layer</code> that the sprite belongs to.</td></tr>
+<tr class=inherited><td><code>.ticks</code></td>
+  <td>The elapsed time since the sprite started.</td></tr>
+<tr class=inherited><td><code>.died</code></td>
+  <td>A <code>Slot</code> that is signaled when the sprite dies.</td></tr>
+<tr><td><code>.bounds</code></td>
+  <td>A <code>Rect</code> for the sprite's size and position.</td></tr>
+<tr><td><code>.src</code></td>
+  <td>A <code>ImageSource</code> for the sprite's content.</td></tr>
+<tr><td><code>.visible</code></td>
+  <td><code>true</code> if the sprite is visible.</td></tr>
+<tr><td><code>.zOrder</code></td>
+  <td>The order that the sprite is drawn to the screen.</td></tr>
+<tr><td><code>.scale</code></td>
+  <td>A vector for the polarity of the sprite image.</td></tr>
+<tr><td><code>.die()</code></td>
+  <td>Kills the sprite.</td></tr>
+<tr><td><code>.movePos(v)</code></td>
+  <td>Moves the sprite by <code>v</code>.</td></tr>
+<tr class=overridable><td><code>.update()</code></td>
+  <td>Updates for the current frame.</td></tr>
+<tr class=overridable><td><code>.render(ctx, bx, by)</code></td>
+  <td>Draws the sprite at the location (<code>bx</code>, <code>by</code>).</td></tr>
+</table>
+
+<a name="Entity"><h3>Entity (<code>entity.ts</code>)</h3></a>
+<table border>
+<tr><td><code>new Entity(bounds, <em>[src, [hitbox]]</em>)</code></td>
+  <td>Creates a new entity.</td></tr>
+<tr class=inherited><td><code>.alive</code></td>
+  <td><code>true</code> if the entity is alive.</td></tr>
+<tr class=inherited><td><code>.layer</code></td>
+  <td>A <code>Layer</code> that the entity belongs to.</td></tr>
+<tr class=inherited><td><code>.ticks</code></td>
+  <td>The elapsed time since the entity started.</td></tr>
+<tr class=inherited><td><code>.died</code></td>
+  <td>A <code>Slot</code> that is signaled when the entity dies.</td></tr>
+<tr class=inherited><td><code>.bounds</code></td>
+  <td>A <code>Rect</code> for the entity's size and position.</td></tr>
+<tr class=inherited><td><code>.src</code></td>
+  <td>A <code>ImageSource</code> for the entity's content.</td></tr>
+<tr class=inherited><td><code>.visible</code></td>
+  <td><code>true</code> if the entity is visible.</td></tr>
+<tr class=inherited><td><code>.zOrder</code></td>
+  <td>The order that the entity is drawn to the screen.</td></tr>
+<tr class=inherited><td><code>.scale</code></td>
+  <td>A vector for the polarity of the entity image.</td></tr>
+<tr class=inherited><td><code>.die()</code></td>
+  <td>Kills the entity.</td></tr>
+<tr class=inherited><td><code>.movePos(v)</code></td>
+  <td>Moves the entity by <code>v</code>.</td></tr>
+<tr><td><code>.hitbox</code></td>
+  <td>A <code>Rect</code> for the entity's hitbox.</td></tr>
+<tr class=overridable><td><code>.update()</code></td>
+  <td>Updates for the current frame.</td></tr>
+<tr class=overridable><td><code>.render(ctx, bx, by)</code></td>
+  <td>Draws the entity at the location (<code>bx</code>, <code>by</code>).</td></tr>
+<tr class=overridable><td><code>.collide(entity)</code></td>
+  <td>Called when the entity collides another entity.</td></tr>
+<tr><td><code>.moveIfPossible(v, force)</code></td>
+  <td>Moves the entity by <code>v</code> without colliding obstacles.</td></tr>
+<tr><td><code>.isMovable(v)</code></td>
+  <td><code>true</code> if the entity is movable toward <code>v</code>.</td></tr>
+<tr><td><code>.getMove(v)</code></td>
+  <td>Trims the vector <code>v</code> so that it doesn't collide.</td></tr>
+<tr class=overridable><td><code>.getObstaclesFor(hitbox,<br>&nbsp; force, range)</code></td>
+  <td>Returns the movement vector <code>hitbox</code> within <code>range</code>.</td></tr>
+<tr class=overridable><td><code>.getFencesFor(hitbox,<br>&nbsp; force, range)</code></td>
+  <td>Returns the rectangle that limits the entity within.</td></tr>
+</table>
+
+<a name="Layer"><h3>Layer (<code>layer.ts</code>)</h3></a>
+<table border>
+<tr><td><code>new Layer()</code></td>
+  <td>Creates a new layer.</td></tr>
+<tr><td><code>.tasks</code></td>
+  <td>A list of <code>Task</code>s that belong to the layer.</td></tr>
+<tr><td><code>.sprites</code></td>
+  <td>A list of <code>Sprite</code>s that belong to the layer.</td></tr>
+<tr><td><code>.entities</code></td>
+  <td>A list of <code>Entity</code>s that belong to the layer.</td></tr>
+<tr class=overridable><td><code>.init()</code></td>
+  <td>Called when the layer is initialized.</td></tr>
+<tr class=overridable><td><code>.tick()</code></td>
+  <td>Called for every frame.</td></tr>
+<tr><td><code>.render(ctx, bx, by)</code></td>
+  <td>Draws all the objects at the location (<code>bx</code>, <code>by</code>).</td></tr>
+<tr><td><code>.scroll(v)</code></td>
+  <td>Moves all the objects by <code>v</code>.</td></tr>
+<tr><td><code>.addObject(obj)</code></td>
+  <td>Adds a <code>Task</code>/<code>Sprite</code>/<code>Entity</code> to the list.</td></tr>
+<tr><td><code>.removeObject(obj)</code></td>
+  <td>Removes a <code>Task</code>/<code>Sprite</code>/<code>Entity</code> from the list.</td></tr>
+<tr><td><code>.checkCollisions()</code></td>
+  <td>Checks collision for each <code>Entity</code> and calls <code>.collide()</code> for those collided.</td></tr>
+<tr><td><code>.findObjects(rect, <em>[objs, [f]]</em>)</code></td>
+  <td>Returns a list of objects that overlap <code>rect</code>.</td></tr>
+</table>
+
+<a name="Scene"><h3>Scene (<code>scene.ts</code>)</h3></a>
+<table border>
+<tr><td><code>new Scene(app)</code></td>
+  <td>Creates a new scene.</td></tr>
+<tr><td><code>.app</code></td>
+  <td></td></tr>
+<tr><td><code>.screen</code></td>
+  <td></td></tr>
+<tr><td><code>.changeScene(scene)</code></td>
+  <td></td></tr>
+<tr><td><code>.init()</code></td>
+  <td></td></tr>
+<tr><td><code>.tick()</code></td>
+  <td></td></tr>
+<tr><td><code>.render(ctx, bx, by)</code></td>
+  <td></td></tr>
+<tr><td><code>.set_dir(v)</code></td>
+  <td></td></tr>
+<tr><td><code>.set_action(action)</code></td>
+  <td></td></tr>
+<tr><td><code>.keydown(keyCode)</code></td>
+  <td></td></tr>
+<tr><td><code>.keyup(keyCode)</code></td>
+  <td></td></tr>
+<tr><td><code>.mousedown(x, y, button)</code></td>
+  <td></td></tr>
+<tr><td><code>.mouseup(x, y, button)</code></td>
+  <td></td></tr>
+<tr><td><code>.mousemove(x, y)</code></td>
+  <td></td></tr>
+</table>
+
+<a name="App"><h3>App (<code>app.ts</code>)</h3></a>
+<table border>
+<tr><td><code>new App(framerate, scale,<br>&nbsp; images, audios, labels)</code></td>
+  <td>Creates a new app.</td></tr>
+<tr><td><code>.framerate</code></td>
+  <td></td></tr>
+<tr><td><code>.frame</code></td>
+  <td></td></tr>
+<tr><td><code>.images</code></td>
+  <td></td></tr>
+<tr><td><code>.audios</code></td>
+  <td></td></tr>
+<tr><td><code>.labels</code></td>
+  <td></td></tr>
+<tr><td><code>.font</code></td>
+  <td></td></tr>
+<tr><td><code>.shadowfont</code></td>
+  <td></td></tr>
+<tr><td><code>.colorfont</code></td>
+  <td></td></tr>
+<tr><td><code>.screen</code></td>
+  <td></td></tr>
+<tr><td><code>.ctx</code></td>
+  <td></td></tr>
+<tr><td><code>.scene</code></td>
+  <td></td></tr>
+<tr><td><code>.active</code></td>
+  <td></td></tr>
+<tr><td><code>.keylock</code></td>
+  <td></td></tr>
+<tr><td><code>.key_dir</code></td>
+  <td></td></tr>
+<tr><td><code>.key_action</code></td>
+  <td></td></tr>
+<tr><td><code>.addElement(bounds)</code></td>
+  <td></td></tr>
+<tr><td><code>.removeElement(elem)</code></td>
+  <td></td></tr>
+<tr><td><code>.lockKeys()</code></td>
+  <td></td></tr>
+<tr><td><code>.keydown(event)</code></td>
+  <td></td></tr>
+<tr><td><code>.keyup(event)</code></td>
+  <td></td></tr>
+<tr><td><code>.mousedown(event)</code></td>
+  <td></td></tr>
+<tr><td><code>.mouseup(event)</code></td>
+  <td></td></tr>
+<tr><td><code>.mousemove(event)</code></td>
+  <td></td></tr>
+<tr><td><code>.focus()</code></td>
+  <td></td></tr>
+<tr><td><code>.blur()</code></td>
+  <td></td></tr>
+<tr><td><code>.init(scene)</code></td>
+  <td></td></tr>
+<tr><td><code>.set_music(music, start, end)</code></td>
+  <td></td></tr>
+<tr><td><code>.post(msg)</code></td>
+  <td></td></tr>
+<tr><td><code>.tick()</code></td>
+  <td></td></tr>
+<tr><td><code>.repaint()</code></td>
+  <td></td></tr>
+</table>
+
+
+<a name="special-classes"><h2>Special Classes</h2></a>
+
+<a name="Queue"><h3>Queue (<code>entity.ts</code>)</h3></a>
+<table border>
+<tr><td><code>new Queue(tasks)</code></td>
+  <td>Creates a new queue that runs multiple <code>Task</code>s sequentially.</td></tr>
+<tr class=inherited><td><code>.alive</code></td>
+  <td><code>true</code> if the queue is running.</td></tr>
+<tr class=inherited><td><code>.layer</code></td>
+  <td>The <code>Layer</code> that the queue belongs to.</td></tr>
+<tr class=inherited><td><code>.ticks</code></td>
+  <td>The elapsed time since the queue started.</td></tr>
+<tr class=inherited><td><code>.died</code></td>
+  <td>A <code>Slot</code> that is signaled when the queue finishes.</td></tr>
+<tr><td><code>.tasks</code></td>
+  <td>A list of <code>Task</code>s to be executed.</td></tr>
+<tr><td><code>.die()</code></td>
+  <td>Kills the queue.</td></tr>
+<tr><td><code>.add(task)</code></td>
+  <td>Adds a <code>Task</code> to the queue.</td></tr>
+<tr><td><code>.remove(task)</code></td>
+  <td>Removes a <code>Task</code> from the queue.</td></tr>
+</table>
+
+<a name="Projectile"><h3>Projectile (<code>entity.ts</code>)</h3></a>
+<table border>
+<tr><td><code>new Projectile(frame, bounds,<br>&nbsp; src, hitbox, movement)</code></td>
+  <td>Creates a new projectile.</td></tr>
+<tr><td><code>.frame</code></td>
+  <td></td></tr>
+<tr><td><code>.movement</code></td>
+  <td></td></tr>
+</table>
+
+<a name="TiledSprite"><h3>TiledSprite (<code>entity.ts</code>)</h3></a>
+<table border>
+<tr><td><code>new TiledSprite(bounds, src)</code></td>
+  <td>Creates a new sprite.</td></tr>
+<tr><td><code>.offset</code></td>
+  <td></td></tr>
+</table>
+
+<a name="StarSprite"><h3>StarSprite (<code>entity.ts</code>)</h3></a>
+<table border>
+<tr><td><code>new StarSprite(bounds, src, nstars,<br>&nbsp; <em>[velocity, [maxdepth]]</em>)</code></td>
+  <td>Creates a new sprite.</td></tr>
+<tr><td><code>.velocity</code></td>
+  <td></td></tr>
+<tr><td><code>.maxdepth</code></td>
+  <td></td></tr>
+</table>
+
+<a name="PhysicalEntity"><h3>PhysicalEntity (<code>entity.ts</code>)</h3></a>
+<a name="PlatformerEntity"><h3>PlatformerEntity (<code>entity.ts</code>)</h3></a>
+
+<a name="ScrollLayer"><h3>ScrollLayer (<code>layer.ts</code>)</h3></a>
+
+<a name="HTMLScene"><h3>HTMLScene (<code>scene.ts</code>)</h3></a>
+<a name="GameScene"><h3>GameScene (<code>scene.ts</code>)</h3></a>
+
+<a name="PlanActor"><h3>PlanActor (<code>planmap.ts</code>)</h3></a>
+<a name="PlanAction"><h3>PlanAction (<code>planmap.ts</code>)</h3></a>
+<a name="PlanProfile"><h3>PlanProfile (<code>planmap.ts</code>)</h3></a>
+<a name="PlanMap"><h3>PlanMap (<code>planmap.ts</code>)</h3></a>
+<a name="PlanActionRunner"><h3>PlanActionRunner (<code>planrunner.ts</code>)</h3></a>
+<a name="PlanningEntity"><h3>PlanningEntity (<code>planrunner.ts</code>)</h3></a>
