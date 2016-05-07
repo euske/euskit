@@ -1,5 +1,6 @@
 /// <reference path="utils.ts" />
 /// <reference path="geom.ts" />
+/// <reference path="tilemap.ts" />
 
 function getContact(hitbox: Rect, v: Vec2, rects: Rect[], rectsWithin: Rect[])
 {
