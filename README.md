@@ -6,7 +6,7 @@ A minimalistic HTML5 framework for 2D games written in TypeScript.
 Examples: Pong
 --------------
 
-Here's a Pong example:
+Here's a sample code for <a href="http://euske.github.io/euskit/samples/pong.html">Pong</a>:
 
 ```typescript
 class Paddle extends Entity {
@@ -93,4 +93,29 @@ class Pong extends GameScene {
         super.render(ctx, bx, by);
     }
 }
+```
+
+And the corresponding HTML:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Pong</title>
+<script language="javascript" src="js/pong.js"></script>
+<body bgcolor="black" text="white" onload="main(Pong);">
+<h1 align=center>Pong</h1>
+<div style="margin: 1em;" align=center>
+  <div style="position:relative; width:640px; height:480px;">
+    <canvas id="game" 
+            style="position:absolute; top:0; left:0; background:gray;"
+            width="640" height="480"></canvas>
+  </div>
+</div>
+<div style="display:none;">
+  <img id="font" src="assets/font.png">
+</div>
+</body>
 ```
