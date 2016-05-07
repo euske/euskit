@@ -3,7 +3,12 @@ Euskit
 
 A minimalistic HTML5 framework for 2D games written in TypeScript.
 
-Examples: Pong
+API Documentation
+-----------------
+
+Here are the <a href="http://euske.github.io/euskit/docs/api.html">API docs</a>.
+
+Example: Pong
 --------------
 
 Here's a sample code for <a href="http://euske.github.io/euskit/samples/pong.html">Pong</a>:
