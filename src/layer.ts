@@ -31,6 +31,7 @@ class Layer {
 	this.cleanObjects(this.tasks);
 	this.cleanObjects(this.sprites);
 	this.cleanObjects(this.entities);
+	this.checkCollisions();
     }
     
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {

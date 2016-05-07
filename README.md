@@ -87,12 +87,8 @@ class Pong extends GameScene {
         this.paddle.vx = v.x;
     }
 
-    tick() {
-        super.tick();
-        this.layer.checkCollisions();
-    }
-
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
+	// Paint the background.
         ctx.fillStyle = 'rgb(0,0,64)';
         ctx.fillRect(bx, by, this.screen.width, this.screen.height);
         super.render(ctx, bx, by);
