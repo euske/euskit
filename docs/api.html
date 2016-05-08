@@ -15,7 +15,7 @@ a { font-weight: bold; }
 <title>Euskit API Reference</title>
 </head>
 <body>
-<h1>Euskit API Reference</h1>
+<h1><a href="https://github.com/euske/euskit">Euskit</a> API Reference</h1>
 
 <div>
 Functions:
@@ -181,7 +181,7 @@ Functions:
   <td>Creates a <code>CanvasRenderingContext2D</code>.</td></tr>
 <tr><td><code>image2array(img)</code></td>
   <td>Converts an image to an 2D array.</td></tr>
-<tr><td><code>drawImageScaled(ctx, src,<br>&nbsp; sx, sy, sw, sh,<br>&nbsp; dx, dy, dw, dh)</code></td>
+<tr><td><code>drawImageScaled(<br>&nbsp; ctx, src,<br>&nbsp; sx, sy, sw, sh,<br>&nbsp; dx, dy, dw, dh)</code></td>
   <td>Draws a flipped image.</td></tr>
 <tr><td><code>playSound(sound, <em>[start]</em>)</code></td>
   <td>Plays a sound.</td></tr>
@@ -192,6 +192,8 @@ Functions:
 <a name="utility-classes"><h2>Utility Classes</h2></a>
 
 <a name="Slot"><h3>Slot (<code>utils.ts</code>)</h3></a>
+<p>
+A <code>Slot</code> represents a simple event that can be subscribed to.
 <table border>
 <tr><td><code>new Slot(sender)</code></td>
   <td>Creates a <code>Slot</code> for a <code>sender</code>.</td></tr>
@@ -206,6 +208,8 @@ Functions:
 </table>
 
 <a name="Color"><h3>Color (<code>utils.ts</code>)</h3></a>
+<p>
+A <code>Color</code> represents an RGBA value.
 <table border>
 <tr><td><code>new Color(r, g, b, <em>[a]</em>)</code></td>
   <td>Creates a <code>Color</code> for RGBA values.</td></tr>
@@ -222,6 +226,9 @@ Functions:
 </table>
 
 <a name="ImageSource"><h3>ImageSource (<code>utils.ts</code>)</h3></a>
+<p>
+An <code>ImageSource</code> is a portion of a <code>&lt;img&gt;</code> 
+that is used for rendering Sprites.
 <table border>
 <tr><td><code>new HTMLImageSource(image, bounds, <em>[offset]</em>)</code></td>
   <td>Creates a <code>ImageSource</code> from <code>&lt;img&gt;</code>.</td></tr>
@@ -230,6 +237,8 @@ Functions:
 </table>
 
 <a name="SpriteSheet"><h3>SpriteSheet (<code>utils.ts</code>)</h3></a>
+<p>
+A set of <code>ImageSource</code> objects indexed by a number.
 <table border>
 <tr><td><code>new ImageSpriteSheet(image, size, <em>[offset]</em>)</code></td>
   <td>Creates a <code>SpriteSheet</code> from <code>&lt;img&gt;</code>.</td></tr>
@@ -240,6 +249,8 @@ Functions:
 </table>
 
 <a name="Vec2"><h3>Vec2 (<code>geom.ts</code>)</h3></a>
+<p>
+A <code>Vec2</code> represents two-dimensional vector that has (x, y) elements.
 <table border>
 <tr><td><code>new Vec2(<em>[x, [y]]</em>)</code></td>
   <td>Creates a vector (<code>x</code>, <code>y</code>).</td></tr>
@@ -278,6 +289,8 @@ Functions:
 </table>
 
 <a name="Vec3"><h3>Vec3 (<code>geom.ts</code>)</h3></a>
+<p>
+A <code>Vec3</code> represents three-dimensional vector that has (x, y, z) elements.
 <table border>
 <tr><td><code>new Vec3(<em>[x, [y, [z]]]</em>)</code></td>
   <td>Creates a vector (<code>x</code>, <code>y</code>, <code>z</code>).</td></tr>
@@ -314,6 +327,9 @@ Functions:
 </table>
 
 <a name="Rect"><h3>Rect (<code>geom.ts</code>)</h3></a>
+<p>
+A <code>Rect</code> object is a 2D rectangle that 
+has its position (x, y) and size (width, height).
 <table border>
 <tr><td><code>new Rect(<em>x, y, [w, [h]]</em>)</code></td>
   <td>Creates a rectangle (<code>x</code>, <code>y</code>, <code>w</code>, <code>h</code>).</td></tr>
@@ -429,6 +445,9 @@ Functions:
 </table>
 
 <a name="Box"><h3>Box (<code>geom.ts</code>)</h3></a>
+<p>
+A <code>Box</code> is a 3D cuboid that has its position and size
+both as <code>Vec3</code>.
 <table border>
 <tr><td><code>new Box(<em>origin, [size]</em>)</code></td>
   <td>Creates a box (<code>origin</code>, <code>size</code>).</td></tr>
@@ -475,6 +494,8 @@ Functions:
 </table>
 
 <a name="TileMap"><h3>TileMap (<code>tilemap.ts</code>)</h3></a>
+<p>
+A <code>TileMap</code> represents a two-dimensional array that holds map tiles.
 <table border>
 <tr><td><code>new TileMap(tilesize, map)</code></td>
   <td>Creates a new tilemap for a given array.</td></tr>
@@ -518,17 +539,20 @@ Functions:
   <td></td></tr>
 <tr><td><code>.getRangeMap(key, f)</code></td>
   <td></td></tr>
-<tr><td><code>.renderFromBottomLeft(ctx, bx, by,<br>&nbsp; tiles, ft, x0, y0, w, h)</code></td>
+<tr><td><code>.renderFromBottomLeft(<br>&nbsp; ctx, bx, by,<br>&nbsp; tiles, ft, x0, y0, w, h)</code></td>
   <td></td></tr>
-<tr><td><code>.renderFromTopRight(ctx, bx, by,<br>&nbsp; tiles, ft, x0, y0, w, h)</code></td>
+<tr><td><code>.renderFromTopRight(<br>&nbsp; ctx, bx, by,<br>&nbsp; tiles, ft, x0, y0, w, h)</code></td>
   <td></td></tr>
-<tr><td><code>.renderWindowFromBottomLeft(ctx, bx, by,<br>&nbsp; window, tiles, ft)</code></td>
+<tr><td><code>.renderWindowFromBottomLeft(<br>&nbsp; ctx, bx, by,<br>&nbsp; window, tiles, ft)</code></td>
   <td></td></tr>
-<tr><td><code>.renderWindowFromTopRight(ctx, bx, by,<br>&nbsp; window, tiles, ft)</code></td>
+<tr><td><code>.renderWindowFromTopRight(<br>&nbsp; ctx, bx, by,<br>&nbsp; window, tiles, ft)</code></td>
   <td></td></tr>
 </table>
 
 <a name="RangeMap"><h3>RangeMap (<code>tilemap.ts</code>)</h3></a>
+<p>
+A <code>RangeMap</code> is a partial copy of <code>TileMap</code> 
+that allows range queries.
 <table border>
 <tr><td><code>new RangeMap(tilemap, f)</code></td>
   <td>Creates a new rangemap for a tilemap.</td></tr>
@@ -545,6 +569,9 @@ Functions:
 <a name="basic-classes"><h2>Basic Classes</h2></a>
 
 <a name="Task"><h3>Task (<code>entity.ts</code>)</h3></a>
+<p>
+A <code>Task</code> is a process that belongs to a <code>Layer</code>
+and its method is executed periodically.
 <table border>
 <tr><td><code>new Task()</code></td>
   <td>Creates a new task.</td></tr>
@@ -565,6 +592,8 @@ Functions:
 </table>
 
 <a name="Sprite"><h3>Sprite (<code>entity.ts</code>)</h3></a>
+<p>
+A <code>Sprite</code> represents something that's shown on the screen.
 <table border>
 <tr><td><code>new Sprite(bounds, <em>[src]</em>)</code></td>
   <td>Creates a new sprite.</td></tr>
@@ -597,6 +626,8 @@ Functions:
 </table>
 
 <a name="Entity"><h3>Entity (<code>entity.ts</code>)</h3></a>
+<p>
+An <code>Entity</code> is a physical object that's visible and has a physical boundary.
 <table border>
 <tr><td><code>new Entity(bounds, <em>[src, [hitbox]]</em>)</code></td>
   <td>Creates a new entity.</td></tr>
@@ -643,6 +674,9 @@ Functions:
 </table>
 
 <a name="Layer"><h3>Layer (<code>layer.ts</code>)</h3></a>
+<p>
+A <code>Layer</code> contains a set of objects that can be rendered 
+at once and interact each other.
 <table border>
 <tr><td><code>new Layer()</code></td>
   <td>Creates a new layer.</td></tr>
@@ -671,6 +705,9 @@ Functions:
 </table>
 
 <a name="Scene"><h3>Scene (<code>scene.ts</code>)</h3></a>
+<p>
+A <code>Scene</code> represents one state of a game that can have its own
+event handling (such as title screen or cutscene).
 <table border>
 <tr><td><code>new Scene(app)</code></td>
   <td>Creates a new scene.</td></tr>
@@ -703,8 +740,11 @@ Functions:
 </table>
 
 <a name="App"><h3>App (<code>app.ts</code>)</h3></a>
+<p>
+An <code>App</code> holds all the shared resources and is
+responsible for switching Scenes.
 <table border>
-<tr><td><code>new App(framerate, scale,<br>&nbsp; images, audios, labels)</code></td>
+<tr><td><code>new App(<br>&nbsp; framerate, scale,<br>&nbsp; images, audios, labels)</code></td>
   <td>Creates a new app.</td></tr>
 <tr><td><code>.framerate</code></td>
   <td></td></tr>
@@ -813,7 +853,7 @@ Functions:
 
 <a name="StarSprite"><h3>StarSprite (<code>entity.ts</code>)</h3></a>
 <table border>
-<tr><td><code>new StarSprite(bounds, src, nstars,<br>&nbsp; <em>[velocity, [maxdepth]]</em>)</code></td>
+<tr><td><code>new StarSprite(<br>&nbsp; bounds, src, nstars,<br>&nbsp; <em>[velocity, [maxdepth]]</em>)</code></td>
   <td>Creates a new sprite.</td></tr>
 <tr><td><code>.velocity</code></td>
   <td></td></tr>
