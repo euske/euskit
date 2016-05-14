@@ -1,13 +1,4 @@
-/// <reference path="utils.ts" />
-/// <reference path="geom.ts" />
-/// <reference path="entity.ts" />
-/// <reference path="tilemap.ts" />
-/// <reference path="text.ts" />
-/// <reference path="layer.ts" />
-/// <reference path="scene.ts" />
-/// <reference path="app.ts" />
-/// <reference path="planmap.ts" />
-/// <reference path="planrunner.ts" />
+// game.ts
 
 
 PlanningEntity.debug = true;
