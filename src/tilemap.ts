@@ -206,14 +206,14 @@ class TileMap {
 		let c = this.get(x, y);
 		c = ft(x, y, c);
 		if (0 <= c) {
-		    let src = tileset.get(c);
-		    if (src instanceof DummyImageSource) {
-			ctx.fillStyle = (src as DummyImageSource).color;
+		    let imgsrc = tileset.get(c);
+		    if (imgsrc instanceof DummyImageSource) {
+			ctx.fillStyle = (imgsrc as DummyImageSource).color;
 			ctx.fillRect(bx+ts*dx, by+ts*dy, ts, ts);
 		    } else {
-			let rect = (src as HTMLImageSource).bounds;
-			let offset = (src as HTMLImageSource).offset;
-			ctx.drawImage((src as HTMLImageSource).image,
+			let rect = (imgsrc as HTMLImageSource).bounds;
+			let offset = (imgsrc as HTMLImageSource).offset;
+			ctx.drawImage((imgsrc as HTMLImageSource).image,
 				      rect.x, rect.y, rect.width, rect.height,
 				      bx+ts*dx-offset.x, by+ts*dy-offset.y,
 				      rect.width, rect.height);
@@ -241,14 +241,14 @@ class TileMap {
 		let c = this.get(x, y);
 		c = ft(x, y, c);
 		if (0 <= c) {
-		    let src = tileset.get(c);
-		    if (src instanceof DummyImageSource) {
-			ctx.fillStyle = (src as DummyImageSource).color;
+		    let imgsrc = tileset.get(c);
+		    if (imgsrc instanceof DummyImageSource) {
+			ctx.fillStyle = (imgsrc as DummyImageSource).color;
 			ctx.fillRect(bx+ts*dx, by+ts*dy, ts, ts);
 		    } else {
-			let rect = (src as HTMLImageSource).bounds;
-			let offset = (src as HTMLImageSource).offset;
-			ctx.drawImage((src as HTMLImageSource).image,
+			let rect = (imgsrc as HTMLImageSource).bounds;
+			let offset = (imgsrc as HTMLImageSource).offset;
+			ctx.drawImage((imgsrc as HTMLImageSource).image,
 				      rect.x, rect.y, rect.width, rect.height,
 				      bx+ts*dx-offset.x, by+ts*dy-offset.y,
 				      rect.width, rect.height);

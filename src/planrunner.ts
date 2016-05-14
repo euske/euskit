@@ -254,9 +254,9 @@ class PlanningEntity extends PlatformerEntity implements PlanActor {
     static debug: boolean = false;
 
     constructor(profile:PlanProfile, bounds: Rect,
-		src: ImageSource=null, hitbox: Rect=null,
+		imgsrc: ImageSource=null, hitbox: Rect=null,
 		speed=4, timeout=30) {
-	super(profile.tilemap, bounds, src, hitbox);
+	super(profile.tilemap, bounds, imgsrc, hitbox);
 	this.profile = profile;
 	this.timeout = timeout;
 	this.speed = speed;

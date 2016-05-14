@@ -181,7 +181,7 @@ Functions:
   <td>Creates a <code>CanvasRenderingContext2D</code>.</td></tr>
 <tr><td><code>image2array(img)</code></td>
   <td>Converts an image to an 2D array.</td></tr>
-<tr><td><code>drawImageScaled(<br>&nbsp; ctx, src,<br>&nbsp; sx, sy, sw, sh,<br>&nbsp; dx, dy, dw, dh)</code></td>
+<tr><td><code>drawImageScaled(<br>&nbsp; ctx, imgsrc,<br>&nbsp; sx, sy, sw, sh,<br>&nbsp; dx, dy, dw, dh)</code></td>
   <td>Draws a flipped image.</td></tr>
 <tr><td><code>playSound(sound, <em>[start]</em>)</code></td>
   <td>Plays a sound.</td></tr>
@@ -595,7 +595,7 @@ and its method is executed periodically.
 <p>
 A <code>Sprite</code> represents something that's shown on the screen.
 <table border>
-<tr><td><code>new Sprite(bounds, <em>[src]</em>)</code></td>
+<tr><td><code>new Sprite(bounds, <em>[imgsrc]</em>)</code></td>
   <td>Creates a new sprite.</td></tr>
 <tr class=inherited><td><code>.alive</code></td>
   <td><code>true</code> if the sprite is alive.</td></tr>
@@ -607,7 +607,7 @@ A <code>Sprite</code> represents something that's shown on the screen.
   <td>A <code>Slot</code> that is signaled when the sprite dies.</td></tr>
 <tr><td><code>.bounds</code></td>
   <td>A <code>Rect</code> for the sprite's size and position.</td></tr>
-<tr><td><code>.src</code></td>
+<tr><td><code>.imgsrc</code></td>
   <td>A <code>ImageSource</code> for the sprite's content.</td></tr>
 <tr><td><code>.visible</code></td>
   <td><code>true</code> if the sprite is visible.</td></tr>
@@ -629,7 +629,7 @@ A <code>Sprite</code> represents something that's shown on the screen.
 <p>
 An <code>Entity</code> is a physical object that's visible and has a physical boundary.
 <table border>
-<tr><td><code>new Entity(bounds, <em>[src, [hitbox]]</em>)</code></td>
+<tr><td><code>new Entity(bounds, <em>[imgsrc, [hitbox]]</em>)</code></td>
   <td>Creates a new entity.</td></tr>
 <tr class=inherited><td><code>.alive</code></td>
   <td><code>true</code> if the entity is alive.</td></tr>
@@ -641,7 +641,7 @@ An <code>Entity</code> is a physical object that's visible and has a physical bo
   <td>A <code>Slot</code> that is signaled when the entity dies.</td></tr>
 <tr class=inherited><td><code>.bounds</code></td>
   <td>A <code>Rect</code> for the entity's size and position.</td></tr>
-<tr class=inherited><td><code>.src</code></td>
+<tr class=inherited><td><code>.imgsrc</code></td>
   <td>A <code>ImageSource</code> for the entity's content.</td></tr>
 <tr class=inherited><td><code>.visible</code></td>
   <td><code>true</code> if the entity is visible.</td></tr>
@@ -825,17 +825,21 @@ responsible for switching Scenes.
   <td>A <code>Slot</code> that is signaled when the queue finishes.</td></tr>
 <tr><td><code>.tasks</code></td>
   <td>A list of <code>Task</code>s to be executed.</td></tr>
-<tr><td><code>.die()</code></td>
-  <td>Kills the queue.</td></tr>
+<tr><td><code>.dieWhenEmpty</code></td>
+  <td>Set <code>true</code> to automatically kill the queue when there's no <code>Task</code>.</td></tr>
+<tr><td><code>.getCurrent()</code></td>
+  <td>Returns the current <code>Task</code> or <code>null</code>.</td></tr>
 <tr><td><code>.add(task)</code></td>
   <td>Adds a <code>Task</code> to the queue.</td></tr>
 <tr><td><code>.remove(task)</code></td>
   <td>Removes a <code>Task</code> from the queue.</td></tr>
+<tr><td><code>.clear()</code></td>
+  <td>Removes all the <code>Task</code>s from the queue.</td></tr>
 </table>
 
 <a name="Projectile"><h3>Projectile (<code>entity.ts</code>)</h3></a>
 <table border>
-<tr><td><code>new Projectile(frame, bounds,<br>&nbsp; src, hitbox, movement)</code></td>
+<tr><td><code>new Projectile(frame, bounds,<br>&nbsp; imgsrc, hitbox, movement)</code></td>
   <td>Creates a new projectile.</td></tr>
 <tr><td><code>.frame</code></td>
   <td></td></tr>
@@ -845,7 +849,7 @@ responsible for switching Scenes.
 
 <a name="TiledSprite"><h3>TiledSprite (<code>entity.ts</code>)</h3></a>
 <table border>
-<tr><td><code>new TiledSprite(bounds, src)</code></td>
+<tr><td><code>new TiledSprite(bounds, imgsrc)</code></td>
   <td>Creates a new sprite.</td></tr>
 <tr><td><code>.offset</code></td>
   <td></td></tr>
@@ -853,7 +857,7 @@ responsible for switching Scenes.
 
 <a name="StarSprite"><h3>StarSprite (<code>entity.ts</code>)</h3></a>
 <table border>
-<tr><td><code>new StarSprite(<br>&nbsp; bounds, src, nstars,<br>&nbsp; <em>[velocity, [maxdepth]]</em>)</code></td>
+<tr><td><code>new StarSprite(<br>&nbsp; bounds, imgsrc, nstars,<br>&nbsp; <em>[velocity, [maxdepth]]</em>)</code></td>
   <td>Creates a new sprite.</td></tr>
 <tr><td><code>.velocity</code></td>
   <td></td></tr>
