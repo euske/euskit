@@ -1,9 +1,4 @@
-/// <reference path="../../../src/utils.ts" />
-/// <reference path="../../../src/geom.ts" />
-/// <reference path="../../../src/entity.ts" />
-/// <reference path="../../../src/layer.ts" />
-/// <reference path="../../../src/scene.ts" />
-/// <reference path="../../../src/app.ts" />
+// pong.ts
 
 class Paddle extends Entity {
 

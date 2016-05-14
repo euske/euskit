@@ -8,12 +8,22 @@ TSFLAGS=--noEmitOnError \
 	--noImplicitAny \
 	--noImplicitReturns
 
-OUTDIR=../js
+SRCDIR=../../../src
+SRCS=$(SRCDIR)/utils.ts \
+       $(SRCDIR)/geom.ts \
+       $(SRCDIR)/entity.ts \
+       $(SRCDIR)/text.ts \
+       $(SRCDIR)/layer.ts \
+       $(SRCDIR)/scene.ts \
+       $(SRCDIR)/app.ts
 
-all: $(OUTDIR)/pong.js
+OUTDIR=../js
+OUTFILE=$(OUTDIR)/pong.js
+
+all: $(OUTFILE)
 
 clean:
 	-$(RM) -r $(OUTDIR)
 
-$(OUTDIR)/pong.js: pong.ts
+$(OUTFILE): $(SRCS) pong.ts
 	$(TSC) $(TSFLAGS) --out $@ $^

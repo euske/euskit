@@ -96,7 +96,7 @@ class Pong extends GameScene {
 }
 ```
 
-And the corresponding HTML:
+Here's the HTML for it:
 
 ```html
 <!DOCTYPE html>
