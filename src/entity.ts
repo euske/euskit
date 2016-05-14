@@ -4,11 +4,15 @@
 
 function getContact(hitbox: Rect, v: Vec2, rects: Rect[], rectsWithin: Rect[])
 {
-    for (let i = 0; i < rects.length; i++) {
-	v = hitbox.contact(v, rects[i]);
+    if (rects !== null) {
+	for (let i = 0; i < rects.length; i++) {
+	    v = hitbox.contact(v, rects[i]);
+	}
     }
-    for (let i = 0; i < rectsWithin.length; i++) {
-	v = hitbox.contactWithin(v, rectsWithin[i]);
+    if (rectsWithin !== null) {
+	for (let i = 0; i < rectsWithin.length; i++) {
+	    v = hitbox.contactWithin(v, rectsWithin[i]);
+	}
     }
     return v;
 }

@@ -115,20 +115,18 @@ class HTMLScene extends Scene {
 // 
 class GameScene extends Scene {
 
-    layer: Layer;		// can be ScrollLayer.
-    sprites: Sprite[];
+    layer: ScrollLayer;
     entities: Entity[];
 
     constructor(app: App) {
 	super(app);
-	this.layer = new Layer(); // can be ScrollLayer.
+	this.layer = new ScrollLayer(this.screen);
     }
 
     init() {
 	// [OVERRIDE]
 	super.init();
 	this.layer.init();
-	this.sprites = this.layer.sprites;
 	this.entities = this.layer.entities;
     }
 
