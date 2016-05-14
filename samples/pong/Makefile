@@ -1,9 +1,9 @@
 # Makefile
 
 all:
-	cd src; $(MAKE) all
-	cd assets; $(MAKE) all
+	cd src; $(MAKE) $@
+	cd assets; $(MAKE) $@
 
 clean:
-	cd src; $(MAKE) clean
-	cd assets; $(MAKE) clean
+	cd src; $(MAKE) $@
+	cd assets; $(MAKE) $@
