@@ -25,7 +25,7 @@ class TileMap {
     map: Int32Array[];
     width: number;
     height: number;
-    world: Rect;
+    bounds: Rect;
     
     isObstacle: TileFunc;
     isGrabbable: TileFunc;
@@ -38,9 +38,9 @@ class TileMap {
 	this.map = map;
 	this.width = map[0].length;
 	this.height = map.length;
-	this.world = new Rect(0, 0,
-			      this.width*this.tilesize,
-			      this.height*this.tilesize);
+	this.bounds = new Rect(0, 0,
+			       this.width*this.tilesize,
+			       this.height*this.tilesize);
     }
 
     toString() {
@@ -55,14 +55,14 @@ class TileMap {
 	}
     }
 
-    set(x: number, y: number, v: number) {
+    set(x: number, y: number, c: number) {
 	if (0 <= x && 0 <= y && x < this.width && y < this.height) {
-	    this.map[y][x] = v;
+	    this.map[y][x] = c;
 	    this._rangemap = {};
 	}
     }
 
-    fill(v: number, rect: Rect=null) {
+    fill(c: number, rect: Rect=null) {
 	if (rect === null) {
 	    rect = new Rect(0, 0, this.width, this.height);
 	}
@@ -70,7 +70,7 @@ class TileMap {
 	    const y = rect.y+dy;
 	    for (let dx = 0; dx < rect.width; dx++) {
 		const x = rect.x+dx;
-		this.map[y][x] = v;
+		this.map[y][x] = c;
 	    }
 	}
 	this._rangemap = {};
@@ -191,7 +191,7 @@ class TileMap {
     renderFromBottomLeft(
 	ctx: CanvasRenderingContext2D,
 	bx: number, by: number,
-	tiles: SpriteSheet,
+	tileset: SpriteSheet,
 	ft: TilePosTileFunc,
 	x0=0, y0=0, w=0, h=0) {
 	// Align the pos to the bottom left corner.
@@ -206,7 +206,7 @@ class TileMap {
 		let c = this.get(x, y);
 		c = ft(x, y, c);
 		if (0 <= c) {
-		    let src = tiles.get(c);
+		    let src = tileset.get(c);
 		    if (src instanceof DummyImageSource) {
 			ctx.fillStyle = (src as DummyImageSource).color;
 			ctx.fillRect(bx+ts*dx, by+ts*dy, ts, ts);
@@ -226,7 +226,7 @@ class TileMap {
     renderFromTopRight(
 	ctx: CanvasRenderingContext2D,
 	bx: number, by: number,
-	tiles: SpriteSheet,
+	tileset: SpriteSheet,
 	ft: TilePosTileFunc,
 	x0=0, y0=0, w=0, h=0) {
 	// Align the pos to the bottom left corner.
@@ -241,7 +241,7 @@ class TileMap {
 		let c = this.get(x, y);
 		c = ft(x, y, c);
 		if (0 <= c) {
-		    let src = tiles.get(c);
+		    let src = tileset.get(c);
 		    if (src instanceof DummyImageSource) {
 			ctx.fillStyle = (src as DummyImageSource).color;
 			ctx.fillRect(bx+ts*dx, by+ts*dy, ts, ts);
@@ -263,7 +263,7 @@ class TileMap {
 	ctx: CanvasRenderingContext2D,
 	bx: number, by: number,
 	window: Rect,
-	tiles: SpriteSheet,
+	tileset: SpriteSheet,
 	ft: TilePosTileFunc) {
 	let ts = this.tilesize;
 	let x0 = Math.floor(window.x/ts);
@@ -273,7 +273,7 @@ class TileMap {
 	let fx = x0*ts-window.x;
 	let fy = y0*ts-window.y;
 	this.renderFromBottomLeft(
-	    ctx, bx+fx, by+fy, tiles, ft, 
+	    ctx, bx+fx, by+fy, tileset, ft, 
 	    x0, y0, x1-x0+1, y1-y0+1);
     }
 
@@ -281,7 +281,7 @@ class TileMap {
 	ctx: CanvasRenderingContext2D,
 	bx: number, by: number,
 	window: Rect,
-	tiles: SpriteSheet,
+	tileset: SpriteSheet,
 	ft: TilePosTileFunc) {
 	let ts = this.tilesize;
 	let x0 = Math.floor(window.x/ts);
@@ -291,7 +291,7 @@ class TileMap {
 	let fx = x0*ts-window.x;
 	let fy = y0*ts-window.y;
 	this.renderFromTopRight(
-	    ctx, bx+fx, by+fy, tiles, ft, 
+	    ctx, bx+fx, by+fy, tileset, ft, 
 	    x0, y0, x1-x0+1, y1-y0+1);
     }
 }

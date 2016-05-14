@@ -24,7 +24,7 @@ Functions:
 <a href="#numeric">Numeric</a>,
 <a href="#array">Array</a>,
 <a href="#html5">HTML5</a>
-<br>Utiltiy Classes:
+<br>Utility Classes:
 <a href="#Slot"><code>Slot</code></a>,
 <a href="#Color"><code>Color</code></a>,
 <a href="#ImageSource"><code>ImageSource</code></a>,
@@ -334,9 +334,9 @@ has its position (x, y) and size (width, height).
 <tr><td><code>new Rect(<em>x, y, [w, [h]]</em>)</code></td>
   <td>Creates a rectangle (<code>x</code>, <code>y</code>, <code>w</code>, <code>h</code>).</td></tr>
 <tr><td><code>.x</code></td>
-  <td>The x value of the topleft corner.</td></tr>
+  <td>The x value of the top-left corner.</td></tr>
 <tr><td><code>.y</code></td>
-  <td>The y value of the topleft corner.</td></tr>
+  <td>The y value of the top-left corner.</td></tr>
 <tr><td><code>.width</code></td>
   <td>The width of the rectangle.</td></tr>
 <tr><td><code>.height</code></td>
@@ -500,70 +500,70 @@ A <code>TileMap</code> represents a two-dimensional array that holds map tiles.
 <tr><td><code>new TileMap(tilesize, map)</code></td>
   <td>Creates a new tilemap for a given array.</td></tr>
 <tr><td><code>.tilesize</code></td>
-  <td></td></tr>
+  <td>The tile size.</td></tr>
 <tr><td><code>.map</code></td>
-  <td></td></tr>
+  <td>Int32Array[] for the map data.</td></tr>
 <tr><td><code>.width</code></td>
-  <td></td></tr>
+  <td>The number of tiles that fit horizontally in the map.</td></tr>
 <tr><td><code>.height</code></td>
-  <td></td></tr>
-<tr><td><code>.world</code></td>
-  <td></td></tr>
+  <td>The number of tiles that fit vertically in the map.</td></tr>
+<tr><td><code>.bounds</code></td>
+  <td>The bounds of the map in the actual size.</td></tr>
 <tr><td><code>.isObstacle</code></td>
-  <td></td></tr>
+  <td>A function that returns <code>true</code> for obstacle tiles.</td></tr>
 <tr><td><code>.isGrabbable</code></td>
-  <td></td></tr>
+  <td>A function that returns <code>true</code> for grabbable tiles (e.g. ladders).</td></tr>
 <tr><td><code>.isStoppable</code></td>
-  <td></td></tr>
+  <td>A function that returns <code>true</code> for stoppable tiles.</td></tr>
 <tr><td><code>.get(x, y)</code></td>
-  <td></td></tr>
-<tr><td><code>.get(x, y, v)</code></td>
-  <td></td></tr>
-<tr><td><code>.fill(v, <em>[rect]</em>)</code></td>
-  <td></td></tr>
+  <td>Gets a tile at a specific position.</td></tr>
+<tr><td><code>.set(x, y, c)</code></td>
+  <td>Sets a tile at a specific position. (Clears the RangeMap cache.)</td></tr>
+<tr><td><code>.fill(c, <em>[rect]</em>)</code></td>
+  <td>Fills tiles in a given area.</td></tr>
 <tr><td><code>.copy()</code></td>
-  <td></td></tr>
+  <td>Copies the tilemap.</td></tr>
 <tr><td><code>.coord2map(rect)</code></td>
-  <td></td></tr>
+  <td>Converts an actual Rect/Vec2 to the tile cells.</td></tr>
 <tr><td><code>.map2coord(rect)</code></td>
-  <td></td></tr>
+  <td>Converts a Rect/Vec2 for tile cells to the actual size.</td></tr>
 <tr><td><code>.apply(f, <em>[rect]</em>)</code></td>
-  <td></td></tr>
+  <td>Applies a function to tiles.</td></tr>
 <tr><td><code>.reduce(f, v, <em>[rect]</em>)</code></td>
-  <td></td></tr>
+  <td>Runs a function through tiles by passing results.</td></tr>
 <tr><td><code>.findTile(f, rect)</code></td>
-  <td></td></tr>
-<tr><td><code>.contactTile(rect, f, v, <em>[range]</em>)</code></td>
-  <td></td></tr>
+  <td>Returns the position of the first tile in the given area.</td></tr>
+<tr><td><code>.getTileRects(f, rect)</code></td>
+  <td>Returns a list of actual rectangles for tiles.</td></tr>
 <tr><td><code>.scroll(vx, vy, <em>[rect]</em>)</code></td>
-  <td></td></tr>
+  <td>Scrolls/rotates the tiles.</td></tr>
 <tr><td><code>.getRangeMap(key, f)</code></td>
-  <td></td></tr>
-<tr><td><code>.renderFromBottomLeft(<br>&nbsp; ctx, bx, by,<br>&nbsp; tiles, ft, x0, y0, w, h)</code></td>
-  <td></td></tr>
-<tr><td><code>.renderFromTopRight(<br>&nbsp; ctx, bx, by,<br>&nbsp; tiles, ft, x0, y0, w, h)</code></td>
-  <td></td></tr>
-<tr><td><code>.renderWindowFromBottomLeft(<br>&nbsp; ctx, bx, by,<br>&nbsp; window, tiles, ft)</code></td>
-  <td></td></tr>
-<tr><td><code>.renderWindowFromTopRight(<br>&nbsp; ctx, bx, by,<br>&nbsp; window, tiles, ft)</code></td>
-  <td></td></tr>
+  <td>Creates a <code>RangeMap</code> object for this tilemap.</td></tr>
+<tr><td><code>.renderFromBottomLeft(<br>&nbsp; ctx, bx, by,<br>&nbsp; tileset, ft,<br>&nbsp; <em>[x0, y0, w, h]</em>)</code></td>
+  <td>Renders the tiles from bottom left for a given tile set.</td></tr>
+<tr><td><code>.renderFromTopRight(<br>&nbsp; ctx, bx, by,<br>&nbsp; tileset, ft,<br>&nbsp; <em>[x0, y0, w, h]</em>)</code></td>
+  <td>Renders the tiles from top right for a given tile set.</td></tr>
+<tr><td><code>.renderWindowFromBottomLeft(<br>&nbsp; ctx, bx, by,<br>&nbsp; window, tileset, ft)</code></td>
+  <td>Renders the tiles from bottom left within a window.</td></tr>
+<tr><td><code>.renderWindowFromTopRight(<br>&nbsp; ctx, bx, by,<br>&nbsp; window, tileset, ft)</code></td>
+  <td>Renders the tiles from top right within a window.</td></tr>
 </table>
 
 <a name="RangeMap"><h3>RangeMap (<code>tilemap.ts</code>)</h3></a>
 <p>
 A <code>RangeMap</code> is a partial copy of <code>TileMap</code> 
-that allows range queries.
+that allows range queries for specific tiles.
 <table border>
 <tr><td><code>new RangeMap(tilemap, f)</code></td>
-  <td>Creates a new rangemap for a tilemap.</td></tr>
+  <td>Creates a new rangemap for certain tiles in a tilemap.</td></tr>
 <tr><td><code>.width</code></td>
-  <td></td></tr>
+  <td>The number of tiles that fit horizontally in the map.</td></tr>
 <tr><td><code>.height</code></td>
-  <td></td></tr>
+  <td>The number of tiles that fit vertically in the map.</td></tr>
 <tr><td><code>.get(x0, y0, x1, y1)</code></td>
-  <td></td></tr>
+  <td>Returns the number of specific tiles within the given area.</td></tr>
 <tr><td><code>.exists(rect)</code></td>
-  <td></td></tr>
+  <td><code>true</code> if a specific tile exists within the given area.</td></tr>
 </table>
 
 <a name="basic-classes"><h2>Basic Classes</h2></a>
@@ -707,7 +707,7 @@ at once and interact each other.
 <a name="Scene"><h3>Scene (<code>scene.ts</code>)</h3></a>
 <p>
 A <code>Scene</code> represents one state of a game that can have its own
-event handling (such as title screen or cutscene).
+event handling (such as title screen or cut scene).
 <table border>
 <tr><td><code>new Scene(app)</code></td>
   <td>Creates a new scene.</td></tr>
