@@ -24,9 +24,9 @@ EOF
 mkdir "$dst"/src || :  # ignore errors
 mkdir "$dst"/assets || :  # ignore errors
 cp "$src"/.gitignore "$dst"
-cp "$src"/Makefile "$dst"
+cp "$src"/samples/skel/Makefile "$dst"
+cp "$src"/samples/skel/src/*.ts "$dst"/src
 cp "$src"/src/*.ts "$dst"/src
-cp "$src"/assets/*.png "$dst"/assets
-cp "$src"/assets/*.mp3 "$dst"/assets
-cp "$src"/assets/Makefile "$dst"/assets
-sed -e "s/@@NAME@@/$name/g" "$src"/index.html > "$dst"/index.html
+cp "$src"/samples/skel/assets/* "$dst"/assets
+sed -e "s/@@NAME@@/$name/g" "$src"/samples/skel/index.html > "$dst"/index.html
+sed -e "s/@@NAME@@/$name/g" "$src"/samples/skel/src/Makefile > "$dst"/src/Makefile

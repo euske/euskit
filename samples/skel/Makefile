@@ -6,4 +6,4 @@ all:
 
 clean:
 	cd src; $(MAKE) $@
-	cd assets; $(MAKE) $@
+#	cd assets; $(MAKE) $@

@@ -15,17 +15,15 @@ SRCS=$(SRCDIR)/utils.ts \
        $(SRCDIR)/text.ts \
        $(SRCDIR)/layer.ts \
        $(SRCDIR)/scene.ts \
-       $(SRCDIR)/app.ts \
-       $(SRCDIR)/planmap.ts \
-       $(SRCDIR)/planrunner.ts
+       $(SRCDIR)/app.ts
 
 OUTDIR=../js
-OUTFILE=$(OUTDIR)/game.js
+OUTFILE=$(OUTDIR)/@@NAME@@.js
 
 all: $(OUTFILE)
 
 clean:
 	-$(RM) -r $(OUTDIR)
 
-$(OUTFILE): $(SRCS) game.ts
+$(OUTFILE): $(SRCS) @@NAME@@.ts
 	$(TSC) $(TSFLAGS) --out $@ $^
