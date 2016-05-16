@@ -34,10 +34,10 @@ class App {
     
     scene: Scene = null;
     active: boolean = false;
-    keylock: number = 0 ;
     keyDir: Vec2 = new Vec2();
     keyAction: boolean = false;
     
+    private _keylock: number = 0;
     private _msgs: Action[] = [];
     private _music: HTMLAudioElement = null;
     private _loop_start: number = 0;
@@ -86,36 +86,36 @@ class App {
     }
 
     lockKeys() {
-	this.keylock = this.framerate;
+	this._keylock = this.framerate;
     }
 
     keydown(ev: KeyboardEvent) {
-	if (0 < this.keylock) return;
+	if (0 < this._keylock) return;
 	// [OVERRIDE]
 	// [GAME SPECIFIC CODE]
 	let keysym = getKeySym(ev.keyCode);
 	switch (keysym) {
-	case 'left':
+	case KeySym.Left:
 	    this._key_left = true;
 	    this.keyDir.x = -1;
 	    this.scene.setDir(this.keyDir);
 	    break;
-	case 'right':
+	case KeySym.Right:
 	    this._key_right = true;
 	    this.keyDir.x = +1;
 	    this.scene.setDir(this.keyDir);
 	    break;
-	case 'up':
+	case KeySym.Up:
 	    this._key_up = true;
 	    this.keyDir.y = -1;
 	    this.scene.setDir(this.keyDir);
 	    break;
-	case 'down':
+	case KeySym.Down:
 	    this._key_down = true;
 	    this.keyDir.y = +1;
 	    this.scene.setDir(this.keyDir);
 	    break;
-	case 'action':
+	case KeySym.Action:
 	    if (!this.keyAction) {
 		this.keyAction = true;
 		this.scene.setAction(this.keyAction);
@@ -143,27 +143,27 @@ class App {
 	// [GAME SPECIFIC CODE]
 	let keysym = getKeySym(ev.keyCode);
 	switch (keysym) {
-	case 'left':
+	case KeySym.Left:
 	    this._key_left = false;
 	    this.keyDir.x = (this._key_right) ? +1 : 0;
 	    this.scene.setDir(this.keyDir);
 	    break;
-	case 'right':
+	case KeySym.Right:
 	    this._key_right = false;
 	    this.keyDir.x = (this._key_left) ? -1 : 0;
 	    this.scene.setDir(this.keyDir);
 	    break;
-	case 'up':
+	case KeySym.Up:
 	    this._key_up = false;
 	    this.keyDir.y = (this._key_down) ? +1 : 0;
 	    this.scene.setDir(this.keyDir);
 	    break;
-	case 'down':
+	case KeySym.Down:
 	    this._key_down = false;
 	    this.keyDir.y = (this._key_up) ? -1 : 0;
 	    this.scene.setDir(this.keyDir);
 	    break;
-	case 'action':
+	case KeySym.Action:
 	    if (this.keyAction) {
 		this.keyAction = false;
 		this.scene.setAction(this.keyAction);
@@ -250,8 +250,8 @@ class App {
 	// [OVERRIDE]
 	// [GAME SPECIFIC CODE]
 	this.scene.tick();
-	if (0 < this.keylock) {
-	    this.keylock--;
+	if (0 < this._keylock) {
+	    this._keylock--;
 	}
 
 	if (this._music !== null &&

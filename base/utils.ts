@@ -223,37 +223,46 @@ function playSound(sound: HTMLAudioElement, start=0)
 
 // getKeySym(keyCode): convert directional keys to symbol.
 // cf. https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode
-function getKeySym(keyCode: number): string
+enum KeySym {
+    Unknown = 0,
+    Left,
+    Right,
+    Up,
+    Down,
+    Action,
+    Cancel,
+}
+function getKeySym(keyCode: number): KeySym
 {
     switch (keyCode) {
     case 37:			// LEFT
     case 65:			// A
     case 72:			// H
     case 81:			// Q (AZERTY)
-	return 'left';
+	return KeySym.Left;
     case 39:			// RIGHT
     case 68:			// D
     case 76:			// L
-	return 'right';
+	return KeySym.Right;
     case 38:			// UP
     case 87:			// W
     case 75:			// K
-	return 'up';
+	return KeySym.Up;
     case 40:			// DOWN
     case 83:			// S
     case 74:			// J
-	return 'down';
+	return KeySym.Down;
     case 13:			// ENTER
     case 16:			// SHIFT
     case 32:			// SPACE
     case 90:			// Z
-	return 'action';
+	return KeySym.Action;
     case 8:			// BACKSPACE
     case 27:			// ESCAPE
     case 88:			// X
-	return 'cancel';
+	return KeySym.Cancel;
     default:
-	return null;
+	return KeySym.Unknown;
     }
 }
 

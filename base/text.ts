@@ -439,25 +439,25 @@ class MenuTask extends TextTask {
 	let d = 0;
 	let keysym = getKeySym(key);
 	switch (keysym) {
-	case 'left':
+	case KeySym.Left:
 	    d = (this.vertical)? -999 : -1;
 	    break;
-	case 'right':
+	case KeySym.Right:
 	    d = (this.vertical)? +999 : +1;
 	    break;
-	case 'up':
+	case KeySym.Up:
 	    d = (this.vertical)? -1 : -999;
 	    break;
-	case 'down':
+	case KeySym.Down:
 	    d = (this.vertical)? +1 : +999;
 	    break;
-	case 'action':
+	case KeySym.Action:
 	    if (this.current !== null) {
 		this.die();
 		this.selected.signal(this.current.value);
 	    };
 	    return;
-	case 'cancel':
+	case KeySym.Cancel:
 	    this.die();
 	    this.selected.signal(null);
 	    return;
