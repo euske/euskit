@@ -34,7 +34,9 @@ Functions:
 <a href="#Rect"><code>Rect</code></a>,
 <a href="#Box"><code>Box</code></a>,
 <a href="#TileMap"><code>TileMap</code></a>,
-<a href="#RangeMap"><code>RangeMap</code></a>
+<a href="#RangeMap"><code>RangeMap</code></a>,
+<a href="#Font"><code>Font</code></a>
+<a href="#ShadowFont"><code>ShadowFont</code></a>
 <br>Basic Classes:
 <a href="#Task"><code>Task</code></a>,
 <a href="#Sprite"><code>Sprite</code></a>,
@@ -186,7 +188,7 @@ Functions:
 <tr><td><code>playSound(sound, <em>[start]</em>)</code></td>
   <td>Plays a sound.</td></tr>
 <tr><td><code>getKeySym(keyCode)</code></td>
-  <td>The keysym for <code>keyCode</code>.</td></tr>
+  <td>Returns the <code>KeySym</code> for <code>keyCode</code>.</td></tr>
 </table>
 
 <a name="utility-classes"><h2>Utility Classes</h2></a>
@@ -566,6 +568,40 @@ that allows range queries for specific tiles.
   <td><code>true</code> if a specific tile exists within the given area.</td></tr>
 </table>
 
+<a name="Font"><h3>Font (<code>text.ts</code>)</h3></a>
+<p>
+A <code>Font</code> represents a monospace bitmap font.
+<table border>
+<tr><td><code>new Font(glyphs, <em>[color, [scale]]</em>)</code></td>
+  <td>Creates a <code>Font</code> with a given <code>glyphs</code>.</td></tr>
+<tr><td><code>.width</code></td>
+  <td>The width of individual character.</td></tr>
+<tr><td><code>.height</code></td>
+  <td>The height of individual character.</td></tr>
+<tr><td><code>.getSize(text)</code></td>
+  <td>Computes the pixel size for a given text.</td></tr>
+<tr><td><code>.renderString(ctx, text, x, y)</code></td>
+  <td>Draws the text at a given location.</td></tr>
+</table>
+
+<a name="ShadowFont"><h3>ShadowFont : <a href="#Font">Font</a> (<code>text.ts</code>)</h3></a>
+<p>
+A <code>Font</code> with shadow.
+<table border>
+<tr><td><code>new ShadowFont(glyphs,<br>&nbsp; <em>[color, [scale,<br>&nbsp; [shadowcolor,<br>&nbsp; [shadowdist]]]]</em>)</code></td>
+  <td>Creates a <code>ShadowFont</code> with a given <code>glyphs</code>.</td></tr>
+<tr class=inherited><td><code>.width</code></td>
+  <td>The width of individual character.</td></tr>
+<tr class=inherited><td><code>.height</code></td>
+  <td>The height of individual character.</td></tr>
+<tr class=inherited><td><code>.getSize(text)</code></td>
+  <td>Computes the pixel size for a given text.</td></tr>
+<tr class=inherited><td><code>.renderString(ctx, text, x, y)</code></td>
+  <td>Draws the text at a given location.</td></tr>
+<tr><td><code>.getSize2(text)</code></td>
+  <td>Computes the pixel size for a given text (including the shadow).</td></tr>
+</table>
+
 <a name="basic-classes"><h2>Basic Classes</h2></a>
 
 <a name="Task"><h3>Task (<code>entity.ts</code>)</h3></a>
@@ -660,7 +696,7 @@ An <code>Entity</code> is a physical object that's visible and has a physical bo
 <tr class=overridable><td><code>.render(ctx, bx, by)</code></td>
   <td>Draws the entity at the location (<code>bx</code>, <code>by</code>).</td></tr>
 <tr class=overridable><td><code>.collide(entity)</code></td>
-  <td>Called when the entity collides another entity.</td></tr>
+  <td>Invoked when the entity collides another entity.</td></tr>
 <tr><td><code>.moveIfPossible(v, force)</code></td>
   <td>Moves the entity by <code>v</code> without colliding obstacles.</td></tr>
 <tr><td><code>.isMovable(v)</code></td>
@@ -687,9 +723,9 @@ at once and interact each other.
 <tr><td><code>.entities</code></td>
   <td>A list of <code>Entity</code>s that belong to the layer.</td></tr>
 <tr class=overridable><td><code>.init()</code></td>
-  <td>Called when the layer is initialized.</td></tr>
+  <td>Invoked when the layer is initialized.</td></tr>
 <tr class=overridable><td><code>.tick()</code></td>
-  <td>Called for every frame.</td></tr>
+  <td>Invoked for every frame.</td></tr>
 <tr><td><code>.render(ctx, bx, by)</code></td>
   <td>Draws all the objects at the location (<code>bx</code>, <code>by</code>).</td></tr>
 <tr><td><code>.scroll(v)</code></td>
@@ -712,31 +748,31 @@ event handling (such as title screen or cut scene).
 <tr><td><code>new Scene(app)</code></td>
   <td>Creates a new scene.</td></tr>
 <tr><td><code>.app</code></td>
-  <td></td></tr>
+  <td>The <code>App</code> object that the scene belongs to.</td></tr>
 <tr><td><code>.screen</code></td>
-  <td></td></tr>
+  <td>The canvas rectangle.</td></tr>
 <tr><td><code>.changeScene(scene)</code></td>
-  <td></td></tr>
-<tr><td><code>.init()</code></td>
-  <td></td></tr>
-<tr><td><code>.tick()</code></td>
-  <td></td></tr>
-<tr><td><code>.render(ctx, bx, by)</code></td>
-  <td></td></tr>
-<tr><td><code>.setDir(v)</code></td>
-  <td></td></tr>
-<tr><td><code>.setAction(action)</code></td>
-  <td></td></tr>
-<tr><td><code>.keydown(keyCode)</code></td>
-  <td></td></tr>
-<tr><td><code>.keyup(keyCode)</code></td>
-  <td></td></tr>
-<tr><td><code>.mousedown(x, y, button)</code></td>
-  <td></td></tr>
-<tr><td><code>.mouseup(x, y, button)</code></td>
-  <td></td></tr>
-<tr><td><code>.mousemove(x, y)</code></td>
-  <td></td></tr>
+  <td>Signals the <code>App</code> to switch to a scene.</td></tr>
+<tr class=overridable><td><code>.init()</code></td>
+  <td>Initializes the scene.</td></tr>
+<tr class=overridable><td><code>.tick()</code></td>
+  <td>Invoked for every frame.</td></tr>
+<tr class=overridable><td><code>.render(ctx, bx, by)</code></td>
+  <td>Draws the scene at the location (<code>bx</code>, <code>by</code>).</td></tr>
+<tr class=overridable><td><code>.setDir(v)</code></td>
+  <td>Invoked when a directional input is changed.</td></tr>
+<tr class=overridable><td><code>.setAction(action)</code></td>
+  <td>Invoked when the action key state is changed.</td></tr>
+<tr class=overridable><td><code>.keydown(keyCode)</code></td>
+  <td>Invoked when a key is pressed.</td></tr>
+<tr class=overridable><td><code>.keyup(keyCode)</code></td>
+  <td>Invoked when a key is released.</td></tr>
+<tr class=overridable><td><code>.mousedown(x, y, button)</code></td>
+  <td>Invoked when a mouse button is pressed.</td></tr>
+<tr class=overridable><td><code>.mouseup(x, y, button)</code></td>
+  <td>Invoked when a mouse button is released.</td></tr>
+<tr class=overridable><td><code>.mousemove(x, y)</code></td>
+  <td>Invoked when a mouse position is changed.</td></tr>
 </table>
 
 <a name="App"><h3>App (<code>app.ts</code>)</h3></a>
@@ -745,73 +781,55 @@ An <code>App</code> holds all the shared resources and is
 responsible for switching Scenes.
 <table border>
 <tr><td><code>new App(<br>&nbsp; framerate, scale,<br>&nbsp; images, audios, labels)</code></td>
-  <td>Creates a new app.</td></tr>
+  <td>Creates a new app with given HTML5 resources.</td></tr>
 <tr><td><code>.framerate</code></td>
-  <td></td></tr>
+  <td>The framerate.</td></tr>
 <tr><td><code>.frame</code></td>
-  <td></td></tr>
+  <td>The <code>&lt;canvas&gt;</code> element.</td></tr>
 <tr><td><code>.images</code></td>
-  <td></td></tr>
+  <td>A set of <code>&lt;img&gt;</code> elements.</td></tr>
 <tr><td><code>.audios</code></td>
-  <td></td></tr>
+  <td>A set of <code>&lt;audio&gt;</code> elements.</td></tr>
 <tr><td><code>.labels</code></td>
-  <td></td></tr>
+  <td>A set of <code>&lt;div&gt;</code> elements.</td></tr>
 <tr><td><code>.font</code></td>
-  <td></td></tr>
+  <td>The default monochrome <code>Font</code>.</td></tr>
 <tr><td><code>.shadowfont</code></td>
-  <td></td></tr>
+  <td>The default shadowed <code>Font</code>.</td></tr>
 <tr><td><code>.colorfont</code></td>
-  <td></td></tr>
+  <td>The default color <code>Font</code>.</td></tr>
 <tr><td><code>.screen</code></td>
-  <td></td></tr>
+  <td>The canvas element.</td></tr>
 <tr><td><code>.ctx</code></td>
-  <td></td></tr>
+  <td>The <code>CanvasRenderingContext2D</code> object.</td></tr>
 <tr><td><code>.scene</code></td>
-  <td></td></tr>
+  <td>The current <code>Scene</code>.</td></tr>
 <tr><td><code>.active</code></td>
-  <td></td></tr>
-<tr><td><code>.keylock</code></td>
-  <td></td></tr>
+  <td><code>true</code> if the game is running.</td></tr>
 <tr><td><code>.keyDir</code></td>
-  <td></td></tr>
+  <td>The state of the current directional input.</td></tr>
 <tr><td><code>.keyAction</code></td>
-  <td></td></tr>
+  <td>The state of the current action key.</td></tr>
 <tr><td><code>.addElement(bounds)</code></td>
-  <td></td></tr>
+  <td>Adds a new <code>&lt;div&gt;</code> element to the canvas.</td></tr>
 <tr><td><code>.removeElement(elem)</code></td>
-  <td></td></tr>
+  <td>Removes the element from the canvas.</td></tr>
+<tr><td><code>.setMusic(music, <em>[start, [end]]</em>)</code></td>
+  <td>Starts/Stops the music loop.</td></tr>
 <tr><td><code>.lockKeys()</code></td>
-  <td></td></tr>
-<tr><td><code>.keydown(event)</code></td>
-  <td></td></tr>
-<tr><td><code>.keyup(event)</code></td>
-  <td></td></tr>
-<tr><td><code>.mousedown(event)</code></td>
-  <td></td></tr>
-<tr><td><code>.mouseup(event)</code></td>
-  <td></td></tr>
-<tr><td><code>.mousemove(event)</code></td>
-  <td></td></tr>
-<tr><td><code>.focus()</code></td>
-  <td></td></tr>
-<tr><td><code>.blur()</code></td>
-  <td></td></tr>
+  <td>Blocks accidental keyboard input for one second.</td></tr>
 <tr><td><code>.init(scene)</code></td>
-  <td></td></tr>
-<tr><td><code>.setMusic(music, start, end)</code></td>
-  <td></td></tr>
+  <td>Initializes the game with the first <code>Scene</code>.</td></tr>
 <tr><td><code>.post(msg)</code></td>
-  <td></td></tr>
-<tr><td><code>.tick()</code></td>
-  <td></td></tr>
-<tr><td><code>.repaint()</code></td>
-  <td></td></tr>
+  <td>Queues a function that is to be executed at the end of the frame.</td></tr>
 </table>
 
 
 <a name="special-classes"><h2>Special Classes</h2></a>
 
-<a name="Queue"><h3>Queue (<code>entity.ts</code>)</h3></a>
+<a name="Queue"><h3>Queue : <a href="#Task">Task</a> (<code>entity.ts</code>)</h3></a>
+<p>
+A <code>Queue</code> is a list of <code>Task</code>s that are executed sequentially.
 <table border>
 <tr><td><code>new Queue(tasks)</code></td>
   <td>Creates a new queue that runs multiple <code>Task</code>s sequentially.</td></tr>
@@ -837,17 +855,7 @@ responsible for switching Scenes.
   <td>Removes all the <code>Task</code>s from the queue.</td></tr>
 </table>
 
-<a name="Projectile"><h3>Projectile (<code>entity.ts</code>)</h3></a>
-<table border>
-<tr><td><code>new Projectile(frame, bounds,<br>&nbsp; imgsrc, hitbox, movement)</code></td>
-  <td>Creates a new projectile.</td></tr>
-<tr><td><code>.frame</code></td>
-  <td></td></tr>
-<tr><td><code>.movement</code></td>
-  <td></td></tr>
-</table>
-
-<a name="TiledSprite"><h3>TiledSprite (<code>entity.ts</code>)</h3></a>
+<a name="TiledSprite"><h3>TiledSprite : <a href="#Sprite">Sprite</a> (<code>entity.ts</code>)</h3></a>
 <table border>
 <tr><td><code>new TiledSprite(bounds, imgsrc)</code></td>
   <td>Creates a new sprite.</td></tr>
@@ -855,7 +863,7 @@ responsible for switching Scenes.
   <td></td></tr>
 </table>
 
-<a name="StarSprite"><h3>StarSprite (<code>entity.ts</code>)</h3></a>
+<a name="StarSprite"><h3>StarSprite : <a href="#Sprite">Sprite</a> (<code>entity.ts</code>)</h3></a>
 <table border>
 <tr><td><code>new StarSprite(<br>&nbsp; bounds, imgsrc, nstars,<br>&nbsp; <em>[velocity, [maxdepth]]</em>)</code></td>
   <td>Creates a new sprite.</td></tr>
@@ -863,6 +871,19 @@ responsible for switching Scenes.
   <td></td></tr>
 <tr><td><code>.maxdepth</code></td>
   <td></td></tr>
+</table>
+
+<a name="Projectile"><h3>Projectile : <a href="#Entity">Entity</a> (<code>entity.ts</code>)</h3></a>
+<p>
+A <code>Projectile</code> is an <code>Entity</code> that 
+keeps moving towards a specific direction.
+<table border>
+<tr><td><code>new Projectile(frame, bounds,<br>&nbsp; imgsrc, hitbox, movement)</code></td>
+  <td>Creates a new projectile.</td></tr>
+<tr><td><code>.frame</code></td>
+  <td>The rectangle where the object is kept alive within.</td></tr>
+<tr><td><code>.movement</code></td>
+  <td>The velocity of the object.</td></tr>
 </table>
 
 <a name="PhysicalEntity"><h3>PhysicalEntity (<code>entity.ts</code>)</h3></a>
