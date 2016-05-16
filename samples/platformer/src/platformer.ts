@@ -136,10 +136,10 @@ class Game extends GameScene {
 
     tick() {
 	super.tick();
-	this.player.setMove(this.app.key_dir);
+	this.player.setMove(this.app.keyDir);
     }
 
-    set_action(action: boolean) {
+    setAction(action: boolean) {
 	this.player.setJump(action? Infinity : 0);
     }
 

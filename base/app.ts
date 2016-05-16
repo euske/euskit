@@ -35,8 +35,8 @@ class App {
     scene: Scene = null;
     active: boolean = false;
     keylock: number = 0 ;
-    key_dir: Vec2 = new Vec2();
-    key_action: boolean = false;
+    keyDir: Vec2 = new Vec2();
+    keyAction: boolean = false;
     
     private _msgs: Action[] = [];
     private _music: HTMLAudioElement = null;
@@ -97,28 +97,28 @@ class App {
 	switch (keysym) {
 	case 'left':
 	    this._key_left = true;
-	    this.key_dir.x = -1;
-	    this.scene.set_dir(this.key_dir);
+	    this.keyDir.x = -1;
+	    this.scene.setDir(this.keyDir);
 	    break;
 	case 'right':
 	    this._key_right = true;
-	    this.key_dir.x = +1;
-	    this.scene.set_dir(this.key_dir);
+	    this.keyDir.x = +1;
+	    this.scene.setDir(this.keyDir);
 	    break;
 	case 'up':
 	    this._key_up = true;
-	    this.key_dir.y = -1;
-	    this.scene.set_dir(this.key_dir);
+	    this.keyDir.y = -1;
+	    this.scene.setDir(this.keyDir);
 	    break;
 	case 'down':
 	    this._key_down = true;
-	    this.key_dir.y = +1;
-	    this.scene.set_dir(this.key_dir);
+	    this.keyDir.y = +1;
+	    this.scene.setDir(this.keyDir);
 	    break;
 	case 'action':
-	    if (!this.key_action) {
-		this.key_action = true;
-		this.scene.set_action(this.key_action);
+	    if (!this.keyAction) {
+		this.keyAction = true;
+		this.scene.setAction(this.keyAction);
 	    }
 	    break;
 	default:
@@ -145,28 +145,28 @@ class App {
 	switch (keysym) {
 	case 'left':
 	    this._key_left = false;
-	    this.key_dir.x = (this._key_right) ? +1 : 0;
-	    this.scene.set_dir(this.key_dir);
+	    this.keyDir.x = (this._key_right) ? +1 : 0;
+	    this.scene.setDir(this.keyDir);
 	    break;
 	case 'right':
 	    this._key_right = false;
-	    this.key_dir.x = (this._key_left) ? -1 : 0;
-	    this.scene.set_dir(this.key_dir);
+	    this.keyDir.x = (this._key_left) ? -1 : 0;
+	    this.scene.setDir(this.keyDir);
 	    break;
 	case 'up':
 	    this._key_up = false;
-	    this.key_dir.y = (this._key_down) ? +1 : 0;
-	    this.scene.set_dir(this.key_dir);
+	    this.keyDir.y = (this._key_down) ? +1 : 0;
+	    this.scene.setDir(this.keyDir);
 	    break;
 	case 'down':
 	    this._key_down = false;
-	    this.key_dir.y = (this._key_up) ? -1 : 0;
-	    this.scene.set_dir(this.key_dir);
+	    this.keyDir.y = (this._key_up) ? -1 : 0;
+	    this.scene.setDir(this.keyDir);
 	    break;
 	case 'action':
-	    if (this.key_action) {
-		this.key_action = false;
-		this.scene.set_action(this.key_action);
+	    if (this.keyAction) {
+		this.keyAction = false;
+		this.scene.setAction(this.keyAction);
 	    }
 	    break;
 	}
@@ -222,12 +222,12 @@ class App {
 	// [OVERRIDE]
 	removeChildren(this.frame.parentNode, 'div');
 	
-	this.set_music();
+	this.setMusic();
 	this.scene = scene;
 	this.scene.init();
     }
 
-    set_music(music: HTMLAudioElement=null, start=0, end=0) {
+    setMusic(music: HTMLAudioElement=null, start=0, end=0) {
 	if (this._music !== null) {
 	    this._music.pause();
 	}

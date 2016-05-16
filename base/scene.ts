@@ -33,11 +33,11 @@ class Scene {
 	// [OVERRIDE]
     }
 
-    set_dir(v: Vec2) {
+    setDir(v: Vec2) {
 	// [OVERRIDE]
     }
 
-    set_action(action: boolean) {
+    setAction(action: boolean) {
 	// [OVERRIDE]
     }
 

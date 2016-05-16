@@ -68,7 +68,7 @@ class Pong extends GameScene {
 	this.addObject(this.ball);
     }
 
-    set_dir(v: Vec2) {
+    setDir(v: Vec2) {
 	// Change the paddle direction.
 	this.paddle.vx = v.x;
     }
