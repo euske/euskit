@@ -62,56 +62,6 @@ class Task {
 }
 
 
-//  Queue
-//  A list of Tasks that runs sequentially.
-//
-class Queue extends Task {
-
-    tasks: Task[];
-    dieWhenEmpty: boolean = false;
-
-    constructor(tasks: Task[]=null) {
-	super();
-	this.tasks = (tasks !== null)? tasks : [];
-    }
-  
-    add(task: Task) {
-	this.tasks.push(task);
-    }
-  
-    remove(task: Task) {
-	removeElement(this.tasks, task);
-    }
-
-    clear() {
-	this.tasks = [];
-    }
-
-    getCurrent() {
-	if (this.tasks !== null && 0 < this.tasks.length) {
-	    return this.tasks[0];
-	} else {
-	    return null;
-	}
-    }
-
-    tick() {
-	let task = this.getCurrent();
-	if (task === null && this.dieWhenEmpty) {
-	    this.die();
-	} else {
-	    if (task.layer === null) {
-		task.start(this.layer);
-	    }
-	    task.tick();
-	    if (!task.alive) {
-		this.tasks.shift();
-	    }
-	}
-    }
-}
-
-
 //  Sprite
 //  A moving object that doesn't interact.
 //
