@@ -294,22 +294,24 @@ class Entity extends Sprite {
 // 
 class Projectile extends Entity {
     
-    frame: Rect;
     movement: Vec2 = new Vec2();
+    frame: Rect;
 
-    constructor(frame: Rect, bounds: Rect,
-		imgsrc: ImageSource, hitbox: Rect,
-		movement: Vec2) {
+    constructor(bounds: Rect, imgsrc: ImageSource, hitbox: Rect=null,
+		movement: Vec2=null, frame: Rect=null) {
 	super(bounds, imgsrc, hitbox);
-	this.frame = frame;
 	this.movement = movement;
+	this.frame = frame;
     }
 
     update() {
 	super.update();
-	this.moveIfPossible(this.movement, true);
-	if (!this.hitbox.overlaps(this.frame)) {
-	    this.die();
+	if (this.movement !== null) {
+	    this.moveIfPossible(this.movement, true);
+	    if (this.frame !== null &&
+		!this.hitbox.overlaps(this.frame)) {
+		this.die();
+	    }
 	}
     }
 }
