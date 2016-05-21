@@ -4,105 +4,8 @@
 /// <reference path="entity.ts" />
 
 
-//  PlanActor
-//
-interface PlanActor {
-    isMovable(v: Vec2): boolean;
-    isLanded(): boolean;
-    isHolding(): boolean;
-    getGridPos(): Vec2;
-    getGridBox(): Rect;
-    getGridBoxAt(p: Vec2): Rect;
-    getJumpPoints(): Vec2[];
-    getFallPoints(): Vec2[];
-    moveToward(p: Vec2): void;
-    jumpToward(p: Vec2): void;
-    
-    canMoveTo(p: Vec2): boolean;
-    canGrabAt(p: Vec2): boolean;
-    canStandAt(p: Vec2): boolean;
-    canClimbUp(p: Vec2): boolean;
-    canClimbDown(p: Vec2): boolean;
-    canFall(p0: Vec2, p1: Vec2): boolean;
-    canJump(p0: Vec2, p1: Vec2): boolean;
-}
-
-
-//  PlanAction
-//
-enum ActionType {
-    NONE=0,
-    WALK,
-    FALL,
-    JUMP,
-    CLIMB,
-};
-
-function getKey(x: number, y: number, context: string=null)
-{
-    return (context === null)? (x+','+y) : (x+','+y+':'+context);
-}
-
-class PlanAction {
-
-    p: Vec2;
-    next: PlanAction;
-    cost: number;
-    context: string;
-    type: ActionType;
-
-    constructor(p: Vec2,
-		next: PlanAction=null,
-		cost=0,
-		context: string=null,
-		type: ActionType=ActionType.NONE) {
-	this.p = p;
-	this.next = next;
-	this.cost = cost;
-	this.context = context;
-	this.type = type;
-    }
-
-    getKey() {
-	return getKey(this.p.x, this.p.y, this.context);
-    }
-
-    getColor() {
-	switch (this.type) {
-	case ActionType.WALK:
-	    return 'white';
-	case ActionType.FALL:
-	    return 'blue';
-	case ActionType.JUMP:
-	    return 'magenta';
-	case ActionType.CLIMB:
-	    return 'cyan';
-	default:
-	    return null;
-	}
-    }
-    
-    toString() {
-	return ('<PlanAction('+this.p.x+','+this.p.y+'): cost='+this.cost+' '+this.type+'>');
-    }
-
-}
-
-
-//  PlanMap
-//
-interface PlanActionMap {
-    [index: string]: PlanAction;
-}
-class PlanActionEntry {
-    action: PlanAction;
-    total: number;
-    constructor(action: PlanAction, total: number) {
-	this.action = action;
-	this.total = total;
-    }
-}
-
+//  GridProfile
+// 
 class GridProfile {
     
     gridsize: number;
@@ -126,6 +29,64 @@ class GridProfile {
     }
 }
 
+
+//  PlanActor
+//
+interface PlanActor {
+}
+
+
+//  PlanAction
+//
+function getKey(x: number, y: number, context: string=null)
+{
+    return (context === null)? (x+','+y) : (x+','+y+':'+context);
+}
+
+class PlanAction {
+
+    p: Vec2;
+    next: PlanAction;
+    cost: number;
+    context: string;
+
+    constructor(p: Vec2,
+		next: PlanAction=null,
+		cost=0,
+		context: string=null) {
+	this.p = p;
+	this.next = next;
+	this.cost = cost;
+	this.context = context;
+    }
+
+    getKey() {
+	return getKey(this.p.x, this.p.y, this.context);
+    }
+
+    getColor() {
+	return (null as string);
+    }
+    
+    toString() {
+	return ('<PlanAction('+this.p.x+','+this.p.y+'): cost='+this.cost+'>');
+    }
+}
+
+
+//  PlanMap
+//
+interface PlanActionMap {
+    [index: string]: PlanAction;
+}
+class PlanActionEntry {
+    action: PlanAction;
+    total: number;
+    constructor(action: PlanAction, total: number) {
+	this.action = action;
+	this.total = total;
+    }
+}
 class PlanMap {
 
     profile: GridProfile;
@@ -210,126 +171,204 @@ class PlanMap {
 	this._queue = [];
 	this.addAction(null, new PlanAction(goal));
     }
-
-    fillPlan(actor: PlanActor, range: Rect, start: Vec2=null, maxcost=20) {
+    
+    fillPlan(actor: PlanActor, range: Rect, start: Vec2=null, maxcost=Infinity) {
 	while (0 < this._queue.length) {
-	    let a0 = this._queue.shift().action;
-	    if (maxcost <= a0.cost) continue;
-	    if (start !== null && start.equals(a0.p)) return true;
-	    let p = a0.p;
-	    // assert(range.contains(p));
-
-	    // try climbing down.
-	    let dp = new Vec2(p.x, p.y-1);
-	    if (range.contains(dp) &&
-		actor.canClimbDown(dp)) {
-		this.addAction(start, new PlanAction(
-		    dp, a0, a0.cost+1, null, ActionType.CLIMB));
-	    }
-	    // try climbing up.
-	    let up = new Vec2(p.x, p.y+1);
-	    if (range.contains(up) &&
-		actor.canClimbUp(up)) {
-		this.addAction(start, new PlanAction(
-		    up, a0, a0.cost+1, null, ActionType.CLIMB));
-	    }
-
-	    // for left and right.
-	    for (let vx = -1; vx <= +1; vx += 2) {
-
-		// try walking.
-		let wp = new Vec2(p.x-vx, p.y);
-		if (range.contains(wp) &&
-		    actor.canMoveTo(wp) &&
-		    (actor.canGrabAt(wp) ||
-		     actor.canStandAt(wp))) {
-		    this.addAction(start, new PlanAction(
-			wp, a0, a0.cost+1, null, ActionType.WALK));
-		}
-
-		// try falling.
-		if (actor.canStandAt(p)) {
-		    let fallpts = actor.getFallPoints();
-		    for (let i = 0; i < fallpts.length; i++) {
-			let v = fallpts[i];
-			// try the v.x == 0 case only once.
-			if (v.x === 0 && vx < 0) continue;
-			let fp = p.move(-v.x*vx, -v.y);
-			if (!range.contains(fp)) continue;
-			if (!actor.canMoveTo(fp)) continue;
-			//  +--+....  [vx = +1]
-			//  |  |....
-			//  +-X+.... (fp.x,fp.y) original position.
-			// ##.......
-			//   ...+--+
-			//   ...|  |
-			//   ...+-X+ (p.x,p.y)
-			//     ######
-			if (actor.canFall(fp, p)) {
-			    let dc = Math.abs(v.x)+Math.abs(v.y);
-			    this.addAction(start, new PlanAction(
-				fp, a0, a0.cost+dc, null, ActionType.FALL));
-			}
-		    }
-		}
-
-		// try jumping.
-		if (a0.type === ActionType.FALL) {
-		    let jumppts = actor.getJumpPoints();
-		    for (let i = 0; i < jumppts.length; i++) {
-			let v = jumppts[i];
-			// try the v.x == 0 case only once.
-			if (v.x === 0 && vx < 0) continue;
-			let jp = p.move(-v.x*vx, -v.y);
-			if (!range.contains(jp)) continue;
-			if (!actor.canMoveTo(jp)) continue;
-			if (!actor.canGrabAt(jp) && !actor.canStandAt(jp)) continue;
-			//  ....+--+  [vx = +1]
-			//  ....|  |
-			//  ....+-X+ (p.x,p.y) tip point
-			//  .......
-			//  +--+...
-			//  |  |...
-			//  +-X+... (jp.x,jp.y) original position.
-			// ######
-			if (actor.canJump(jp, p)) {
-			    let dc = Math.abs(v.x)+Math.abs(v.y);
-			    this.addAction(start, new PlanAction(
-				jp, a0, a0.cost+dc, null, ActionType.JUMP));
-			}
-		    }
-		} else if (actor.canStandAt(p)) {
-		    let jumppts = actor.getJumpPoints();
-		    for (let i = 0; i < jumppts.length; i++) {
-			let v = jumppts[i];
-			if (v.x === 0) continue;
-			let jp = p.move(-v.x*vx, -v.y);
-			if (!range.contains(jp)) continue;
-			if (!actor.canMoveTo(jp)) continue;
-			if (!actor.canGrabAt(jp) && !actor.canStandAt(jp)) continue;
-			//  ....+--+  [vx = +1]
-			//  ....|  |
-			//  ....+-X+ (p.x,p.y) tip point
-			//  .....##
-			//  +--+...
-			//  |  |...
-			//  +-X+... (jp.x,jp.y) original position.
-			// ######
-			if (actor.canJump(jp, p)) {
-			    let dc = Math.abs(v.x)+Math.abs(v.y);
-			    this.addAction(start, new PlanAction(
-				jp, a0, a0.cost+dc, null, ActionType.JUMP));
-			}
-		    }
-		}
-	    }
-	    
+	    let action = this._queue.shift().action;
+	    if (maxcost <= action.cost) continue;
+	    if (start !== null && start.equals(action.p)) return true;
+	    this.expandPlan(actor, range, action, start);
 	    // A* search.
 	    this._queue.sort(
 		(a:PlanActionEntry,b:PlanActionEntry) => { return a.total-b.total; });
 	}
-	
 	return false;
     }
 
+    expandPlan(actor: PlanActor, range: Rect, a0: PlanAction, start: Vec2=null) {
+    }
+}
+
+
+//  PlatformerActionType
+// 
+enum ActionType {
+    NONE=0,
+    WALK,
+    FALL,
+    JUMP,
+    CLIMB,
+};
+
+//  PlatformerActor
+//
+interface PlatformerActor extends PlanActor {
+    isMovable(v: Vec2): boolean;
+    isLanded(): boolean;
+    isHolding(): boolean;
+    getGridPos(): Vec2;
+    getGridBox(): Rect;
+    getGridBoxAt(p: Vec2): Rect;
+    getJumpPoints(): Vec2[];
+    getFallPoints(): Vec2[];
+    moveToward(p: Vec2): void;
+    jumpToward(p: Vec2): void;
+    
+    canMoveTo(p: Vec2): boolean;
+    canGrabAt(p: Vec2): boolean;
+    canStandAt(p: Vec2): boolean;
+    canClimbUp(p: Vec2): boolean;
+    canClimbDown(p: Vec2): boolean;
+    canFall(p0: Vec2, p1: Vec2): boolean;
+    canJump(p0: Vec2, p1: Vec2): boolean;
+}
+
+//  PlatformerAction
+// 
+class PlatformerAction extends PlanAction {
+    
+    type: ActionType;
+    
+    constructor(p: Vec2,
+		next: PlanAction=null,
+		cost=0,
+		context: string=null,
+		type: ActionType=ActionType.NONE) {
+	super(p, next, cost, context);
+	this.type = type;
+    }
+
+    toString() {
+	return ('<PlatformAction('+this.p.x+','+this.p.y+'): cost='+this.cost+' '+this.type+'>');
+    }
+    
+    getColor() {
+	switch (this.type) {
+	case ActionType.WALK:
+	    return 'white';
+	case ActionType.FALL:
+	    return 'blue';
+	case ActionType.JUMP:
+	    return 'magenta';
+	case ActionType.CLIMB:
+	    return 'cyan';
+	default:
+	    return null;
+	}
+    }
+}
+
+// PlatformerPlanMap
+// 
+class PlatformerPlanMap extends PlanMap {
+
+    expandPlan(actor: PlatformerActor, range: Rect, a0: PlatformerAction, start: Vec2=null) {
+	let p = a0.p;
+	// assert(range.contains(p));
+
+	// try climbing down.
+	let dp = new Vec2(p.x, p.y-1);
+	if (range.contains(dp) &&
+	    actor.canClimbDown(dp)) {
+	    this.addAction(start, new PlatformerAction(
+		dp, a0, a0.cost+1, null, ActionType.CLIMB));
+	}
+	// try climbing up.
+	let up = new Vec2(p.x, p.y+1);
+	if (range.contains(up) &&
+	    actor.canClimbUp(up)) {
+	    this.addAction(start, new PlatformerAction(
+		up, a0, a0.cost+1, null, ActionType.CLIMB));
+	}
+
+	// for left and right.
+	for (let vx = -1; vx <= +1; vx += 2) {
+
+	    // try walking.
+	    let wp = new Vec2(p.x-vx, p.y);
+	    if (range.contains(wp) &&
+		actor.canMoveTo(wp) &&
+		(actor.canGrabAt(wp) ||
+		 actor.canStandAt(wp))) {
+		this.addAction(start, new PlatformerAction(
+		    wp, a0, a0.cost+1, null, ActionType.WALK));
+	    }
+
+	    // try falling.
+	    if (actor.canStandAt(p)) {
+		let fallpts = actor.getFallPoints();
+		for (let i = 0; i < fallpts.length; i++) {
+		    let v = fallpts[i];
+		    // try the v.x == 0 case only once.
+		    if (v.x === 0 && vx < 0) continue;
+		    let fp = p.move(-v.x*vx, -v.y);
+		    if (!range.contains(fp)) continue;
+		    if (!actor.canMoveTo(fp)) continue;
+		    //  +--+....  [vx = +1]
+		    //  |  |....
+		    //  +-X+.... (fp.x,fp.y) original position.
+		    // ##.......
+		    //   ...+--+
+		    //   ...|  |
+		    //   ...+-X+ (p.x,p.y)
+		    //     ######
+		    if (actor.canFall(fp, p)) {
+			let dc = Math.abs(v.x)+Math.abs(v.y);
+			this.addAction(start, new PlatformerAction(
+			    fp, a0, a0.cost+dc, null, ActionType.FALL));
+		    }
+		}
+	    }
+
+	    // try jumping.
+	    if (a0.type === ActionType.FALL) {
+		let jumppts = actor.getJumpPoints();
+		for (let i = 0; i < jumppts.length; i++) {
+		    let v = jumppts[i];
+		    // try the v.x == 0 case only once.
+		    if (v.x === 0 && vx < 0) continue;
+		    let jp = p.move(-v.x*vx, -v.y);
+		    if (!range.contains(jp)) continue;
+		    if (!actor.canMoveTo(jp)) continue;
+		    if (!actor.canGrabAt(jp) && !actor.canStandAt(jp)) continue;
+		    //  ....+--+  [vx = +1]
+		    //  ....|  |
+		    //  ....+-X+ (p.x,p.y) tip point
+		    //  .......
+		    //  +--+...
+		    //  |  |...
+		    //  +-X+... (jp.x,jp.y) original position.
+		    // ######
+		    if (actor.canJump(jp, p)) {
+			let dc = Math.abs(v.x)+Math.abs(v.y);
+			this.addAction(start, new PlatformerAction(
+			    jp, a0, a0.cost+dc, null, ActionType.JUMP));
+		    }
+		}
+	    } else if (actor.canStandAt(p)) {
+		let jumppts = actor.getJumpPoints();
+		for (let i = 0; i < jumppts.length; i++) {
+		    let v = jumppts[i];
+		    if (v.x === 0) continue;
+		    let jp = p.move(-v.x*vx, -v.y);
+		    if (!range.contains(jp)) continue;
+		    if (!actor.canMoveTo(jp)) continue;
+		    if (!actor.canGrabAt(jp) && !actor.canStandAt(jp)) continue;
+		    //  ....+--+  [vx = +1]
+		    //  ....|  |
+		    //  ....+-X+ (p.x,p.y) tip point
+		    //  .....##
+		    //  +--+...
+		    //  |  |...
+		    //  +-X+... (jp.x,jp.y) original position.
+		    // ######
+		    if (actor.canJump(jp, p)) {
+			let dc = Math.abs(v.x)+Math.abs(v.y);
+			this.addAction(start, new PlatformerAction(
+			    jp, a0, a0.cost+dc, null, ActionType.JUMP));
+		    }
+		}
+	    }
+	}
+    }
 }
