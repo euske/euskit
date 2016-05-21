@@ -157,7 +157,9 @@ class PlanActionRunner {
 		actor.canJump(cur, dst)) {
 		actor.jumpToward(dst);
 		// once you leap, the action is considered finished.
-		this.action = new PlanAction(dst, null, ActionType.WALK, this.action.next);
+		this.action = new PlanAction(
+		    dst, this.action.next, this.action.next.cost,
+		    null, ActionType.WALK);
 		this.count = this.timeout;
 	    } else {
 		// not landed, holding something, or has no clearance.

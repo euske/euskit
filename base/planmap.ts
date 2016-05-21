@@ -46,27 +46,44 @@ function getKey(x: number, y: number, context: string=null)
 class PlanAction {
 
     p: Vec2;
-    context: string;
-    type: ActionType;
     next: PlanAction;
     cost: number;
-    key: string;
+    context: string;
+    type: ActionType;
 
     constructor(p: Vec2,
-		context: string=null,
-		type: ActionType=ActionType.NONE,
 		next: PlanAction=null,
-		dc=0) {
+		cost=0,
+		context: string=null,
+		type: ActionType=ActionType.NONE) {
 	this.p = p;
+	this.next = next;
+	this.cost = cost;
 	this.context = context;
 	this.type = type;
-	this.next = next;
-	this.cost = (next === null)? 0 : next.cost+dc;
-	this.key = getKey(p.x, p.y);
     }
 
+    getKey() {
+	return getKey(this.p.x, this.p.y, this.context);
+    }
+
+    getColor() {
+	switch (this.type) {
+	case ActionType.WALK:
+	    return 'white';
+	case ActionType.FALL:
+	    return 'blue';
+	case ActionType.JUMP:
+	    return 'magenta';
+	case ActionType.CLIMB:
+	    return 'cyan';
+	default:
+	    return null;
+	}
+    }
+    
     toString() {
-	return ('<PlanAction('+this.p.x+','+this.p.y+'): '+this.type+' cost='+this.cost+'>');
+	return ('<PlanAction('+this.p.x+','+this.p.y+'): cost='+this.cost+' '+this.type+'>');
     }
 
 }
@@ -143,9 +160,10 @@ class PlanMap {
     }
 
     addAction(start: Vec2, action: PlanAction) {
-	let prev = this._map[action.key];
+	let key = action.getKey();
+	let prev = this._map[key];
 	if (prev === undefined || action.cost < prev.cost) {
-	    this._map[action.key] = action;
+	    this._map[key] = action;
 	    let dist = ((start === null)? Infinity :
 			(Math.abs(start.x-action.p.x)+
 			 Math.abs(start.y-action.p.y)));
@@ -159,33 +177,21 @@ class PlanMap {
 	let rs = gs/2;
 	ctx.lineWidth = 1;
 	for (let k in this._map) {
-	    let a = this._map[k];
-	    let p0 = profile.grid2coord(a.p);
-	    switch (a.type) {
-	    case ActionType.WALK:
-		ctx.strokeStyle = 'white';
-		break;
-	    case ActionType.FALL:
-		ctx.strokeStyle = 'blue';
-		break;
-	    case ActionType.JUMP:
-		ctx.strokeStyle = 'magenta';
-		break;
-	    case ActionType.CLIMB:
-		ctx.strokeStyle = 'cyan';
-		break;
-	    default:
-		continue;
-	    }
-	    ctx.strokeRect(bx+p0.x-rs/2+.5,
-			   by+p0.y-rs/2+.5,
-			   rs, rs);
-	    if (a.next !== null) {
-		let p1 = profile.grid2coord(a.next.p);
-		ctx.beginPath();
-		ctx.moveTo(bx+p0.x+.5, by+p0.y+.5);
-		ctx.lineTo(bx+p1.x+.5, by+p1.y+.5);
-		ctx.stroke();
+	    let action = this._map[k];
+	    let color = action.getColor();
+	    if (color !== null) {
+		let p0 = profile.grid2coord(action.p);
+		ctx.strokeStyle = color;
+		ctx.strokeRect(bx+p0.x-rs/2+.5,
+			       by+p0.y-rs/2+.5,
+			       rs, rs);
+		if (action.next !== null) {
+		    let p1 = profile.grid2coord(action.next.p);
+		    ctx.beginPath();
+		    ctx.moveTo(bx+p0.x+.5, by+p0.y+.5);
+		    ctx.lineTo(bx+p1.x+.5, by+p1.y+.5);
+		    ctx.stroke();
+		}
 	    }
 	}
 	if (this.start !== null) {
@@ -225,14 +231,14 @@ class PlanMap {
 	    if (range.contains(dp) &&
 		this.actor.canClimbDown(dp)) {
 		this.addAction(start, new PlanAction(
-		    dp, null, ActionType.CLIMB, a0, 1));
+		    dp, a0, a0.cost+1, null, ActionType.CLIMB));
 	    }
 	    // try climbing up.
 	    let up = new Vec2(p.x, p.y+1);
 	    if (range.contains(up) &&
 		this.actor.canClimbUp(up)) {
 		this.addAction(start, new PlanAction(
-		    up, null, ActionType.CLIMB, a0, 1));
+		    up, a0, a0.cost+1, null, ActionType.CLIMB));
 	    }
 
 	    // for left and right.
@@ -245,7 +251,7 @@ class PlanMap {
 		    (this.actor.canGrabAt(wp) ||
 		     this.actor.canStandAt(wp))) {
 		    this.addAction(start, new PlanAction(
-			wp, null, ActionType.WALK, a0, 1));
+			wp, a0, a0.cost+1, null, ActionType.WALK));
 		}
 
 		// try falling.
@@ -269,7 +275,7 @@ class PlanMap {
 			if (this.actor.canFall(fp, p)) {
 			    let dc = Math.abs(v.x)+Math.abs(v.y);
 			    this.addAction(start, new PlanAction(
-				fp, null, ActionType.FALL, a0, dc));
+				fp, a0, a0.cost+dc, null, ActionType.FALL));
 			}
 		    }
 		}
@@ -296,7 +302,7 @@ class PlanMap {
 			if (this.actor.canJump(jp, p)) {
 			    let dc = Math.abs(v.x)+Math.abs(v.y);
 			    this.addAction(start, new PlanAction(
-				jp, null, ActionType.JUMP, a0, dc));
+				jp, a0, a0.cost+dc, null, ActionType.JUMP));
 			}
 		    }
 		} else if (this.actor.canStandAt(p)) {
@@ -319,7 +325,7 @@ class PlanMap {
 			if (this.actor.canJump(jp, p)) {
 			    let dc = Math.abs(v.x)+Math.abs(v.y);
 			    this.addAction(start, new PlanAction(
-				jp, null, ActionType.JUMP, a0, dc));
+				jp, a0, a0.cost+dc, null, ActionType.JUMP));
 			}
 		    }
 		}
