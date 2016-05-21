@@ -57,7 +57,7 @@ class Monster extends PlanningEntity {
 
     constructor(scene: Game, pos: Vec2) {
 	let bounds = pos.expand(16, 16);
-	super(scene.profile, bounds, scene.sheet.get(1), bounds);
+	super(scene.profile, scene.tilemap, bounds, scene.sheet.get(1), bounds);
 	this.scene = scene;
 	this.setJumpFunc(jumpfunc);
     }
@@ -82,7 +82,7 @@ class Game extends GameScene {
 
     tilemap: TileMap;
     player: Player;
-    profile: PlanProfile;
+    profile: GridProfile;
     sheet: SpriteSheet;
     tiles: SpriteSheet;
 
@@ -117,7 +117,7 @@ class Game extends GameScene {
 	this.tilemap.isObstacle = ((c:number) => { return c == 1; });
 	this.tilemap.isGrabbable = ((c:number) => { return c == 2; });
 	this.tilemap.isStoppable = ((c:number) => { return c != 0; });
-	this.profile = new PlanProfile(this.tilemap);
+	this.profile = new GridProfile(this.tilemap);
 	
 	this.player = new Player(this, this.screen.center());
 	this.addObject(this.player);

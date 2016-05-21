@@ -241,7 +241,7 @@ class PlanActionRunner {
 //
 class PlanningEntity extends PlatformerEntity implements PlanActor {
 
-    profile: PlanProfile;
+    profile: GridProfile;
     jumppts: Vec2[];
     fallpts: Vec2[];
     timeout: number;
@@ -255,10 +255,10 @@ class PlanningEntity extends PlatformerEntity implements PlanActor {
 
     static debug: boolean = false;
 
-    constructor(profile:PlanProfile, bounds: Rect,
+    constructor(profile:GridProfile, tilemap:TileMap, bounds: Rect,
 		imgsrc: ImageSource=null, hitbox: Rect=null,
 		speed=4, timeout=30) {
-	super(profile.tilemap, bounds, imgsrc, hitbox);
+	super(tilemap, bounds, imgsrc, hitbox);
 	this.profile = profile;
 	this.timeout = timeout;
 	this.speed = speed;
@@ -307,9 +307,9 @@ class PlanningEntity extends PlatformerEntity implements PlanActor {
 	let range = goal.expand(size, size);
 	let start = this.getGridPos();
 	this.updateRangeMaps();
-	let plan = new PlanMap(this.profile, this);
+	let plan = new PlanMap(this.profile);
 	plan.initPlan(goal);
-	if (plan.fillPlan(range, start, maxcost)) {
+	if (plan.fillPlan(this, range, start, maxcost)) {
 	    return new PlanActionRunner(plan, this, this.timeout);
 	}
 	return null;
@@ -329,7 +329,8 @@ class PlanningEntity extends PlatformerEntity implements PlanActor {
     render(ctx:CanvasRenderingContext2D, bx:number, by:number) {
 	super.render(ctx, bx, by);
 	if (PlanningEntity.debug && this.runner !== null) {
-	    this.runner.plan.render(ctx, bx, by);
+	    let start = this.getGridPos();
+	    this.runner.plan.render(ctx, bx, by, start);
 	}
     }
     

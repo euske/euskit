@@ -103,14 +103,12 @@ class PlanActionEntry {
     }
 }
 
-class PlanProfile {
+class GridProfile {
     
-    tilemap: TileMap;
     gridsize: number;
     offset: number;
 
     constructor(tilemap:TileMap, resolution=1) {
-	this.tilemap = tilemap;
 	this.gridsize = tilemap.tilesize/resolution;
 	this.offset = fmod(this.gridsize, tilemap.tilesize)/2;
     }
@@ -130,19 +128,14 @@ class PlanProfile {
 
 class PlanMap {
 
-    profile: PlanProfile;
-    actor: PlanActor;
-
-    start: Vec2;
+    profile: GridProfile;
     goal: Vec2;
     
     private _map: PlanActionMap;
     private _queue: PlanActionEntry[];
     
-    constructor(profile: PlanProfile, actor: PlanActor) {
+    constructor(profile: GridProfile) {
 	this.profile = profile;
-	this.actor = actor;
-	this.start = null;
 	this.goal = null;
     }
 
@@ -171,7 +164,8 @@ class PlanMap {
 	}
     }
 
-    render(ctx:CanvasRenderingContext2D, bx:number, by:number) {
+    render(ctx:CanvasRenderingContext2D, bx:number, by:number,
+	   start:Vec2=null) {
 	let profile = this.profile;
 	let gs = profile.gridsize;
 	let rs = gs/2;
@@ -194,16 +188,16 @@ class PlanMap {
 		}
 	    }
 	}
-	if (this.start !== null) {
-	    let p = profile.grid2coord(this.start);
-	    ctx.strokeStyle = '#ff0000';
+	if (this.goal !== null) {
+	    let p = profile.grid2coord(this.goal);
+	    ctx.strokeStyle = '#00ff00';
 	    ctx.strokeRect(bx+p.x-gs/2+.5,
 			   by+p.y-gs/2+.5,
 			   gs, gs);
 	}
-	if (this.goal !== null) {
-	    let p = profile.grid2coord(this.goal);
-	    ctx.strokeStyle = '#00ff00';
+	if (start !== null) {
+	    let p = profile.grid2coord(start);
+	    ctx.strokeStyle = '#ff0000';
 	    ctx.strokeRect(bx+p.x-gs/2+.5,
 			   by+p.y-gs/2+.5,
 			   gs, gs);
@@ -217,26 +211,25 @@ class PlanMap {
 	this.addAction(null, new PlanAction(goal));
     }
 
-    fillPlan(range: Rect, start: Vec2=null, maxcost=20) {
-	this.start = start;
+    fillPlan(actor: PlanActor, range: Rect, start: Vec2=null, maxcost=20) {
 	while (0 < this._queue.length) {
 	    let a0 = this._queue.shift().action;
 	    if (maxcost <= a0.cost) continue;
+	    if (start !== null && start.equals(a0.p)) return true;
 	    let p = a0.p;
-	    if (start !== null && start.equals(p)) return true;
 	    // assert(range.contains(p));
 
 	    // try climbing down.
 	    let dp = new Vec2(p.x, p.y-1);
 	    if (range.contains(dp) &&
-		this.actor.canClimbDown(dp)) {
+		actor.canClimbDown(dp)) {
 		this.addAction(start, new PlanAction(
 		    dp, a0, a0.cost+1, null, ActionType.CLIMB));
 	    }
 	    // try climbing up.
 	    let up = new Vec2(p.x, p.y+1);
 	    if (range.contains(up) &&
-		this.actor.canClimbUp(up)) {
+		actor.canClimbUp(up)) {
 		this.addAction(start, new PlanAction(
 		    up, a0, a0.cost+1, null, ActionType.CLIMB));
 	    }
@@ -247,23 +240,23 @@ class PlanMap {
 		// try walking.
 		let wp = new Vec2(p.x-vx, p.y);
 		if (range.contains(wp) &&
-		    this.actor.canMoveTo(wp) &&
-		    (this.actor.canGrabAt(wp) ||
-		     this.actor.canStandAt(wp))) {
+		    actor.canMoveTo(wp) &&
+		    (actor.canGrabAt(wp) ||
+		     actor.canStandAt(wp))) {
 		    this.addAction(start, new PlanAction(
 			wp, a0, a0.cost+1, null, ActionType.WALK));
 		}
 
 		// try falling.
-		if (this.actor.canStandAt(p)) {
-		    let fallpts = this.actor.getFallPoints();
+		if (actor.canStandAt(p)) {
+		    let fallpts = actor.getFallPoints();
 		    for (let i = 0; i < fallpts.length; i++) {
 			let v = fallpts[i];
 			// try the v.x == 0 case only once.
 			if (v.x === 0 && vx < 0) continue;
 			let fp = p.move(-v.x*vx, -v.y);
 			if (!range.contains(fp)) continue;
-			if (!this.actor.canMoveTo(fp)) continue;
+			if (!actor.canMoveTo(fp)) continue;
 			//  +--+....  [vx = +1]
 			//  |  |....
 			//  +-X+.... (fp.x,fp.y) original position.
@@ -272,7 +265,7 @@ class PlanMap {
 			//   ...|  |
 			//   ...+-X+ (p.x,p.y)
 			//     ######
-			if (this.actor.canFall(fp, p)) {
+			if (actor.canFall(fp, p)) {
 			    let dc = Math.abs(v.x)+Math.abs(v.y);
 			    this.addAction(start, new PlanAction(
 				fp, a0, a0.cost+dc, null, ActionType.FALL));
@@ -282,15 +275,15 @@ class PlanMap {
 
 		// try jumping.
 		if (a0.type === ActionType.FALL) {
-		    let jumppts = this.actor.getJumpPoints();
+		    let jumppts = actor.getJumpPoints();
 		    for (let i = 0; i < jumppts.length; i++) {
 			let v = jumppts[i];
 			// try the v.x == 0 case only once.
 			if (v.x === 0 && vx < 0) continue;
 			let jp = p.move(-v.x*vx, -v.y);
 			if (!range.contains(jp)) continue;
-			if (!this.actor.canMoveTo(jp)) continue;
-			if (!this.actor.canGrabAt(jp) && !this.actor.canStandAt(jp)) continue;
+			if (!actor.canMoveTo(jp)) continue;
+			if (!actor.canGrabAt(jp) && !actor.canStandAt(jp)) continue;
 			//  ....+--+  [vx = +1]
 			//  ....|  |
 			//  ....+-X+ (p.x,p.y) tip point
@@ -299,21 +292,21 @@ class PlanMap {
 			//  |  |...
 			//  +-X+... (jp.x,jp.y) original position.
 			// ######
-			if (this.actor.canJump(jp, p)) {
+			if (actor.canJump(jp, p)) {
 			    let dc = Math.abs(v.x)+Math.abs(v.y);
 			    this.addAction(start, new PlanAction(
 				jp, a0, a0.cost+dc, null, ActionType.JUMP));
 			}
 		    }
-		} else if (this.actor.canStandAt(p)) {
-		    let jumppts = this.actor.getJumpPoints();
+		} else if (actor.canStandAt(p)) {
+		    let jumppts = actor.getJumpPoints();
 		    for (let i = 0; i < jumppts.length; i++) {
 			let v = jumppts[i];
 			if (v.x === 0) continue;
 			let jp = p.move(-v.x*vx, -v.y);
 			if (!range.contains(jp)) continue;
-			if (!this.actor.canMoveTo(jp)) continue;
-			if (!this.actor.canGrabAt(jp) && !this.actor.canStandAt(jp)) continue;
+			if (!actor.canMoveTo(jp)) continue;
+			if (!actor.canGrabAt(jp) && !actor.canStandAt(jp)) continue;
 			//  ....+--+  [vx = +1]
 			//  ....|  |
 			//  ....+-X+ (p.x,p.y) tip point
@@ -322,7 +315,7 @@ class PlanMap {
 			//  |  |...
 			//  +-X+... (jp.x,jp.y) original position.
 			// ######
-			if (this.actor.canJump(jp, p)) {
+			if (actor.canJump(jp, p)) {
 			    let dc = Math.abs(v.x)+Math.abs(v.y);
 			    this.addAction(start, new PlanAction(
 				jp, a0, a0.cost+dc, null, ActionType.JUMP));
