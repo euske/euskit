@@ -1,4 +1,4 @@
-// game.ts
+// platformer.ts
 
 
 PlanningEntity.debug = true;
@@ -125,13 +125,6 @@ class Game extends GameScene {
 	let monster = new Monster(this, this.screen.center())
 	monster.target = this.player;
 	this.addObject(monster);
-	
-	// show a banner.
-	let textbox = new TextBox(this.screen, this.app.font);
-	textbox.linespace = 2;
-	textbox.lifetime = 30;
-	textbox.putText(['GAEM!!1'], 'center', 'center');
-	this.addObject(textbox);
     }
 
     tick() {
@@ -147,8 +140,7 @@ class Game extends GameScene {
 	ctx.fillStyle = 'rgb(0,0,0)';
 	ctx.fillRect(bx, by, this.screen.width, this.screen.height);
 	this.tilemap.renderFromBottomLeft(
-	    ctx, bx, by, this.tiles,
-	    (x,y,c) => { return this.tilemap.get(x,y); });
+	    ctx, bx, by, this.tiles, (x,y,c) => { return c; });
 	super.render(ctx, bx, by);
     }
 }
