@@ -73,7 +73,7 @@ class Sprite extends Task {
     zOrder: number = 0;
     scale: Vec2 = new Vec2(1, 1);
 
-    constructor(bounds: Rect, imgsrc: ImageSource=null) {
+    constructor(bounds: Rect=null, imgsrc: ImageSource=null) {
 	super();
 	this.bounds = (bounds)? bounds.copy() : null;
 	this.imgsrc = imgsrc;
@@ -222,7 +222,7 @@ class Entity extends Sprite {
 
     hitbox: Rect;
 
-    constructor(bounds: Rect, imgsrc: ImageSource=null, hitbox: Rect=null) {
+    constructor(bounds: Rect=null, imgsrc: ImageSource=null, hitbox: Rect=null) {
 	super(bounds, imgsrc);
 	this.hitbox = (hitbox)? hitbox.copy() : null;
     }

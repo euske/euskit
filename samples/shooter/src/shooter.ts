@@ -8,9 +8,9 @@ var APP: App;
 //  Bullet
 //
 class Bullet extends Projectile {
-    constructor(frame: Rect, pos: Vec2, movement: Vec2) {
+    constructor(pos: Vec2, movement: Vec2, frame: Rect) {
 	let bounds = pos.expand(8, 2);
-	super(frame, bounds, WHITE, bounds, movement);
+	super(bounds, WHITE, bounds, movement, frame);
     }
 }
 
@@ -37,8 +37,8 @@ class Player extends Entity {
 	if (this.firing && this.firetick == 0) {
 	    this.firetick = 4;
 	    var bullet = new Bullet(
-		this.scene.screen, this.bounds.anchor(-1,0),
-		new Vec2(8, 0));
+		this.bounds.anchor(-1,0), new Vec2(8, 0),
+		this.scene.screen);
 	    this.scene.addObject(bullet);
 	    playSound(APP.audios['pew']);
 	} else {
@@ -82,7 +82,7 @@ class Enemy1 extends Projectile {
     constructor(scene: Shooter, pos: Vec2) {
 	let bounds = pos.expand(16, 16);
 	let v = new Vec2(-rnd(1,8), rnd(3)-1);
-	super(scene.screen, bounds, scene.sprites.get(1), bounds, v);
+	super(bounds, scene.sprites.get(1), bounds, v, scene.screen);
     }
 }
 applyMixins(Enemy1, [EnemyBase]);
@@ -95,7 +95,7 @@ class Enemy2 extends Projectile {
     constructor(scene: Shooter, pos: Vec2) {
 	let bounds = pos.expand(16, 16);
 	let v = new Vec2(-rnd(1,4), 0);
-	super(scene.screen, bounds, scene.sprites.get(2), bounds, v);
+	super(bounds, scene.sprites.get(2), bounds, v, scene.screen);
     }
 
     update() {
