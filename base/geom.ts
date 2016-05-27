@@ -325,8 +325,8 @@ class Rect {
     }
     
     rndpt() {
-	return new Vec2(this.x+rnd(this.width),
-			this.y+rnd(this.height));
+	return new Vec2(this.x+frnd(this.width),
+			this.y+frnd(this.height));
     }
     
     modpt(p: Vec2) {
@@ -410,6 +410,103 @@ class Rect {
 	return v;
     }
 
+}
+
+
+//  Circle
+//
+class Circle {
+
+    center: Vec2;
+    radius: number;
+
+    constructor(center: Vec2, radius=0) {
+	this.center = center;
+	this.radius = radius;
+    }
+
+    toString() {
+	return 'Circle(center='+this.center+', radius'+this.radius+')';
+    }
+    
+    copy() {
+	return new Circle(this.center.copy(), this.radius);
+    }
+    
+    equals(circle: Circle) {
+	return (this.center.equals(circle.center) &&
+		this.radius == circle.radius);
+    }
+    
+    isZero() {
+	return this.radius == 0;
+    }
+    
+    move(dx: number, dy: number) {
+	return new Circle(this.center.move(dx, dy), this.radius);  
+    }
+    
+    add(v: Vec2) {
+	return new Circle(this.center.add(v), this.radius);
+    }
+    
+    inflate(dr: number) {
+	return new Circle(this.center, this.radius+dr);
+    }
+    
+    resize(radius: number) {
+	return new Circle(this.center, radius);
+    }
+
+    dist(p: Vec2) {
+	return this.center.sub(p).len();
+    }
+
+    contains(p: Vec2) {
+	return this.dist(p) <= this.radius;
+    }
+
+    containsCircle(circle: Circle) {
+	let d = this.dist(circle.center);
+	return d+circle.radius <= this.radius;
+    }
+
+    overlaps(circle: Circle) {
+	let d = this.dist(circle.center);
+	return d <= this.radius+circle.radius;
+    }
+    
+    clamp(bounds: Rect) {
+	let x = ((bounds.width < this.radius)? bounds.centerx() :
+		 clamp(bounds.x, this.center.x, bounds.x+bounds.width-this.radius));
+	let y = ((bounds.height < this.radius)? bounds.centery() :
+		 clamp(bounds.y, this.center.y, bounds.y+bounds.height-this.radius));
+	return new Circle(new Vec2(x, y), this.radius);
+    }
+    
+    rndpt() {
+	let r = frnd(this.radius);
+	let t = frnd(Math.PI*2);
+	return new Vec2(this.center.x+r*Math.cos(t),
+			this.center.y+r*Math.sin(t));
+    }
+    
+    contact(v: Vec2, circle: Circle) {
+	assert(!this.overlaps(circle), 'circle overlapped');
+	let d = circle.center.sub(this.center);
+	let dv = d.x*v.x + d.y*v.y;
+	let v2 = v.len2();
+	let d2 = d.len2();
+	let R = (this.radius + circle.radius);
+	// |d - t*v|^2 = (r1+r2)^2
+	// t = { (d*v) + sqrt((d*v)^2 - v^2(d^2-R^2)) } / v^2
+	let t = (dv - Math.sqrt(dv*dv - v2*(d2-R*R))) / v2;
+	if (0 <= t && t <= 1) {
+	    return v.scale(t);
+	} else {
+	    return v;
+	}
+    }
 }
 
 
@@ -554,9 +651,9 @@ class Box {
     }
     
     rndpt() {
-	return new Vec3(this.origin.x+rnd(this.size.x),
-			this.origin.y+rnd(this.size.y),
-			this.origin.z+rnd(this.size.z));
+	return new Vec3(this.origin.x+frnd(this.size.x),
+			this.origin.y+frnd(this.size.y),
+			this.origin.z+frnd(this.size.z));
     }
 
     contactYZPlane(v: Vec3, x: number, rect: Rect) {
