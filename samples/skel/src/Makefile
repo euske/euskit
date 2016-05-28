@@ -8,7 +8,7 @@ TSFLAGS=--noEmitOnError \
 	--noImplicitAny \
 	--noImplicitReturns
 
-SRCDIR=../../../src
+SRCDIR=../base
 SRCS=$(SRCDIR)/utils.ts \
        $(SRCDIR)/geom.ts \
        $(SRCDIR)/entity.ts \
