@@ -2,16 +2,16 @@
 /// <reference path="geom.ts" />
 /// <reference path="tilemap.ts" />
 
-function getContact(hitbox: Rect, v: Vec2, rects: Rect[], rectsWithin: Rect[])
+function getContact(hitbox: Rect, v: Vec2, rects: Rect[], bounds: Rect[])
 {
     if (rects !== null) {
 	for (let i = 0; i < rects.length; i++) {
-	    v = hitbox.contact(v, rects[i]);
+	    v = hitbox.contactRect(v, rects[i]);
 	}
     }
-    if (rectsWithin !== null) {
-	for (let i = 0; i < rectsWithin.length; i++) {
-	    v = hitbox.contactWithin(v, rectsWithin[i]);
+    if (bounds !== null) {
+	for (let i = 0; i < bounds.length; i++) {
+	    v = hitbox.contactBounds(v, bounds[i]);
 	}
     }
     return v;

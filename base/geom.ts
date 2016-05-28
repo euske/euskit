@@ -274,7 +274,7 @@ class Rect {
 	return new Rect(x, y, w, h);
     }
     
-    contains(p: Vec2) {
+    containsPt(p: Vec2) {
 	return (this.x <= p.x && this.y <= p.y &&
 		p.x <= this.x+this.width && p.y <= this.y+this.height);
     }
@@ -376,7 +376,7 @@ class Rect {
 	return new Vec2(dx, dy);
     }
     
-    contact(v: Vec2, rect: Rect) {
+    contactRect(v: Vec2, rect: Rect) {
 	assert(!this.overlaps(rect), 'rect overlapped');
 	
 	if (0 < v.x) {
@@ -394,17 +394,17 @@ class Rect {
 	return v;
     }
 
-    contactWithin(v: Vec2, rect: Rect) {
+    contactBounds(v: Vec2, bounds: Rect) {
 	if (0 < v.x) {
-	    v = this.contactVLine(v, rect.x+rect.width, -Infinity, +Infinity);
+	    v = this.contactVLine(v, bounds.x+bounds.width, -Infinity, +Infinity);
 	} else if (v.x < 0) {
-	    v = this.contactVLine(v, rect.x, -Infinity, +Infinity);
+	    v = this.contactVLine(v, bounds.x, -Infinity, +Infinity);
 	}
 
 	if (0 < v.y) {
-	    v = this.contactHLine(v, rect.y+rect.height, -Infinity, +Infinity);
+	    v = this.contactHLine(v, bounds.y+bounds.height, -Infinity, +Infinity);
 	} else if (v.y < 0) {
-	    v = this.contactHLine(v, rect.y, -Infinity, +Infinity);
+	    v = this.contactHLine(v, bounds.y, -Infinity, +Infinity);
 	}
 
 	return v;
@@ -462,7 +462,7 @@ class Circle {
 	return this.center.sub(p).len();
     }
 
-    contains(p: Vec2) {
+    containsPt(p: Vec2) {
 	return this.dist(p) <= this.radius;
     }
 
@@ -491,7 +491,7 @@ class Circle {
 			this.center.y+r*Math.sin(t));
     }
     
-    contact(v: Vec2, circle: Circle) {
+    contactCircle(v: Vec2, circle: Circle) {
 	assert(!this.overlaps(circle), 'circle overlapped');
 	let d = circle.center.sub(this.center);
 	let dv = d.x*v.x + d.y*v.y;
@@ -599,7 +599,7 @@ class Box {
 			this.origin.z-(box.origin.z+box.size.z));
     }
     
-    contains(p: Vec3) {
+    containsPt(p: Vec3) {
 	return (this.origin.x <= p.x && this.origin.y <= p.y && this.origin.z <= p.z &&
 		p.x <= this.origin.x+this.size.x &&
 		p.y <= this.origin.y+this.size.y &&
@@ -740,7 +740,7 @@ class Box {
 	return new Vec3(dx, dy, dz);  
     }
     
-    contact(v: Vec3, box: Box) {
+    contactBox(v: Vec3, box: Box) {
 	assert(!this.overlaps(box), 'box overlapped');
 	
 	if (0 < v.x) {

@@ -264,18 +264,18 @@ class PlatformerPlanMap extends PlanMap {
 
     expandPlan(actor: PlatformerActor, range: Rect, a0: PlatformerAction, start: Vec2=null) {
 	let p = a0.p;
-	// assert(range.contains(p));
+	// assert(range.containsPt(p));
 
 	// try climbing down.
 	let dp = new Vec2(p.x, p.y-1);
-	if (range.contains(dp) &&
+	if (range.containsPt(dp) &&
 	    actor.canClimbDown(dp)) {
 	    this.addAction(start, new PlatformerAction(
 		dp, a0, a0.cost+1, null, ActionType.CLIMB));
 	}
 	// try climbing up.
 	let up = new Vec2(p.x, p.y+1);
-	if (range.contains(up) &&
+	if (range.containsPt(up) &&
 	    actor.canClimbUp(up)) {
 	    this.addAction(start, new PlatformerAction(
 		up, a0, a0.cost+1, null, ActionType.CLIMB));
@@ -286,7 +286,7 @@ class PlatformerPlanMap extends PlanMap {
 
 	    // try walking.
 	    let wp = new Vec2(p.x-vx, p.y);
-	    if (range.contains(wp) &&
+	    if (range.containsPt(wp) &&
 		actor.canMoveTo(wp) &&
 		(actor.canGrabAt(wp) ||
 		 actor.canStandAt(wp))) {
@@ -302,7 +302,7 @@ class PlatformerPlanMap extends PlanMap {
 		    // try the v.x == 0 case only once.
 		    if (v.x === 0 && vx < 0) continue;
 		    let fp = p.move(-v.x*vx, -v.y);
-		    if (!range.contains(fp)) continue;
+		    if (!range.containsPt(fp)) continue;
 		    if (!actor.canMoveTo(fp)) continue;
 		    //  +--+....  [vx = +1]
 		    //  |  |....
@@ -328,7 +328,7 @@ class PlatformerPlanMap extends PlanMap {
 		    // try the v.x == 0 case only once.
 		    if (v.x === 0 && vx < 0) continue;
 		    let jp = p.move(-v.x*vx, -v.y);
-		    if (!range.contains(jp)) continue;
+		    if (!range.containsPt(jp)) continue;
 		    if (!actor.canMoveTo(jp)) continue;
 		    if (!actor.canGrabAt(jp) && !actor.canStandAt(jp)) continue;
 		    //  ....+--+  [vx = +1]
@@ -351,7 +351,7 @@ class PlatformerPlanMap extends PlanMap {
 		    let v = jumppts[i];
 		    if (v.x === 0) continue;
 		    let jp = p.move(-v.x*vx, -v.y);
-		    if (!range.contains(jp)) continue;
+		    if (!range.containsPt(jp)) continue;
 		    if (!actor.canMoveTo(jp)) continue;
 		    if (!actor.canGrabAt(jp) && !actor.canStandAt(jp)) continue;
 		    //  ....+--+  [vx = +1]
