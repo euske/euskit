@@ -8,7 +8,7 @@ var APP: App;
 //
 class Player extends Entity {
 
-    scane: Game;
+    scene: Game;
     usermove: Vec2;
 
     constructor(scene: Game, pos: Vec2) {
