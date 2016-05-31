@@ -32,6 +32,7 @@ Functions:
 <a href="#Vec2"><code>Vec2</code></a>,
 <a href="#Vec3"><code>Vec3</code></a>,
 <a href="#Rect"><code>Rect</code></a>,
+<a href="#Circle"><code>Circle</code></a>,
 <a href="#Box"><code>Box</code></a>,
 <a href="#TileMap"><code>TileMap</code></a>,
 <a href="#RangeMap"><code>RangeMap</code></a>,
@@ -436,14 +437,28 @@ has its position (x, y) and size (width, height).
   <td>The x-distance to <code>rect</code>.</td></tr>
 <tr><td><code>.ydistance(rect)</code></td>
   <td>The y-distance to <code>rect</code>.</td></tr>
-<tr><td><code>.contains(p)</code></td>
+<tr><td><code>.containsPt(p)</code></td>
   <td><code>true</code> if the rectangle contains <code>p</code>.</td></tr>
 <tr><td><code>.containsRect(rect)</code></td>
   <td><code>true</code> if the rectangle contains <code>rect</code>.</td></tr>
 <tr><td><code>.overlaps(rect)</code></td>
   <td><code>true</code> if the rectangle overlaps <code>rect</code>.</td></tr>
-<tr><td><code>.contact(v, rect)</code></td>
+<tr><td><code>.contactRect(v, rect)</code></td>
   <td>Trims a vector so that it doesn't collide <code>rect</code>.</td></tr>
+<tr><td><code>.contactBounds(v, bounds)</code></td>
+  <td>Trims a vector so that it doesn't collide <code>bounds</code>.</td></tr>
+</table>
+
+<a name="Circle"><h3>Circle (<code>geom.ts</code>)</h3></a>
+<p>
+A <code>Circle</code> represents a circle that has its center and radius.
+<table border>
+<tr><td><code>new Circle(<em>center, [radius]</em>)</code></td>
+  <td>Creates a circle.</td></tr>
+<tr><td><code>.center</code></td>
+  <td>The center of the circle.</td></tr>
+<tr><td><code>.radius</code></td>
+  <td>The radius of the circle.</td></tr>
 </table>
 
 <a name="Box"><h3>Box (<code>geom.ts</code>)</h3></a>
@@ -487,11 +502,11 @@ both as <code>Vec3</code>.
   <td>The y-distance to <code>box</code>.</td></tr>
 <tr><td><code>.zdistance(box)</code></td>
   <td>The z-distance to <code>box</code>.</td></tr>
-<tr><td><code>.contains(p)</code></td>
+<tr><td><code>.containsPt(p)</code></td>
   <td><code>true</code> if the box contains <code>p</code>.</td></tr>
 <tr><td><code>.overlaps(box)</code></td>
   <td><code>true</code> if the box overlaps <code>box</code>.</td></tr>
-<tr><td><code>.contact(v, box)</code></td>
+<tr><td><code>.contactBox(v, box)</code></td>
   <td>Trims a vector so that it doesn't collide <code>box</code>.</td></tr>
 </table>
 
