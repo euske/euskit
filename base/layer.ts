@@ -15,6 +15,11 @@ class Layer {
 	this.init();
     }
 
+    toString() {
+	return ('<Layer: tasks='+this.tasks+', sprites='+
+		this.sprites+', entities='+this.entities+'>');
+    }
+  
     init() {
 	this.tasks = [];
 	this.sprites = [];

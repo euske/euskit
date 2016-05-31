@@ -52,7 +52,7 @@ class Game extends GameScene {
 	super.tick();
     }
 
-    set_dir(v: Vec2) {
+    setDir(v: Vec2) {
 	this.player.setMove(v);
     }
 
