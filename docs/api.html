@@ -152,8 +152,8 @@ Functions:
   <td>Limits a value to [<code>v0</code>, <code>v1</code>].</td></tr>
 <tr><td><code>sign(v)</code></td>
   <td>-1, 0 or +1 based on the sign of <code>v</code>.</td></tr>
-<tr><td><code>blink(t, duration)</code></td>
-  <td><code>true</code> if <code>t</code> should be visible.</td></tr>
+<tr><td><code>phase(t, duration, n)</code></td>
+  <td>Returns the phase for time <code>t</code>.</td></tr>
 <tr><td><code>frnd(a, <em>[b]</em>)</code></td>
   <td>Generates a value [0,<code>a</code>) or [<code>a</code>,<code>b</code>)</td></tr>
 <tr><td><code>rnd(a, <em>[b]</em>)</code></td>
@@ -285,8 +285,10 @@ A <code>Vec2</code> represents two-dimensional vector that has (x, y) elements.
   <td>(<code>clamp(x)</code>, <code>clamp(y)</code>).</td></tr>
 <tr><td><code>.move(dx, dy)</code></td>
   <td>(<code>x+dx</code>, <code>y+dy</code>).</td></tr>
+<tr><td><code>.rotate(d)</code></td>
+  <td>Creates a rotated vector in radian (clockwise...0&lt;<code>d</code>)</td></tr>
 <tr><td><code>.rot90(d)</code></td>
-  <td>Creates a rotated vector (clockwise...0&lt;<code>d</code>)</td></tr>
+  <td>Creates a rotated vector by 90 degrees (clockwise...0&lt;<code>d</code>)</td></tr>
 <tr><td><code>.expand(dw, dh, <em>[vx, [vy]]</em>)</code></td>
   <td>Creates a <code>Rect</code> with the point as an anchor.</td></tr>
 </table>

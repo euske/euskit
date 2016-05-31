@@ -66,6 +66,13 @@ class Vec2 {
     move(dx: number, dy: number) {
 	return new Vec2(this.x+dx, this.y+dy);
     }
+
+    // rotate: rotates a vector clockwise by d radian.
+    rotate(d: number) {
+	let s = Math.sin(d);
+	let c = Math.cos(d);
+	return new Vec2(this.x*c-this.y*s, this.x*s+this.y*c);
+    }
     
     rot90(d: number) {
 	if (d < 0) {
