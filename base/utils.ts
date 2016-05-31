@@ -54,11 +54,11 @@ function sign(v: number)
     }
 }
 
-// blink(t, duration): returns true if t is within the on interval.
-function blink(t: number, duration: number)
+// phase(t, duration, n): returns phase if t is within the on interval.
+function phase(t: number, duration: number, n=2)
 {
-    if (duration === 0) return true;
-    return ((t % duration) < duration/2);
+    if (duration === 0) return 0;
+    return int(n*t/duration) % n;
 }
 
 // rnd(a, b): returns a random number.

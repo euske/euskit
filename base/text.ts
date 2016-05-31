@@ -507,7 +507,7 @@ class DialogBox extends TextBox {
 		bx += this.bounds.x;
 		by += this.bounds.y;
 	    }
-	    if (blink(this.ticks, this.blinking)) {
+	    if (phase(this.ticks, this.blinking)) {
 		cursor.font.renderString(
 		    ctx, cursor.text,
 		    bx+cursor.bounds.x, by+cursor.bounds.y);
