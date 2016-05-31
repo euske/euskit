@@ -72,6 +72,8 @@ class Sprite extends Task {
     visible: boolean = true;
     zOrder: number = 0;
     scale: Vec2 = new Vec2(1, 1);
+    rotation: number = 0;
+    center: Vec2 = null;
 
     constructor(bounds: Rect=null, imgsrc: ImageSource=null) {
 	super();
@@ -95,19 +97,28 @@ class Sprite extends Task {
   
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
 	// [OVERRIDE]
+	if (this.bounds === null) return;
+	ctx.save();
+	ctx.translate(bx+this.bounds.x, by+this.bounds.y);
+	if (this.center !== null) {
+	    ctx.translate(this.center.x, this.center.y);
+	    ctx.rotate(this.rotation);
+	    ctx.translate(-this.center.x, -this.center.y);
+	}
 	let w = this.bounds.width;
 	let h = this.bounds.height;
 	if (this.imgsrc instanceof DummyImageSource) {
 	    ctx.fillStyle = (this.imgsrc as DummyImageSource).color;
-	    ctx.fillRect(bx+this.bounds.x, by+this.bounds.y, w, h);
+	    ctx.fillRect(0, 0, w, h);
 	} else if (this.imgsrc instanceof HTMLImageSource) {
 	    let rect = (this.imgsrc as HTMLImageSource).bounds;
 	    let offset = (this.imgsrc as HTMLImageSource).offset;
 	    drawImageScaled(ctx, (this.imgsrc as HTMLImageSource).image,
 			    rect.x, rect.y, rect.width, rect.height,
-			    bx+this.bounds.x-offset.x, by+this.bounds.y-offset.y,
+			    -offset.x, -offset.y,
 			    w*this.scale.x, h*this.scale.y);
 	}
+	ctx.restore();
     }
 
 }
