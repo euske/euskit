@@ -343,10 +343,12 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 	return this.fallpts;
     }
     getGridPos() {
-	return this.profile.coord2grid(this.hitbox.center());
+	let p = this.collider.getAABB().center();
+	return this.profile.coord2grid(p);
     }
     getGridBox() {
-	return this.hitbox.center().expand(this.gridbox.width, this.gridbox.height);
+	let p = this.collider.getAABB().center();
+	return p.expand(this.gridbox.width, this.gridbox.height);
     }
     getGridBoxAt(p: Vec2) {
 	return this.profile.grid2coord(p).expand(this.gridbox.width, this.gridbox.height);
@@ -368,7 +370,8 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 	return this.grabbable.exists(this.tilemap.coord2map(hitbox));
     }
     canClimbDown(p: Vec2) {
-	let hitbox = this.getGridBoxAt(p).move(0, this.hitbox.height);
+	let rect = this.collider.getAABB();
+	let hitbox = this.getGridBoxAt(p).move(0, rect.height);
 	return this.grabbable.exists(this.tilemap.coord2map(hitbox));
     }
     canFall(p0: Vec2, p1: Vec2) {
@@ -417,8 +420,9 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
     }
 
     moveToward(p: Vec2) {
-	let r = this.getGridBoxAt(p);
-	let v = new Vec2(r.x-this.hitbox.x, r.y-this.hitbox.y);
+	let p0 = this.collider.getAABB().center();
+	let p1 = this.getGridBoxAt(p).center();
+	let v = p1.sub(p0);
 	v.x = clamp(-this.speed, v.x, +this.speed);
 	v.y = clamp(-this.speed, v.y, +this.speed);
 	this.movement = v;

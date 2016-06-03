@@ -58,8 +58,8 @@ class Layer {
 	for (let i = 0; i < this.entities.length; i++) {
 	    let obj = this.entities[i];
 	    if (!obj.alive) continue;
-	    if (obj.hitbox === null) continue;
-	    obj.hitbox = obj.hitbox.add(v);
+	    if (obj.collider === null) continue;
+	    obj.collider = obj.collider.add(v);
 	}
     }
 
@@ -94,8 +94,8 @@ class Layer {
     checkCollisions() {
 	for (let i = 0; i < this.entities.length; i++) {
 	    let obj0 = this.entities[i];
-	    if (obj0.alive && obj0.hitbox !== null) {
-		let a = this.findObjects(obj0.hitbox, this.entities.slice(i+1));
+	    if (obj0.alive && obj0.collider !== null) {
+		let a = this.findObjects(obj0.collider, this.entities.slice(i+1));
 		for (let j = 0; j < a.length; j++) {
 		    let obj1 = a[j];
 		    obj0.collide(obj1);
@@ -105,7 +105,7 @@ class Layer {
 	}
     }
     
-    findObjects(rect: Rect,
+    findObjects(shape: Shape,
 		objs: Entity[]=null,
 		f: (e:Entity)=>boolean=null) {
 	if (objs === null) {
@@ -114,8 +114,8 @@ class Layer {
 	let a:Entity[] = [];
 	for (let i = 0; i < objs.length; i++) {
 	    let obj1 = objs[i];
-	    if (obj1.alive && obj1.hitbox !== null &&
-		obj1.hitbox.overlaps(rect) && (f === null || f(obj1))) {
+	    if (obj1.alive && obj1.collider !== null &&
+		obj1.collider.overlaps(shape) && (f === null || f(obj1))) {
 		a.push(obj1);
 	    }
 	}

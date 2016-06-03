@@ -163,9 +163,23 @@ class Vec3 {
 }
 
 
+//  Shape
+//
+interface Shape {
+    copy<T extends Shape>(): T;
+    move<T extends Shape>(dx: number, dy: number): T;
+    add<T extends Shape>(v: Vec2): T;
+    equals<T extends Shape>(shape: T): boolean;
+    overlaps(shape: Shape): boolean;
+    contact(v: Vec2, shape: Shape): Vec2;
+    contactBounds(v: Vec2, rect: Rect): Vec2;
+    getAABB(): Rect;
+}
+
+
 //  Rect
 //
-class Rect {
+class Rect implements Shape {
 
     x: number;
     y: number;
@@ -302,11 +316,11 @@ class Rect {
 			this.y-(rect.y+rect.height));
     }
     
-    overlaps(rect: Rect) {
+    overlapsRect(rect: Rect) {
 	return (this.xdistance(rect) < 0 &&
 		this.ydistance(rect) < 0);
     }
-    
+
     union(rect: Rect) {
 	let x0 = Math.min(this.x, rect.x);
 	let y0 = Math.min(this.y, rect.y);
@@ -384,7 +398,7 @@ class Rect {
     }
     
     contactRect(v: Vec2, rect: Rect) {
-	assert(!this.overlaps(rect), 'rect overlapped');
+	assert(!this.overlapsRect(rect), 'rect overlapped');
 	
 	if (0 < v.x) {
 	    v = this.contactVLine(v, rect.x, rect.y, rect.y+rect.height);
@@ -417,12 +431,39 @@ class Rect {
 	return v;
     }
 
+    overlapsCircle(circle: Circle) {
+	// XXX
+	return false;
+    }
+
+    overlaps(shape: Shape): boolean {
+	if (shape instanceof Rect) {
+	    return this.overlapsRect(shape);
+	} else if (shape instanceof Circle) {
+	    return this.overlapsCircle(shape);
+	} else {
+	    return false;
+	}
+    }    
+
+    contact(v: Vec2, shape: Shape): Vec2 {
+	if (shape instanceof Rect) {
+	    return this.contactRect(v, shape);
+	} else {
+	    // XXX
+	    return null;
+	}
+    }
+
+    getAABB() {
+	return this;
+    }
 }
 
 
 //  Circle
 //
-class Circle {
+class Circle implements Shape {
 
     center: Vec2;
     radius: number;
@@ -478,7 +519,7 @@ class Circle {
 	return d+circle.radius <= this.radius;
     }
 
-    overlaps(circle: Circle) {
+    overlapsCircle(circle: Circle) {
 	let d = this.dist(circle.center);
 	return d <= this.radius+circle.radius;
     }
@@ -499,7 +540,7 @@ class Circle {
     }
     
     contactCircle(v: Vec2, circle: Circle) {
-	assert(!this.overlaps(circle), 'circle overlapped');
+	assert(!this.overlapsCircle(circle), 'circle overlapped');
 	let d = circle.center.sub(this.center);
 	let dv = d.x*v.x + d.y*v.y;
 	let v2 = v.len2();
@@ -513,6 +554,42 @@ class Circle {
 	} else {
 	    return v;
 	}
+    }
+
+    contactBounds(v: Vec2, bounds: Rect) {
+	// XXX
+	return v;
+    }
+
+    overlapsRect(rect: Rect) {
+	// XXX
+	return false;
+    }
+
+    overlaps(shape: Shape): boolean {
+	if (shape instanceof Circle) {
+	    return this.overlapsCircle(shape);
+	} else if (shape instanceof Rect) {
+	    return this.overlapsRect(shape);
+	} else {
+	    return false;
+	}
+    }    
+
+    contact(v: Vec2, shape: Shape): Vec2 {
+	if (shape instanceof Circle) {
+	    return this.contactCircle(v, shape);
+	} else {
+	    // XXX
+	    return null;
+	}
+    }    
+
+    getAABB() {
+	return new Rect(
+	    this.center.x-this.radius,
+	    this.center.y-this.radius,
+	    this.radius*2, this.radius*2);
     }
 }
 
@@ -613,7 +690,7 @@ class Box {
 		p.z <= this.origin.z+this.size.z);
     }
     
-    overlaps(box: Box) {
+    overlapsBox(box: Box) {
 	return (this.xdistance(box) < 0 &&
 		this.ydistance(box) < 0 &&
 		this.zdistance(box) < 0);
@@ -748,7 +825,7 @@ class Box {
     }
     
     contactBox(v: Vec3, box: Box) {
-	assert(!this.overlaps(box), 'box overlapped');
+	assert(!this.overlapsBox(box), 'box overlapped');
 	
 	if (0 < v.x) {
 	    v = this.contactYZPlane(v, box.origin.x, 

@@ -65,7 +65,8 @@ class Monster extends PlanningEntity {
     update() {
 	super.update();
 	if (!this.isPlanRunning()) {
-	    let runner = this.getPlan(this.target.hitbox.center(), 20, 40)
+	    let p = this.target.collider.getAABB().center();
+	    let runner = this.getPlan(p, 20, 40)
 	    if (runner !== null) {
 		this.startPlan(runner);
 	    }

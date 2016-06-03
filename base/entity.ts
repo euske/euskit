@@ -2,16 +2,16 @@
 /// <reference path="geom.ts" />
 /// <reference path="tilemap.ts" />
 
-function getContact(hitbox: Rect, v: Vec2, rects: Rect[], bounds: Rect[])
+function getContact(collider: Shape, v: Vec2, colliders: Shape[], bounds: Rect[])
 {
-    if (rects !== null) {
-	for (let i = 0; i < rects.length; i++) {
-	    v = hitbox.contactRect(v, rects[i]);
+    if (colliders !== null) {
+	for (let i = 0; i < colliders.length; i++) {
+	    v = collider.contact(v, colliders[i]);
 	}
     }
     if (bounds !== null) {
 	for (let i = 0; i < bounds.length; i++) {
-	    v = hitbox.contactBounds(v, bounds[i]);
+	    v = collider.contactBounds(v, bounds[i]);
 	}
     }
     return v;
@@ -87,7 +87,9 @@ class Sprite extends Task {
   
     movePos(v: Vec2) {
 	// [OVERRIDE]
-	this.bounds = this.bounds.add(v);
+	if (this.bounds !== null) {
+	    this.bounds = this.bounds.add(v);
+	}
     }
   
     update() {
@@ -197,7 +199,7 @@ class StarSprite extends Sprite {
 	    star.p.x += this.velocity.x/star.z;
 	    star.p.y += this.velocity.y/star.z;
 	    let rect = star.p.expand(star.s, star.s);
-	    if (!this.bounds.overlaps(rect)) {
+	    if (!this.bounds.overlapsRect(rect)) {
 		star.init(this.maxdepth);
 		star.p = this.bounds.modpt(star.p);
 	    }
@@ -231,15 +233,15 @@ class StarSprite extends Sprite {
 //
 class Entity extends Sprite {
 
-    hitbox: Rect;
+    collider: Shape;
 
-    constructor(bounds: Rect=null, imgsrc: ImageSource=null, hitbox: Rect=null) {
+    constructor(bounds: Rect=null, imgsrc: ImageSource=null, collider: Shape=null) {
 	super(bounds, imgsrc);
-	this.hitbox = (hitbox)? hitbox.copy() : null;
+	this.collider = collider;
     }
 
     toString() {
-	return '<Entity: '+this.hitbox+'>';
+	return '<Entity: '+this.collider+'>';
     }
 
     collide(entity: Entity) {
@@ -247,48 +249,50 @@ class Entity extends Sprite {
     }
 
     moveIfPossible(v: Vec2, force: boolean) {
-	this.movePos(this.getMove(v, this.hitbox, force));
+	this.movePos(this.getMove(v, this.collider, force));
     }
     
     movePos(v: Vec2) {
 	super.movePos(v);
-	if (this.hitbox !== null) {
-	    this.hitbox = this.hitbox.add(v);
+	if (this.collider !== null) {
+	    this.collider = this.collider.add(v);
 	}
     }
 
     isMovable(v0: Vec2) {
-	if (this.hitbox !== null) {
-	    let v1 = this.getMove(v0, this.hitbox, true);
+	if (this.collider !== null) {
+	    let v1 = this.getMove(v0, this.collider, true);
 	    return v1.equals(v0);
 	} else {
 	    return true;
 	}
     }
 
-    getMove(v: Vec2, hitbox: Rect, force: boolean) {
-	if (hitbox === null) return v;
-	let range = hitbox.union(hitbox.add(v));
+    getMove(v: Vec2, collider: Shape, force: boolean) {
+	if (collider === null) return v;
+	let hitbox0 = collider.getAABB();
+	let range = hitbox0.union(hitbox0.add(v));
 	let obstacles = this.getObstaclesFor(range, force);
 	let fences = this.getFencesFor(range, force);
-	let d = getContact(hitbox, v, obstacles, fences);
+	let d = getContact(collider, v, obstacles, fences);
 	v = v.sub(d);
-	hitbox = hitbox.add(d);
+	collider = collider.add(d);
 	if (v.x != 0) {
-	    d = getContact(hitbox, new Vec2(v.x, 0), obstacles, fences);
+	    d = getContact(collider, new Vec2(v.x, 0), obstacles, fences);
 	    v = v.sub(d);
-	    hitbox = hitbox.add(d);
+	    collider = collider.add(d);
 	}
 	if (v.y != 0) {
-	    d = getContact(hitbox, new Vec2(0, v.y), obstacles, fences);
+	    d = getContact(collider, new Vec2(0, v.y), obstacles, fences);
 	    v = v.sub(d);
-	    hitbox = hitbox.add(d);
+	    collider = collider.add(d);
 	}
-	return new Vec2(hitbox.x-this.hitbox.x,
-			hitbox.y-this.hitbox.y);
+	let hitbox1 = collider.getAABB();
+	return new Vec2(hitbox1.x-hitbox0.x,
+			hitbox1.y-hitbox0.y);
     }
   
-    getObstaclesFor(range: Rect, force: boolean): Rect[] {
+    getObstaclesFor(range: Rect, force: boolean): Shape[] {
 	// [OVERRIDE]
 	return null;
     }
@@ -308,9 +312,9 @@ class Projectile extends Entity {
     movement: Vec2 = new Vec2();
     frame: Rect;
 
-    constructor(bounds: Rect, imgsrc: ImageSource, hitbox: Rect=null,
+    constructor(bounds: Rect, imgsrc: ImageSource, collider: Shape=null,
 		movement: Vec2=null, frame: Rect=null) {
-	super(bounds, imgsrc, hitbox);
+	super(bounds, imgsrc, collider);
 	this.movement = movement;
 	this.frame = frame;
     }
@@ -320,7 +324,7 @@ class Projectile extends Entity {
 	if (this.movement !== null) {
 	    this.moveIfPossible(this.movement, true);
 	    if (this.frame !== null &&
-		!this.hitbox.overlaps(this.frame)) {
+		!this.collider.overlaps(this.frame)) {
 		this.die();
 	    }
 	}
@@ -343,8 +347,8 @@ class PhysicalEntity extends Entity {
     protected _jumpend: number;
     protected _landed: boolean;
     
-    constructor(bounds: Rect, imgsrc: ImageSource=null, hitbox: Rect=null) {
-	super(bounds, imgsrc, hitbox);
+    constructor(bounds: Rect, imgsrc: ImageSource=null, collider: Shape=null) {
+	super(bounds, imgsrc, collider);
 	this._jumpt = Infinity;
 	this._jumpend = 0;
 	this._landed = false;
@@ -380,7 +384,8 @@ class PhysicalEntity extends Entity {
     fall() {
 	if (!this.isHolding()) {
 	    let vy = this.jumpfunc(this.velocity.y, this._jumpt);
-	    this.velocity = this.getMove(new Vec2(this.velocity.x, vy), this.hitbox, false);
+	    let v = new Vec2(this.velocity.x, vy);
+	    this.velocity = this.getMove(v, this.collider, false);
 	    this.movePos(this.velocity);
 	    let landed = (0 < vy && this.velocity.y == 0);
 	    if (!this._landed && landed) {
@@ -416,13 +421,14 @@ class PlatformerEntity extends PhysicalEntity {
     tilemap: TileMap;
 
     constructor(tilemap: TileMap, bounds: Rect,
-		imgsrc: ImageSource=null, hitbox: Rect=null) {
-	super(bounds, imgsrc, hitbox);
+		imgsrc: ImageSource=null, collider: Rect=null) {
+	super(bounds, imgsrc, collider);
 	this.tilemap = tilemap;
     }
     
     isHolding() {
-	return (this.tilemap.findTile(this.tilemap.isGrabbable, this.hitbox) !== null);
+	let range = this.collider.getAABB();
+	return (this.tilemap.findTile(this.tilemap.isGrabbable, range) !== null);
     }
 
     getObstaclesFor(range: Rect, force: boolean): Rect[] {

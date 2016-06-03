@@ -146,11 +146,11 @@ class Shooter extends GameScene {
 	}
     }
 
-    set_action(action: boolean) {
+    setAction(action: boolean) {
 	this.player.setFire(action);
     }
     
-    set_dir(v: Vec2) {
+    setDir(v: Vec2) {
 	this.player.setMove(v);
     }
 
