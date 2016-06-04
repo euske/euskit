@@ -556,8 +556,7 @@ class Circle implements Shape {
     }
 
     contactBounds(v: Vec2, bounds: Rect) {
-	// XXX
-	return v;
+	return this.getAABB().contactBounds(v, bounds);
     }
 
     overlapsRect(rect: Rect) {
