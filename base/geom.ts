@@ -432,8 +432,7 @@ class Rect implements Shape {
     }
 
     overlapsCircle(circle: Circle) {
-	// XXX
-	return false;
+	return circle.overlapsRect(this);
     }
 
     overlaps(shape: Shape): boolean {
@@ -562,8 +561,24 @@ class Circle implements Shape {
     }
 
     overlapsRect(rect: Rect) {
-	// XXX
-	return false;
+	let x0 = rect.x;
+	let x1 = rect.right();
+	let y0 = rect.y;
+	let y1 = rect.bottom();
+	let cx = this.center.x;
+	let cy = this.center.y;
+	let r = this.radius;
+	return (this.containsPt(new Vec2(x0, y0)) ||
+		this.containsPt(new Vec2(x1, y0)) ||
+		this.containsPt(new Vec2(x0, y1)) ||
+		this.containsPt(new Vec2(x1, y1)) ||
+		((x0 < cx && cx < x1) &&
+		 (Math.abs(y0-cy) < r ||
+		  Math.abs(y1-cy) < r)) ||
+		((y0 < cy && cy < y1) &&
+		 (Math.abs(y0-cy) < r ||
+		  Math.abs(y1-cy) < r))
+	       );
     }
 
     overlaps(shape: Shape): boolean {
