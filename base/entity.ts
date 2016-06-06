@@ -322,7 +322,7 @@ class Projectile extends Entity {
     update() {
 	super.update();
 	if (this.movement !== null) {
-	    this.moveIfPossible(this.movement, true);
+	    this.movePos(this.movement);
 	    if (this.frame !== null &&
 		!this.collider.overlaps(this.frame)) {
 		this.die();

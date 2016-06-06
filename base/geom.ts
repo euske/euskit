@@ -538,6 +538,30 @@ class Circle implements Shape {
 			this.center.y+r*Math.sin(t));
     }
     
+    contactVLine(v: Vec2, x: number, y0: number, y1: number) {
+	let y = this.center.y + v.y;
+	if (y0 < y && y < y1) {
+	    let dx = x - this.center.x;
+	    let dt = dx / v.x;
+	    if (0 <= dt && dt <= 1) {
+		return new Vec2(dx, v.y*dt);
+	    }
+	}
+	return v;
+    }
+    
+    contactHLine(v: Vec2, y: number, x0: number, x1: number) {
+	let x = this.center.x + v.x;
+	if (x0 < x && x < x1) {
+	    let dy = y - this.center.y;
+	    let dt = dy / v.y;
+	    if (0 <= dt && dt <= 1) {
+		return new Vec2(v.x*dt, dy);
+	    }
+	}
+	return v;
+    }
+    
     contactCircle(v: Vec2, circle: Circle) {
 	assert(!this.overlapsCircle(circle), 'circle overlapped');
 	let d = circle.center.sub(this.center);
@@ -547,7 +571,11 @@ class Circle implements Shape {
 	let R = (this.radius + circle.radius);
 	// |d - t*v|^2 = (r1+r2)^2
 	// t = { (d*v) + sqrt((d*v)^2 - v^2(d^2-R^2)) } / v^2
-	let t = (dv - Math.sqrt(dv*dv - v2*(d2-R*R))) / v2;
+	let s = dv*dv - v2*(d2-R*R);
+	if (s <= 0) {
+	    return v;
+	} 
+	let t = (dv - Math.sqrt(s)) / v2;
 	if (0 <= t && t <= 1) {
 	    return v.scale(t);
 	} else {
