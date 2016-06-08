@@ -583,6 +583,31 @@ class Circle implements Shape {
 	}
     }
 
+    contactRect(v: Vec2, rect: Rect) {
+	if (0 < v.x) {
+	    v = this.contactVLine(v, rect.x, rect.y, rect.y+rect.height);
+	} else if (v.x < 0) {
+	    v = this.contactVLine(v, rect.x+rect.width, rect.y, rect.y+rect.height);
+	}
+
+	if (0 < v.y) {
+	    v = this.contactHLine(v, rect.y, rect.x, rect.x+rect.width);
+	} else if (v.y < 0) {
+	    v = this.contactHLine(v, rect.y+rect.height, rect.x, rect.x+rect.width);
+	}
+
+	if (this.center.x < rect.x && this.center.y < rect.y) {
+	    v = this.contactCircle(v, new Circle(new Vec2(rect.x, rect.y)));
+	} else if (rect.right() < this.center.x && this.center.y < rect.y) {
+	    v = this.contactCircle(v, new Circle(new Vec2(rect.right(), rect.y)));
+	} else if (this.center.x < rect.x && rect.bottom() < this.center.y) {
+	    v = this.contactCircle(v, new Circle(new Vec2(rect.x, rect.bottom())));
+	} else if (rect.right() < this.center.x && rect.bottom() < this.center.y) {
+	    v = this.contactCircle(v, new Circle(new Vec2(rect.right(), rect.bottom())));
+	}
+	return v;
+    }
+
     contactBounds(v: Vec2, bounds: Rect) {
 	return this.getAABB().contactBounds(v, bounds);
     }
@@ -621,6 +646,8 @@ class Circle implements Shape {
     contact(v: Vec2, shape: Shape): Vec2 {
 	if (shape instanceof Circle) {
 	    return this.contactCircle(v, shape);
+	} else if (shape instanceof Rect) {
+	    return this.contactRect(v, shape);
 	} else {
 	    // XXX
 	    return null;
