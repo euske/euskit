@@ -421,7 +421,7 @@ class PlatformerEntity extends PhysicalEntity {
     tilemap: TileMap;
 
     constructor(tilemap: TileMap, bounds: Rect,
-		imgsrc: ImageSource=null, collider: Rect=null) {
+		imgsrc: ImageSource=null, collider: Shape=null) {
 	super(bounds, imgsrc, collider);
 	this.tilemap = tilemap;
     }

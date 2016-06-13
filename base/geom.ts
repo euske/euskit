@@ -448,8 +448,9 @@ class Rect implements Shape {
     contact(v: Vec2, shape: Shape): Vec2 {
 	if (shape instanceof Rect) {
 	    return this.contactRect(v, shape);
+	} else if (shape instanceof Circle) {
+	    return shape.contactRect(v.scale(-1), this).scale(-1);
 	} else {
-	    // XXX
 	    return null;
 	}
     }
@@ -473,7 +474,7 @@ class Circle implements Shape {
     }
 
     toString() {
-	return 'Circle(center='+this.center+', radius'+this.radius+')';
+	return 'Circle(center='+this.center+', radius='+this.radius+')';
     }
     
     copy() {
@@ -600,7 +601,8 @@ class Circle implements Shape {
 	    v = this.contactCircle(v, new Circle(new Vec2(rect.x, rect.y)));
 	} else if (rect.right() < this.center.x && this.center.y < rect.y) {
 	    v = this.contactCircle(v, new Circle(new Vec2(rect.right(), rect.y)));
-	} else if (this.center.x < rect.x && rect.bottom() < this.center.y) {
+	}
+	if (this.center.x < rect.x && rect.bottom() < this.center.y) {
 	    v = this.contactCircle(v, new Circle(new Vec2(rect.x, rect.bottom())));
 	} else if (rect.right() < this.center.x && rect.bottom() < this.center.y) {
 	    v = this.contactCircle(v, new Circle(new Vec2(rect.right(), rect.bottom())));
@@ -649,7 +651,6 @@ class Circle implements Shape {
 	} else if (shape instanceof Rect) {
 	    return this.contactRect(v, shape);
 	} else {
-	    // XXX
 	    return null;
 	}
     }    
