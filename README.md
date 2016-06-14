@@ -30,7 +30,7 @@ class Paddle extends Entity {
     update() {
         // Updates the position.
         this.bounds = this.bounds.move(this.vx*4, 0).clamp(this.screen);
-        this.hitbox = this.bounds;
+        this.collider = this.bounds;
     }
 }
 
@@ -57,7 +57,7 @@ class Ball extends Entity {
             this.v.y = -this.v.y;
         }
         this.bounds = this.bounds.add(this.v);
-        this.hitbox = this.bounds;
+        this.collider = this.bounds;
     }
 
     collide(entity: Entity) {

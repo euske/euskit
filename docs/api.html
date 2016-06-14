@@ -33,6 +33,7 @@ Functions:
 <a href="#Vec3"><code>Vec3</code></a>,
 <a href="#Rect"><code>Rect</code></a>,
 <a href="#Circle"><code>Circle</code></a>,
+<a href="#Shape"><code>Shape</code></a>,
 <a href="#Box"><code>Box</code></a>,
 <a href="#TileMap"><code>TileMap</code></a>,
 <a href="#RangeMap"><code>RangeMap</code></a>,
@@ -107,7 +108,7 @@ Functions:
     <a href="#Sprite"><code>Sprite</code></a>: 
     A <code>Task</code> that is visible on screen.<br>
     <a href="#Entity"><code>Entity</code></a>: 
-    A <code>Sprite</code> that has a hitbox and can collide another <code>Entity</code>.<br>
+    A <code>Sprite</code> that can collide another <code>Entity</code>.<br>
   </div>
 </div>
 
@@ -443,7 +444,7 @@ has its position (x, y) and size (width, height).
   <td><code>true</code> if the rectangle contains <code>p</code>.</td></tr>
 <tr><td><code>.containsRect(rect)</code></td>
   <td><code>true</code> if the rectangle contains <code>rect</code>.</td></tr>
-<tr><td><code>.overlaps(rect)</code></td>
+<tr><td><code>.overlapsRect(rect)</code></td>
   <td><code>true</code> if the rectangle overlaps <code>rect</code>.</td></tr>
 <tr><td><code>.contactRect(v, rect)</code></td>
   <td>Trims a vector so that it doesn't collide <code>rect</code>.</td></tr>
@@ -461,6 +462,28 @@ A <code>Circle</code> represents a circle that has its center and radius.
   <td>The center of the circle.</td></tr>
 <tr><td><code>.radius</code></td>
   <td>The radius of the circle.</td></tr>
+</table>
+
+<a name="Shape"><h3>Shape (<code>geom.ts</code>)</h3></a>
+<p>
+A <code>Shape</code> is an abstract interface that represents a collider.
+<table border>
+<tr><td><code>.copy()</code></td>
+  <td>Duplicates the shape.</td></tr>
+<tr><td><code>.move(dx, dy)</code></td>
+  <td>Creates a shape moved by (<code>dx</code>, <code>dy</code>).</td></tr>
+<tr><td><code>.add(v)</code></td>
+  <td>Creates a shape moved by <code>v</code>.</td></tr>
+<tr><td><code>.equals(shape)</code></td>
+  <td><code>true</code> if <code>shape</code> is identical.</td></tr>
+<tr><td><code>.overlaps(shape)</code></td>
+  <td><code>true</code> if the shape overlaps <code>shape</code>.</td></tr>
+<tr><td><code>.contact(v, shape)</code></td>
+  <td>Trims a vector so that it doesn't collide <code>shape</code>.</td></tr>
+<tr><td><code>.contactBounds(v, shape)</code></td>
+  <td>Trims a vector so that it doesn't collide <code>bounds</code>.</td></tr>
+<tr><td><code>.getAABB()</code></td>
+  <td>Returns the AABB of the shape.</td></tr>
 </table>
 
 <a name="Box"><h3>Box (<code>geom.ts</code>)</h3></a>
@@ -682,7 +705,7 @@ A <code>Sprite</code> represents something that's shown on the screen.
 <p>
 An <code>Entity</code> is a physical object that's visible and has a physical boundary.
 <table border>
-<tr><td><code>new Entity(bounds, <em>[imgsrc, [hitbox]]</em>)</code></td>
+<tr><td><code>new Entity(bounds, <em>[imgsrc, [collider]]</em>)</code></td>
   <td>Creates a new entity.</td></tr>
 <tr class=inherited><td><code>.alive</code></td>
   <td><code>true</code> if the entity is alive.</td></tr>
@@ -706,8 +729,8 @@ An <code>Entity</code> is a physical object that's visible and has a physical bo
   <td>Kills the entity.</td></tr>
 <tr class=inherited><td><code>.movePos(v)</code></td>
   <td>Moves the entity by <code>v</code>.</td></tr>
-<tr><td><code>.hitbox</code></td>
-  <td>A <code>Rect</code> for the entity's hitbox.</td></tr>
+<tr><td><code>.collider</code></td>
+  <td>A <code>Rect</code>/<code>Circle</code> for the entity's collider.</td></tr>
 <tr class=overridable><td><code>.update()</code></td>
   <td>Updates for the current frame.</td></tr>
 <tr class=overridable><td><code>.render(ctx, bx, by)</code></td>
@@ -720,10 +743,10 @@ An <code>Entity</code> is a physical object that's visible and has a physical bo
   <td><code>true</code> if the entity is movable toward <code>v</code>.</td></tr>
 <tr><td><code>.getMove(v)</code></td>
   <td>Trims the vector <code>v</code> so that it doesn't collide.</td></tr>
-<tr class=overridable><td><code>.getObstaclesFor(hitbox,<br>&nbsp; force, range)</code></td>
-  <td>Returns the movement vector <code>hitbox</code> within <code>range</code>.</td></tr>
-<tr class=overridable><td><code>.getFencesFor(hitbox,<br>&nbsp; force, range)</code></td>
-  <td>Returns the rectangle that limits the entity within.</td></tr>
+<tr class=overridable><td><code>.getObstaclesFor(range, force)</code></td>
+  <td>Returns a list of <code>Shape</code>s within <code>range</code>.</td></tr>
+<tr class=overridable><td><code>.getFencesFor(range, force)</code></td>
+  <td>Returns a list of bounding rectangles that limits the entity within.</td></tr>
 </table>
 
 <a name="Layer"><h3>Layer (<code>layer.ts</code>)</h3></a>
@@ -895,7 +918,7 @@ A <code>Queue</code> is a list of <code>Task</code>s that are executed sequentia
 A <code>Projectile</code> is an <code>Entity</code> that 
 keeps moving towards a specific direction.
 <table border>
-<tr><td><code>new Projectile(frame, bounds,<br>&nbsp; imgsrc, hitbox, movement)</code></td>
+<tr><td><code>new Projectile(frame, bounds,<br>&nbsp; imgsrc, collider, movement, frame)</code></td>
   <td>Creates a new projectile.</td></tr>
 <tr><td><code>.frame</code></td>
   <td>The rectangle where the object is kept alive within.</td></tr>
