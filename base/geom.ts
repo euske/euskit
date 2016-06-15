@@ -296,8 +296,8 @@ class Rect implements Shape {
     }
     
     containsPt(p: Vec2) {
-	return (this.x <= p.x && this.y <= p.y &&
-		p.x <= this.x+this.width && p.y <= this.y+this.height);
+	return (this.x < p.x && this.y < p.y &&
+		p.x < this.x+this.width && p.y < this.y+this.height);
     }
     
     containsRect(rect: Rect) {
@@ -319,6 +319,10 @@ class Rect implements Shape {
     overlapsRect(rect: Rect) {
 	return (this.xdistance(rect) < 0 &&
 		this.ydistance(rect) < 0);
+    }
+
+    overlapsCircle(circle: Circle) {
+	return circle.overlapsRect(this);
     }
 
     union(rect: Rect) {
@@ -431,10 +435,6 @@ class Rect implements Shape {
 	return v;
     }
 
-    overlapsCircle(circle: Circle) {
-	return circle.overlapsRect(this);
-    }
-
     overlaps(shape: Shape): boolean {
 	if (shape instanceof Rect) {
 	    return this.overlapsRect(shape);
@@ -511,19 +511,40 @@ class Circle implements Shape {
     }
 
     containsPt(p: Vec2) {
-	return this.dist(p) <= this.radius;
+	return this.dist(p) < this.radius;
     }
 
     containsCircle(circle: Circle) {
 	let d = this.dist(circle.center);
-	return d+circle.radius <= this.radius;
+	return d+circle.radius < this.radius;
     }
 
     overlapsCircle(circle: Circle) {
 	let d = this.dist(circle.center);
-	return d <= this.radius+circle.radius;
+	return d < this.radius+circle.radius;
     }
     
+    overlapsRect(rect: Rect) {
+	let x0 = rect.x;
+	let x1 = rect.right();
+	let y0 = rect.y;
+	let y1 = rect.bottom();
+	let cx = this.center.x;
+	let cy = this.center.y;
+	let r = this.radius;
+	return (this.containsPt(new Vec2(x0, y0)) ||
+		this.containsPt(new Vec2(x1, y0)) ||
+		this.containsPt(new Vec2(x0, y1)) ||
+		this.containsPt(new Vec2(x1, y1)) ||
+		((x0 < cx && cx < x1) &&
+		 (Math.abs(y0-cy) < r ||
+		  Math.abs(y1-cy) < r)) ||
+		((y0 < cy && cy < y1) &&
+		 (Math.abs(x0-cx) < r ||
+		  Math.abs(x1-cx) < r))
+	       );
+    }
+
     clamp(bounds: Rect) {
 	let x = ((bounds.width < this.radius)? bounds.centerx() :
 		 clamp(bounds.x, this.center.x, bounds.x+bounds.width-this.radius));
@@ -542,6 +563,7 @@ class Circle implements Shape {
     contactVLine(v: Vec2, x: number, y0: number, y1: number) {
 	let y = this.center.y + v.y;
 	if (y0 < y && y < y1) {
+	    x += (v.x < 0)? this.radius : -this.radius;
 	    let dx = x - this.center.x;
 	    let dt = dx / v.x;
 	    if (0 <= dt && dt <= 1) {
@@ -554,6 +576,7 @@ class Circle implements Shape {
     contactHLine(v: Vec2, y: number, x0: number, x1: number) {
 	let x = this.center.x + v.x;
 	if (x0 < x && x < x1) {
+	    y += (v.y < 0)? this.radius : -this.radius;
 	    let dy = y - this.center.y;
 	    let dt = dy / v.y;
 	    if (0 <= dt && dt <= 1) {
@@ -564,7 +587,7 @@ class Circle implements Shape {
     }
     
     contactCircle(v: Vec2, circle: Circle) {
-	assert(!this.overlapsCircle(circle), 'circle overlapped');
+	//assert(!this.overlapsCircle(circle), 'circle overlapped');
 	let d = circle.center.sub(this.center);
 	let dv = d.x*v.x + d.y*v.y;
 	let v2 = v.len2();
@@ -585,6 +608,7 @@ class Circle implements Shape {
     }
 
     contactRect(v: Vec2, rect: Rect) {
+	//assert(!this.overlapsRect(rect), 'rect overlapped');
 	if (0 < v.x) {
 	    v = this.contactVLine(v, rect.x, rect.y, rect.y+rect.height);
 	} else if (v.x < 0) {
@@ -597,14 +621,16 @@ class Circle implements Shape {
 	    v = this.contactHLine(v, rect.y+rect.height, rect.x, rect.x+rect.width);
 	}
 
-	if (this.center.x < rect.x && this.center.y < rect.y) {
+	if (this.center.x < rect.x || this.center.y < rect.y) {
 	    v = this.contactCircle(v, new Circle(new Vec2(rect.x, rect.y)));
-	} else if (rect.right() < this.center.x && this.center.y < rect.y) {
+	}
+	if (rect.right() < this.center.x || this.center.y < rect.y) {
 	    v = this.contactCircle(v, new Circle(new Vec2(rect.right(), rect.y)));
 	}
-	if (this.center.x < rect.x && rect.bottom() < this.center.y) {
+	if (this.center.x < rect.x || rect.bottom() < this.center.y) {
 	    v = this.contactCircle(v, new Circle(new Vec2(rect.x, rect.bottom())));
-	} else if (rect.right() < this.center.x && rect.bottom() < this.center.y) {
+	}
+	if (rect.right() < this.center.x || rect.bottom() < this.center.y) {
 	    v = this.contactCircle(v, new Circle(new Vec2(rect.right(), rect.bottom())));
 	}
 	return v;
@@ -612,27 +638,6 @@ class Circle implements Shape {
 
     contactBounds(v: Vec2, bounds: Rect) {
 	return this.getAABB().contactBounds(v, bounds);
-    }
-
-    overlapsRect(rect: Rect) {
-	let x0 = rect.x;
-	let x1 = rect.right();
-	let y0 = rect.y;
-	let y1 = rect.bottom();
-	let cx = this.center.x;
-	let cy = this.center.y;
-	let r = this.radius;
-	return (this.containsPt(new Vec2(x0, y0)) ||
-		this.containsPt(new Vec2(x1, y0)) ||
-		this.containsPt(new Vec2(x0, y1)) ||
-		this.containsPt(new Vec2(x1, y1)) ||
-		((x0 < cx && cx < x1) &&
-		 (Math.abs(y0-cy) < r ||
-		  Math.abs(y1-cy) < r)) ||
-		((y0 < cy && cy < y1) &&
-		 (Math.abs(y0-cy) < r ||
-		  Math.abs(y1-cy) < r))
-	       );
     }
 
     overlaps(shape: Shape): boolean {

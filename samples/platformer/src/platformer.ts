@@ -30,7 +30,8 @@ class Player extends PlatformerEntity {
 
     constructor(scene: Game, pos: Vec2) {
 	let bounds = pos.expand(16, 16);
-	super(scene.tilemap, bounds, scene.sheet.get(0), bounds);
+	let collider = new Circle(pos, 8);
+	super(scene.tilemap, bounds, scene.sheet.get(0), collider);
 	this.scene = scene;
 	this.usermove = new Vec2();
 	this.setJumpFunc(jumpfunc);
