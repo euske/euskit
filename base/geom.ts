@@ -463,6 +463,7 @@ class Rect implements Shape {
 
 //  Circle
 //
+const EPSILON = 0.0001;
 class Circle implements Shape {
 
     center: Vec2;
@@ -596,15 +597,17 @@ class Circle implements Shape {
 	// |d - t*v|^2 = (r1+r2)^2
 	// t = { (d*v) + sqrt((d*v)^2 - v^2(d^2-R^2)) } / v^2
 	let s = dv*dv - v2*(d2-R*R);
-	if (s <= 0) {
-	    return v;
-	} 
-	let t = (dv - Math.sqrt(s)) / v2;
-	if (0 <= t && t <= 1) {
-	    return v.scale(t);
-	} else {
-	    return v;
+	if (0 < s) {
+	    let t = (dv - Math.sqrt(s)) / v2;
+	    if (t < -EPSILON) {
+		;
+	    } else if (t < EPSILON) {
+		v = new Vec2();
+	    } else if (t < 1+EPSILON) {
+		v = v.scale(t/(1+EPSILON));
+	    }
 	}
+	return v;
     }
 
     contactRect(v: Vec2, rect: Rect) {
