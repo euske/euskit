@@ -47,12 +47,12 @@ Functions:
 <a href="#Scene"><code>Scene</code></a>,
 <a href="#App"><code>App</code></a>
 <br>Special Classes:
-<a href="#Queue"><code>Queue</code></a>,
 <a href="#Projectile"><code>Projectile</code></a>,
 <a href="#TiledSprite"><code>TiledSprite</code></a>,
 <a href="#FlowSprite"><code>FlowSprite</code></a>,
 <a href="#PhysicalEntity"><code>PhysicalEntity</code></a>,
 <a href="#PlatformerEntity"><code>PlatformerEntity</code></a>,
+<a href="#Queue"><code>Queue</code></a>,
 <a href="#ScrollLayer"><code>ScrollLayer</code></a>,
 <a href="#HTMLScene"><code>HTMLScene</code></a>,
 <a href="#GameScene"><code>GameScene</code></a>,
@@ -867,7 +867,47 @@ responsible for switching Scenes.
 
 <a name="special-classes"><h2>Special Classes</h2></a>
 
-<a name="Queue"><h3>Queue : <a href="#Task">Task</a> (<code>entity.ts</code>)</h3></a>
+<a name="TiledSprite"><h3>TiledSprite : <a href="#Sprite">Sprite</a> (<code>entity.ts</code>)</h3></a>
+<p>
+A <code>TiledSprite</code> is a Sprite that shows 
+the same image repeatedly within the bounds.
+<table border>
+<tr><td><code>new TiledSprite(bounds, imgsrc)</code></td>
+  <td>Creates a new sprite.</td></tr>
+<tr><td><code>.offset</code></td>
+  <td>The offset of the image (in <code>Vec2</code>).</td></tr>
+</table>
+
+<a name="StarSprite"><h3>StarSprite : <a href="#Sprite">Sprite</a> (<code>entity.ts</code>)</h3></a>
+<p>
+A <code>Sprite</code> that shows multiple parallaxed stars. 
+Suitable for space backgrounds.
+<table border>
+<tr><td><code>new StarSprite(<br>&nbsp; bounds, imgsrc, nstars,<br>&nbsp; <em>[velocity, [maxdepth]]</em>)</code></td>
+  <td>Creates a new sprite.</td></tr>
+<tr><td><code>.velocity</code></td>
+  <td>The velocity of the star movement.</td></tr>
+<tr><td><code>.maxdepth</code></td>
+  <td>The maximum depth of stars.</td></tr>
+</table>
+
+<a name="Projectile"><h3>Projectile : <a href="#Entity">Entity</a> (<code>entity.ts</code>)</h3></a>
+<p>
+A <code>Projectile</code> is an <code>Entity</code> that 
+keeps moving towards a specific direction.
+<table border>
+<tr><td><code>new Projectile(frame, bounds,<br>&nbsp; imgsrc, collider,<br>&nbsp; <em>[movement[, frame]]</em>)</code></td>
+  <td>Creates a new projectile.</td></tr>
+<tr><td><code>.movement</code></td>
+  <td>The velocity of the object.</td></tr>
+<tr><td><code>.frame</code></td>
+  <td>The rectangle where the object is kept alive within.</td></tr>
+</table>
+
+<a name="PhysicalEntity"><h3>PhysicalEntity (<code>entity.ts</code>)</h3></a>
+<a name="PlatformerEntity"><h3>PlatformerEntity (<code>entity.ts</code>)</h3></a>
+
+<a name="Queue"><h3>Queue : <a href="#Task">Task</a> (<code>tween.ts</code>)</h3></a>
 <p>
 A <code>Queue</code> is a list of <code>Task</code>s that are executed sequentially.
 <table border>
@@ -894,40 +934,6 @@ A <code>Queue</code> is a list of <code>Task</code>s that are executed sequentia
 <tr><td><code>.clear()</code></td>
   <td>Removes all the <code>Task</code>s from the queue.</td></tr>
 </table>
-
-<a name="TiledSprite"><h3>TiledSprite : <a href="#Sprite">Sprite</a> (<code>entity.ts</code>)</h3></a>
-<table border>
-<tr><td><code>new TiledSprite(bounds, imgsrc)</code></td>
-  <td>Creates a new sprite.</td></tr>
-<tr><td><code>.offset</code></td>
-  <td></td></tr>
-</table>
-
-<a name="StarSprite"><h3>StarSprite : <a href="#Sprite">Sprite</a> (<code>entity.ts</code>)</h3></a>
-<table border>
-<tr><td><code>new StarSprite(<br>&nbsp; bounds, imgsrc, nstars,<br>&nbsp; <em>[velocity, [maxdepth]]</em>)</code></td>
-  <td>Creates a new sprite.</td></tr>
-<tr><td><code>.velocity</code></td>
-  <td></td></tr>
-<tr><td><code>.maxdepth</code></td>
-  <td></td></tr>
-</table>
-
-<a name="Projectile"><h3>Projectile : <a href="#Entity">Entity</a> (<code>entity.ts</code>)</h3></a>
-<p>
-A <code>Projectile</code> is an <code>Entity</code> that 
-keeps moving towards a specific direction.
-<table border>
-<tr><td><code>new Projectile(frame, bounds,<br>&nbsp; imgsrc, collider, movement, frame)</code></td>
-  <td>Creates a new projectile.</td></tr>
-<tr><td><code>.frame</code></td>
-  <td>The rectangle where the object is kept alive within.</td></tr>
-<tr><td><code>.movement</code></td>
-  <td>The velocity of the object.</td></tr>
-</table>
-
-<a name="PhysicalEntity"><h3>PhysicalEntity (<code>entity.ts</code>)</h3></a>
-<a name="PlatformerEntity"><h3>PlatformerEntity (<code>entity.ts</code>)</h3></a>
 
 <a name="ScrollLayer"><h3>ScrollLayer (<code>layer.ts</code>)</h3></a>
 

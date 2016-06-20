@@ -2,6 +2,13 @@ Euskit
 ======
 
 A minimalistic HTML5 framework for 2D games written in TypeScript.
+(The name was suggested by Mr. Rat King)
+
+Features
+--------
+ * Simple and straightforward API.
+ * Suitable for old-school pixel art games.
+ * Object oriented.
 
 API Documentation
 -----------------
