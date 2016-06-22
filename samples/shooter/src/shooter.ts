@@ -2,7 +2,6 @@
 ///
 
 const WHITE = new DummyImageSource('white');
-var APP: App;
 
 
 //  Bullet
@@ -119,7 +118,6 @@ class Shooter extends GameScene {
 
     constructor(app: App) {
 	super(app);
-	APP = app;
 	this.sprites = new ImageSpriteSheet(APP.images['sprites'], new Vec2(16,16));
     }
     

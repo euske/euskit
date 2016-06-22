@@ -1,8 +1,6 @@
 ///  game.ts
 ///
 
-var APP: App;
-
 
 //  Player
 //
@@ -38,7 +36,6 @@ class Game extends GameScene {
 
     constructor(app: App) {
 	super(app);
-	APP = app;
 	this.sprites = new ImageSpriteSheet(APP.images['sprites'], new Vec2(16,16));
     }
     

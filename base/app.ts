@@ -14,6 +14,7 @@ interface DivDictionary {
     [index: string]: HTMLDivElement;
 }
 
+
 //  App
 //  handles the event loop and global state management.
 //  It also has shared resources (images, audios, etc.)
@@ -277,6 +278,9 @@ class App {
 }
 
 
+//  Global App instance.
+var APP: App;
+
 // main: sets up the browser interaction.
 function main<T extends Scene>(
     scene0: { new(app:App):T; },
@@ -294,32 +298,32 @@ function main<T extends Scene>(
     let audios = getprops(document.getElementsByTagName('audio')) as AudioDictionary;
     let labels = getprops(document.getElementsByClassName('label')) as DivDictionary;
     let frame = document.getElementById(canvasId) as HTMLCanvasElement;
-    let app = new App(framerate, scale, frame, images, audios, labels);
     let ctx = getEdgeyContext(frame);
+    APP = new App(framerate, scale, frame, images, audios, labels);
     let timer: number;
-  
+
     function repaint() {
-	ctx.drawImage(app.screen,
-		      0, 0, app.screen.width, app.screen.height,
+	ctx.drawImage(APP.screen,
+		      0, 0, APP.screen.width, APP.screen.height,
 		      0, 0, frame.width, frame.height);
     }    
     
     function tick() {
-	if (app.active) {
-	    app.tick();
-	    app.repaint();
+	if (APP.active) {
+	    APP.tick();
+	    APP.repaint();
 	    repaint();
 	}
     }
     
     function keydown(e: KeyboardEvent) {
-	if (app.active) {
+	if (APP.active) {
 	    switch (e.keyCode) {
 	    case 17:			// Control
 	    case 18:			// Meta
 		break;
 	    default:
-		app.keydown(e);
+		APP.keydown(e);
 		break;
 	    }
 	    switch (e.keyCode) {
@@ -343,46 +347,46 @@ function main<T extends Scene>(
     }
     
     function keyup(e: KeyboardEvent) {
-	if (app.active) {
+	if (APP.active) {
 	    switch (e.keyCode) {
 	    case 17:			// Control
 	    case 18:			// Meta
 		break;
 	    default:
-		app.keyup(e);
+		APP.keyup(e);
 		break;
 	    }
 	}
     }
     
     function mousedown(e: MouseEvent) {
-	if (app.active) {
-	    app.mousedown(e);
+	if (APP.active) {
+	    APP.mousedown(e);
 	}
     }
     
     function mouseup(e: MouseEvent) {
-	if (app.active) {
-	    app.mouseup(e);
+	if (APP.active) {
+	    APP.mouseup(e);
 	}
     }
     
     function mousemove(e: MouseEvent) {
-	if (app.active) {
-	    app.mousemove(e);
+	if (APP.active) {
+	    APP.mousemove(e);
 	}
     }
     
     function focus(e: FocusEvent) {
-	if (!app.active) {
-	    app.focus();
+	if (!APP.active) {
+	    APP.focus();
 	    repaint();
 	}
     }
     
     function blur(e: FocusEvent) {
-	if (app.active) {
-	    app.blur();
+	if (APP.active) {
+	    APP.blur();
 	    repaint();
 	}
 	let size = 50;
@@ -398,8 +402,8 @@ function main<T extends Scene>(
 	ctx.restore();
     }
 
-    app.init(new scene0(app));
-    app.focus();
+    APP.init(new scene0(APP));
+    APP.focus();
     window.addEventListener('keydown', keydown);
     window.addEventListener('keyup', keyup);
     window.addEventListener('mousedown', mousedown);
