@@ -46,16 +46,16 @@ Functions:
 <a href="#Layer"><code>Layer</code></a>,
 <a href="#Scene"><code>Scene</code></a>,
 <a href="#App"><code>App</code></a>
-<br>Special Classes:
+<br>Specialized Classes:
 <a href="#Projectile"><code>Projectile</code></a>,
 <a href="#TiledSprite"><code>TiledSprite</code></a>,
 <a href="#FlowSprite"><code>FlowSprite</code></a>,
 <a href="#PhysicalEntity"><code>PhysicalEntity</code></a>,
 <a href="#PlatformerEntity"><code>PlatformerEntity</code></a>,
-<a href="#Queue"><code>Queue</code></a>,
 <a href="#ScrollLayer"><code>ScrollLayer</code></a>,
-<a href="#HTMLScene"><code>HTMLScene</code></a>,
 <a href="#GameScene"><code>GameScene</code></a>,
+<a href="#Queue"><code>Queue</code></a>,
+<a href="#HTMLScene"><code>HTMLScene</code></a>,
 <a href="#PlanActor"><code>PlanActor</code></a>,
 <a href="#PlanAction"><code>PlanAction</code></a>,
 <a href="#PlanProfile"><code>PlanProfile</code></a>,
@@ -63,6 +63,10 @@ Functions:
 <a href="#PlanActionRunner"><code>PlanActionRunner</code></a>,
 <a href="#PlanningEntity"><code>PlanningEntity</code></a>
 </div>
+<p>
+Legend...
+<span class=inherited><code>inherited</code></span>,
+<span class=overridable><code>overridable</code></span>
 
 <a name="concepts"><h2>Concepts</h2></a>
 <div style="position: relative;">
@@ -867,12 +871,12 @@ responsible for switching Scenes.
 </table>
 
 
-<a name="special-classes"><h2>Special Classes</h2></a>
+<a name="specialized-classes"><h2>Specialized Classes</h2></a>
 
 <a name="TiledSprite"><h3>TiledSprite : <a href="#Sprite">Sprite</a> (<code>entity.ts</code>)</h3></a>
 <p>
-A <code>TiledSprite</code> is a Sprite that shows 
-the same image repeatedly within the bounds.
+A <code>Sprite</code> shows an image repeatedly within the bounds.
+Suitable for backgrounds.
 <table border>
 <tr><td><code>new TiledSprite(bounds, imgsrc)</code></td>
   <td>Creates a new sprite.</td></tr>
@@ -883,7 +887,7 @@ the same image repeatedly within the bounds.
 <a name="StarSprite"><h3>StarSprite : <a href="#Sprite">Sprite</a> (<code>entity.ts</code>)</h3></a>
 <p>
 A <code>Sprite</code> that shows multiple parallaxed stars. 
-Suitable for space backgrounds.
+Suitable for space-y backgrounds.
 <table border>
 <tr><td><code>new StarSprite(<br>&nbsp; bounds, imgsrc, nstars,<br>&nbsp; <em>[velocity, [maxdepth]]</em>)</code></td>
   <td>Creates a new sprite.</td></tr>
@@ -897,6 +901,7 @@ Suitable for space backgrounds.
 <p>
 A <code>Projectile</code> is an <code>Entity</code> that 
 keeps moving towards a specific direction.
+Suitable for bullets or obstacles.
 <table border>
 <tr><td><code>new Projectile(frame, bounds,<br>&nbsp; imgsrc, collider,<br>&nbsp; <em>[movement[, frame]]</em>)</code></td>
   <td>Creates a new projectile.</td></tr>
@@ -907,7 +912,82 @@ keeps moving towards a specific direction.
 </table>
 
 <a name="PhysicalEntity"><h3>PhysicalEntity (<code>entity.ts</code>)</h3></a>
+<p>
+An <code>Entity</code> that is affected by gravity.
+Suitable for charcters or objects that can jump or fall.
+<table border>
+<tr><td><code>new PhysicalEntity(bounds,<br>&nbsp; <em>[imgsrc, [collider]]</em>)</code></td>
+  <td>Creates a new entity.</td></tr>
+<tr class=inherited><td><code>.alive</code></td>
+  <td><code>true</code> if the entity is alive.</td></tr>
+<tr class=inherited><td><code>.layer</code></td>
+  <td>A <code>Layer</code> that the entity belongs to.</td></tr>
+<tr class=inherited><td><code>.ticks</code></td>
+  <td>The elapsed time since the entity started.</td></tr>
+<tr class=inherited><td><code>.died</code></td>
+  <td>A <code>Slot</code> that is signaled when the entity dies.</td></tr>
+<tr class=inherited><td><code>.bounds</code></td>
+  <td>A <code>Rect</code> for the entity's size and position.</td></tr>
+<tr class=inherited><td><code>.imgsrc</code></td>
+  <td>A <code>ImageSource</code> for the entity's content.</td></tr>
+<tr class=inherited><td><code>.visible</code></td>
+  <td><code>true</code> if the entity is visible.</td></tr>
+<tr class=inherited><td><code>.zOrder</code></td>
+  <td>The order that the entity is drawn to the screen.</td></tr>
+<tr class=inherited><td><code>.scale</code></td>
+  <td>A vector for the polarity of the entity image.</td></tr>
+<tr><td><code>.velocity</code></td>
+  <td>A vector for the current velocity.</td></tr>
+<tr><td><code>.maxspeed</code></td>
+  <td>A vector for the maximum speed (absolute values).</td></tr>
+<tr><td><code>.jumpfunc</code></td>
+  <td>A gravity function <code>(vy:number, t:number) =&gt; number</code></td></tr>
+<tr class=inherited><td><code>.die()</code></td>
+  <td>Kills the entity.</td></tr>
+<tr class=inherited><td><code>.movePos(v)</code></td>
+  <td>Moves the entity by <code>v</code>.</td></tr>
+<tr class=inherited><td><code>.collider</code></td>
+  <td>A <code>Rect</code>/<code>Circle</code> for the entity's collider.</td></tr>
+<tr class=overridable><td><code>.update()</code></td>
+  <td>Updates for the current frame.</td></tr>
+<tr class=overridable><td><code>.render(ctx, bx, by)</code></td>
+  <td>Draws the entity at the location (<code>bx</code>, <code>by</code>).</td></tr>
+<tr class=overridable><td><code>.collide(entity)</code></td>
+  <td>Invoked when the entity collides another entity.</td></tr>
+<tr class=inherited><td><code>.moveIfPossible(v, force)</code></td>
+  <td>Moves the entity by <code>v</code> without colliding obstacles.</td></tr>
+<tr class=inherited><td><code>.isMovable(v)</code></td>
+  <td><code>true</code> if the entity is movable toward <code>v</code>.</td></tr>
+<tr class=inherited><td><code>.getMove(v)</code></td>
+  <td>Trims the vector <code>v</code> so that it doesn't collide.</td></tr>
+<tr class=overridable><td><code>.getObstaclesFor(range, force)</code></td>
+  <td>Returns a list of <code>Shape</code>s within <code>range</code>.</td></tr>
+<tr class=overridable><td><code>.getFencesFor(range, force)</code></td>
+  <td>Returns a list of bounding rectangles that limits the entity within.</td></tr>
+<tr><td><code>.setJumpFunc(function)</code></td>
+  <td>Sets the gravity function.</td></tr>
+<tr><td><code>.setJump(jumpend)</code></td>
+  <td>Starts a jump maneuver that ends at <code>t=jumpend</code>.</td></tr>
+<tr><td><code>.jump()</code></td>
+  <td>Invoked when the entity starts jumping.</td></tr>
+<tr><td><code>.fall()</code></td>
+  <td>Invoked for every update.</td></tr>
+<tr><td><code>.isLanded()</code></td>
+  <td><code>true</code> if the entity is landed on a platform.</td></tr>
+<tr class=overridable><td><code>.land()</code></td>
+  <td>Invoked when the entity is landed on a platform.</td></tr>
+<tr class=overridable><td><code>.isHolding()</code></td>
+  <td><code>true</code> if the entity is in a state that stops falling.</td></tr>
+</table>
+
 <a name="PlatformerEntity"><h3>PlatformerEntity (<code>entity.ts</code>)</h3></a>
+<p>
+A <code>PhysicalEntity</code> that interacts with a <code>TileMap</code>.
+Suitable for tile-based platformer games.
+
+<a name="ScrollLayer"><h3>ScrollLayer (<code>layer.ts</code>)</h3></a>
+
+<a name="GameScene"><h3>GameScene (<code>scene.ts</code>)</h3></a>
 
 <a name="Queue"><h3>Queue : <a href="#Task">Task</a> (<code>tween.ts</code>)</h3></a>
 <p>
@@ -937,10 +1017,7 @@ A <code>Queue</code> is a list of <code>Task</code>s that are executed sequentia
   <td>Removes all the <code>Task</code>s from the queue.</td></tr>
 </table>
 
-<a name="ScrollLayer"><h3>ScrollLayer (<code>layer.ts</code>)</h3></a>
-
 <a name="HTMLScene"><h3>HTMLScene (<code>scene.ts</code>)</h3></a>
-<a name="GameScene"><h3>GameScene (<code>scene.ts</code>)</h3></a>
 
 <a name="PlanActor"><h3>PlanActor (<code>planmap.ts</code>)</h3></a>
 <a name="PlanAction"><h3>PlanAction (<code>planmap.ts</code>)</h3></a>
