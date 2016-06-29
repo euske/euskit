@@ -54,8 +54,10 @@ Functions:
 <a href="#PlatformerEntity"><code>PlatformerEntity</code></a>,
 <a href="#ScrollLayer"><code>ScrollLayer</code></a>,
 <a href="#GameScene"><code>GameScene</code></a>,
-<a href="#Queue"><code>Queue</code></a>,
 <a href="#HTMLScene"><code>HTMLScene</code></a>,
+<br>Tween Library:
+<a href="#Queue"><code>Queue</code></a>,
+<br>Pathfinding Library:
 <a href="#PlanActor"><code>PlanActor</code></a>,
 <a href="#PlanAction"><code>PlanAction</code></a>,
 <a href="#PlanProfile"><code>PlanProfile</code></a>,
@@ -968,7 +970,7 @@ Suitable for charcters or objects that can jump or fall.
   <td>Sets the gravity function.</td></tr>
 <tr><td><code>.setJump(jumpend)</code></td>
   <td>Starts a jump maneuver that ends at <code>t=jumpend</code>.</td></tr>
-<tr><td><code>.jump()</code></td>
+<tr class=overridable><td><code>.jump()</code></td>
   <td>Invoked when the entity starts jumping.</td></tr>
 <tr><td><code>.fall()</code></td>
   <td>Invoked for every update.</td></tr>
@@ -984,10 +986,165 @@ Suitable for charcters or objects that can jump or fall.
 <p>
 A <code>PhysicalEntity</code> that interacts with a <code>TileMap</code>.
 Suitable for tile-based platformer games.
+<table border>
+<tr><td><code>new PlatformerEntity(tilemap, bounds,<br>&nbsp; <em>[imgsrc, [collider]]</em>)</code></td>
+  <td>Creates a new entity.</td></tr>
+<tr class=inherited><td><code>.alive</code></td>
+  <td><code>true</code> if the entity is alive.</td></tr>
+<tr class=inherited><td><code>.layer</code></td>
+  <td>A <code>Layer</code> that the entity belongs to.</td></tr>
+<tr class=inherited><td><code>.ticks</code></td>
+  <td>The elapsed time since the entity started.</td></tr>
+<tr class=inherited><td><code>.died</code></td>
+  <td>A <code>Slot</code> that is signaled when the entity dies.</td></tr>
+<tr class=inherited><td><code>.bounds</code></td>
+  <td>A <code>Rect</code> for the entity's size and position.</td></tr>
+<tr class=inherited><td><code>.imgsrc</code></td>
+  <td>A <code>ImageSource</code> for the entity's content.</td></tr>
+<tr class=inherited><td><code>.visible</code></td>
+  <td><code>true</code> if the entity is visible.</td></tr>
+<tr class=inherited><td><code>.zOrder</code></td>
+  <td>The order that the entity is drawn to the screen.</td></tr>
+<tr class=inherited><td><code>.scale</code></td>
+  <td>A vector for the polarity of the entity image.</td></tr>
+<tr class=inherited><td><code>.velocity</code></td>
+  <td>A vector for the current velocity.</td></tr>
+<tr class=inherited><td><code>.maxspeed</code></td>
+  <td>A vector for the maximum speed (absolute values).</td></tr>
+<tr class=inherited><td><code>.jumpfunc</code></td>
+  <td>A gravity function <code>(vy:number, t:number) =&gt; number</code></td></tr>
+<tr><td><code>.tilemap</code></td>
+  <td>A <code>TileMap</code> that interacts with the entity.</td></tr>
+<tr class=inherited><td><code>.die()</code></td>
+  <td>Kills the entity.</td></tr>
+<tr class=inherited><td><code>.movePos(v)</code></td>
+  <td>Moves the entity by <code>v</code>.</td></tr>
+<tr class=inherited><td><code>.collider</code></td>
+  <td>A <code>Rect</code>/<code>Circle</code> for the entity's collider.</td></tr>
+<tr class=overridable><td><code>.update()</code></td>
+  <td>Updates for the current frame.</td></tr>
+<tr class=overridable><td><code>.render(ctx, bx, by)</code></td>
+  <td>Draws the entity at the location (<code>bx</code>, <code>by</code>).</td></tr>
+<tr class=overridable><td><code>.collide(entity)</code></td>
+  <td>Invoked when the entity collides another entity.</td></tr>
+<tr class=inherited><td><code>.moveIfPossible(v, force)</code></td>
+  <td>Moves the entity by <code>v</code> without colliding obstacles.</td></tr>
+<tr class=inherited><td><code>.isMovable(v)</code></td>
+  <td><code>true</code> if the entity is movable toward <code>v</code>.</td></tr>
+<tr class=inherited><td><code>.getMove(v)</code></td>
+  <td>Trims the vector <code>v</code> so that it doesn't collide.</td></tr>
+<tr class=overridable><td><code>.getFencesFor(range, force)</code></td>
+  <td>Returns a list of bounding rectangles that limits the entity within.</td></tr>
+<tr class=inherited><td><code>.setJumpFunc(function)</code></td>
+  <td>Sets the gravity function.</td></tr>
+<tr class=inherited><td><code>.setJump(jumpend)</code></td>
+  <td>Starts a jump maneuver that ends at <code>t=jumpend</code>.</td></tr>
+<tr class=overridable><td><code>.jump()</code></td>
+  <td>Invoked when the entity starts jumping.</td></tr>
+<tr class=inherited><td><code>.fall()</code></td>
+  <td>Invoked for every update.</td></tr>
+<tr class=inherited><td><code>.isLanded()</code></td>
+  <td><code>true</code> if the entity is landed on a platform.</td></tr>
+<tr class=overridable><td><code>.land()</code></td>
+  <td>Invoked when the entity is landed on a platform.</td></tr>
+</table>
 
 <a name="ScrollLayer"><h3>ScrollLayer (<code>layer.ts</code>)</h3></a>
+<p>
+A <code>Layer</code> that can scroll the displayed area. 
+Only shows the objects within the window.
+<table border>
+<tr><td><code>new ScrollLayer(window)</code></td>
+  <td>Creates a new layer.</td></tr>
+<tr class=inherited><td><code>.tasks</code></td>
+  <td>A list of <code>Task</code>s that belong to the layer.</td></tr>
+<tr class=inherited><td><code>.sprites</code></td>
+  <td>A list of <code>Sprite</code>s that belong to the layer.</td></tr>
+<tr class=inherited><td><code>.entities</code></td>
+  <td>A list of <code>Entity</code>s that belong to the layer.</td></tr>
+<tr><td><code>.window</code></td>
+  <td>A <code>Rect</code> that specifies the window.</td></tr>
+<tr class=overridable><td><code>.init()</code></td>
+  <td>Invoked when the layer is initialized.</td></tr>
+<tr class=overridable><td><code>.tick()</code></td>
+  <td>Invoked for every frame.</td></tr>
+<tr class=inherited><td><code>.render(ctx, bx, by)</code></td>
+  <td>Draws all the objects at the location (<code>bx</code>, <code>by</code>).</td></tr>
+<tr class=inherited><td><code>.scroll(v)</code></td>
+  <td>Moves all the objects by <code>v</code>.</td></tr>
+<tr><td><code>.move(v)</code></td>
+  <td>Moves the window by <code>v</code>.</td></tr>
+<tr><td><code>.setCenter(bounds, rect)</code></td>
+  <td>Centers the window around <code>rect</code>.</td></tr>
+<tr class=inherited><td><code>.addObject(obj)</code></td>
+  <td>Adds a <code>Task</code>/<code>Sprite</code>/<code>Entity</code> to the list.</td></tr>
+<tr class=inherited><td><code>.removeObject(obj)</code></td>
+  <td>Removes a <code>Task</code>/<code>Sprite</code>/<code>Entity</code> from the list.</td></tr>
+<tr class=inherited><td><code>.checkCollisions()</code></td>
+  <td>Checks collision for each <code>Entity</code> and calls <code>.collide()</code> for those collided.</td></tr>
+<tr class=inherited><td><code>.findObjects(rect, <em>[objs, [f]]</em>)</code></td>
+  <td>Returns a list of objects that overlap <code>rect</code>.</td></tr>
+</table>
 
 <a name="GameScene"><h3>GameScene (<code>scene.ts</code>)</h3></a>
+<p>
+A <code>Scene</code> that has one <code>Layer</code> with
+a few convenient methods.
+<table border>
+<tr><td><code>new GameScene(app)</code></td>
+  <td>Creates a new scene.</td></tr>
+<tr class=inherited><td><code>.app</code></td>
+  <td>The <code>App</code> object that the scene belongs to.</td></tr>
+<tr class=inherited><td><code>.screen</code></td>
+  <td>The canvas rectangle.</td></tr>
+<tr><td><code>.layer</code></td>
+  <td>A <code>Layer</code> for this scene.</td></tr>
+<tr><td><code>.entities</code></td>
+  <td>An alias to <code>layer.entities</code>.</td></tr>
+<tr><td><code>.addObject(obj)</code></td>
+  <td>Adds a <code>Task</code>/<code>Sprite</code>/<code>Entity</code> to the list.</td></tr>
+<tr><td><code>.removeObject(obj)</code></td>
+  <td>Removes a <code>Task</code>/<code>Sprite</code>/<code>Entity</code> from the list.</td></tr>
+<tr class=inherited><td><code>.changeScene(scene)</code></td>
+  <td>Signals the <code>App</code> to switch to a scene.</td></tr>
+<tr class=overridable><td><code>.init()</code></td>
+  <td>Initializes the scene.</td></tr>
+<tr class=overridable><td><code>.tick()</code></td>
+  <td>Invoked for every frame.</td></tr>
+<tr class=overridable><td><code>.render(ctx, bx, by)</code></td>
+  <td>Draws the scene at the location (<code>bx</code>, <code>by</code>).</td></tr>
+<tr class=overridable><td><code>.setDir(v)</code></td>
+  <td>Invoked when a directional input is changed.</td></tr>
+<tr class=overridable><td><code>.setAction(action)</code></td>
+  <td>Invoked when the action key state is changed.</td></tr>
+<tr class=overridable><td><code>.keydown(keyCode)</code></td>
+  <td>Invoked when a key is pressed.</td></tr>
+<tr class=overridable><td><code>.keyup(keyCode)</code></td>
+  <td>Invoked when a key is released.</td></tr>
+<tr class=overridable><td><code>.mousedown(x, y, button)</code></td>
+  <td>Invoked when a mouse button is pressed.</td></tr>
+<tr class=overridable><td><code>.mouseup(x, y, button)</code></td>
+  <td>Invoked when a mouse button is released.</td></tr>
+<tr class=overridable><td><code>.mousemove(x, y)</code></td>
+  <td>Invoked when a mouse position is changed.</td></tr>
+</table>
+
+<a name="HTMLScene"><h3>HTMLScene (<code>scene.ts</code>)</h3></a>
+<p>
+A <code>Scene</code> for a static HTML text. 
+Suitable for game title or help screen, etc.
+<table border>
+<tr><td><code>new HTMLScene(app, text)</code></td>
+  <td>Creates a new HTML scene.</td></tr>
+<tr><td><code>.text</code></td>
+  <td>A string to display.</td></tr>
+<tr class=inherited><td><code>.changeScene(scene)</code></td>
+  <td>Signals the <code>App</code> to switch to a scene.</td></tr>
+<tr class=overridable><td><code>.change()</code></td>
+  <td>Invoked when there's a mouse or keyboard input.</td></tr>
+</table>
+
+<a name="tween"><h2>Tween Library</h2></a>
 
 <a name="Queue"><h3>Queue : <a href="#Task">Task</a> (<code>tween.ts</code>)</h3></a>
 <p>
@@ -1017,7 +1174,7 @@ A <code>Queue</code> is a list of <code>Task</code>s that are executed sequentia
   <td>Removes all the <code>Task</code>s from the queue.</td></tr>
 </table>
 
-<a name="HTMLScene"><h3>HTMLScene (<code>scene.ts</code>)</h3></a>
+<a name="pathfinding"><h2>Pathfinding Library</h2></a>
 
 <a name="PlanActor"><h3>PlanActor (<code>planmap.ts</code>)</h3></a>
 <a name="PlanAction"><h3>PlanAction (<code>planmap.ts</code>)</h3></a>

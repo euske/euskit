@@ -148,23 +148,23 @@ class ScrollLayer extends Layer {
 	this.window = this.window.add(v);
     }
     
-    setCenter(world: Rect, bounds: Rect) {
-	if (this.window.width < bounds.width) {
-	    this.window.x = (bounds.width-this.window.width)/2;
-	} else if (bounds.x < this.window.x) {
-	    this.window.x = bounds.x;
-	} else if (this.window.x+this.window.width < bounds.x+bounds.width) {
-	    this.window.x = bounds.x+bounds.width - this.window.width;
+    setCenter(bounds: Rect, rect: Rect) {
+	if (this.window.width < rect.width) {
+	    this.window.x = (rect.width-this.window.width)/2;
+	} else if (rect.x < this.window.x) {
+	    this.window.x = rect.x;
+	} else if (this.window.x+this.window.width < rect.x+rect.width) {
+	    this.window.x = rect.x+rect.width - this.window.width;
 	}
-	if (this.window.height < bounds.height) {
-	    this.window.y = (bounds.height-this.window.height)/2;
-	} else if (bounds.y < this.window.y) {
-	    this.window.y = bounds.y;
-	} else if (this.window.y+this.window.height < bounds.y+bounds.height) {
-	    this.window.y = bounds.y+bounds.height - this.window.height;
+	if (this.window.height < rect.height) {
+	    this.window.y = (rect.height-this.window.height)/2;
+	} else if (rect.y < this.window.y) {
+	    this.window.y = rect.y;
+	} else if (this.window.y+this.window.height < rect.y+rect.height) {
+	    this.window.y = rect.y+rect.height - this.window.height;
 	}
-	this.window.x = clamp(0, this.window.x, world.width-this.window.width);
-	this.window.y = clamp(0, this.window.y, world.height-this.window.height);
+	this.window.x = clamp(0, this.window.x, bounds.width-this.window.width);
+	this.window.y = clamp(0, this.window.y, bounds.height-this.window.height);
     }
 
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
