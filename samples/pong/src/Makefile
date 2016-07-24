@@ -18,12 +18,12 @@ SRCS=$(BASEDIR)/utils.ts \
        $(BASEDIR)/app.ts
 
 OUTDIR=../js
-OUTFILE=$(OUTDIR)/pong.js
+OUTFILE=$(OUTDIR)/game.js
 
 all: $(OUTFILE)
 
 clean:
 	-$(RM) -r $(OUTDIR)
 
-$(OUTFILE): $(SRCS) pong.ts
+$(OUTFILE): $(SRCS) game.ts
 	$(TSC) $(TSFLAGS) --out $@ $^

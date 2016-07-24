@@ -20,12 +20,12 @@ SRCS=$(BASEDIR)/utils.ts \
        $(BASEDIR)/planrunner.ts
 
 OUTDIR=../js
-OUTFILE=$(OUTDIR)/platformer.js
+OUTFILE=$(OUTDIR)/game.js
 
 all: $(OUTFILE)
 
 clean:
 	-$(RM) -r $(OUTDIR)
 
-$(OUTFILE): $(SRCS) platformer.ts
+$(OUTFILE): $(SRCS) game.ts
 	$(TSC) $(TSFLAGS) --out $@ $^

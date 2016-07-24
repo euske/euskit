@@ -7,7 +7,7 @@ class Paddle extends Entity {
 
     constructor(screen: Rect) {
 	// Initializes the position and color.
-	let bounds = screen.anchor(0,-1).move(0,-20).expand(30,10);
+	let bounds = screen.anchor(0,-1).move(0,-20).expand(40,10);
 	super(bounds, new DummyImageSource('green'), bounds);
 	this.screen = screen;
 	this.vx = 0;
@@ -30,7 +30,7 @@ class Ball extends Entity {
 	let bounds = screen.center().expand(10,10);
 	super(bounds, new DummyImageSource('white'), bounds);
 	this.screen = screen;
-	this.v = new Vec2(1,1);
+	this.v = new Vec2(4,4);
     }
 
     update() {
@@ -49,7 +49,7 @@ class Ball extends Entity {
     collide(entity: Entity) {
 	// Bounces at the paddle.
 	if (entity instanceof Paddle) {
-	    this.v.y = -1;
+	    this.v.y = -4;
 	}
     }
 }

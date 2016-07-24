@@ -8,22 +8,22 @@ TSFLAGS=--noEmitOnError \
 	--noImplicitAny \
 	--noImplicitReturns
 
-SRCDIR=../base
-SRCS=$(SRCDIR)/utils.ts \
-       $(SRCDIR)/geom.ts \
-       $(SRCDIR)/entity.ts \
-       $(SRCDIR)/text.ts \
-       $(SRCDIR)/layer.ts \
-       $(SRCDIR)/scene.ts \
-       $(SRCDIR)/app.ts
+BASEDIR=../base
+SRCS=$(BASEDIR)/utils.ts \
+       $(BASEDIR)/geom.ts \
+       $(BASEDIR)/entity.ts \
+       $(BASEDIR)/text.ts \
+       $(BASEDIR)/layer.ts \
+       $(BASEDIR)/scene.ts \
+       $(BASEDIR)/app.ts
 
 OUTDIR=../js
-OUTFILE=$(OUTDIR)/@@NAME@@.js
+OUTFILE=$(OUTDIR)/game.js
 
 all: $(OUTFILE)
 
 clean:
 	-$(RM) -r $(OUTDIR)
 
-$(OUTFILE): $(SRCS) @@NAME@@.ts
+$(OUTFILE): $(SRCS) game.ts
 	$(TSC) $(TSFLAGS) --out $@ $^

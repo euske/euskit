@@ -4,7 +4,7 @@ PYTHON=python
 SOX=sox
 LAME=lame
 
-AUDIOS=
+AUDIOS=beep.mp3
 
 all: $(AUDIOS)
 
