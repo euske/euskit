@@ -3,7 +3,7 @@
 
 PlanningEntity.debug = true;
 function jumpfunc (vy:number, t:number) {
-    return (0 <= t && t <= 5)? -4 : vy+1;
+    return (0 <= t && t <= 5)? -8 : vy+2;
 }
 
 
@@ -29,9 +29,8 @@ class Player extends PlatformerEntity {
     usermove: Vec2;
 
     constructor(scene: Game, pos: Vec2) {
-	let bounds = pos.expand(16, 16);
-	let collider = new Circle(pos, 8);
-	super(scene.tilemap, bounds, scene.sheet.get(0), collider);
+	let bounds = pos.expand(32, 32);
+	super(scene.tilemap, bounds, scene.sprites.get(0), bounds);
 	this.scene = scene;
 	this.usermove = new Vec2();
 	this.setJumpFunc(jumpfunc);
@@ -43,7 +42,7 @@ class Player extends PlatformerEntity {
     }
     
     setMove(v: Vec2) {
-	this.usermove = v.scale(4);
+	this.usermove = v.scale(8);
     }
 }
 applyMixins(Player, [WorldObject]);
@@ -57,8 +56,8 @@ class Monster extends PlanningEntity {
     target: Entity;
 
     constructor(scene: Game, pos: Vec2) {
-	let bounds = pos.expand(16, 16);
-	super(scene.profile, scene.tilemap, bounds, scene.sheet.get(1), bounds);
+	let bounds = pos.expand(32, 32);
+	super(scene.profile, scene.tilemap, bounds, scene.sprites.get(4), bounds);
 	this.scene = scene;
 	this.setJumpFunc(jumpfunc);
     }
@@ -85,13 +84,13 @@ class Game extends GameScene {
     tilemap: TileMap;
     player: Player;
     profile: GridProfile;
-    sheet: SpriteSheet;
+    sprites: SpriteSheet;
     tiles: SpriteSheet;
 
     constructor(app: App) {
 	super(app);
-	this.sheet = new DummySpriteSheet(['green','red']);
-	this.tiles = new DummySpriteSheet(['black','gray','orange']);
+	this.sprites = new ImageSpriteSheet(APP.images['sprites'], new Vec2(32,32));
+	this.tiles = new ImageSpriteSheet(APP.images['tiles'], new Vec2(48,48), new Vec2(0,16));
     }
     
     init() {
@@ -115,7 +114,7 @@ class Game extends GameScene {
 	    "00111000000201111000",
 	    "11111111111111111111",
 	];
-	this.tilemap = new TileMap(16, MAP.map((v:string) => { return str2array(v); }));
+	this.tilemap = new TileMap(32, MAP.map((v:string) => { return str2array(v); }));
 	this.tilemap.isObstacle = ((c:number) => { return c == 1; });
 	this.tilemap.isGrabbable = ((c:number) => { return c == 2; });
 	this.tilemap.isStoppable = ((c:number) => { return c != 0; });
@@ -132,6 +131,8 @@ class Game extends GameScene {
     tick() {
 	super.tick();
 	this.player.setMove(this.app.keyDir);
+	this.layer.setCenter(this.tilemap.bounds,
+			     this.player.bounds.inflate(80,80));
     }
 
     setAction(action: boolean) {
@@ -141,8 +142,14 @@ class Game extends GameScene {
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
 	ctx.fillStyle = 'rgb(0,0,0)';
 	ctx.fillRect(bx, by, this.screen.width, this.screen.height);
-	this.tilemap.renderFromBottomLeft(
-	    ctx, bx, by, this.tiles, (x,y,c) => { return c; });
+	// Render the background tiles.
+	this.tilemap.renderWindowFromBottomLeft(
+	    ctx, bx, by, this.layer.window, this.tiles,
+	    (x,y,c) => { return (c == 0 || c == 2)? 0 : -1; });
+	// Render the map tiles.
+	this.tilemap.renderWindowFromBottomLeft(
+	    ctx, bx, by, this.layer.window, this.tiles,
+	    (x,y,c) => { return (c == 0)? -1 : c; });
 	super.render(ctx, bx, by);
     }
 }
