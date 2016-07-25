@@ -8,17 +8,6 @@ TSFLAGS=--noEmitOnError \
 	--noImplicitAny \
 	--noImplicitReturns
 
-BASEDIR=../../../base
-SRCS=$(BASEDIR)/utils.ts \
-       $(BASEDIR)/geom.ts \
-       $(BASEDIR)/entity.ts \
-       $(BASEDIR)/text.ts \
-       $(BASEDIR)/layer.ts \
-       $(BASEDIR)/scene.ts \
-       $(BASEDIR)/app.ts \
-       $(BASEDIR)/planmap.ts \
-       $(BASEDIR)/planrunner.ts
-
 OUTDIR=../js
 OUTFILE=$(OUTDIR)/game.js
 
@@ -27,5 +16,5 @@ all: $(OUTFILE)
 clean:
 	-$(RM) -r $(OUTDIR)
 
-$(OUTFILE): $(SRCS) game.ts
+$(OUTFILE): game.ts
 	$(TSC) $(TSFLAGS) --out $@ $^

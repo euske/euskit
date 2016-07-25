@@ -1,3 +1,12 @@
+/// <reference path="base/utils.ts" />
+/// <reference path="base/geom.ts" />
+/// <reference path="base/entity.ts" />
+/// <reference path="base/text.ts" />
+/// <reference path="base/scene.ts" />
+/// <reference path="base/app.ts" />
+/// <reference path="base/tilemap.ts" />
+/// <reference path="base/planmap.ts" />
+/// <reference path="base/planrunner.ts" />
 // platformer.ts
 
 

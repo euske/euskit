@@ -24,13 +24,13 @@ cat > "$dst/.rsyn" <<EOF
 opts='--exclude *.wav --exclude *.md --exclude src --exclude tmp --exclude tools --exclude Makefile'
 remote='tabesugi:public/file/ludumdare.tabesugi.net/$name'
 EOF
-mkdir "$dst"/base || :  # ignore errors
 mkdir "$dst"/src || :  # ignore errors
+mkdir "$dst"/src/base || :  # ignore errors
 mkdir "$dst"/assets || :  # ignore errors
 cp "$src"/../../.gitignore "$dst"
-cp "$src"/../../base/*.ts "$dst"/base
+cp "$src"/../../base/*.ts "$dst"/src/base
 cp "$src"/Makefile "$dst"
-cp "$src"/src/game.ts "$dst"/src/"$name".ts
+cp "$src"/src/Makefile "$dst"/src
+cp "$src"/src/game.ts "$dst"/src
 cp "$src"/assets/* "$dst"/assets
 sed -e "s/@@NAME@@/$name/g" "$src"/index.html > "$dst"/index.html
-sed -e "s/@@NAME@@/$name/g" "$src"/src/Makefile > "$dst"/src/Makefile
