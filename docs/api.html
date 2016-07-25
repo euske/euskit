@@ -36,9 +36,7 @@ Functions:
 <a href="#Shape"><code>Shape</code></a>,
 <a href="#Box"><code>Box</code></a>,
 <a href="#TileMap"><code>TileMap</code></a>,
-<a href="#RangeMap"><code>RangeMap</code></a>,
-<a href="#Font"><code>Font</code></a>
-<a href="#ShadowFont"><code>ShadowFont</code></a>
+<a href="#RangeMap"><code>RangeMap</code></a>
 <br>Basic Classes:
 <a href="#Task"><code>Task</code></a>,
 <a href="#Sprite"><code>Sprite</code></a>,
@@ -54,7 +52,12 @@ Functions:
 <a href="#PlatformerEntity"><code>PlatformerEntity</code></a>,
 <a href="#ScrollLayer"><code>ScrollLayer</code></a>,
 <a href="#GameScene"><code>GameScene</code></a>,
-<a href="#HTMLScene"><code>HTMLScene</code></a>,
+<a href="#HTMLScene"><code>HTMLScene</code></a>
+<br>Text Library:
+<a href="#Font"><code>Font</code></a>,
+<a href="#ShadowFont"><code>ShadowFont</code></a>,
+<a href="#TextBox"><code>TextBox</code></a>,
+<a href="#DialogBox"><code>DialogBox</code></a>
 <br>Tween Library:
 <a href="#Queue"><code>Queue</code></a>,
 <br>Pathfinding Library:
@@ -616,40 +619,6 @@ that allows range queries for specific tiles.
   <td><code>true</code> if a specific tile exists within the given area.</td></tr>
 </table>
 
-<a name="Font"><h3>Font (<code>text.ts</code>)</h3></a>
-<p>
-A <code>Font</code> represents a monospace bitmap font.
-<table border>
-<tr><td><code>new Font(glyphs, <em>[color, [scale]]</em>)</code></td>
-  <td>Creates a <code>Font</code> with a given <code>glyphs</code>.</td></tr>
-<tr><td><code>.width</code></td>
-  <td>The width of individual character.</td></tr>
-<tr><td><code>.height</code></td>
-  <td>The height of individual character.</td></tr>
-<tr><td><code>.getSize(text)</code></td>
-  <td>Computes the pixel size for a given text.</td></tr>
-<tr><td><code>.renderString(ctx, text, x, y)</code></td>
-  <td>Draws the text at a given location.</td></tr>
-</table>
-
-<a name="ShadowFont"><h3>ShadowFont : <a href="#Font">Font</a> (<code>text.ts</code>)</h3></a>
-<p>
-A <code>Font</code> with shadow.
-<table border>
-<tr><td><code>new ShadowFont(glyphs,<br>&nbsp; <em>[color, [scale,<br>&nbsp; [shadowcolor,<br>&nbsp; [shadowdist]]]]</em>)</code></td>
-  <td>Creates a <code>ShadowFont</code> with a given <code>glyphs</code>.</td></tr>
-<tr class=inherited><td><code>.width</code></td>
-  <td>The width of individual character.</td></tr>
-<tr class=inherited><td><code>.height</code></td>
-  <td>The height of individual character.</td></tr>
-<tr class=inherited><td><code>.getSize(text)</code></td>
-  <td>Computes the pixel size for a given text.</td></tr>
-<tr class=inherited><td><code>.renderString(ctx, text, x, y)</code></td>
-  <td>Draws the text at a given location.</td></tr>
-<tr><td><code>.getSize2(text)</code></td>
-  <td>Computes the pixel size for a given text (including the shadow).</td></tr>
-</table>
-
 <a name="basic-classes"><h2>Basic Classes</h2></a>
 
 <a name="Task"><h3>Task (<code>entity.ts</code>)</h3></a>
@@ -1143,6 +1112,44 @@ Suitable for game title or help screen, etc.
 <tr class=overridable><td><code>.change()</code></td>
   <td>Invoked when there's a mouse or keyboard input.</td></tr>
 </table>
+
+<a name="text"><h2>Text Library</h2></a>
+<a name="Font"><h3>Font (<code>text.ts</code>)</h3></a>
+<p>
+A <code>Font</code> represents a monospace bitmap font.
+<table border>
+<tr><td><code>new Font(glyphs, <em>[color, [scale]]</em>)</code></td>
+  <td>Creates a <code>Font</code> with a given <code>glyphs</code>.</td></tr>
+<tr><td><code>.width</code></td>
+  <td>The width of individual character.</td></tr>
+<tr><td><code>.height</code></td>
+  <td>The height of individual character.</td></tr>
+<tr><td><code>.getSize(text)</code></td>
+  <td>Computes the pixel size for a given text.</td></tr>
+<tr><td><code>.renderString(ctx, text, x, y)</code></td>
+  <td>Draws the text at a given location.</td></tr>
+</table>
+
+<a name="ShadowFont"><h3>ShadowFont : <a href="#Font">Font</a> (<code>text.ts</code>)</h3></a>
+<p>
+A <code>Font</code> with shadow.
+<table border>
+<tr><td><code>new ShadowFont(glyphs,<br>&nbsp; <em>[color, [scale,<br>&nbsp; [shadowcolor,<br>&nbsp; [shadowdist]]]]</em>)</code></td>
+  <td>Creates a <code>ShadowFont</code> with a given <code>glyphs</code>.</td></tr>
+<tr class=inherited><td><code>.width</code></td>
+  <td>The width of individual character.</td></tr>
+<tr class=inherited><td><code>.height</code></td>
+  <td>The height of individual character.</td></tr>
+<tr class=inherited><td><code>.getSize(text)</code></td>
+  <td>Computes the pixel size for a given text.</td></tr>
+<tr class=inherited><td><code>.renderString(ctx, text, x, y)</code></td>
+  <td>Draws the text at a given location.</td></tr>
+<tr><td><code>.getSize2(text)</code></td>
+  <td>Computes the pixel size for a given text (including the shadow).</td></tr>
+</table>
+
+<a name="TextBox"><h3>TextBox : <a href="#Sprite">Sprite</a> (<code>text.ts</code>)</h3></a>
+<a name="DialogBox"><h3>DialogBox : <a href="#TextBox">TextBox</a> (<code>text.ts</code>)</h3></a>
 
 <a name="tween"><h2>Tween Library</h2></a>
 
