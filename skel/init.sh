@@ -27,8 +27,8 @@ EOF
 mkdir "$dst"/src || :  # ignore errors
 mkdir "$dst"/src/base || :  # ignore errors
 mkdir "$dst"/assets || :  # ignore errors
-cp "$src"/../../.gitignore "$dst"
 cp "$src"/../../base/*.ts "$dst"/src/base
+cp "$src"/.gitignore "$dst"
 cp "$src"/Makefile "$dst"
 cp "$src"/src/Makefile "$dst"/src
 cp "$src"/src/game.ts "$dst"/src
