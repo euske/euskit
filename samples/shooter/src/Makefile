@@ -15,6 +15,7 @@ all: $(OUTFILE)
 
 clean:
 	-$(RM) -r $(OUTDIR)
+	-$(RM) -r base
 
 $(OUTFILE): game.ts
 	$(TSC) $(TSFLAGS) --out $@ $^

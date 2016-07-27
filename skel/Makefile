@@ -9,4 +9,4 @@ clean:
 #	-cd assets; $(MAKE) $@
 
 src/base:
-	cp -a ../../base src
+	cp -a ../base src
