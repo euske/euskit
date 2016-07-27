@@ -6,9 +6,8 @@ A minimalistic HTML5 framework for 2D games written in TypeScript.
 
 Features
 --------
- * Simple and straightforward API.
  * Suitable for old-school pixel art games.
- * Object oriented.
+ * Simple and straightforward API.
 
 API Documentation
 -----------------
@@ -107,12 +106,11 @@ Here's the HTML for it:
 
 ```html
 <!DOCTYPE html>
-<html>
-<head>
+<html><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <title>Pong</title>
-<script language="javascript" src="js/pong.js"></script>
+<script language="javascript" src="js/game.js"></script>
 <body bgcolor="black" text="white" onload="main(Pong);">
 <h1 align=center>Pong</h1>
 <div style="margin: 1em;" align=center>
