@@ -137,8 +137,8 @@ class Game extends GameScene {
 	this.addObject(monster);
     }
 
-    tick() {
-	super.tick();
+    tick(t: number) {
+	super.tick(t);
 	this.player.setMove(this.app.keyDir);
 	this.layer.setCenter(this.tilemap.bounds,
 			     this.player.bounds.inflate(80,80));

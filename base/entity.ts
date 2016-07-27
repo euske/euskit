@@ -25,8 +25,9 @@ class Task {
 
     alive: boolean = true;
     layer: Layer = null;
-    ticks: number = 0;
     lifetime: number = Infinity;
+    time0: number = 0;
+    time: number = 0;
     died: Slot;
 
     constructor() {
@@ -34,18 +35,19 @@ class Task {
     }
 
     toString() {
-	return '<Task: ticks='+this.ticks+'>';
+	return '<Task: time='+this.time+'>';
     }
   
     start(layer: Layer) {
 	this.layer = layer;
-	this.ticks = 0;
+	this.time0 = layer.time;
+	this.time = 0;
     }
 
-    tick() {
-	this.ticks++;
+    tick(t: number) {
 	this.update();
-	if (this.alive && this.lifetime < this.ticks) {
+	this.time = t - this.time0;
+	if (this.alive && this.lifetime <= this.time) {
 	    this.die();
 	}
     }

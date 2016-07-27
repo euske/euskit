@@ -7,6 +7,7 @@
 // 
 class Layer {
 
+    time: number = 0;
     tasks: Task[];
     sprites: Sprite[];
     entities: Entity[];
@@ -26,11 +27,12 @@ class Layer {
 	this.entities = [];
     }
   
-    tick() {
+    tick(t: number) {
+	this.time = t;
 	for (let i = 0; i < this.tasks.length; i++) {
 	    let obj = this.tasks[i];
 	    if (obj.alive) {
-		obj.tick();
+		obj.tick(t);
 	    }
 	}
 	this.cleanObjects(this.tasks);

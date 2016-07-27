@@ -32,7 +32,8 @@ class App {
 
     screen: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
-    
+
+    ticks: number = 0;
     scene: Scene = null;
     active: boolean = false;
     keyDir: Vec2 = new Vec2();
@@ -250,7 +251,8 @@ class App {
     tick() {
 	// [OVERRIDE]
 	// [GAME SPECIFIC CODE]
-	this.scene.tick();
+	this.scene.tick(this.ticks/this.framerate);
+	this.ticks++;
 	if (0 < this._keylock) {
 	    this._keylock--;
 	}

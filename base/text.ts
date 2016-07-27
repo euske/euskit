@@ -347,7 +347,7 @@ class DisplayTask extends TextTask {
 
     text: string;
     font: Font;
-    interval: number = 0;
+    speed: number = 0;
     sound: HTMLAudioElement = null;
     private _index: number = 0;
 
@@ -357,17 +357,22 @@ class DisplayTask extends TextTask {
 	this.font = dialog.font;
     }
 
-    tick() {
-	this.ticks++;
+    tick(t: number) {
+	super.tick(t);
 	if (this.text.length <= this._index) {
 	    this.die();
-	} else if (this.interval === 0) {
+	} else if (this.speed === 0) {
 	    this.ff();
-	} else if ((this.ticks % this.interval) === 0) {
-	    let c = this.text.substr(this._index, 1);
-	    this.dialog.addText(c, this.font);
-	    this._index++;
-	    if (/\w/.test(c) && this.sound !== null) {
+	} else {
+	    let n = this.time*this.speed;
+	    let sound = false;
+	    while (this._index < n) {
+		let c = this.text.substr(this._index, 1);
+		this.dialog.addText(c, this.font);
+		this._index++;
+		sound = sound || (/\w/.test(c));
+	    }
+	    if (sound && this.sound !== null) {
 		playSound(this.sound);
 	    }
 	}
@@ -488,7 +493,7 @@ class MenuTask extends TextTask {
 //
 class DialogBox extends TextBox {
 
-    interval: number = 0;
+    speed: number = 0;
     autohide: boolean = false;
     sound: HTMLAudioElement = null;
     queue: TextTask[] = [];
@@ -507,7 +512,7 @@ class DialogBox extends TextBox {
 		bx += this.bounds.x;
 		by += this.bounds.y;
 	    }
-	    if (phase(this.ticks, this.blinking)) {
+	    if (phase(this.time, this.blinking)) {
 		cursor.font.renderString(
 		    ctx, cursor.text,
 		    bx+cursor.bounds.x, by+cursor.bounds.y);
@@ -521,8 +526,8 @@ class DialogBox extends TextBox {
 	this.cursor = null;
     }
 
-    tick() {
-	super.tick();
+    tick(t: number) {
+	super.tick(t);
 	let task:TextTask = null;
 	while (true) {
 	    task = this.getCurrentTask();
@@ -530,7 +535,7 @@ class DialogBox extends TextBox {
 	    if (task.layer === null) {
 		task.start(this.layer);
 	    }
-	    task.tick();
+	    task.tick(t);
 	    if (task.alive) break;
 	    this.removeTask(task);
 	}
@@ -590,10 +595,10 @@ class DialogBox extends TextBox {
 	return task;
     }
 
-    addDisplay(text: string, interval=-1,
+    addDisplay(text: string, speed=-1,
 	       sound: HTMLAudioElement=null, font: Font=null) {
 	let task = new DisplayTask(this, text);
-	task.interval = (0 <= interval)? interval : this.interval;
+	task.speed = (0 <= speed)? speed : this.speed;
 	task.sound = (sound !== null)? sound : this.sound;
 	task.font = (font !== null)? font : this.font;
 	this.addTask(task);

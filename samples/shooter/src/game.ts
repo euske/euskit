@@ -135,9 +135,9 @@ class Shooter extends GameScene {
 	this.count = 0;
     }
 
-    tick() {
-	super.tick();
-	this.stars.tick();
+    tick(t: number) {
+	super.tick(t);
+	this.stars.tick(t);
 	this.count--;
 	if (this.count <= 0) {
 	    let pos = new Vec2(this.screen.width, rnd(this.screen.height));

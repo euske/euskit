@@ -51,8 +51,8 @@ class Game extends GameScene {
 	this.addObject(this.player);
     }
 
-    tick() {
-	super.tick();
+    tick(t: number) {
+	super.tick(t);
     }
 
     setDir(v: Vec2) {
