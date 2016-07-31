@@ -2,16 +2,16 @@
 /// <reference path="geom.ts" />
 /// <reference path="tilemap.ts" />
 
-function getContact(collider: Shape, v: Vec2, colliders: Shape[], bounds: Rect[])
+function getContact(collider0: Shape, v: Vec2, colliders: Shape[], bounds: Rect[])
 {
     if (colliders !== null) {
-	for (let i = 0; i < colliders.length; i++) {
-	    v = collider.contact(v, colliders[i]);
+	for (let collider1 of colliders) {
+	    v = collider0.contact(v, collider1);
 	}
     }
     if (bounds !== null) {
-	for (let i = 0; i < bounds.length; i++) {
-	    v = collider.contactBounds(v, bounds[i]);
+	for (let rect of bounds) {
+	    v = collider0.contactBounds(v, rect);
 	}
     }
     return v;
@@ -199,8 +199,7 @@ class StarSprite extends Sprite {
 
     update() {
 	super.update();
-	for (let i = 0; i < this._stars.length; i++) {
-	    let star = this._stars[i];
+	for (let star of this._stars) {
 	    star.p.x += this.velocity.x/star.z;
 	    star.p.y += this.velocity.y/star.z;
 	    let rect = star.p.expand(star.s, star.s);
@@ -214,8 +213,7 @@ class StarSprite extends Sprite {
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
 	bx += this.bounds.x;
 	by += this.bounds.y;
-	for (let i = 0; i < this._stars.length; i++) {
-	    let star = this._stars[i];
+	for (let star of this._stars) {
 	    let dst = star.p.expand(star.s, star.s);
 	    if (this.imgsrc instanceof DummyImageSource) {
 		ctx.fillStyle = (this.imgsrc as DummyImageSource).color;

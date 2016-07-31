@@ -297,8 +297,7 @@ class PlatformerPlanMap extends PlanMap {
 	    // try falling.
 	    if (actor.canStandAt(p)) {
 		let fallpts = actor.getFallPoints();
-		for (let i = 0; i < fallpts.length; i++) {
-		    let v = fallpts[i];
+		for (let v of fallpts) {
 		    // try the v.x == 0 case only once.
 		    if (v.x === 0 && vx < 0) continue;
 		    let fp = p.move(-v.x*vx, -v.y);
@@ -323,8 +322,7 @@ class PlatformerPlanMap extends PlanMap {
 	    // try jumping.
 	    if (a0.type === ActionType.FALL) {
 		let jumppts = actor.getJumpPoints();
-		for (let i = 0; i < jumppts.length; i++) {
-		    let v = jumppts[i];
+		for (let v of jumppts) {
 		    // try the v.x == 0 case only once.
 		    if (v.x === 0 && vx < 0) continue;
 		    let jp = p.move(-v.x*vx, -v.y);
@@ -347,8 +345,7 @@ class PlatformerPlanMap extends PlanMap {
 		}
 	    } else if (actor.canStandAt(p)) {
 		let jumppts = actor.getJumpPoints();
-		for (let i = 0; i < jumppts.length; i++) {
-		    let v = jumppts[i];
+		for (let v of jumppts) {
 		    if (v.x === 0) continue;
 		    let jp = p.move(-v.x*vx, -v.y);
 		    if (!range.containsPt(jp)) continue;

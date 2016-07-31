@@ -78,8 +78,8 @@ class TileMap {
 
     copy() {
 	let map:Int32Array[] = [];
-	for (let i = 0; i < this.map.length; i++) {
-	    map.push(this.map[i].slice());
+	for (let a of this.map) {
+	    map.push(a.slice());
 	}
 	return new TileMap(this.tilesize, map);
     }

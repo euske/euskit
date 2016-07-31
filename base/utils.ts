@@ -294,10 +294,10 @@ class Slot {
     }
   
     signal(...params: any[]) {
-	for (let i = 0; i < this.receivers.length; i++) {
+	for (let receiver of this.receivers) {
 	    const args = Array.prototype.slice.call(arguments);
 	    args.unshift(this.sender);
-	    this.receivers[i].apply(null, args);
+	    receiver.apply(null, args);
 	}
     }
 

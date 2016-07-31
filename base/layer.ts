@@ -29,8 +29,7 @@ class Layer {
   
     tick(t: number) {
 	this.time = t;
-	for (let i = 0; i < this.tasks.length; i++) {
-	    let obj = this.tasks[i];
+	for (let obj of this.tasks) {
 	    if (obj.alive) {
 		obj.tick(t);
 	    }
@@ -42,8 +41,7 @@ class Layer {
     }
     
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
-	for (let i = 0; i < this.sprites.length; i++) {
-	    let obj = this.sprites[i];
+	for (let obj of this.sprites) {
 	    if (obj.alive && obj.visible) {
 		obj.render(ctx, bx, by);
 	    }
@@ -51,8 +49,7 @@ class Layer {
     }
 
     scroll(v: Vec2) {
-	for (let i = 0; i < this.sprites.length; i++) {
-	    let obj = this.sprites[i];
+	for (let obj of this.sprites) {
 	    if (!obj.alive) continue;
 	    if (obj.pos === null) continue;
 	    obj.pos = obj.pos.add(v);
@@ -94,8 +91,7 @@ class Layer {
 		let a = this.findObjects(
 		    obj0.collider.add(obj0.pos),
 		    this.entities.slice(i+1));
-		for (let j = 0; j < a.length; j++) {
-		    let obj1 = a[j];
+		for (let obj1 of a) {
 		    obj0.collide(obj1);
 		    obj1.collide(obj0);
 		}
@@ -110,8 +106,7 @@ class Layer {
 	    objs = this.entities;
 	}
 	let a:Entity[] = [];
-	for (let i = 0; i < objs.length; i++) {
-	    let obj1 = objs[i];
+	for (let obj1 of objs) {
 	    if (obj1.alive && obj1.collider !== null &&
 		(f === null || f(obj1)) &&
 		obj1.collider.add(obj1.pos).overlaps(shape)) {
@@ -169,8 +164,7 @@ class ScrollLayer extends Layer {
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
 	bx -= this.window.x;
 	by -= this.window.y;
-	for (let i = 0; i < this.sprites.length; i++) {
-	    let obj = this.sprites[i];
+	for (let obj of this.sprites) {
 	    if (obj.alive && obj.visible) {
 		if (obj.bounds === null ||
 		    obj.bounds.add(obj.pos).overlaps(this.window)) {
