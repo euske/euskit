@@ -54,14 +54,8 @@ class Layer {
 	for (let i = 0; i < this.sprites.length; i++) {
 	    let obj = this.sprites[i];
 	    if (!obj.alive) continue;
-	    if (obj.bounds === null) continue;
-	    obj.bounds = obj.bounds.add(v);
-	}
-	for (let i = 0; i < this.entities.length; i++) {
-	    let obj = this.entities[i];
-	    if (!obj.alive) continue;
-	    if (obj.collider === null) continue;
-	    obj.collider = obj.collider.add(v);
+	    if (obj.pos === null) continue;
+	    obj.pos = obj.pos.add(v);
 	}
     }
 
@@ -97,7 +91,9 @@ class Layer {
 	for (let i = 0; i < this.entities.length; i++) {
 	    let obj0 = this.entities[i];
 	    if (obj0.alive && obj0.collider !== null) {
-		let a = this.findObjects(obj0.collider, this.entities.slice(i+1));
+		let a = this.findObjects(
+		    obj0.collider.add(obj0.pos),
+		    this.entities.slice(i+1));
 		for (let j = 0; j < a.length; j++) {
 		    let obj1 = a[j];
 		    obj0.collide(obj1);
@@ -117,7 +113,8 @@ class Layer {
 	for (let i = 0; i < objs.length; i++) {
 	    let obj1 = objs[i];
 	    if (obj1.alive && obj1.collider !== null &&
-		obj1.collider.overlaps(shape) && (f === null || f(obj1))) {
+		(f === null || f(obj1)) &&
+		obj1.collider.add(obj1.pos).overlaps(shape)) {
 		a.push(obj1);
 	    }
 	}
@@ -175,7 +172,8 @@ class ScrollLayer extends Layer {
 	for (let i = 0; i < this.sprites.length; i++) {
 	    let obj = this.sprites[i];
 	    if (obj.alive && obj.visible) {
-		if (obj.bounds === null || obj.bounds.overlaps(this.window)) {
+		if (obj.bounds === null ||
+		    obj.bounds.add(obj.pos).overlaps(this.window)) {
 		    obj.render(ctx, bx, by);
 		}
 	    }

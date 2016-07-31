@@ -16,8 +16,8 @@ class Player extends Entity {
     usermove: Vec2;
 
     constructor(scene: Game, pos: Vec2) {
-	let bounds = pos.expand(16, 16);
-	super(bounds, scene.sprites.get(0), bounds);
+	let bounds = new Rect(-8, -8, 16, 16);
+	super(pos, bounds, scene.sprites.get(0), bounds);
 	this.scene = scene;
 	this.usermove = new Vec2();
     }

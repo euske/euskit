@@ -14,8 +14,8 @@ const WHITE = new DummyImageSource('white');
 //
 class Bullet extends Projectile {
     constructor(pos: Vec2, movement: Vec2, frame: Rect) {
-	let bounds = pos.expand(8, 2);
-	super(bounds, WHITE, bounds, movement, frame);
+	let bounds = new Rect(-4, -1, 8, 2);
+	super(pos, bounds, WHITE, bounds, movement, frame);
     }
 }
 
@@ -30,8 +30,8 @@ class Player extends Entity {
     firetick: number;
 
     constructor(scene: Shooter, pos: Vec2) {
-	let bounds = pos.expand(16, 16);
-	super(bounds, scene.sprites.get(0), bounds);
+	let bounds = new Rect(-8, -8, 16, 16);
+	super(pos, bounds, scene.sprites.get(0), bounds);
 	this.scene = scene;
 	this.usermove = new Vec2();
     }
@@ -42,7 +42,7 @@ class Player extends Entity {
 	if (this.firing && this.firetick == 0) {
 	    this.firetick = 4;
 	    var bullet = new Bullet(
-		this.bounds.anchor(-1,0), new Vec2(8, 0),
+		this.pos, new Vec2(8, 0),
 		this.scene.screen);
 	    this.scene.addObject(bullet);
 	    playSound(APP.audios['pew']);
@@ -85,9 +85,9 @@ class EnemyBase extends Projectile {
 class Enemy1 extends Projectile {
 
     constructor(scene: Shooter, pos: Vec2) {
-	let bounds = pos.expand(16, 16);
+	let bounds = new Rect(-8, -8, 16, 16);
 	let v = new Vec2(-rnd(1,8), rnd(3)-1);
-	super(bounds, scene.sprites.get(1), bounds, v, scene.screen);
+	super(pos, bounds, scene.sprites.get(1), bounds, v, scene.screen);
     }
 }
 applyMixins(Enemy1, [EnemyBase]);
@@ -98,9 +98,9 @@ applyMixins(Enemy1, [EnemyBase]);
 class Enemy2 extends Projectile {
 
     constructor(scene: Shooter, pos: Vec2) {
-	let bounds = pos.expand(16, 16);
+	let bounds = new Rect(-8, -8, 16, 16);
 	let v = new Vec2(-rnd(1,4), 0);
-	super(bounds, scene.sprites.get(2), bounds, v, scene.screen);
+	super(pos, bounds, scene.sprites.get(2), bounds, v, scene.screen);
     }
 
     update() {

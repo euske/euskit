@@ -38,8 +38,8 @@ class Player extends PlatformerEntity {
     usermove: Vec2;
 
     constructor(scene: Game, pos: Vec2) {
-	let bounds = pos.expand(32, 32);
-	super(scene.tilemap, bounds, scene.sprites.get(0), bounds);
+	let bounds = new Rect(-16, -16, 32, 32);
+	super(scene.tilemap, pos, bounds, scene.sprites.get(0), bounds);
 	this.scene = scene;
 	this.usermove = new Vec2();
 	this.setJumpFunc(jumpfunc);
@@ -48,6 +48,7 @@ class Player extends PlatformerEntity {
     update() {
 	super.update();
 	this.moveIfPossible(this.usermove, true);
+	log(this.pos);
     }
     
     setMove(v: Vec2) {
@@ -65,8 +66,9 @@ class Monster extends PlanningEntity {
     target: Entity;
 
     constructor(scene: Game, pos: Vec2) {
-	let bounds = pos.expand(32, 32);
-	super(scene.profile, scene.tilemap, bounds, scene.sprites.get(4), bounds);
+	let bounds = new Rect(-16, -16, 32, 32);
+	super(scene.profile, scene.tilemap, pos,
+	      bounds, scene.sprites.get(4), bounds);
 	this.scene = scene;
 	this.setJumpFunc(jumpfunc);
     }
@@ -74,7 +76,7 @@ class Monster extends PlanningEntity {
     update() {
 	super.update();
 	if (!this.isPlanRunning()) {
-	    let p = this.target.collider.getAABB().center();
+	    let p = this.target.pos;
 	    let runner = this.getPlan(p, 20, 40)
 	    if (runner !== null) {
 		this.startPlan(runner);
@@ -141,7 +143,7 @@ class Game extends GameScene {
 	super.tick(t);
 	this.player.setMove(this.app.keyDir);
 	this.layer.setCenter(this.tilemap.bounds,
-			     this.player.bounds.inflate(80,80));
+			     this.player.pos.expand(80,80));
     }
 
     setAction(action: boolean) {

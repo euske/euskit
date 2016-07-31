@@ -255,10 +255,10 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 
     static debug: boolean = false;
 
-    constructor(profile:GridProfile, tilemap:TileMap, bounds: Rect,
+    constructor(profile:GridProfile, tilemap:TileMap, pos: Vec2, bounds: Rect,
 		imgsrc: ImageSource=null, hitbox: Rect=null,
 		speed=4, timeout=30) {
-	super(tilemap, bounds, imgsrc, hitbox);
+	super(tilemap, pos, bounds, imgsrc, hitbox);
 	this.profile = profile;
 	this.timeout = timeout;
 	this.speed = speed;
@@ -343,12 +343,10 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 	return this.fallpts;
     }
     getGridPos() {
-	let p = this.collider.getAABB().center();
-	return this.profile.coord2grid(p);
+	return this.profile.coord2grid(this.pos);
     }
     getGridBox() {
-	let p = this.collider.getAABB().center();
-	return p.expand(this.gridbox.width, this.gridbox.height);
+	return this.pos.expand(this.gridbox.width, this.gridbox.height);
     }
     getGridBoxAt(p: Vec2) {
 	return this.profile.grid2coord(p).expand(this.gridbox.width, this.gridbox.height);
@@ -420,7 +418,7 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
     }
 
     moveToward(p: Vec2) {
-	let p0 = this.collider.getAABB().center();
+	let p0 = this.pos;
 	let p1 = this.getGridBoxAt(p).center();
 	let v = p1.sub(p0);
 	v.x = clamp(-this.speed, v.x, +this.speed);

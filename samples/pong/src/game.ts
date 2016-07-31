@@ -13,16 +13,20 @@ class Paddle extends Entity {
 
     constructor(screen: Rect) {
 	// Initializes the position and color.
-	let bounds = screen.anchor(0,-1).move(0,-20).expand(40,10);
-	super(bounds, new DummyImageSource('green'), bounds);
+	let pos = screen.anchor(0,-1).move(0,-20);
+	let bounds = new Rect(-20,-5,40,10);
+	super(pos, bounds, new DummyImageSource('green'), bounds);
 	this.screen = screen;
 	this.vx = 0;
     }
 
     update() {
 	// Updates the position.
-	this.bounds = this.bounds.move(this.vx*4, 0).clamp(this.screen);
-	this.collider = this.bounds;
+	let pos = this.pos.move(this.vx*4, 0);
+	let bounds = this.bounds.add(pos);
+	if (0 <= bounds.x && bounds.right() <= this.screen.right()) {
+	    this.pos = pos;
+	}
     }
 }
 
@@ -33,23 +37,23 @@ class Ball extends Entity {
 
     constructor(screen: Rect) {
 	// Initializes the position and color.
-	let bounds = screen.center().expand(10,10);
-	super(bounds, new DummyImageSource('white'), bounds);
+	let bounds = new Rect(-5,-5,10,10);
+	super(screen.center(), bounds, new DummyImageSource('white'), bounds);
 	this.screen = screen;
 	this.v = new Vec2(4,4);
     }
 
     update() {
 	// Updates the position.
-	let bounds = this.bounds.add(this.v);
+	let pos = this.pos.add(this.v);
+	let bounds = this.bounds.add(pos);
 	if (bounds.x < 0 || this.screen.right() < bounds.right()) {
 	    this.v.x = -this.v.x;
 	}
 	if (bounds.y < 0 || this.screen.bottom() < bounds.bottom()) {
 	    this.v.y = -this.v.y;
 	}
-	this.bounds = this.bounds.add(this.v);
-	this.collider = this.bounds;
+	this.pos = this.pos.add(this.v);
     }
 
     collide(entity: Entity) {
