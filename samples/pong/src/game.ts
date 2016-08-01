@@ -50,7 +50,7 @@ class Ball extends Entity {
 	if (bounds.x < 0 || this.screen.right() < bounds.right()) {
 	    this.v.x = -this.v.x;
 	}
-	if (bounds.y < 0 || this.screen.bottom() < bounds.bottom()) {
+	if (bounds.y < 0) {
 	    this.v.y = -this.v.y;
 	}
 	this.pos = this.pos.add(this.v);
@@ -70,8 +70,8 @@ class Pong extends GameScene {
     ball: Ball;
 
     init() {
-	// Initializes the objects.
 	super.init();
+	// Places the objects.
 	this.paddle = new Paddle(this.screen);
 	this.addObject(this.paddle);
 	this.ball = new Ball(this.screen);
@@ -79,14 +79,15 @@ class Pong extends GameScene {
     }
 
     setDir(v: Vec2) {
-	// Change the paddle direction.
+	// Changes the paddle direction.
 	this.paddle.vx = v.x;
     }
 
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
-	// Paint the background.
+	// Paints the background.
 	ctx.fillStyle = 'rgb(0,0,64)';
 	ctx.fillRect(bx, by, this.screen.width, this.screen.height);
+	// Paints everything else.
 	super.render(ctx, bx, by);
     }
 }
