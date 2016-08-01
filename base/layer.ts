@@ -89,7 +89,7 @@ class Layer {
 	    let obj0 = this.entities[i];
 	    if (obj0.alive && obj0.collider !== null) {
 		let a = this.findObjects(
-		    obj0.collider.add(obj0.pos),
+		    obj0.getCollider(),
 		    this.entities.slice(i+1));
 		for (let obj1 of a) {
 		    obj0.collide(obj1);
@@ -109,7 +109,7 @@ class Layer {
 	for (let obj1 of objs) {
 	    if (obj1.alive && obj1.collider !== null &&
 		(f === null || f(obj1)) &&
-		obj1.collider.add(obj1.pos).overlaps(shape)) {
+		obj1.getCollider().overlaps(shape)) {
 		a.push(obj1);
 	    }
 	}
@@ -167,7 +167,7 @@ class ScrollLayer extends Layer {
 	for (let obj of this.sprites) {
 	    if (obj.alive && obj.visible) {
 		if (obj.bounds === null ||
-		    obj.bounds.add(obj.pos).overlaps(this.window)) {
+		    obj.getBounds().overlaps(this.window)) {
 		    obj.render(ctx, bx, by);
 		}
 	    }

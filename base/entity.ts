@@ -30,7 +30,8 @@ class Task {
     time: number = 0;
     died: Slot;
 
-    constructor() {
+    constructor(lifetime=Infinity) {
+	this.lifetime = lifetime;
 	this.died = new Slot(this);
     }
 
@@ -93,6 +94,10 @@ class Sprite extends Task {
 	if (this.pos !== null) {
 	    this.pos = this.pos.add(v);
 	}
+    }
+
+    getBounds() {
+	return this.bounds.add(this.pos);
     }
   
     update() {
@@ -252,6 +257,10 @@ class Entity extends Sprite {
 	// [OVERRIDE]
     }
 
+    getCollider() {
+	return this.collider.add(this.pos);
+    }
+  
     moveIfPossible(v: Vec2, force: boolean) {
 	this.movePos(this.getMove(this.pos, v, force));
     }
@@ -322,7 +331,7 @@ class Projectile extends Entity {
 	if (this.movement !== null) {
 	    this.movePos(this.movement);
 	    if (this.frame !== null &&
-		!this.collider.overlaps(this.frame)) {
+		!this.getCollider().overlaps(this.frame)) {
 		this.die();
 	    }
 	}
@@ -426,7 +435,7 @@ class PlatformerEntity extends PhysicalEntity {
     }
     
     isHolding() {
-	let range = this.collider.add(this.pos).getAABB();
+	let range = this.getCollider().getAABB();
 	return (this.tilemap.findTile(this.tilemap.isGrabbable, range) !== null);
     }
 
