@@ -28,7 +28,7 @@ class PointSet {
 
     toList() {
 	let a:Vec2[] = [];
-	for (var k in this._pts) {
+	for (let k in this._pts) {
 	    a.push(this._pts[k]);
 	}
 	return a;

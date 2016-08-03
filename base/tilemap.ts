@@ -10,9 +10,6 @@ interface TileFunc {
 interface TilePosFunc {
     (x: number, y: number, c: number): boolean;
 }
-interface TilePosValueFunc<T> {
-    (x: number, y: number, c: number, v: T): T;
-}
 interface TilePosTileFunc {
     (x: number, y: number, c: number): number;
 }
@@ -128,34 +125,21 @@ class TileMap {
 	return null;
     }
 
-    reduce<T>(f: TilePosValueFunc<T>, v: T, rect: Rect=null) {
-	if (rect === null) {
-	    rect = new Rect(0, 0, this.width, this.height);
-	}
-	for (let dy = 0; dy < rect.height; dy++) {
-	    let y = rect.y+dy;
-	    for (let dx = 0; dx < rect.width; dx++) {
-		let x = rect.x+dx;
-		let c = this.get(x, y);
-		v = f(x, y, c, v);
-	    }
-	}
-	return v;
-    }
-  
     findTile(f0: TileFunc, range: Rect) {
 	return this.apply((x,y,c)=>{return f0(c);}, this.coord2map(range));
     }
 
     getTileRects(f0: TileFunc, range:Rect): Rect[] {
 	let ts = this.tilesize;
-	function f(x:number, y:number, c:number, rects:Rect[]) {
+	let rects = [] as Rect[];
+	function f(x:number, y:number, c:number) {
 	    if (f0(c)) {
 		rects.push(new Rect(x*ts, y*ts, ts, ts));
 	    }
-	    return rects;
+	    return false;
 	}
-	return this.reduce(f, [] as Rect[], this.coord2map(range));
+	this.apply(f, this.coord2map(range));
+	return rects;
     }
   
     scroll(vx: number, vy: number, rect: Rect=null) {
