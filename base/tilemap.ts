@@ -183,8 +183,6 @@ class TileMap {
 	w = (w != 0)? w : this.width;
 	h = (h != 0)? h : this.height;
 	// Draw tiles from the bottom-left first.
-	ctx.save();
-	ctx.translate(bx, by);
 	for (let dy = h-1; 0 <= dy; dy--) {
 	    let y = y0+dy;
 	    for (let dx = 0; dx < w; dx++) {
@@ -202,13 +200,12 @@ class TileMap {
 			ctx.drawImage(
 			    imgsrc.image,
 			    srcRect.x, srcRect.y, srcRect.width, srcRect.height,
-			    ts*dx+dstRect.x, ts*dy+dstRect.y,
+			    bx+ts*dx+dstRect.x, by+ts*dy+dstRect.y,
 			    dstRect.width, dstRect.height);
 		    }
 		}
 	    }
 	}
-	ctx.restore();
     }
 
     renderFromTopRight(
@@ -222,8 +219,6 @@ class TileMap {
 	w = (w != 0)? w : this.width;
 	h = (h != 0)? h : this.height;
 	// Draw tiles from the top-right first.
-	ctx.save();
-	ctx.translate(bx, by);
 	for (let dy = 0; dy < h; dy++) {
 	    let y = y0+dy;
 	    for (let dx = w-1; 0 <= dx; dx--) {
@@ -241,13 +236,12 @@ class TileMap {
 			ctx.drawImage(
 			    imgsrc.image,
 			    srcRect.x, srcRect.y, srcRect.width, srcRect.height,
-			    ts*dx+dstRect.x, ts*dy+dstRect.y,
+			    bx+ts*dx+dstRect.x, by+ts*dy+dstRect.y,
 			    dstRect.width, dstRect.height);
 		    }
 		}
 	    }
 	}
-	ctx.restore();
     }
 
 

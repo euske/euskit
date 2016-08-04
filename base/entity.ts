@@ -223,7 +223,7 @@ class StarSprite extends Sprite {
 	    let imgsrc = this.imgsrc
 	    if (imgsrc instanceof DummyImageSource) {
 		ctx.fillStyle = imgsrc.color;
-		ctx.fillRect(bx+dstRect.x, by+dstRect.y, dstRect.width, dstRect.height);
+		ctx.fillRect(dstRect.x, dstRect.y, dstRect.width, dstRect.height);
 	    } else if (imgsrc instanceof HTMLImageSource) {
 		let srcRect = imgsrc.srcRect;
 		drawImageScaled(
@@ -308,7 +308,9 @@ class Entity extends Sprite {
     }
 
     moveIfPossible(v: Vec2, force: boolean) {
-	this.movePos(this.getMove(this.pos, v, force));
+	v = this.getMove(this.pos, v, force);
+	this.movePos(v);
+	return v;
     }
     
 }
@@ -394,8 +396,7 @@ class PhysicalEntity extends Entity {
 	if (!this.isHolding()) {
 	    let vy = this.jumpfunc(this.velocity.y, this._jumpt);
 	    let v = new Vec2(this.velocity.x, vy);
-	    this.velocity = this.getMove(this.pos, v, false);
-	    this.movePos(this.velocity);
+	    this.velocity = this.moveIfPossible(v, false);
 	    let landed = (0 < vy && this.velocity.y == 0);
 	    if (!this._landed && landed) {
 		this.land();
