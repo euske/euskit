@@ -38,6 +38,7 @@ class App {
     active: boolean = false;
     keyDir: Vec2 = new Vec2();
     keyAction: boolean = false;
+    keyCancel: boolean = false;
     
     private _keylock: number = 0;
     private _msgs: Action[] = [];
@@ -123,6 +124,12 @@ class App {
 		this.scene.setAction(this.keyAction);
 	    }
 	    break;
+	case KeySym.Cancel:
+	    if (!this.keyCancel) {
+		this.keyCancel = true;
+		this.scene.setCancel(this.keyCancel);
+	    }
+	    break;
 	default:
 	    switch (ev.keyCode) {
 	    case 112:			// F1
@@ -169,6 +176,12 @@ class App {
 	    if (this.keyAction) {
 		this.keyAction = false;
 		this.scene.setAction(this.keyAction);
+	    }
+	    break;
+	case KeySym.Cancel:
+	    if (this.keyCancel) {
+		this.keyCancel = false;
+		this.scene.setCancel(this.keyCancel);
 	    }
 	    break;
 	}

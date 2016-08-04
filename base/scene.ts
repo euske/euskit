@@ -40,6 +40,10 @@ class Scene {
     setAction(action: boolean) {
 	// [OVERRIDE]
     }
+    
+    setCancel(cancel: boolean) {
+	// [OVERRIDE]
+    }
 
     keydown(key: number) {
 	// [OVERRIDE]
