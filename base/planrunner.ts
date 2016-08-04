@@ -255,17 +255,18 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 
     static debug: boolean = false;
 
-    constructor(profile:GridProfile, tilemap:TileMap, pos: Vec2, bounds: Rect,
-		imgsrc: ImageSource=null, hitbox: Rect=null,
+    constructor(profile:GridProfile, tilemap:TileMap, pos: Vec2, 
+		imgsrc: ImageSource, hitbox: Rect=null,
 		speed=4, timeout=30) {
-	super(tilemap, pos, bounds, imgsrc, hitbox);
+	super(tilemap, pos, imgsrc, hitbox);
 	this.profile = profile;
 	this.timeout = timeout;
 	this.speed = speed;
 	let gs = this.profile.gridsize;
-	this.gridbox = new Rect(0, 0,
-				Math.ceil(hitbox.width/gs)*gs,
-				Math.ceil(hitbox.height/gs)*gs);
+	this.gridbox = new Rect(
+	    0, 0,
+	    Math.ceil(hitbox.width/gs)*gs,
+	    Math.ceil(hitbox.height/gs)*gs);
     }
 
     setJumpFunc(jumpfunc: JumpFunc) {

@@ -16,8 +16,8 @@ class Player extends Entity {
     usermove: Vec2;
 
     constructor(scene: Game, pos: Vec2) {
-	let bounds = new Rect(-8, -8, 16, 16);
-	super(pos, bounds, scene.sprites.get(0), bounds);
+	let imgsrc = scene.sprites.get(0);
+	super(pos, imgsrc, imgsrc.dstRect);
 	this.scene = scene;
 	this.usermove = new Vec2();
     }
@@ -42,7 +42,8 @@ class Game extends GameScene {
 
     constructor(app: App) {
 	super(app);
-	this.sprites = new ImageSpriteSheet(APP.images['sprites'], new Vec2(16,16));
+	this.sprites = new ImageSpriteSheet(
+	    APP.images['sprites'], new Vec2(16,16), new Vec2(8,8));
     }
     
     init() {

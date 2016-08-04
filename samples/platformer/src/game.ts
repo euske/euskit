@@ -38,8 +38,8 @@ class Player extends PlatformerEntity {
     usermove: Vec2;
 
     constructor(scene: Game, pos: Vec2) {
-	let bounds = new Rect(-16, -16, 32, 32);
-	super(scene.tilemap, pos, bounds, scene.sprites.get(0), bounds);
+	let imgsrc = scene.sprites.get(0);
+	super(scene.tilemap, pos, imgsrc, imgsrc.dstRect);
 	this.scene = scene;
 	this.usermove = new Vec2();
 	this.setJumpFunc(jumpfunc);
@@ -66,9 +66,8 @@ class Monster extends PlanningEntity {
     target: Entity;
 
     constructor(scene: Game, pos: Vec2) {
-	let bounds = new Rect(-16, -16, 32, 32);
-	super(scene.profile, scene.tilemap, pos,
-	      bounds, scene.sprites.get(4), bounds);
+	let imgsrc = scene.sprites.get(4);
+	super(scene.profile, scene.tilemap, pos, imgsrc, imgsrc.dstRect);
 	this.scene = scene;
 	this.setJumpFunc(jumpfunc);
     }

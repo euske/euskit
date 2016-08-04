@@ -15,7 +15,7 @@ class Paddle extends Entity {
 	// Initializes the position and color.
 	let pos = screen.anchor(0,-1).move(0,-20);
 	let bounds = new Rect(-20,-5,40,10);
-	super(pos, bounds, new DummyImageSource('green', bounds), bounds);
+	super(pos, new DummyImageSource('green', bounds), bounds);
 	this.screen = screen;
 	this.vx = 0;
     }
@@ -23,7 +23,7 @@ class Paddle extends Entity {
     update() {
 	// Updates the position.
 	let pos = this.pos.move(this.vx*4, 0);
-	let bounds = this.bounds.add(pos);
+	let bounds = this.getBounds(pos);
 	if (0 <= bounds.x && bounds.right() <= this.screen.right()) {
 	    this.pos = pos;
 	}
@@ -38,7 +38,7 @@ class Ball extends Entity {
     constructor(screen: Rect) {
 	// Initializes the position and color.
 	let bounds = new Rect(-5,-5,10,10);
-	super(screen.center(), bounds, new DummyImageSource('white', bounds), bounds);
+	super(screen.center(), new DummyImageSource('white', bounds), bounds);
 	this.screen = screen;
 	this.v = new Vec2(rnd(2)*8-4, -4);
     }
@@ -46,7 +46,7 @@ class Ball extends Entity {
     update() {
 	// Updates the position.
 	let pos = this.pos.add(this.v);
-	let bounds = this.bounds.add(pos);
+	let bounds = this.getBounds(pos);
 	if (bounds.x < 0 || this.screen.right() < bounds.right()) {
 	    this.v.x = -this.v.x;
 	}

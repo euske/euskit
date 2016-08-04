@@ -71,17 +71,15 @@ class Task {
 class Sprite extends Task {
 
     pos: Vec2;
-    bounds: Rect;
     imgsrc: ImageSource;
     visible: boolean = true;
     zOrder: number = 0;
     scale: Vec2 = new Vec2(1, 1);
     rotation: number = 0;
 
-    constructor(pos: Vec2=null, bounds: Rect=null, imgsrc: ImageSource=null) {
+    constructor(pos: Vec2, imgsrc: ImageSource=null) {
 	super();
-	this.pos = (pos !== null)? pos.copy() : null;
-	this.bounds = bounds;
+	this.pos = pos.copy();
 	this.imgsrc = imgsrc;
     }
     
@@ -89,17 +87,15 @@ class Sprite extends Task {
 	return '<Sprite: '+this.pos+'>';
     }
   
-    movePos(v: Vec2) {
-	// [OVERRIDE]
-	if (this.pos !== null) {
-	    this.pos = this.pos.add(v);
-	}
-    }
-
-    getBounds() {
-	return this.bounds.add(this.pos);
+    getBounds(pos: Vec2=null) {
+	return this.imgsrc.dstRect.add((pos !== null)? pos : this.pos);
     }
   
+    movePos(v: Vec2) {
+	// [OVERRIDE]
+	this.pos = this.pos.add(v);
+    }
+
     update() {
 	// [OVERRIDE]
 	super.update();
@@ -107,8 +103,6 @@ class Sprite extends Task {
   
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
 	// [OVERRIDE]
-	if (this.pos === null) return;
-	if (this.bounds === null) return;
 	ctx.save();
 	ctx.translate(bx+this.pos.x, by+this.pos.y);
 	if (this.rotation) {
@@ -140,10 +134,12 @@ class Sprite extends Task {
 //
 class TiledSprite extends Sprite {
 
+    bounds: Rect;
     offset: Vec2 = new Vec2();
     
     constructor(bounds: Rect, imgsrc: HTMLImageSource) {
-	super(null, bounds, imgsrc);
+	super(new Vec2(), imgsrc);
+	this.bounds = bounds
     }
 
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
@@ -186,6 +182,7 @@ class Star {
 }
 class StarSprite extends Sprite {
     
+    bounds: Rect;
     velocity: Vec2;
     maxdepth: number;
     
@@ -193,7 +190,8 @@ class StarSprite extends Sprite {
 
     constructor(bounds: Rect, imgsrc: ImageSource, nstars: number,
 		velocity=new Vec2(-1,0), maxdepth=3) {
-	super(null, bounds, imgsrc);
+	super(new Vec2(), imgsrc);
+	this.bounds = bounds
 	this.velocity = velocity;
 	this.maxdepth = maxdepth;
 	for (let i = 0; i < nstars; i++) {
@@ -248,9 +246,8 @@ class Entity extends Sprite {
 
     collider: Shape;
 
-    constructor(pos: Vec2=null, bounds: Rect=null,
-		imgsrc: ImageSource=null, collider: Shape=null) {
-	super(pos, bounds, imgsrc);
+    constructor(pos: Vec2, imgsrc: ImageSource, collider: Shape=null) {
+	super(pos, imgsrc);
 	this.collider = collider;
     }
 
@@ -258,18 +255,10 @@ class Entity extends Sprite {
 	return '<Entity: '+this.collider+'>';
     }
 
-    collide(entity: Entity) {
-	// [OVERRIDE]
-    }
-
-    getCollider() {
-	return this.collider.add(this.pos);
+    getCollider(pos: Vec2=null) {
+	return this.collider.add((pos !== null)? pos : this.pos);
     }
   
-    moveIfPossible(v: Vec2, force: boolean) {
-	this.movePos(this.getMove(this.pos, v, force));
-    }
-    
     isMovable(v0: Vec2) {
 	if (this.collider !== null) {
 	    let v1 = this.getMove(this.pos, v0, true);
@@ -314,6 +303,14 @@ class Entity extends Sprite {
 	return null;
     }
 
+    collide(entity: Entity) {
+	// [OVERRIDE]
+    }
+
+    moveIfPossible(v: Vec2, force: boolean) {
+	this.movePos(this.getMove(this.pos, v, force));
+    }
+    
 }
 
 
@@ -324,9 +321,9 @@ class Projectile extends Entity {
     movement: Vec2 = new Vec2();
     frame: Rect;
 
-    constructor(pos: Vec2, bounds: Rect, imgsrc: ImageSource,
+    constructor(pos: Vec2, imgsrc: ImageSource,
 		collider: Shape=null, movement: Vec2=null, frame: Rect=null) {
-	super(pos, bounds, imgsrc, collider);
+	super(pos, imgsrc, collider);
 	this.movement = movement;
 	this.frame = frame;
     }
@@ -359,9 +356,8 @@ class PhysicalEntity extends Entity {
     protected _jumpend: number;
     protected _landed: boolean;
     
-    constructor(pos: Vec2, bounds: Rect,
-		imgsrc: ImageSource=null, collider: Shape=null) {
-	super(pos, bounds, imgsrc, collider);
+    constructor(pos: Vec2, imgsrc: ImageSource=null, collider: Shape=null) {
+	super(pos, imgsrc, collider);
 	this._jumpt = Infinity;
 	this._jumpend = 0;
 	this._landed = false;
@@ -433,9 +429,9 @@ class PlatformerEntity extends PhysicalEntity {
     
     tilemap: TileMap;
 
-    constructor(tilemap: TileMap, pos: Vec2, bounds: Rect,
-		imgsrc: ImageSource=null, collider: Shape=null) {
-	super(pos, bounds, imgsrc, collider);
+    constructor(tilemap: TileMap, pos: Vec2, imgsrc: ImageSource, 
+		collider: Shape=null) {
+	super(pos, imgsrc, collider);
 	this.tilemap = tilemap;
     }
     

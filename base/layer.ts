@@ -166,8 +166,7 @@ class ScrollLayer extends Layer {
 	by -= this.window.y;
 	for (let obj of this.sprites) {
 	    if (obj.alive && obj.visible) {
-		if (obj.bounds === null ||
-		    obj.getBounds().overlaps(this.window)) {
+		if (obj.getBounds().overlaps(this.window)) {
 		    obj.render(ctx, bx, by);
 		}
 	    }

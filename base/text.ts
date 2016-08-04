@@ -123,7 +123,7 @@ class TextBox extends Sprite {
     segments: TextSegment[] = [];
     
     constructor(frame: Rect, font: Font, header='') {
-	super(null);
+	super(new Vec2());
 	this.frame = frame;
 	this.font = font;
 	this.header = header;
@@ -145,10 +145,8 @@ class TextBox extends Sprite {
     }
 
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
-	if (this.bounds !== null) {
-	    bx += this.bounds.x;
-	    by += this.bounds.y;
-	}
+	bx += this.pos.x;
+	by += this.pos.y;
 	if (this.background !== null) {
 	    let rect = this.frame.inflate(this.padding, this.padding);
 	    ctx.fillStyle = this.background;
@@ -508,10 +506,8 @@ class DialogBox extends TextBox {
 	super.render(ctx, bx, by);
 	let cursor = this.cursor;
 	if (cursor !== null) {
-	    if (this.bounds !== null) {
-		bx += this.bounds.x;
-		by += this.bounds.y;
-	    }
+	    bx += this.pos.x;
+	    by += this.pos.y;
 	    if (phase(this.time, this.blinking)) {
 		cursor.font.renderString(
 		    ctx, cursor.text,

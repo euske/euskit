@@ -13,7 +13,7 @@
 class Bullet extends Projectile {
     constructor(pos: Vec2, movement: Vec2, frame: Rect) {
 	let bounds = new Rect(-4, -1, 8, 2);
-	super(pos, bounds, new DummyImageSource('white', bounds), bounds, movement, frame);
+	super(pos, new DummyImageSource('white', bounds), bounds, movement, frame);
     }
 }
 
@@ -28,8 +28,8 @@ class Player extends Entity {
     firetick: number;
 
     constructor(scene: Shooter, pos: Vec2) {
-	let bounds = new Rect(-8, -8, 16, 16);
-	super(pos, bounds, scene.sprites.get(0), bounds);
+	let imgsrc = scene.sprites.get(0);
+	super(pos, imgsrc, imgsrc.dstRect);
 	this.scene = scene;
 	this.usermove = new Vec2();
     }
@@ -83,9 +83,9 @@ class EnemyBase extends Projectile {
 class Enemy1 extends Projectile {
 
     constructor(scene: Shooter, pos: Vec2) {
-	let bounds = new Rect(-8, -8, 16, 16);
+	let imgsrc = scene.sprites.get(1);
 	let v = new Vec2(-rnd(1,8), rnd(3)-1);
-	super(pos, bounds, scene.sprites.get(1), bounds, v, scene.screen);
+	super(pos, imgsrc, imgsrc.dstRect, v, scene.screen);
     }
 }
 applyMixins(Enemy1, [EnemyBase]);
@@ -96,9 +96,9 @@ applyMixins(Enemy1, [EnemyBase]);
 class Enemy2 extends Projectile {
 
     constructor(scene: Shooter, pos: Vec2) {
-	let bounds = new Rect(-8, -8, 16, 16);
+	let imgsrc = scene.sprites.get(2);
 	let v = new Vec2(-rnd(1,4), 0);
-	super(pos, bounds, scene.sprites.get(2), bounds, v, scene.screen);
+	super(pos, imgsrc, imgsrc.dstRect, v, scene.screen);
     }
 
     update() {
