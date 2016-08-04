@@ -345,28 +345,29 @@ class Color {
 //  ImageSource
 //
 class ImageSource {
-    constructor() {
+    dstRect: Rect;
+    
+    constructor(dstRect: Rect) {
+	this.dstRect = dstRect;
     }
 }
 
 class HTMLImageSource extends ImageSource {
     image: HTMLImageElement;
-    bounds: Rect;
-    offset: Vec2;
+    srcRect: Rect;
     
-    constructor(image: HTMLImageElement, bounds: Rect, offset: Vec2=null) {
-	super();
+    constructor(image: HTMLImageElement, srcRect: Rect, dstRect: Rect) {
+	super(dstRect);
 	this.image = image;
-	this.bounds = bounds;
-	this.offset = (offset !== null)? offset : new Vec2();
+	this.srcRect = srcRect;
     }
 }
 
 class DummyImageSource extends ImageSource {
     color: string;
     
-    constructor(color: string) {
-	super();
+    constructor(color: string, dstRect: Rect) {
+	super(dstRect);
 	this.color = color;
     }
 }
@@ -386,30 +387,31 @@ class SpriteSheet {
 class ImageSpriteSheet extends SpriteSheet {
     image: HTMLImageElement;
     size: Vec2;
-    offset: Vec2;
+    origin: Vec2;
 
-    constructor(image: HTMLImageElement, size: Vec2, offset: Vec2=null) {
+    constructor(image: HTMLImageElement, size: Vec2, origin: Vec2=null) {
 	super();
 	this.image = image;
 	this.size = size;
-	this.offset = offset;
+	this.origin = (origin !== null)? origin : new Vec2();
     }
 
     get(x:number, y=0) {
-	const rect = new Rect(x*this.size.x, y*this.size.y, this.size.x, this.size.y);
-	return new HTMLImageSource(this.image, rect, this.offset);
+	let srcRect = new Rect(x*this.size.x, y*this.size.y, this.size.x, this.size.y);
+	let dstRect = new Rect(-this.origin.x, -this.origin.y, this.size.x, this.size.y);
+	return new HTMLImageSource(this.image, srcRect, dstRect);
     }
 }
 
 class DummySpriteSheet extends SpriteSheet {
-    colors: string[];
+    sprites: DummyImageSource[];
 
-    constructor(colors: string[]) {
+    constructor(sprites: DummyImageSource[]) {
 	super();
-	this.colors = colors;
+	this.sprites = sprites;
     }
 
     get(x:number, y=0) {
-	return new DummyImageSource(this.colors[x]);
+	return this.sprites[x];
     }
 }

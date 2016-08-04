@@ -183,6 +183,8 @@ class TileMap {
 	w = (w != 0)? w : this.width;
 	h = (h != 0)? h : this.height;
 	// Draw tiles from the bottom-left first.
+	ctx.save();
+	ctx.translate(bx, by);
 	for (let dy = h-1; 0 <= dy; dy--) {
 	    let y = y0+dy;
 	    for (let dx = 0; dx < w; dx++) {
@@ -191,20 +193,22 @@ class TileMap {
 		c = ft(x, y, c);
 		if (0 <= c) {
 		    let imgsrc = tileset.get(c);
+		    let dstRect = imgsrc.dstRect;
 		    if (imgsrc instanceof DummyImageSource) {
-			ctx.fillStyle = (imgsrc as DummyImageSource).color;
+			ctx.fillStyle = imgsrc.color;
 			ctx.fillRect(bx+ts*dx, by+ts*dy, ts, ts);
-		    } else {
-			let rect = (imgsrc as HTMLImageSource).bounds;
-			let offset = (imgsrc as HTMLImageSource).offset;
-			ctx.drawImage((imgsrc as HTMLImageSource).image,
-				      rect.x, rect.y, rect.width, rect.height,
-				      bx+ts*dx-offset.x, by+ts*dy-offset.y,
-				      rect.width, rect.height);
+		    } else if (imgsrc instanceof HTMLImageSource) {
+			let srcRect = imgsrc.srcRect;
+			ctx.drawImage(
+			    imgsrc.image,
+			    srcRect.x, srcRect.y, srcRect.width, srcRect.height,
+			    ts*dx+dstRect.x, ts*dy+dstRect.y,
+			    dstRect.width, dstRect.height);
 		    }
 		}
 	    }
 	}
+	ctx.restore();
     }
 
     renderFromTopRight(
@@ -218,6 +222,8 @@ class TileMap {
 	w = (w != 0)? w : this.width;
 	h = (h != 0)? h : this.height;
 	// Draw tiles from the top-right first.
+	ctx.save();
+	ctx.translate(bx, by);
 	for (let dy = 0; dy < h; dy++) {
 	    let y = y0+dy;
 	    for (let dx = w-1; 0 <= dx; dx--) {
@@ -226,20 +232,22 @@ class TileMap {
 		c = ft(x, y, c);
 		if (0 <= c) {
 		    let imgsrc = tileset.get(c);
+		    let dstRect = imgsrc.dstRect;
 		    if (imgsrc instanceof DummyImageSource) {
-			ctx.fillStyle = (imgsrc as DummyImageSource).color;
+			ctx.fillStyle = imgsrc.color;
 			ctx.fillRect(bx+ts*dx, by+ts*dy, ts, ts);
-		    } else {
-			let rect = (imgsrc as HTMLImageSource).bounds;
-			let offset = (imgsrc as HTMLImageSource).offset;
-			ctx.drawImage((imgsrc as HTMLImageSource).image,
-				      rect.x, rect.y, rect.width, rect.height,
-				      bx+ts*dx-offset.x, by+ts*dy-offset.y,
-				      rect.width, rect.height);
+		    } else if (imgsrc instanceof HTMLImageSource) {
+			let srcRect = imgsrc.srcRect;
+			ctx.drawImage(
+			    imgsrc.image,
+			    srcRect.x, srcRect.y, srcRect.width, srcRect.height,
+			    ts*dx+dstRect.x, ts*dy+dstRect.y,
+			    dstRect.width, dstRect.height);
 		    }
 		}
 	    }
 	}
+	ctx.restore();
     }
 
 

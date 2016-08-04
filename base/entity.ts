@@ -114,19 +114,20 @@ class Sprite extends Task {
 	if (this.rotation) {
 	    ctx.rotate(this.rotation);
 	}
-	if (this.imgsrc instanceof DummyImageSource) {
-	    ctx.fillStyle = (this.imgsrc as DummyImageSource).color;
-	    ctx.fillRect(this.bounds.x, this.bounds.y,
-			 this.bounds.width, this.bounds.height);
-	} else if (this.imgsrc instanceof HTMLImageSource) {
-	    let src = (this.imgsrc as HTMLImageSource).bounds;
-	    let offset = (this.imgsrc as HTMLImageSource).offset;
+	let imgsrc = this.imgsrc
+	let dstRect = imgsrc.dstRect;
+	if (imgsrc instanceof DummyImageSource) {
+	    ctx.fillStyle = imgsrc.color;
+	    ctx.fillRect(
+		dstRect.x, dstRect.y, dstRect.width, dstRect.height);
+	} else if (imgsrc instanceof HTMLImageSource) {
+	    let srcRect = imgsrc.srcRect;
 	    drawImageScaled(
-		ctx, (this.imgsrc as HTMLImageSource).image,
-		src.x, src.y, src.width, src.height,
-		this.bounds.x-offset.x, this.bounds.y-offset.y,
-		this.bounds.width*this.scale.x,
-		this.bounds.height*this.scale.y);
+		ctx, imgsrc.image,
+		srcRect.x, srcRect.y, srcRect.width, srcRect.height,
+		dstRect.x, dstRect.y,
+		dstRect.width*this.scale.x,
+		dstRect.height*this.scale.y);
 	}
 	ctx.restore();
     }
@@ -141,7 +142,7 @@ class TiledSprite extends Sprite {
 
     offset: Vec2 = new Vec2();
     
-    constructor(bounds: Rect, imgsrc: ImageSource) {
+    constructor(bounds: Rect, imgsrc: HTMLImageSource) {
 	super(null, bounds, imgsrc);
     }
 
@@ -153,15 +154,16 @@ class TiledSprite extends Sprite {
 	ctx.rect(bx, by, this.bounds.width, this.bounds.height);
 	ctx.clip();
 	let imgsrc = this.imgsrc as HTMLImageSource;
-	let w = imgsrc.bounds.width;
-	let h = imgsrc.bounds.height;
+	let srcRect = imgsrc.srcRect;
+	let w = imgsrc.dstRect.width;
+	let h = imgsrc.dstRect.height;
 	let dx0 = int(Math.floor(this.offset.x/w)*w - this.offset.x);
 	let dy0 = int(Math.floor(this.offset.y/h)*h - this.offset.y);
 	for (let dy = dy0; dy < this.bounds.height; dy += h) {
 	    for (let dx = dx0; dx < this.bounds.width; dx += w) {
 		ctx.drawImage(
-		    imgsrc.image, imgsrc.bounds.x,
-		    imgsrc.bounds.y, w, h,
+		    imgsrc.image,
+		    srcRect.x, srcRect.y, srcRect.width, srcRect.height,
 		    bx+dx, by+dy, w, h);
 	    }
 	}
@@ -216,22 +218,25 @@ class StarSprite extends Sprite {
     }
 
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
-	bx += this.bounds.x;
-	by += this.bounds.y;
+	ctx.save();
+	ctx.translate(bx+this.bounds.x, by+this.bounds.y);
 	for (let star of this._stars) {
-	    let dst = star.p.expand(star.s, star.s);
-	    if (this.imgsrc instanceof DummyImageSource) {
-		ctx.fillStyle = (this.imgsrc as DummyImageSource).color;
-		ctx.fillRect(bx+dst.x, by+dst.y, dst.width, dst.height);
-	    } else if (this.imgsrc instanceof HTMLImageSource) {
-		let rect = (this.imgsrc as HTMLImageSource).bounds;
-		let offset = (this.imgsrc as HTMLImageSource).offset;
-		drawImageScaled(ctx, (this.imgsrc as HTMLImageSource).image,
-				rect.x, rect.y, rect.width, rect.height,
-				bx+dst.x-offset.x, by+dst.y-offset.y,
-				dst.width*this.scale.x, dst.height*this.scale.y);
+	    let dstRect = star.p.expand(star.s, star.s);
+	    let imgsrc = this.imgsrc
+	    if (imgsrc instanceof DummyImageSource) {
+		ctx.fillStyle = imgsrc.color;
+		ctx.fillRect(bx+dstRect.x, by+dstRect.y, dstRect.width, dstRect.height);
+	    } else if (imgsrc instanceof HTMLImageSource) {
+		let srcRect = imgsrc.srcRect;
+		drawImageScaled(
+		    ctx, imgsrc.image,
+		    srcRect.x, srcRect.y, srcRect.width, srcRect.height,
+		    dstRect.x, dstRect.y,
+		    dstRect.width*this.scale.x,
+		    dstRect.height*this.scale.y);
 	    }
 	}
+	ctx.restore();
     }
 }
 

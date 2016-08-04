@@ -7,15 +7,13 @@
 ///  shooter.ts
 ///
 
-const WHITE = new DummyImageSource('white');
-
 
 //  Bullet
 //
 class Bullet extends Projectile {
     constructor(pos: Vec2, movement: Vec2, frame: Rect) {
 	let bounds = new Rect(-4, -1, 8, 2);
-	super(pos, bounds, WHITE, bounds, movement, frame);
+	super(pos, bounds, new DummyImageSource('white', bounds), bounds, movement, frame);
     }
 }
 
@@ -124,14 +122,16 @@ class Shooter extends GameScene {
 
     constructor(app: App) {
 	super(app);
-	this.sprites = new ImageSpriteSheet(APP.images['sprites'], new Vec2(16,16));
+	this.sprites = new ImageSpriteSheet(
+	    APP.images['sprites'], new Vec2(16,16), new Vec2(8,8));
     }
     
     init() {
 	super.init();
 	this.player = new Player(this, this.screen.center());
 	this.addObject(this.player);
-	this.stars = new StarSprite(this.screen, WHITE, 100);
+	this.stars = new StarSprite(
+	    this.screen, new DummyImageSource('white', new Rect(0,0,1,1)), 100);
 	this.count = 0;
     }
 
