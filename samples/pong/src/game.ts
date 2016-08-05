@@ -4,7 +4,14 @@
 /// <reference path="base/text.ts" />
 /// <reference path="base/scene.ts" />
 /// <reference path="base/app.ts" />
-// pong.ts
+
+//  Pong
+//
+//  A very basic example of using Euskit.
+//
+//  Some parts are made intentionally simplistic to
+//  facilitate the understanding.
+//
 
 class Paddle extends Entity {
 
@@ -12,9 +19,9 @@ class Paddle extends Entity {
     vx: number;			// Moving direction.
 
     constructor(screen: Rect) {
-	// Initializes the position and color.
-	let bounds = new Rect(-20,-5,40,10);
+	// Initializes the position and shape.
 	super(screen.anchor(0,-1).move(0,-20));
+	let bounds = new Rect(-20,-5,40,10);
 	this.imgsrc = new DummyImageSource('green', bounds);
 	this.collider = bounds;
 	this.screen = screen;
@@ -37,9 +44,9 @@ class Ball extends Entity {
     v: Vec2;			// Moving direction.
 
     constructor(screen: Rect) {
-	// Initializes the position and color.
-	let bounds = new Rect(-5,-5,10,10);
+	// Initializes the position and shape.
 	super(screen.center());
+	let bounds = new Rect(-5,-5,10,10);
 	this.imgsrc = new DummyImageSource('white', bounds);
 	this.collider = bounds;
 	this.screen = screen;
@@ -60,7 +67,7 @@ class Ball extends Entity {
     }
 
     collide(entity: Entity) {
-	// Bounces at the paddle.
+	// Bounces when hit the paddle.
 	if (entity instanceof Paddle) {
 	    this.v.y = -4;
 	}
@@ -83,6 +90,7 @@ class Pong extends GameScene {
 
     tick(t: number) {
 	super.tick(t);
+	// Restarts when the ball goes out of screen.
 	if (this.screen.height < this.ball.pos.y) {
 	    this.init();
 	}

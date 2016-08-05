@@ -31,10 +31,11 @@ class Paddle extends Entity {
     vx: number;                 // Moving direction.
 
     constructor(screen: Rect) {
-        // Initializes the position and color.
-        let pos = screen.anchor(0,-1).move(0,-20);
+        // Initializes the position and shape.
+        super(screen.anchor(0,-1).move(0,-20));
         let bounds = new Rect(-20,-5,40,10);
-        super(pos, new DummyImageSource('green', bounds), bounds);
+        this.imgsrc = new DummyImageSource('green', bounds);
+        this.collider = bounds;
         this.screen = screen;
         this.vx = 0;
     }
@@ -55,9 +56,11 @@ class Ball extends Entity {
     v: Vec2;                    // Moving direction.
 
     constructor(screen: Rect) {
-        // Initializes the position and color.
+        // Initializes the position and shape.
+        super(screen.center());
         let bounds = new Rect(-5,-5,10,10);
-        super(screen.center(), new DummyImageSource('white', bounds), bounds);
+        this.imgsrc = new DummyImageSource('white', bounds);
+        this.collider = bounds;
         this.screen = screen;
         this.v = new Vec2(rnd(2)*8-4, -4);
     }
@@ -76,7 +79,7 @@ class Ball extends Entity {
     }
 
     collide(entity: Entity) {
-        // Bounces at the paddle.
+        // Bounces when hit the paddle.
         if (entity instanceof Paddle) {
             this.v.y = -4;
         }
@@ -99,6 +102,7 @@ class Pong extends GameScene {
 
     tick(t: number) {
         super.tick(t);
+        // Restarts when the ball goes out of screen.
         if (this.screen.height < this.ball.pos.y) {
             this.init();
         }

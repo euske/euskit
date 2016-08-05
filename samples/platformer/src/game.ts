@@ -7,7 +7,12 @@
 /// <reference path="base/tilemap.ts" />
 /// <reference path="base/planmap.ts" />
 /// <reference path="base/planrunner.ts" />
-// platformer.ts
+
+//  Platformer
+//
+//  An example of intermediate level using
+//  basic physics and path finding.
+//
 
 
 PlanningEntity.debug = true;

@@ -4,8 +4,11 @@
 /// <reference path="base/text.ts" />
 /// <reference path="base/scene.ts" />
 /// <reference path="base/app.ts" />
-///  shooter.ts
-///
+
+//  Shooter
+//
+//  A basic shoot-em up using multiple enemy types.
+//
 
 
 //  Bullet
