@@ -16,9 +16,10 @@ class Player extends Entity {
     usermove: Vec2;
 
     constructor(scene: Game, pos: Vec2) {
-	let imgsrc = scene.sprites.get(0);
-	super(pos, imgsrc, imgsrc.dstRect);
+	super(pos);
 	this.scene = scene;
+	this.imgsrc = scene.sprites.get(0);
+	this.collider = this.imgsrc.dstRect;
 	this.usermove = new Vec2();
     }
 

@@ -242,11 +242,13 @@ class PlatformerActionRunner {
 class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 
     profile: GridProfile;
-    jumppts: Vec2[];
-    fallpts: Vec2[];
-    timeout: number;
-    speed: number;
     gridbox: Rect;
+    
+    jumppts: Vec2[] = null;
+    fallpts: Vec2[] = null;
+    timeout: number = 30;
+    speed: number = 4;
+    
     obstacle: RangeMap;
     grabbable: RangeMap;
     stoppable: RangeMap;
@@ -255,13 +257,12 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 
     static debug: boolean = false;
 
-    constructor(profile:GridProfile, tilemap:TileMap, pos: Vec2, 
-		imgsrc: ImageSource, hitbox: Rect=null,
-		speed=4, timeout=30) {
-	super(tilemap, pos, imgsrc, hitbox);
+    constructor(profile:GridProfile, tilemap:TileMap, pos: Vec2) {
+	super(tilemap, pos);
 	this.profile = profile;
-	this.timeout = timeout;
-	this.speed = speed;
+    }
+
+    setHitbox(hitbox: Rect) {
 	let gs = this.profile.gridsize;
 	this.gridbox = new Rect(
 	    0, 0,

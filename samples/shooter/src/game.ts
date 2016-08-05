@@ -11,9 +11,11 @@
 //  Bullet
 //
 class Bullet extends Projectile {
-    constructor(pos: Vec2, movement: Vec2, frame: Rect) {
+    constructor(pos: Vec2) {
+	super(pos);
 	let bounds = new Rect(-4, -1, 8, 2);
-	super(pos, new DummyImageSource('white', bounds), bounds, movement, frame);
+	this.imgsrc = new DummyImageSource('white', bounds)
+	this.collider = bounds;
     }
 }
 
@@ -28,9 +30,10 @@ class Player extends Entity {
     firetick: number;
 
     constructor(scene: Shooter, pos: Vec2) {
-	let imgsrc = scene.sprites.get(0);
-	super(pos, imgsrc, imgsrc.dstRect);
+	super(pos);
 	this.scene = scene;
+	this.imgsrc = scene.sprites.get(0);
+	this.collider = this.imgsrc.dstRect;
 	this.usermove = new Vec2();
     }
 
@@ -39,9 +42,9 @@ class Player extends Entity {
 	this.moveIfPossible(this.usermove, true);
 	if (this.firing && this.firetick == 0) {
 	    this.firetick = 4;
-	    var bullet = new Bullet(
-		this.pos, new Vec2(8, 0),
-		this.scene.screen);
+	    var bullet = new Bullet(this.pos);
+	    bullet.movement = new Vec2(8, 0);
+	    bullet.frame = this.scene.screen;
 	    this.scene.addObject(bullet);
 	    playSound(APP.audios['pew']);
 	} else {
@@ -83,9 +86,11 @@ class EnemyBase extends Projectile {
 class Enemy1 extends Projectile {
 
     constructor(scene: Shooter, pos: Vec2) {
-	let imgsrc = scene.sprites.get(1);
-	let v = new Vec2(-rnd(1,8), rnd(3)-1);
-	super(pos, imgsrc, imgsrc.dstRect, v, scene.screen);
+	super(pos);
+	this.imgsrc = scene.sprites.get(1);
+	this.collider = this.imgsrc.dstRect;
+	this.movement = new Vec2(-rnd(1,8), rnd(3)-1);
+	this.frame = scene.screen;
     }
 }
 applyMixins(Enemy1, [EnemyBase]);
@@ -96,9 +101,11 @@ applyMixins(Enemy1, [EnemyBase]);
 class Enemy2 extends Projectile {
 
     constructor(scene: Shooter, pos: Vec2) {
-	let imgsrc = scene.sprites.get(2);
-	let v = new Vec2(-rnd(1,4), 0);
-	super(pos, imgsrc, imgsrc.dstRect, v, scene.screen);
+	super(pos);
+	this.imgsrc = scene.sprites.get(2);
+	this.collider = this.imgsrc.dstRect;
+	this.movement = new Vec2(-rnd(1,4), 0);
+	this.frame = scene.screen;
     }
 
     update() {
@@ -130,8 +137,9 @@ class Shooter extends GameScene {
 	super.init();
 	this.player = new Player(this, this.screen.center());
 	this.addObject(this.player);
-	this.stars = new StarSprite(
-	    this.screen, new DummyImageSource('white', new Rect(0,0,1,1)), 100);
+	this.stars = new StarSprite(this.screen, 100);
+	this.stars.imgsrc = new DummyImageSource('white', new Rect(0,0,1,1));
+	this.stars.velocity = new Vec2(-4, 0);
 	this.count = 0;
     }
 

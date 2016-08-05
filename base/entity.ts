@@ -71,16 +71,15 @@ class Task {
 class Sprite extends Task {
 
     pos: Vec2;
-    imgsrc: ImageSource;
+    imgsrc: ImageSource = null;
     visible: boolean = true;
     zOrder: number = 0;
     scale: Vec2 = new Vec2(1, 1);
     rotation: number = 0;
 
-    constructor(pos: Vec2, imgsrc: ImageSource=null) {
+    constructor(pos: Vec2) {
 	super();
 	this.pos = pos.copy();
-	this.imgsrc = imgsrc;
     }
     
     toString() {
@@ -88,7 +87,11 @@ class Sprite extends Task {
     }
   
     getBounds(pos: Vec2=null) {
-	return this.imgsrc.dstRect.add((pos !== null)? pos : this.pos);
+	if (this.imgsrc === null) {
+	    return null;
+	} else {
+	    return this.imgsrc.dstRect.add((pos !== null)? pos : this.pos);
+	}
     }
   
     movePos(v: Vec2) {
@@ -103,27 +106,29 @@ class Sprite extends Task {
   
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
 	// [OVERRIDE]
-	ctx.save();
-	ctx.translate(bx+this.pos.x, by+this.pos.y);
-	if (this.rotation) {
-	    ctx.rotate(this.rotation);
-	}
 	let imgsrc = this.imgsrc
-	let dstRect = imgsrc.dstRect;
-	if (imgsrc instanceof DummyImageSource) {
-	    ctx.fillStyle = imgsrc.color;
-	    ctx.fillRect(
-		dstRect.x, dstRect.y, dstRect.width, dstRect.height);
-	} else if (imgsrc instanceof HTMLImageSource) {
-	    let srcRect = imgsrc.srcRect;
-	    drawImageScaled(
-		ctx, imgsrc.image,
-		srcRect.x, srcRect.y, srcRect.width, srcRect.height,
-		dstRect.x, dstRect.y,
-		dstRect.width*this.scale.x,
-		dstRect.height*this.scale.y);
+	if (imgsrc !== null) {
+	    ctx.save();
+	    ctx.translate(bx+this.pos.x, by+this.pos.y);
+	    if (this.rotation) {
+		ctx.rotate(this.rotation);
+	    }
+	    let dstRect = imgsrc.dstRect;
+	    if (imgsrc instanceof DummyImageSource) {
+		ctx.fillStyle = imgsrc.color;
+		ctx.fillRect(
+		    dstRect.x, dstRect.y, dstRect.width, dstRect.height);
+	    } else if (imgsrc instanceof HTMLImageSource) {
+		let srcRect = imgsrc.srcRect;
+		drawImageScaled(
+		    ctx, imgsrc.image,
+		    srcRect.x, srcRect.y, srcRect.width, srcRect.height,
+		    dstRect.x, dstRect.y,
+		    dstRect.width*this.scale.x,
+		    dstRect.height*this.scale.y);
+	    }
+	    ctx.restore();
 	}
-	ctx.restore();
     }
 
 }
@@ -137,33 +142,34 @@ class TiledSprite extends Sprite {
     bounds: Rect;
     offset: Vec2 = new Vec2();
     
-    constructor(bounds: Rect, imgsrc: HTMLImageSource) {
-	super(new Vec2(), imgsrc);
+    constructor(bounds: Rect) {
+	super(new Vec2());
 	this.bounds = bounds
     }
 
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
-	bx += this.bounds.x;
-	by += this.bounds.y;
-	ctx.save();
-	ctx.beginPath();
-	ctx.rect(bx, by, this.bounds.width, this.bounds.height);
-	ctx.clip();
 	let imgsrc = this.imgsrc as HTMLImageSource;
-	let srcRect = imgsrc.srcRect;
-	let w = imgsrc.dstRect.width;
-	let h = imgsrc.dstRect.height;
-	let dx0 = int(Math.floor(this.offset.x/w)*w - this.offset.x);
-	let dy0 = int(Math.floor(this.offset.y/h)*h - this.offset.y);
-	for (let dy = dy0; dy < this.bounds.height; dy += h) {
-	    for (let dx = dx0; dx < this.bounds.width; dx += w) {
-		ctx.drawImage(
-		    imgsrc.image,
-		    srcRect.x, srcRect.y, srcRect.width, srcRect.height,
-		    bx+dx, by+dy, w, h);
+	if (imgsrc !== null) {
+	    ctx.save();
+	    ctx.translate(bx+this.bounds.x, by+this.bounds.y);
+	    ctx.beginPath();
+	    ctx.rect(0, 0, this.bounds.width, this.bounds.height);
+	    ctx.clip();
+	    let srcRect = imgsrc.srcRect;
+	    let w = imgsrc.dstRect.width;
+	    let h = imgsrc.dstRect.height;
+	    let dx0 = int(Math.floor(this.offset.x/w)*w - this.offset.x);
+	    let dy0 = int(Math.floor(this.offset.y/h)*h - this.offset.y);
+	    for (let dy = dy0; dy < this.bounds.height; dy += h) {
+		for (let dx = dx0; dx < this.bounds.width; dx += w) {
+		    ctx.drawImage(
+			imgsrc.image,
+			srcRect.x, srcRect.y, srcRect.width, srcRect.height,
+			dx, dy, w, h);
+		}
 	    }
+	    ctx.restore();
 	}
-	ctx.restore();
     }
 
 }
@@ -183,16 +189,14 @@ class Star {
 class StarSprite extends Sprite {
     
     bounds: Rect;
-    velocity: Vec2;
     maxdepth: number;
+    velocity: Vec2 = new Vec2();
     
     private _stars: Star[] = [];
 
-    constructor(bounds: Rect, imgsrc: ImageSource, nstars: number,
-		velocity=new Vec2(-1,0), maxdepth=3) {
-	super(new Vec2(), imgsrc);
+    constructor(bounds: Rect, nstars: number, maxdepth=3) {
+	super(new Vec2());
 	this.bounds = bounds
-	this.velocity = velocity;
 	this.maxdepth = maxdepth;
 	for (let i = 0; i < nstars; i++) {
 	    let star = new Star();
@@ -216,25 +220,27 @@ class StarSprite extends Sprite {
     }
 
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
-	ctx.save();
-	ctx.translate(bx+this.bounds.x, by+this.bounds.y);
-	for (let star of this._stars) {
-	    let dstRect = star.p.expand(star.s, star.s);
-	    let imgsrc = this.imgsrc
-	    if (imgsrc instanceof DummyImageSource) {
-		ctx.fillStyle = imgsrc.color;
-		ctx.fillRect(dstRect.x, dstRect.y, dstRect.width, dstRect.height);
-	    } else if (imgsrc instanceof HTMLImageSource) {
-		let srcRect = imgsrc.srcRect;
-		drawImageScaled(
-		    ctx, imgsrc.image,
-		    srcRect.x, srcRect.y, srcRect.width, srcRect.height,
-		    dstRect.x, dstRect.y,
-		    dstRect.width*this.scale.x,
-		    dstRect.height*this.scale.y);
+	let imgsrc = this.imgsrc
+	if (imgsrc !== null) {
+	    ctx.save();
+	    ctx.translate(bx+this.bounds.x, by+this.bounds.y);
+	    for (let star of this._stars) {
+		let dstRect = star.p.expand(star.s, star.s);
+		if (imgsrc instanceof DummyImageSource) {
+		    ctx.fillStyle = imgsrc.color;
+		    ctx.fillRect(dstRect.x, dstRect.y, dstRect.width, dstRect.height);
+		} else if (imgsrc instanceof HTMLImageSource) {
+		    let srcRect = imgsrc.srcRect;
+		    drawImageScaled(
+			ctx, imgsrc.image,
+			srcRect.x, srcRect.y, srcRect.width, srcRect.height,
+			dstRect.x, dstRect.y,
+			dstRect.width*this.scale.x,
+			dstRect.height*this.scale.y);
+		}
 	    }
+	    ctx.restore();
 	}
-	ctx.restore();
     }
 }
 
@@ -244,28 +250,23 @@ class StarSprite extends Sprite {
 //
 class Entity extends Sprite {
 
-    collider: Shape;
-
-    constructor(pos: Vec2, imgsrc: ImageSource, collider: Shape=null) {
-	super(pos, imgsrc);
-	this.collider = collider;
-    }
+    collider: Shape = null;
 
     toString() {
-	return '<Entity: '+this.collider+'>';
+	return '<Entity: '+this.pos+'>';
     }
 
     getCollider(pos: Vec2=null) {
-	return this.collider.add((pos !== null)? pos : this.pos);
+	if (this.collider === null) {
+	    return null;
+	} else {
+	    return this.collider.add((pos !== null)? pos : this.pos);
+	}
     }
   
     isMovable(v0: Vec2) {
-	if (this.collider !== null) {
-	    let v1 = this.getMove(this.pos, v0, true);
-	    return v1.equals(v0);
-	} else {
-	    return true;
-	}
+	let v1 = this.getMove(this.pos, v0, true);
+	return v1.equals(v0);
     }
 
     getMove(pos: Vec2, v: Vec2, force: boolean) {
@@ -321,14 +322,7 @@ class Entity extends Sprite {
 class Projectile extends Entity {
     
     movement: Vec2 = new Vec2();
-    frame: Rect;
-
-    constructor(pos: Vec2, imgsrc: ImageSource,
-		collider: Shape=null, movement: Vec2=null, frame: Rect=null) {
-	super(pos, imgsrc, collider);
-	this.movement = movement;
-	this.frame = frame;
-    }
+    frame: Rect = null;
 
     update() {
 	super.update();
@@ -352,22 +346,12 @@ class PhysicalEntity extends Entity {
 
     velocity: Vec2 = new Vec2();
     maxspeed: Vec2 = new Vec2(6,6);
-    jumpfunc: JumpFunc;
+    jumpfunc: JumpFunc = (vy:number, t:number) => { return (0 <= t && t <= 5)? -4 : vy+1; };
     
-    protected _jumpt: number;
-    protected _jumpend: number;
-    protected _landed: boolean;
+    protected _jumpt: number = Infinity;
+    protected _jumpend: number = 0;
+    protected _landed: boolean = false;
     
-    constructor(pos: Vec2, imgsrc: ImageSource=null, collider: Shape=null) {
-	super(pos, imgsrc, collider);
-	this._jumpt = Infinity;
-	this._jumpend = 0;
-	this._landed = false;
-	this.jumpfunc = (
-	    (vy:number, t:number) => { return (0 <= t && t <= 5)? -4 : vy+1; }
-	);
-    }
-
     setJumpFunc(jumpfunc: JumpFunc) {
 	this.jumpfunc = jumpfunc;
     }
@@ -430,9 +414,8 @@ class PlatformerEntity extends PhysicalEntity {
     
     tilemap: TileMap;
 
-    constructor(tilemap: TileMap, pos: Vec2, imgsrc: ImageSource, 
-		collider: Shape=null) {
-	super(pos, imgsrc, collider);
+    constructor(tilemap: TileMap, pos: Vec2) {
+	super(pos);
 	this.tilemap = tilemap;
     }
     

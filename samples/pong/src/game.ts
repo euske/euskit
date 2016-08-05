@@ -13,9 +13,10 @@ class Paddle extends Entity {
 
     constructor(screen: Rect) {
 	// Initializes the position and color.
-	let pos = screen.anchor(0,-1).move(0,-20);
 	let bounds = new Rect(-20,-5,40,10);
-	super(pos, new DummyImageSource('green', bounds), bounds);
+	super(screen.anchor(0,-1).move(0,-20));
+	this.imgsrc = new DummyImageSource('green', bounds);
+	this.collider = bounds;
 	this.screen = screen;
 	this.vx = 0;
     }
@@ -38,7 +39,9 @@ class Ball extends Entity {
     constructor(screen: Rect) {
 	// Initializes the position and color.
 	let bounds = new Rect(-5,-5,10,10);
-	super(screen.center(), new DummyImageSource('white', bounds), bounds);
+	super(screen.center());
+	this.imgsrc = new DummyImageSource('white', bounds);
+	this.collider = bounds;
 	this.screen = screen;
 	this.v = new Vec2(rnd(2)*8-4, -4);
     }
