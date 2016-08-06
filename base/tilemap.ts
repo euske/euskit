@@ -124,25 +124,8 @@ class TileMap {
 	}
 	return null;
     }
-
-    findTile(f0: TileFunc, range: Rect) {
-	return this.apply((x,y,c)=>{return f0(c);}, this.coord2map(range));
-    }
-
-    getTileRects(f0: TileFunc, range:Rect): Rect[] {
-	let ts = this.tilesize;
-	let rects = [] as Rect[];
-	function f(x:number, y:number, c:number) {
-	    if (f0(c)) {
-		rects.push(new Rect(x*ts, y*ts, ts, ts));
-	    }
-	    return false;
-	}
-	this.apply(f, this.coord2map(range));
-	return rects;
-    }
   
-    scroll(vx: number, vy: number, rect: Rect=null) {
+    shift(vx: number, vy: number, rect: Rect=null) {
 	if (rect === null) {
 	    rect = new Rect(0, 0, this.width, this.height);
 	}
@@ -161,6 +144,23 @@ class TileMap {
 		this.map[rect.y+y][rect.x+x] = src[dy][dx];
 	    }
 	}
+    }
+
+    findTile(f0: TileFunc, range: Rect) {
+	return this.apply((x,y,c)=>{return f0(c);}, this.coord2map(range));
+    }
+
+    getTileRects(f0: TileFunc, range:Rect): Rect[] {
+	let ts = this.tilesize;
+	let rects = [] as Rect[];
+	function f(x:number, y:number, c:number) {
+	    if (f0(c)) {
+		rects.push(new Rect(x*ts, y*ts, ts, ts));
+	    }
+	    return false;
+	}
+	this.apply(f, this.coord2map(range));
+	return rects;
     }
 
     getRangeMap(key:string, f: TileFunc) {

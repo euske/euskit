@@ -48,10 +48,10 @@ class Layer {
 	}
     }
 
-    scroll(v: Vec2) {
+    moveAll(v: Vec2) {
 	for (let obj of this.sprites) {
 	    if (!obj.alive) continue;
-	    if (obj.pos === null) continue;
+	    if (obj.getBounds() === null) continue;
 	    obj.pos = obj.pos.add(v);
 	}
     }
@@ -138,7 +138,7 @@ class ScrollLayer extends Layer {
 	return '<ScrollLayer: '+this.window+'>';
     }
   
-    move(v: Vec2) {
+    moveCenter(v: Vec2) {
 	this.window = this.window.add(v);
     }
     
@@ -166,7 +166,8 @@ class ScrollLayer extends Layer {
 	by -= this.window.y;
 	for (let obj of this.sprites) {
 	    if (obj.alive && obj.visible) {
-		if (obj.getBounds().overlaps(this.window)) {
+		let bounds = obj.getBounds()
+		if (bounds === null || bounds.overlaps(this.window)) {
 		    obj.render(ctx, bx, by);
 		}
 	    }

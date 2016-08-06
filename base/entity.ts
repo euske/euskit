@@ -87,10 +87,11 @@ class Sprite extends Task {
     }
   
     getBounds(pos: Vec2=null) {
-	if (this.imgsrc === null) {
-	    return null;
+	pos = (pos !== null)? pos : this.pos;
+	if (pos !== null && this.imgsrc !== null) {
+	    return this.imgsrc.dstRect.add(pos);
 	} else {
-	    return this.imgsrc.dstRect.add((pos !== null)? pos : this.pos);
+	    return null;
 	}
     }
   
@@ -257,10 +258,11 @@ class Entity extends Sprite {
     }
 
     getCollider(pos: Vec2=null) {
-	if (this.collider === null) {
-	    return null;
+	pos = (pos !== null)? pos : this.pos;
+	if (pos !== null && this.collider !== null) {
+	    return this.collider.add(pos);
 	} else {
-	    return this.collider.add((pos !== null)? pos : this.pos);
+	    return null;
 	}
     }
   
