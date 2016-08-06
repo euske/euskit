@@ -1,11 +1,13 @@
 # Makefile
 
 all:
-	cd platformer; $(MAKE) $@
 	cd pong; $(MAKE) $@
 	cd shooter; $(MAKE) $@
+	cd platformer; $(MAKE) $@
+	cd isometric; $(MAKE) $@
 
 clean:
-	-cd platformer; $(MAKE) $@
 	-cd pong; $(MAKE) $@
 	-cd shooter; $(MAKE) $@
+	-cd platformer; $(MAKE) $@
+	-cd isometric; $(MAKE) $@

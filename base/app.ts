@@ -27,8 +27,8 @@ class App {
     audios: AudioDictionary;
     labels: DivDictionary;
     font: Font;
-    shadowfont: Font;
-    colorfont: Font;
+    shadowFont: Font;
+    colorFont: Font;
 
     screen: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
@@ -63,8 +63,8 @@ class App {
 	this.audios = audios;
 	this.labels = labels;
 	this.font = new Font(this.images['font'], 'white');
-	this.colorfont = new Font(this.images['font'], null);
-	this.shadowfont = new ShadowFont(this.images['font'], 'white');
+	this.colorFont = new Font(this.images['font'], null);
+	this.shadowFont = new ShadowFont(this.images['font'], 'white');
 
 	// Initialize the off-screen bitmap.
 	this.screen = createCanvas(this.frame.width/scale,
