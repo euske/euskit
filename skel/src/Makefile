@@ -1,7 +1,7 @@
 # Makefile for src
 
 RM=rm -f
-LN=ln
+SLN=ln -s
 TSC=tsc
 
 TSFLAGS=--noEmitOnError \
@@ -17,10 +17,10 @@ all: base $(OUTFILE)
 
 clean:
 	-$(RM) -r $(OUTDIR)
-	-$(RM) base
+	-$(RM) -r base
 
 base: $(BASEDIR)
-	$(LN) -s $(BASEDIR) base
+	$(SLN) $(BASEDIR) ./base
 
 $(OUTFILE): game.ts
 	$(TSC) $(TSFLAGS) --out $@ $^
