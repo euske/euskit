@@ -245,9 +245,9 @@ A <code>Color</code> represents an RGBA value.
 An <code>ImageSource</code> is a portion of a <code>&lt;img&gt;</code> 
 that is used for rendering Sprites.
 <table border>
-<tr><td><code>new HTMLImageSource(image, bounds, <em>[offset]</em>)</code></td>
+<tr><td><code>new HTMLImageSource(image, srcRect, dstRect)</code></td>
   <td>Creates a <code>ImageSource</code> from <code>&lt;img&gt;</code>.</td></tr>
-<tr><td><code>new DummyImageSource(color)</code></td>
+<tr><td><code>new FillImageSource(color, dstRect)</code></td>
   <td>Creates a <code>ImageSource</code> with a solid color.</td></tr>
 </table>
 
@@ -255,9 +255,9 @@ that is used for rendering Sprites.
 <p>
 A set of <code>ImageSource</code> objects indexed by a number.
 <table border>
-<tr><td><code>new ImageSpriteSheet(image, size, <em>[offset]</em>)</code></td>
+<tr><td><code>new ImageSpriteSheet(image, size, <em>[origin]</em>)</code></td>
   <td>Creates a <code>SpriteSheet</code> from <code>&lt;img&gt;</code>.</td></tr>
-<tr><td><code>new DummySpriteSheet(colors)</code></td>
+<tr><td><code>new SimpleSpriteSheet(imgsrcs)</code></td>
   <td>Creates a <code>SpriteSheet</code> with solid colors.</td></tr>
 <tr><td><code>.get(i)</code></td>
   <td>The <code>i</code>-th <code>ImageSource</code>.</td></tr>

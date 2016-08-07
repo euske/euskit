@@ -22,7 +22,7 @@ class Paddle extends Entity {
 	// Initializes the position and shape.
 	super(screen.anchor(0,-1).move(0,-20));
 	let bounds = new Rect(-20,-5,40,10);
-	this.imgsrc = new DummyImageSource('green', bounds);
+	this.imgsrc = new FillImageSource('green', bounds);
 	this.collider = bounds;
 	this.screen = screen;
 	this.vx = 0;
@@ -47,7 +47,7 @@ class Ball extends Entity {
 	// Initializes the position and shape.
 	super(screen.center());
 	let bounds = new Rect(-5,-5,10,10);
-	this.imgsrc = new DummyImageSource('white', bounds);
+	this.imgsrc = new FillImageSource('white', bounds);
 	this.collider = bounds;
 	this.screen = screen;
 	this.v = new Vec2(rnd(2)*8-4, -4);

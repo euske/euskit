@@ -115,7 +115,7 @@ class Sprite extends Task {
 		ctx.rotate(this.rotation);
 	    }
 	    let dstRect = imgsrc.dstRect;
-	    if (imgsrc instanceof DummyImageSource) {
+	    if (imgsrc instanceof FillImageSource) {
 		ctx.fillStyle = imgsrc.color;
 		ctx.fillRect(
 		    dstRect.x, dstRect.y, dstRect.width, dstRect.height);
@@ -227,7 +227,7 @@ class StarSprite extends Sprite {
 	    ctx.translate(bx+this.bounds.x, by+this.bounds.y);
 	    for (let star of this._stars) {
 		let dstRect = star.p.expand(star.s, star.s);
-		if (imgsrc instanceof DummyImageSource) {
+		if (imgsrc instanceof FillImageSource) {
 		    ctx.fillStyle = imgsrc.color;
 		    ctx.fillRect(dstRect.x, dstRect.y, dstRect.width, dstRect.height);
 		} else if (imgsrc instanceof HTMLImageSource) {

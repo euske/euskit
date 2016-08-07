@@ -192,7 +192,7 @@ class TileMap {
 		if (0 <= c) {
 		    let imgsrc = tileset.get(c);
 		    let dstRect = imgsrc.dstRect;
-		    if (imgsrc instanceof DummyImageSource) {
+		    if (imgsrc instanceof FillImageSource) {
 			ctx.fillStyle = imgsrc.color;
 			ctx.fillRect(bx+ts*dx, by+ts*dy, ts, ts);
 		    } else if (imgsrc instanceof HTMLImageSource) {
@@ -228,7 +228,7 @@ class TileMap {
 		if (0 <= c) {
 		    let imgsrc = tileset.get(c);
 		    let dstRect = imgsrc.dstRect;
-		    if (imgsrc instanceof DummyImageSource) {
+		    if (imgsrc instanceof FillImageSource) {
 			ctx.fillStyle = imgsrc.color;
 			ctx.fillRect(bx+ts*dx, by+ts*dy, ts, ts);
 		    } else if (imgsrc instanceof HTMLImageSource) {

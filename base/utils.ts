@@ -363,7 +363,7 @@ class HTMLImageSource extends ImageSource {
     }
 }
 
-class DummyImageSource extends ImageSource {
+class FillImageSource extends ImageSource {
     color: string;
     
     constructor(color: string, dstRect: Rect) {
@@ -403,15 +403,15 @@ class ImageSpriteSheet extends SpriteSheet {
     }
 }
 
-class DummySpriteSheet extends SpriteSheet {
-    sprites: DummyImageSource[];
+class SimpleSpriteSheet extends SpriteSheet {
+    imgsrcs: FillImageSource[];
 
-    constructor(sprites: DummyImageSource[]) {
+    constructor(imgsrcs: FillImageSource[]) {
 	super();
-	this.sprites = sprites;
+	this.imgsrcs = imgsrcs;
     }
 
     get(x:number, y=0) {
-	return this.sprites[x];
+	return this.imgsrcs[x];
     }
 }

@@ -17,7 +17,7 @@ class Bullet extends Projectile {
     constructor(pos: Vec2) {
 	super(pos);
 	let bounds = new Rect(-4, -1, 8, 2);
-	this.imgsrc = new DummyImageSource('white', bounds)
+	this.imgsrc = new FillImageSource('white', bounds)
 	this.collider = bounds;
     }
 }
@@ -141,7 +141,7 @@ class Shooter extends GameScene {
 	this.player = new Player(this, this.screen.center());
 	this.addObject(this.player);
 	this.stars = new StarSprite(this.screen, 100);
-	this.stars.imgsrc = new DummyImageSource('white', new Rect(0,0,1,1));
+	this.stars.imgsrc = new FillImageSource('white', new Rect(0,0,1,1));
 	this.stars.velocity = new Vec2(-4, 0);
 	this.count = 0;
     }
