@@ -173,6 +173,7 @@ interface Shape {
     overlaps(shape: Shape): boolean;
     contact(v: Vec2, shape: Shape): Vec2;
     contactBounds(v: Vec2, rect: Rect): Vec2;
+    containsPt(p: Vec2): boolean;
     getAABB(): Rect;
 }
 
