@@ -66,7 +66,7 @@ class Ball extends Entity {
 	this.pos = this.pos.add(this.v);
     }
 
-    collide(entity: Entity) {
+    collidedWith(entity: Entity) {
 	// Bounces when hit the paddle.
 	if (entity instanceof Paddle) {
 	    this.v.y = -4;

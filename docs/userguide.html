@@ -163,7 +163,7 @@ entity.moveIfPossible(v, force);
 
 <blockquote><pre>
 class Player extends Entity {
-    collide(entity: Entity) {
+    collidedWith(entity: Entity) {
         if (entity instanceof Enemy) {
             this.die();
         }

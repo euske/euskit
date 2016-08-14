@@ -92,8 +92,8 @@ class Layer {
 		    obj0.getCollider(),
 		    this.entities.slice(i+1));
 		for (let obj1 of a) {
-		    obj0.collide(obj1);
-		    obj1.collide(obj0);
+		    obj0.collidedWith(obj1);
+		    obj1.collidedWith(obj0);
 		}
 	    }
 	}

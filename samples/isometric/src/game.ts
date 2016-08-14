@@ -338,7 +338,7 @@ class Player extends Entity3d {
 	this.velocity3 = this.moveIfPossible3(v, false).clamp(this.maxspeed3);
     }
 
-    collide(entity: Entity) {
+    collidedWith(entity: Entity) {
 	if (entity instanceof Thingy) {
 	    entity.die();
 	    let obj = new Projectile(this.pos.move(0,-16));

@@ -75,7 +75,7 @@ class Player extends Entity {
 //  EnemyBase
 //
 class EnemyBase extends Projectile {
-    collide(entity: Entity) {
+    collidedWith(entity: Entity) {
 	if (entity instanceof Bullet) {
 	    playSound(APP.audios['explosion']);
 	    this.die();

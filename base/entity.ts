@@ -306,7 +306,7 @@ class Entity extends Sprite {
 	return null;
     }
 
-    collide(entity: Entity) {
+    collidedWith(entity: Entity) {
 	// [OVERRIDE]
     }
 

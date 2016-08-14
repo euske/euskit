@@ -716,7 +716,7 @@ An <code>Entity</code> is a physical object that's visible and has a physical bo
   <td>Updates for the current frame.</td></tr>
 <tr class=overridable><td><code>.render(ctx, bx, by)</code></td>
   <td>Draws the entity at the location (<code>bx</code>, <code>by</code>).</td></tr>
-<tr class=overridable><td><code>.collide(entity)</code></td>
+<tr class=overridable><td><code>.collidedWith(entity)</code></td>
   <td>Invoked when the entity collides another entity.</td></tr>
 <tr><td><code>.moveIfPossible(v, force)</code></td>
   <td>Moves the entity by <code>v</code> without colliding obstacles.</td></tr>
@@ -756,7 +756,7 @@ at once and interact each other.
 <tr><td><code>.removeObject(obj)</code></td>
   <td>Removes a <code>Task</code>/<code>Sprite</code>/<code>Entity</code> from the list.</td></tr>
 <tr><td><code>.checkCollisions()</code></td>
-  <td>Checks collision for each <code>Entity</code> and calls <code>.collide()</code> for those collided.</td></tr>
+  <td>Checks collision for each <code>Entity</code> and calls <code>.collidedWith()</code> for those collided.</td></tr>
 <tr><td><code>.findObjects(shape, <em>[objs, [f]]</em>)</code></td>
   <td>Returns a list of objects that overlap <code>shape</code>.</td></tr>
 </table>
@@ -939,7 +939,7 @@ Suitable for charcters or objects that can jump or fall.
   <td>Updates for the current frame.</td></tr>
 <tr class=overridable><td><code>.render(ctx, bx, by)</code></td>
   <td>Draws the entity at the location (<code>bx</code>, <code>by</code>).</td></tr>
-<tr class=overridable><td><code>.collide(entity)</code></td>
+<tr class=overridable><td><code>.collidedWith(entity)</code></td>
   <td>Invoked when the entity collides another entity.</td></tr>
 <tr class=inherited><td><code>.moveIfPossible(v, force)</code></td>
   <td>Moves the entity by <code>v</code> without colliding obstacles.</td></tr>
@@ -1010,7 +1010,7 @@ Suitable for tile-based platformer games.
   <td>Updates for the current frame.</td></tr>
 <tr class=overridable><td><code>.render(ctx, bx, by)</code></td>
   <td>Draws the entity at the location (<code>bx</code>, <code>by</code>).</td></tr>
-<tr class=overridable><td><code>.collide(entity)</code></td>
+<tr class=overridable><td><code>.collidedWith(entity)</code></td>
   <td>Invoked when the entity collides another entity.</td></tr>
 <tr class=inherited><td><code>.moveIfPossible(v, force)</code></td>
   <td>Moves the entity by <code>v</code> without colliding obstacles.</td></tr>
@@ -1066,7 +1066,7 @@ Only shows the objects within the window.
 <tr class=inherited><td><code>.removeObject(obj)</code></td>
   <td>Removes a <code>Task</code>/<code>Sprite</code>/<code>Entity</code> from the list.</td></tr>
 <tr class=inherited><td><code>.checkCollisions()</code></td>
-  <td>Checks collision for each <code>Entity</code> and calls <code>.collide()</code> for those collided.</td></tr>
+  <td>Checks collision for each <code>Entity</code> and calls <code>.collidedWith()</code> for those collided.</td></tr>
 <tr class=inherited><td><code>.findObjects(rect, <em>[objs, [f]]</em>)</code></td>
   <td>Returns a list of objects that overlap <code>rect</code>.</td></tr>
 </table>
