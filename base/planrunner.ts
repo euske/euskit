@@ -325,7 +325,7 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 		this.stopPlan();
 	    }
 	}
-	this.moveIfPossible(this.movement, true);
+	this.moveIfPossible(this.movement);
     }
 
     render(ctx:CanvasRenderingContext2D, bx:number, by:number) {

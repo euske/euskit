@@ -80,16 +80,16 @@ class Entity3d extends Entity {
 	    new Vec3(bounds.width, bounds.height, this.depth));
     }
 
-    isMovable3(v0: Vec3) {
-	let v1 = this.getMove3(this.getPos3(), v0, true);
+    isMovable3(v0: Vec3, context=null as string) {
+	let v1 = this.getMove3(this.getPos3(), v0, context);
 	return v1.equals(v0);
     }
 
-    getMove3(pos: Vec3, v: Vec3, force: boolean) {
+    getMove3(pos: Vec3, v: Vec3, context=null as string) {
 	let collider0 = this.getCollider3(pos);
 	let collider1 = collider0;
 	let range = collider1.union(collider1.add(v));
-	let obstacles = this.getObstaclesFor3(range, force);
+	let obstacles = this.getObstaclesFor3(range, context);
 	let d = getContact3(collider1, v, obstacles);
 	v = v.sub(d);
 	collider1 = collider1.add(d);
@@ -115,12 +115,12 @@ class Entity3d extends Entity {
 	return false;
     }
     
-    getObstaclesFor3(range: Box, force: boolean): Box[] {
+    getObstaclesFor3(range: Box, context: string): Box[] {
 	return null;
     }
 
-    moveIfPossible3(v: Vec3, force: boolean) {
-	v = this.getMove3(this.getPos3(), v, force);
+    moveIfPossible3(v: Vec3, context=null as string) {
+	v = this.getMove3(this.getPos3(), v, context);
 	this.movePos3(v);
 	return v;
     }
@@ -267,7 +267,7 @@ class Player extends Entity3d {
 	this.usermove3 = new Vec3();
     }
     
-    getObstaclesFor3(range: Box, force: boolean) {
+    getObstaclesFor3(range: Box, context: string) {
 	let window = this.scene.layer.window;
 	let tilemap = this.scene.tilemap;
 	let ts = tilemap.tilesize;
@@ -312,7 +312,7 @@ class Player extends Entity3d {
 
     update() {
 	super.update();
-	this.moveIfPossible3(this.usermove3, true);
+	this.moveIfPossible3(this.usermove3);
 	this.fall();
 	if (this._jumpt < this._jumpend) {
 	    this._jumpt++;
@@ -335,7 +335,7 @@ class Player extends Entity3d {
     fall() {
 	let vz = this.jumpfunc3(this.velocity3.z, this._jumpt);
 	let v = new Vec3(this.velocity3.x, this.velocity3.y, vz);
-	this.velocity3 = this.moveIfPossible3(v, false).clamp(this.maxspeed3);
+	this.velocity3 = this.moveIfPossible3(v, 'fall').clamp(this.maxspeed3);
     }
 
     collidedWith(entity: Entity) {
@@ -434,7 +434,7 @@ class Game extends Scene {
 	    this.layer.moveAll(vw);
 	}
 	if (this.player.alive) {
-	    this.player.moveIfPossible3(new Vec3(v.x, v.y, 0), false);
+	    this.player.moveIfPossible3(new Vec3(v.x, v.y, 0), 'fall');
 	}
     }
 

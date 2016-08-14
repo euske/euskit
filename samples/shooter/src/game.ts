@@ -42,7 +42,7 @@ class Player extends Entity {
 
     update() {
 	super.update();
-	this.moveIfPossible(this.usermove, true);
+	this.moveIfPossible(this.usermove);
 	if (this.firing && this.firetick == 0) {
 	    this.firetick = 4;
 	    var bullet = new Bullet(this.pos);
@@ -66,7 +66,7 @@ class Player extends Entity {
 	this.usermove = v.scale(4);
     }
     
-    getFencesFor(range: Rect, force: boolean): Rect[] {
+    getFencesFor(range: Rect, context: string): Rect[] {
 	return [this.scene.screen];
     }    
 }

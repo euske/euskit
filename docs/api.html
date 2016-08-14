@@ -718,15 +718,15 @@ An <code>Entity</code> is a physical object that's visible and has a physical bo
   <td>Draws the entity at the location (<code>bx</code>, <code>by</code>).</td></tr>
 <tr class=overridable><td><code>.collidedWith(entity)</code></td>
   <td>Invoked when the entity collides another entity.</td></tr>
-<tr><td><code>.moveIfPossible(v, force)</code></td>
+<tr><td><code>.moveIfPossible(v, <em>[context]</em>)</code></td>
   <td>Moves the entity by <code>v</code> without colliding obstacles.</td></tr>
 <tr><td><code>.isMovable(v)</code></td>
   <td><code>true</code> if the entity is movable toward <code>v</code>.</td></tr>
 <tr><td><code>.getMove(v)</code></td>
   <td>Trims the vector <code>v</code> so that it doesn't collide.</td></tr>
-<tr class=overridable><td><code>.getObstaclesFor(range, force)</code></td>
+<tr class=overridable><td><code>.getObstaclesFor(range, context)</code></td>
   <td>Returns a list of <code>Shape</code>s within <code>range</code>.</td></tr>
-<tr class=overridable><td><code>.getFencesFor(range, force)</code></td>
+<tr class=overridable><td><code>.getFencesFor(range, context)</code></td>
   <td>Returns a list of bounding rectangles that limits the entity within.</td></tr>
 </table>
 
@@ -941,15 +941,15 @@ Suitable for charcters or objects that can jump or fall.
   <td>Draws the entity at the location (<code>bx</code>, <code>by</code>).</td></tr>
 <tr class=overridable><td><code>.collidedWith(entity)</code></td>
   <td>Invoked when the entity collides another entity.</td></tr>
-<tr class=inherited><td><code>.moveIfPossible(v, force)</code></td>
+<tr class=inherited><td><code>.moveIfPossible(v, <em>[context]</em>)</code></td>
   <td>Moves the entity by <code>v</code> without colliding obstacles.</td></tr>
 <tr class=inherited><td><code>.isMovable(v)</code></td>
   <td><code>true</code> if the entity is movable toward <code>v</code>.</td></tr>
 <tr class=inherited><td><code>.getMove(v)</code></td>
   <td>Trims the vector <code>v</code> so that it doesn't collide.</td></tr>
-<tr class=overridable><td><code>.getObstaclesFor(range, force)</code></td>
+<tr class=overridable><td><code>.getObstaclesFor(range, context)</code></td>
   <td>Returns a list of <code>Shape</code>s within <code>range</code>.</td></tr>
-<tr class=overridable><td><code>.getFencesFor(range, force)</code></td>
+<tr class=overridable><td><code>.getFencesFor(range, context)</code></td>
   <td>Returns a list of bounding rectangles that limits the entity within.</td></tr>
 <tr><td><code>.setJumpFunc(function)</code></td>
   <td>Sets the gravity function.</td></tr>
@@ -1012,13 +1012,13 @@ Suitable for tile-based platformer games.
   <td>Draws the entity at the location (<code>bx</code>, <code>by</code>).</td></tr>
 <tr class=overridable><td><code>.collidedWith(entity)</code></td>
   <td>Invoked when the entity collides another entity.</td></tr>
-<tr class=inherited><td><code>.moveIfPossible(v, force)</code></td>
+<tr class=inherited><td><code>.moveIfPossible(v, <em>[context]</em>)</code></td>
   <td>Moves the entity by <code>v</code> without colliding obstacles.</td></tr>
 <tr class=inherited><td><code>.isMovable(v)</code></td>
   <td><code>true</code> if the entity is movable toward <code>v</code>.</td></tr>
 <tr class=inherited><td><code>.getMove(v)</code></td>
   <td>Trims the vector <code>v</code> so that it doesn't collide.</td></tr>
-<tr class=overridable><td><code>.getFencesFor(range, force)</code></td>
+<tr class=overridable><td><code>.getFencesFor(range, context)</code></td>
   <td>Returns a list of bounding rectangles that limits the entity within.</td></tr>
 <tr class=inherited><td><code>.setJumpFunc(function)</code></td>
   <td>Sets the gravity function.</td></tr>

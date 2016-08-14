@@ -25,7 +25,7 @@ class Player extends Entity {
 
     update() {
 	super.update();
-	this.moveIfPossible(this.usermove, true);
+	this.moveIfPossible(this.usermove);
     }
     
     setMove(v: Vec2) {

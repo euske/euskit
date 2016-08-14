@@ -28,7 +28,7 @@ class WorldObject {
     
     scene: Game;
     
-    getFencesFor(range: Rect, force: boolean): Rect[] {
+    getFencesFor(range: Rect, context: string): Rect[] {
 	return [this.scene.screen];
     }
     
@@ -53,7 +53,7 @@ class Player extends PlatformerEntity {
 
     update() {
 	super.update();
-	this.moveIfPossible(this.usermove, true);
+	this.moveIfPossible(this.usermove);
     }
     
     setMove(v: Vec2) {

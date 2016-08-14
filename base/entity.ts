@@ -266,18 +266,18 @@ class Entity extends Sprite {
 	}
     }
   
-    isMovable(v0: Vec2) {
-	let v1 = this.getMove(this.pos, v0, true);
+    isMovable(v0: Vec2, context=null as string) {
+	let v1 = this.getMove(this.pos, v0, context);
 	return v1.equals(v0);
     }
 
-    getMove(pos: Vec2, v: Vec2, force: boolean) {
+    getMove(pos: Vec2, v: Vec2, context=null as string) {
 	if (this.collider === null) return v;
 	let collider = this.collider.add(pos);
 	let hitbox0 = collider.getAABB();
 	let range = hitbox0.union(hitbox0.add(v));
-	let obstacles = this.getObstaclesFor(range, force);
-	let fences = this.getFencesFor(range, force);
+	let obstacles = this.getObstaclesFor(range, context);
+	let fences = this.getFencesFor(range, context);
 	let d = getContact(collider, v, obstacles, fences);
 	v = v.sub(d);
 	collider = collider.add(d);
@@ -296,12 +296,12 @@ class Entity extends Sprite {
 			hitbox1.y-hitbox0.y);
     }
   
-    getObstaclesFor(range: Rect, force: boolean): Shape[] {
+    getObstaclesFor(range: Rect, context: string): Shape[] {
 	// [OVERRIDE]
 	return null;
     }
   
-    getFencesFor(range: Rect, force: boolean): Rect[] {
+    getFencesFor(range: Rect, context: string): Rect[] {
 	// [OVERRIDE]
 	return null;
     }
@@ -310,8 +310,8 @@ class Entity extends Sprite {
 	// [OVERRIDE]
     }
 
-    moveIfPossible(v: Vec2, force: boolean) {
-	v = this.getMove(this.pos, v, force);
+    moveIfPossible(v: Vec2, context=null as string) {
+	v = this.getMove(this.pos, v, context);
 	this.movePos(v);
 	return v;
     }
@@ -382,7 +382,7 @@ class PhysicalEntity extends Entity {
 	if (!this.isHolding()) {
 	    let vy = this.jumpfunc(this.velocity.y, this._jumpt);
 	    let v = new Vec2(this.velocity.x, vy);
-	    this.velocity = this.moveIfPossible(v, false);
+	    this.velocity = this.moveIfPossible(v, 'fall');
 	    let landed = (0 < vy && this.velocity.y == 0);
 	    if (!this._landed && landed) {
 		this.land();
@@ -426,8 +426,8 @@ class PlatformerEntity extends PhysicalEntity {
 	return (this.tilemap.findTile(this.tilemap.isGrabbable, range) !== null);
     }
 
-    getObstaclesFor(range: Rect, force: boolean): Rect[] {
-	let f = ((force || this.isHolding())?
+    getObstaclesFor(range: Rect, context=null as string): Rect[] {
+	let f = ((context != 'fall' || this.isHolding())?
 		 this.tilemap.isObstacle :
 		 this.tilemap.isStoppable);
 	return this.tilemap.getTileRects(f, range);
