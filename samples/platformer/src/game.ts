@@ -16,9 +16,9 @@
 
 
 PlanningEntity.debug = true;
-function jumpfunc (vy:number, t:number) {
+const jumpfunc = (vy:number, t:number) => {
     return (0 <= t && t <= 5)? -8 : vy+2;
-}
+};
 
 
 
@@ -54,7 +54,6 @@ class Player extends PlatformerEntity {
     update() {
 	super.update();
 	this.moveIfPossible(this.usermove, true);
-	log(this.pos);
     }
     
     setMove(v: Vec2) {
