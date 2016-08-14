@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<style>
+h1 { border-bottom: 4pt solid; }
+h2 { border-bottom: 2pt solid; }
+h3 { border-bottom: 1pt solid; }
+table { border-collapse: collapse; }
+td { padding: 2px; }
+a { font-weight: bold; }
+.inherited { background: #cccccc; }
+.overridable { background: #ccffcc; }
+</style>
+<title>Euskit User Guide</title>
+</head>
+<body>
+<h1><a href="https://github.com/euske/euskit">Euskit</a> User Guide</h1>
+
+<h2><a name="howtocreate">1. How To Create a New Project</a></h2>
+<p>
+On Unix, type:
+<blockquote><pre>
+$ ./setup.sh /path/to/project
+</pre></blockquote>
+All the necessary files and template code will be copied.
+
+<h2><a name="filestructure">2. Project File Structure</a></h2>
+<ul>
+<li> <code>./</code> &nbsp; Project directory.
+  <ul>
+  <li> <code>Makefile</code> &nbsp; Build file.
+  <li> <code>index.html</code> &nbsp; Game page.
+  <li> <code>assets/</code> &nbsp; Game assets (images and sounds)
+  <li> <code>src/game.ts</code> &nbsp; Game source code.
+    <ul>
+      <li> <code>base/*.ts</code> &nbsp; Euskit base library code.
+    </ul>
+  </ul>
+</ul>
+
+<h2><a name="objects">3. Basic Objects</a></h2>
+
+<ul>
+<li> Every game has exactly one top-level object, <code>App</code>.
+<li> The <code>App</code> object manages shared resources (such as images
+and sounds) and redirects the GUI events to its
+current <code>Scene</code>.  
+<li> A <code>Scene</code> object responds to
+each event and interacts with the user. A game can have
+multiple <code>Scene</code>s (such as a title and cutscene screen) and
+there's always only one that is active.  
+<li> Each <code>Scene</code> can
+contain zero or more <code>Layer</code>s.  This is
+where <code>Task</code>s, <code>Sprite</code>s
+and <code>Entity</code>s reside. Each of these objects can run
+independently and can be created or destroyed as
+needed. 
+<li> A <code>Task</code> is just an independent process
+whose <code>update()</code> method is called at every frame.  A
+new <code>Task</code> can be created and added to a <code>Layer</code>
+at any time. When a Task dies because it is terminated externally or
+its speficied lifetime is passed, it is automatically removed from
+its <code>Layer</code>. 
+<li> A <code>Sprite</code> is a visible
+<code>Task</code>. It has a position and its own rendering function 
+<code>render()</code> and can be shown at a screen. 
+<li> An <code>Entity</code> is a <code>Sprite</code> that has a
+physical extent. In Euskit, pure <code>Sprite</code>s are mostly used
+as particles or text labels, and <code>Entity</code>s are often used
+as a player or other characters in a game.
+</ul>
+
+<div style="position: relative;">
+  <svg xmlns="http://www.w3.org/2000/svg" 
+       xmlns:xlink="http://www.w3.org/1999/xlink"
+       version="1.1" width="250" height="150">
+    <g transform="translate(1.5,1.5)">
+      <g fill="none" stroke="black" stroke-width="1">
+	<line x1="140" y1="12" x2="55" y2="100" />
+	<line x1="140" y1="12" x2="175" y2="100" />
+	<rect x="0" y="55" width="110" height="90" fill="white" />
+	<rect x="120" y="55" width="110" height="90" fill="white" />
+	<ellipse cx="140" cy="12" rx="20" ry="12" fill="white" />
+	<rect x="18" y="60" width="80" height="60" fill="white" />
+	<rect x="14" y="64" width="80" height="60" fill="white" />
+	<rect x="10" y="68" width="80" height="60" fill="white" />
+	<circle cx="20" cy="80" r="5" />
+	<rect x="70" y="90" width="16" height="16" />
+	<rect x="20" y="110" width="15" height="15" />
+      </g>
+      <g style="font-size: 75%;">
+	<text x="140" y="15" text-anchor="middle">App</text>
+	<text x="28" y="85" text-anchor="begin">Task</text>
+	<text x="68" y="102" text-anchor="end">Sprite</text>
+	<text x="38" y="122" text-anchor="begin">Entity</text>
+	<text x="70" y="140" text-anchor="begin">Layer</text>
+	<text x="55" y="52" text-anchor="middle">Scene</text>
+	<text x="175" y="52" text-anchor="middle">Scene</text>
+	<text x="240" y="100" text-anchor="begin">...</text>
+	<text x="165" y="15">Images, ...</text>
+      </g>
+    </g>
+  </svg>
+</div>
+
+<h3><a name="task">3.1. Task</a></h3>
+
+<blockquote><pre>
+let task = new Task();
+layer.addObject(task);
+task.lifetime = 1.0;
+task.die();
+task.died.subscribe((task) =&gt; { ... });
+</pre></blockquote>
+
+<blockquote><pre>
+class MyTask extends Task {
+    update() {
+        this.count--;
+        if (this.cont == 0) {
+            log("Boo!");
+            this.die();
+        }
+    }
+}
+</pre></blockquote>
+
+
+<h3><a name="sprite">3.2. Sprite</a></h3>
+
+<blockquote><pre>
+let sprite = new Sprite(pos);
+layer.addObject(sprite);
+sprite.pos = new Vec2(10,20);
+sprite.visible = false;
+sprite.zOrder = 1;
+sprite.scale = new Vec2(-1, 1);
+sprite.rotation = 1;
+sprite.movePos(v);
+</pre></blockquote>
+
+<blockquote><pre>
+class Particle extends Sprite {
+    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
+        ctx.fillStyle = 'red';
+        ctx.fillRect(bx+this.pos.x-5, by+this.pos.y-5, 10, 10);
+    }
+}
+</pre></blockquote>
+
+<h3><a name="entity">3.3. Entity</a></h3>
+
+<blockquote><pre>
+let entity = new Entity(pos);
+layer.addObject(entity);
+entity.collider = new Rect(-5,-5,10,10);
+entity.collider = new Circle(0,0,5);
+entity.isMovable(v);
+entity.getMove(pos, v, force);
+entity.moveIfPossible(v, force);
+</pre></blockquote>
+
+<blockquote><pre>
+class Player extends Entity {
+    collide(entity: Entity) {
+        if (entity instanceof Enemy) {
+            this.die();
+        }
+    }
+}
+</pre></blockquote>
+
+<h2>4. Use Collision Detection</h2>
+
+<h2>5. How To Make a Platformer</h2>
+
+<h3>5.1. Using TileMap</h3>
+
+<h2>6. How To Make a Shooter</h2>
