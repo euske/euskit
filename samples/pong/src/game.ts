@@ -13,6 +13,9 @@
 //  facilitate the understanding.
 //
 
+
+//  Paddle
+//
 class Paddle extends Entity {
 
     screen: Rect;		// Screen bounds.
@@ -38,6 +41,9 @@ class Paddle extends Entity {
     }
 }
 
+
+//  Ball
+//
 class Ball extends Entity {
 
     screen: Rect;		// Screen bounds.
@@ -74,6 +80,9 @@ class Ball extends Entity {
     }
 }
 
+
+//  Pong
+//
 class Pong extends GameScene {
 
     paddle: Paddle;
