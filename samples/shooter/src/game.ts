@@ -84,7 +84,15 @@ class Player extends Entity {
     getFencesFor(range: Rect, context: string): Rect[] {
 	// Restrict its position within the screen.
 	return [this.scene.screen];
-    }    
+    }
+
+    collidedWith(entity: Entity) {
+	if (entity instanceof EnemyBase) {
+	    playSound(APP.audios['explosion']);
+	    this.die();
+	    this.layer.addObject(new Explosion(this.pos));
+	}
+    }
 }
 
 
@@ -106,7 +114,7 @@ class EnemyBase extends Projectile {
 
 //  Enemy1
 //
-class Enemy1 extends Projectile {
+class Enemy1 extends EnemyBase {
 
     constructor(scene: Shooter, pos: Vec2) {
 	super(pos);
@@ -116,12 +124,11 @@ class Enemy1 extends Projectile {
 	this.frame = scene.screen;
     }
 }
-applyMixins(Enemy1, [EnemyBase]);
 
 
 //  Enemy2
 //
-class Enemy2 extends Projectile {
+class Enemy2 extends EnemyBase {
 
     constructor(scene: Shooter, pos: Vec2) {
 	super(pos);
@@ -139,7 +146,6 @@ class Enemy2 extends Projectile {
 	}
     }
 }
-applyMixins(Enemy2, [EnemyBase]);
 
 
 //  Shooter
@@ -159,6 +165,11 @@ class Shooter extends GameScene {
     init() {
 	super.init();
 	this.player = new Player(this, this.screen.center());
+	this.player.died.subscribe(() => {
+	    let task = new Task(2);
+	    task.died.subscribe(() => { this.init(); });
+	    this.addObject(task);
+	});
 	this.addObject(this.player);
 	this.stars = new StarSprite(this.screen, 100);
 	this.stars.imgsrc = new FillImageSource('white', new Rect(0,0,1,1));
