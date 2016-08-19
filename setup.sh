@@ -20,14 +20,15 @@ echo "dst: $dst"
 
 # create .rsyn
 mkdir "$dst"/src || :  # ignore errors
-mkdir "$dst"/src/base || :  # ignore errors
+mkdir "$dst"/base || :  # ignore errors
 mkdir "$dst"/assets || :  # ignore errors
-cp "$src"/base/*.ts "$dst"/src/base
+cp "$src"/base/*.ts "$dst"/base
 cp "$src"/skel/.gitignore "$dst"
 cp "$src"/skel/Makefile "$dst"
 cp "$src"/skel/index.html "$dst"
 cp "$src"/skel/src/.gitignore "$dst"/src
 cp "$src"/skel/src/Makefile "$dst"/src
-cp "$src"/skel/src/*.ts "$dst"/src
 cp "$src"/skel/assets/.gitignore "$dst"/assets
 cp "$src"/skel/assets/* "$dst"/assets
+sed 's+^/// <reference path="../../base+/// <reference path="../base+' \
+    "$src"/skel/src/game.ts > "$dst"/src/game.ts
