@@ -1,7 +1,6 @@
 # Makefile for src
 
 RM=rm -f
-SLN=ln -s
 TSC=tsc
 
 TSFLAGS=--noEmitOnError \
@@ -9,18 +8,13 @@ TSFLAGS=--noEmitOnError \
 	--noImplicitAny \
 	--noImplicitReturns
 
-BASEDIR=../base
 OUTDIR=../js
 OUTFILE=$(OUTDIR)/game.js
 
-all: base $(OUTFILE)
+all: $(OUTFILE)
 
 clean:
 	-$(RM) -r $(OUTDIR)
-	-$(RM) -r base
-
-base: $(BASEDIR)
-	$(SLN) $(BASEDIR) ./base
 
 $(OUTFILE): game.ts
 	$(TSC) $(TSFLAGS) --out $@ $^

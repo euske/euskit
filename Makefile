@@ -1,8 +1,8 @@
 # Makefile
 
 all:
-	cd samples; $(MAKE) $@ BASEDIR=$(PWD)/base
-	cd skel; $(MAKE) $@ BASEDIR=$(PWD)/base
+	cd samples; $(MAKE) $@
+	cd skel; $(MAKE) $@
 
 clean:
 	-cd samples; $(MAKE) $@
