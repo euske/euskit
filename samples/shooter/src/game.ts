@@ -61,7 +61,7 @@ class Player extends Entity {
 		var bullet = new Bullet(this.pos);
 		bullet.movement = new Vec2(8, 0);
 		bullet.frame = this.scene.screen;
-		this.scene.addObject(bullet);
+		this.layer.addObject(bullet);
 		playSound(APP.audios['pew']);
 		this.nextfire = 4;
 	    }
@@ -90,7 +90,7 @@ class Player extends Entity {
 	if (entity instanceof EnemyBase) {
 	    playSound(APP.audios['explosion']);
 	    this.die();
-	    this.layer.addObject(new Explosion(this.pos));
+	    this.chain(new Explosion(this.pos));
 	}
     }
 }
@@ -106,7 +106,7 @@ class EnemyBase extends Projectile {
 	if (entity instanceof Bullet) {
 	    playSound(APP.audios['explosion']);
 	    this.die();
-	    this.layer.addObject(new Explosion(this.pos));
+	    this.chain(new Explosion(this.pos));
 	}
     }
 }
@@ -164,12 +164,10 @@ class Shooter extends GameScene {
     
     init() {
 	super.init();
+	let restartGame = new Task(2);
+	restartGame.died.subscribe(() => { this.init(); });
 	this.player = new Player(this, this.screen.center());
-	this.player.died.subscribe(() => {
-	    let task = new Task(2);
-	    task.died.subscribe(() => { this.init(); });
-	    this.addObject(task);
-	});
+	this.player.chain(restartGame);
 	this.addObject(this.player);
 	this.stars = new StarSprite(this.screen, 100);
 	this.stars.imgsrc = new FillImageSource('white', new Rect(0,0,1,1));

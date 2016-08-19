@@ -48,14 +48,31 @@ class Task {
     tick(t: number) {
 	this.update();
 	this.time = t - this.time0;
-	if (this.alive && this.lifetime <= this.time) {
+	if (this.lifetime <= this.time) {
 	    this.die();
 	}
     }
   
     die() {
-	this.alive = false;
-	this.died.signal();
+	if (this.alive) {
+	    this.alive = false;
+	    this.died.signal();
+	}
+    }
+
+    chain(task: Task) {
+	if (this.alive) {
+	    this.died.subscribe(() => {
+		if (this.layer !== null) {
+		    this.layer.addObject(task)
+		}
+	    });
+	} else {
+	    if (this.layer !== null) {
+		this.layer.addObject(task)
+	    }
+	}
+	return task;
     }
   
     update() {
