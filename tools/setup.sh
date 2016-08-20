@@ -11,24 +11,25 @@ IFS=$'\n\t'
 # destdir.
 dst="$1"
 # dirname of the script.
-src=${0%/*}
+dirname=${0%/*}
+basedir="$dirname/.."
 mkdir "$dst" || :  # ignore errors
 [ -d "$dst" ] || ( echo "directory not exist: $dst" && exit 1 )
 
-echo "src: $src"
+echo "basedir: $basedir"
 echo "dst: $dst"
 
 # create .rsyn
 mkdir "$dst"/src || :  # ignore errors
 mkdir "$dst"/base || :  # ignore errors
 mkdir "$dst"/assets || :  # ignore errors
-cp "$src"/base/*.ts "$dst"/base
-cp "$src"/skel/.gitignore "$dst"
-cp "$src"/skel/Makefile "$dst"
-cp "$src"/skel/index.html "$dst"
-cp "$src"/skel/src/.gitignore "$dst"/src
-cp "$src"/skel/src/Makefile "$dst"/src
-cp "$src"/skel/assets/.gitignore "$dst"/assets
-cp "$src"/skel/assets/* "$dst"/assets
+cp "$basedir"/base/*.ts "$dst"/base
+cp "$basedir"/skel/.gitignore "$dst"
+cp "$basedir"/skel/Makefile "$dst"
+cp "$basedir"/skel/index.html "$dst"
+cp "$basedir"/skel/src/.gitignore "$dst"/src
+cp "$basedir"/skel/src/Makefile "$dst"/src
+cp "$basedir"/skel/assets/.gitignore "$dst"/assets
+cp "$basedir"/skel/assets/* "$dst"/assets
 sed 's+^/// <reference path="../../base+/// <reference path="../base+' \
-    "$src"/skel/src/game.ts > "$dst"/src/game.ts
+    "$basedir"/skel/src/game.ts > "$dst"/src/game.ts

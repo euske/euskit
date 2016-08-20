@@ -21,7 +21,7 @@ a { font-weight: bold; }
 <p>
 On Unix, type:
 <blockquote><pre>
-$ ./setup.sh /path/to/project
+$ ./tools/setup.sh /path/to/project
 </pre></blockquote>
 All the necessary files and template code will be copied.
 
@@ -32,11 +32,8 @@ All the necessary files and template code will be copied.
   <li> <code>Makefile</code> &nbsp; Build file.
   <li> <code>index.html</code> &nbsp; Game page.
   <li> <code>assets/</code> &nbsp; Game assets (images and sounds)
+  <li> <code>base/*.ts</code> &nbsp; Euskit base library code.
   <li> <code>src/game.ts</code> &nbsp; Game source code.
-    <ul>
-      <li> <code>base/*.ts</code> &nbsp; Euskit base library code.
-    </ul>
-  </ul>
 </ul>
 
 <h2><a name="objects">3. Basic Objects</a></h2>
@@ -173,8 +170,10 @@ class Player extends Entity {
 
 <h2>4. Use Collision Detection</h2>
 
-<h2>5. How To Make a Platformer</h2>
+<h2>5. Event System</h2>
 
-<h3>5.1. Using TileMap</h3>
+<h2>6. How To Make Games Like...</h2>
 
-<h2>6. How To Make a Shooter</h2>
+<h3>6.1. Platformer</h3>
+
+<h3>6.2. Shooter</h3>
