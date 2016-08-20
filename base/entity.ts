@@ -28,11 +28,11 @@ class Task {
     lifetime: number = Infinity;
     time0: number = 0;
     time: number = 0;
-    died: Slot;
+    died: Signal;
 
     constructor(lifetime=Infinity) {
 	this.lifetime = lifetime;
-	this.died = new Slot(this);
+	this.died = new Signal(this);
     }
 
     toString() {
@@ -56,7 +56,7 @@ class Task {
     die() {
 	if (this.alive) {
 	    this.alive = false;
-	    this.died.signal();
+	    this.died.fire();
 	}
     }
 

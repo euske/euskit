@@ -406,7 +406,7 @@ class MenuTask extends TextTask {
 
     font: Font;
     cursor: TextSegment;
-    selected: Slot;
+    selected: Signal;
     vertical: boolean = false;
     items: MenuItem[] = [];
     current: MenuItem = null;
@@ -416,7 +416,7 @@ class MenuTask extends TextTask {
 	super(dialog);
 	this.font = dialog.font;
 	this.cursor = new TextSegment(new Vec2(), '>', this.font);
-	this.selected = new Slot(this);
+	this.selected = new Signal(this);
     }
 
     addItem(pos: Vec2, text: string, value: any=null) {
@@ -457,12 +457,12 @@ class MenuTask extends TextTask {
 	case KeySym.Action:
 	    if (this.current !== null) {
 		this.die();
-		this.selected.signal(this.current.value);
+		this.selected.fire(this.current.value);
 	    };
 	    return;
 	case KeySym.Cancel:
 	    this.die();
-	    this.selected.signal(null);
+	    this.selected.fire(null);
 	    return;
 	}
 	

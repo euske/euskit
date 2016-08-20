@@ -267,12 +267,12 @@ function getKeySym(keyCode: number): KeySym
 }
 
 
-//  Slot: an event system
+//  Signal: an event system
 //
 interface Action {
     (...params:any[]): any;
 }
-class Slot {
+class Signal {
 
     sender: any;
     receivers: Action[] = [];
@@ -282,7 +282,7 @@ class Slot {
     }
 	
     toString() {
-	return ('<Slot('+this.sender+') '+this.receivers+'>');
+	return ('<Signal('+this.sender+') '+this.receivers+'>');
     }
   
     subscribe(recv: Action) {
@@ -293,14 +293,13 @@ class Slot {
 	removeElement(this.receivers, recv);
     }
   
-    signal(...params: any[]) {
+    fire(...params: any[]) {
 	for (let receiver of this.receivers) {
 	    const args = Array.prototype.slice.call(arguments);
 	    args.unshift(this.sender);
 	    receiver.apply(null, args);
 	}
     }
-
 }
 
 

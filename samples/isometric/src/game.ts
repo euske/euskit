@@ -245,7 +245,7 @@ class Thingy extends Entity3d {
 class Player extends Entity3d {
     
     scene: Game;
-    scored: Slot;
+    scored: Signal;
     
     jumpfunc3: (vz:number, t:number) => number;
     usermove3: Vec3;
@@ -256,7 +256,7 @@ class Player extends Entity3d {
     constructor(scene: Game, pos: Vec2) {
 	super(pos);
 	this.scene = scene;
-	this.scored = new Slot(this);
+	this.scored = new Signal(this);
 	this.imgsrc = SPRITES.get(S.PLAYER)
 	this.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
 	this.collider = this.imgsrc.dstRect.inflate(-4, -4);
@@ -347,7 +347,7 @@ class Player extends Entity3d {
 	    obj.lifetime = 0.5;
 	    obj.zOrder = 2;
 	    this.scene.layer.addObject(obj);
-	    this.scored.signal();
+	    this.scored.fire();
 	}
     }
     

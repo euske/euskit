@@ -102,19 +102,19 @@ class Player extends Entity {
 //
 class EnemyBase extends Projectile {
 
-    killed: Slot;
+    killed: Signal;
 
     constructor(scene: Shooter, pos: Vec2) {
 	super(pos);
 	this.frame = scene.screen;
-	this.killed = new Slot(this);
+	this.killed = new Signal(this);
     }
     
     collidedWith(entity: Entity) {
 	if (entity instanceof Bullet) {
 	    playSound(APP.audios['explosion']);
 	    this.die();
-	    this.killed.signal();
+	    this.killed.fire();
 	    this.chain(new Explosion(this.pos));
 	}
     }
