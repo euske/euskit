@@ -43,7 +43,7 @@ class Player extends Entity {
     scene: Shooter;
     usermove: Vec2 = new Vec2();
     firing: boolean = false;
-    nextfire: number = 0;
+    nextfire: number = 0;	// Firing counter
 
     constructor(scene: Shooter, pos: Vec2) {
 	super(pos);
@@ -102,10 +102,19 @@ class Player extends Entity {
 //
 class EnemyBase extends Projectile {
 
+    killed: Slot;
+
+    constructor(scene: Shooter, pos: Vec2) {
+	super(pos);
+	this.frame = scene.screen;
+	this.killed = new Slot(this);
+    }
+    
     collidedWith(entity: Entity) {
 	if (entity instanceof Bullet) {
 	    playSound(APP.audios['explosion']);
 	    this.die();
+	    this.killed.signal();
 	    this.chain(new Explosion(this.pos));
 	}
     }
@@ -117,11 +126,10 @@ class EnemyBase extends Projectile {
 class Enemy1 extends EnemyBase {
 
     constructor(scene: Shooter, pos: Vec2) {
-	super(pos);
+	super(scene, pos);
 	this.imgsrc = SPRITES.get(1);
 	this.collider = this.imgsrc.dstRect;
 	this.movement = new Vec2(-rnd(1,8), rnd(3)-1);
-	this.frame = scene.screen;
     }
 }
 
@@ -131,11 +139,10 @@ class Enemy1 extends EnemyBase {
 class Enemy2 extends EnemyBase {
 
     constructor(scene: Shooter, pos: Vec2) {
-	super(pos);
+	super(scene, pos);
 	this.imgsrc = SPRITES.get(2);
 	this.collider = this.imgsrc.dstRect;
 	this.movement = new Vec2(-rnd(1,4), 0);
-	this.frame = scene.screen;
     }
 
     update() {
@@ -154,7 +161,9 @@ class Shooter extends GameScene {
 
     player: Player;
     stars: StarSprite;
-    nextenemy: number;
+    nextenemy: number;		// Enemy spawning counter.
+    score: number;
+    scoreBox: TextBox;
 
     constructor(app: App) {
 	super(app);
@@ -173,6 +182,9 @@ class Shooter extends GameScene {
 	this.stars.imgsrc = new FillImageSource('white', new Rect(0,0,1,1));
 	this.stars.velocity = new Vec2(-4, 0);
 	this.nextenemy = 0;
+	this.score = 0;
+	this.scoreBox = new TextBox(this.screen.inflate(-8,-8), APP.font);
+	this.updateScore();
     }
 
     tick(t: number) {
@@ -181,11 +193,15 @@ class Shooter extends GameScene {
 	// Spawn an enemy at a random interval.
 	if (this.nextenemy == 0) {
 	    let pos = new Vec2(this.screen.width, rnd(this.screen.height));
+	    let enemy:EnemyBase;
 	    if (rnd(2) == 0) {
-		this.addObject(new Enemy1(this, pos));
+		enemy = new Enemy1(this, pos);
 	    } else {
-		this.addObject(new Enemy2(this, pos));
+		enemy = new Enemy2(this, pos);
 	    }
+	    // Increase the score when it's killed.
+	    enemy.killed.subscribe(() => { this.score++; this.updateScore(); });
+	    this.addObject(enemy);
 	    this.nextenemy = 10+rnd(20);
 	}
 	this.nextenemy--;
@@ -199,10 +215,17 @@ class Shooter extends GameScene {
 	this.player.setMove(v);
     }
 
+    updateScore() {
+	// Update the text in the score box.
+	this.scoreBox.clear();
+	this.scoreBox.putText(['SCORE:'+format(this.score)]);
+    }
+
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
 	ctx.fillStyle = 'rgb(0,0,32)';
 	ctx.fillRect(bx, by, this.screen.width, this.screen.height);
 	super.render(ctx, bx, by);
 	this.stars.render(ctx, bx, by);
+	this.scoreBox.render(ctx, bx, by);
     }
 }
