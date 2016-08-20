@@ -122,7 +122,7 @@ class TextBox extends Sprite {
     background: string = null;
     segments: TextSegment[] = [];
     
-    constructor(frame: Rect, font: Font, header='') {
+    constructor(frame: Rect, font: Font=null, header='') {
 	super(new Vec2());
 	this.frame = frame;
 	this.font = font;

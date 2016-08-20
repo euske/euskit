@@ -53,3 +53,35 @@ class Queue extends Task {
 	}
     }
 }
+
+
+//  Tweener
+//  Base class for all tweeners.
+//
+class Tweener extends Task {
+    
+    sprite: Sprite;
+    
+    constructor(sprite: Sprite, lifetime=Infinity) {
+	super(lifetime);
+	this.sprite = sprite;
+    }    
+}
+
+
+//  Blinker
+//
+class Blinker extends Tweener {
+
+    interval: number;
+    
+    constructor(sprite: Sprite, interval=1.0, lifetime=Infinity) {
+	super(sprite, lifetime);
+	this.interval = interval;
+    }
+    
+    update() {
+	super.update();
+	this.sprite.visible = (phase(this.time, this.interval) == 0);
+    }
+}

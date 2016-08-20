@@ -378,7 +378,7 @@ class SpriteSheet {
     constructor() {
     }
     
-    get(x:number, y=0) {
+    get(x:number, y=0, origin: Vec2=null) {
 	return null as ImageSource;
     }
 }
@@ -395,9 +395,10 @@ class ImageSpriteSheet extends SpriteSheet {
 	this.origin = (origin !== null)? origin : new Vec2();
     }
 
-    get(x:number, y=0) {
+    get(x:number, y=0, origin: Vec2=null) {
+	origin = (origin !== null)? origin : this.origin;
 	let srcRect = new Rect(x*this.size.x, y*this.size.y, this.size.x, this.size.y);
-	let dstRect = new Rect(-this.origin.x, -this.origin.y, this.size.x, this.size.y);
+	let dstRect = new Rect(-origin.x, -origin.y, this.size.x, this.size.y);
 	return new HTMLImageSource(this.image, srcRect, dstRect);
     }
 }
@@ -410,7 +411,7 @@ class SimpleSpriteSheet extends SpriteSheet {
 	this.imgsrcs = imgsrcs;
     }
 
-    get(x:number, y=0) {
+    get(x:number, y=0, origin: Vec2=null) {
 	return this.imgsrcs[x];
     }
 }
