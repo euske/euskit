@@ -13,7 +13,7 @@ class Scene {
 
     constructor(app: App) {
 	this.app = app;
-	this.screen = new Rect(0, 0, app.screen.width, app.screen.height);
+	this.screen = new Rect(0, 0, app.canvas.width, app.canvas.height);
     }
 
     changeScene(scene: Scene) {

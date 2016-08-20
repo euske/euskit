@@ -27,7 +27,7 @@ class App {
     audios: AudioDictionary;
     labels: DivDictionary;
 
-    screen: HTMLCanvasElement;
+    canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
 
     ticks: number = 0;
@@ -36,6 +36,8 @@ class App {
     keyDir: Vec2 = new Vec2();
     keyAction: boolean = false;
     keyCancel: boolean = false;
+    mousePos: Vec2 = new Vec2();
+    mouseButton: boolean = false;
     
     private _keylock: number = 0;
     private _msgs: Action[] = [];
@@ -61,9 +63,9 @@ class App {
 	this.labels = labels;
 
 	// Initialize the off-screen bitmap.
-	this.screen = createCanvas(this.frame.width/scale,
+	this.canvas = createCanvas(this.frame.width/scale,
 				   this.frame.height/scale);
-	this.ctx = getEdgeyContext(this.screen);
+	this.ctx = getEdgeyContext(this.canvas);
     }
 
     addElement(bounds: Rect) {
@@ -182,32 +184,44 @@ class App {
 	this.scene.keyup(ev.keyCode);
     }
 
+    updateMousePos(ev: MouseEvent) {
+	let bounds = this.frame.getBoundingClientRect();
+	this.mousePos = new Vec2(
+	    (ev.clientX-bounds.left)*this.canvas.width/bounds.width,
+	    (ev.clientY-bounds.top)*this.canvas.height/bounds.height);
+    }
+
     mousedown(ev: MouseEvent) {
 	// [OVERRIDE]
 	if (ev.target === this.frame) {
-	    this.scene.mousedown(
-		ev.layerX*this.screen.width/this.frame.width,
-		ev.layerY*this.screen.height/this.frame.height,
-		ev.button);
+	    this.updateMousePos(ev);
+	    switch (ev.button) {
+	    case 0:
+		this.mouseButton = true;
+		break;
+	    }
+	    this.scene.mousedown(this.mousePos.x, this.mousePos.y, ev.button);
 	}
     }
 
     mouseup(ev: MouseEvent) {
 	// [OVERRIDE]
 	if (ev.target === this.frame) {
-	    this.scene.mouseup(
-		ev.layerX*this.screen.width/this.frame.width,
-		ev.layerY*this.screen.height/this.frame.height,
-		ev.button);
+	    this.updateMousePos(ev);
+	    switch (ev.button) {
+	    case 0:
+		this.mouseButton = false;
+		break;
+	    }
+	    this.scene.mouseup(this.mousePos.x, this.mousePos.y, ev.button);
 	}
     }
 
     mousemove(ev: MouseEvent) {
 	// [OVERRIDE]
 	if (ev.target === this.frame) {
-	    this.scene.mousemove(
-		ev.layerX*this.screen.width/this.frame.width,
-		ev.layerY*this.screen.height/this.frame.height);
+	    this.updateMousePos(ev);
+	    this.scene.mousemove(this.mousePos.x, this.mousePos.y);
 	}
     }
 
@@ -278,7 +292,7 @@ class App {
 
     repaint() {
 	// [OVERRIDE]
-	this.ctx.clearRect(0, 0, this.screen.width, this.screen.height);
+	this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	this.ctx.save();
 	this.scene.render(this.ctx, 0, 0);
 	this.ctx.restore();
@@ -312,8 +326,8 @@ function main<T extends Scene>(
     let timer: number;
 
     function repaint() {
-	ctx.drawImage(APP.screen,
-		      0, 0, APP.screen.width, APP.screen.height,
+	ctx.drawImage(APP.canvas,
+		      0, 0, APP.canvas.width, APP.canvas.height,
 		      0, 0, frame.width, frame.height);
     }    
     
