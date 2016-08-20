@@ -389,7 +389,8 @@ class Game extends Scene {
 	this.tilemap.set(8, 2, T.BLOCK);
 	
 	// show a banner.
-	let banner = new TextBox(this.screen, APP.shadowFont);
+	let font = new ShadowFont(APP.images['font'], 'white');
+	let banner = new TextBox(this.screen, font);
 	banner.putText(['GET ALL TEH DAMN THINGIES!'], 'center', 'center');
 	banner.lifetime = 2.0;
 	banner.update = (() => {

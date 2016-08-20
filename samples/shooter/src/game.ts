@@ -169,6 +169,8 @@ class Shooter extends GameScene {
 	super(app);
 	SPRITES = new ImageSpriteSheet(
 	    APP.images['sprites'], new Vec2(16,16), new Vec2(8,8));
+	let font = new Font(APP.images['font'], 'white');
+	this.scoreBox = new TextBox(this.screen.inflate(-8,-8), font);
     }
     
     init() {
@@ -183,7 +185,6 @@ class Shooter extends GameScene {
 	this.stars.velocity = new Vec2(-4, 0);
 	this.nextenemy = 0;
 	this.score = 0;
-	this.scoreBox = new TextBox(this.screen.inflate(-8,-8), APP.font);
 	this.updateScore();
     }
 
