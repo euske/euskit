@@ -17,7 +17,7 @@ mkdir "$dst" || :  # ignore errors
 [ -d "$dst" ] || ( echo "directory not exist: $dst" && exit 1 )
 
 echo "basedir: $basedir"
-echo "dst: $dst"
+echo "setting up for: $dst"
 
 # create .rsyn
 mkdir "$dst"/src || :  # ignore errors
@@ -27,9 +27,10 @@ cp "$basedir"/base/*.ts "$dst"/base
 cp "$basedir"/skel/.gitignore "$dst"
 cp "$basedir"/skel/Makefile "$dst"
 cp "$basedir"/skel/index.html "$dst"
-cp "$basedir"/skel/src/.gitignore "$dst"/src
 cp "$basedir"/skel/src/Makefile "$dst"/src
 cp "$basedir"/skel/assets/.gitignore "$dst"/assets
 cp "$basedir"/skel/assets/* "$dst"/assets
 sed 's+^/// <reference path="../../base+/// <reference path="../base+' \
     "$basedir"/skel/src/game.ts > "$dst"/src/game.ts
+
+echo "done."
