@@ -108,17 +108,6 @@ function removeElement<T>(a: T[], obj: T)
     return a;
 }
 
-// removeElements(a, f): remove elements from a.
-function removeElements<T>(a: T[], f: (x:T)=>boolean)
-{
-    for (let i = a.length-1; 0 <= i; i--) {
-	if (f(a[i])) {
-	    a.splice(i, 1);
-	}
-    }
-    return a;
-}
-
 // str2array(str): converts a string to an array.
 function str2array(s: string, f: (c:string)=>number=parseInt)
 {

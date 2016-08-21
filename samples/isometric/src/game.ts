@@ -137,7 +137,7 @@ class ScrollLayer3 extends ScrollLayer {
     tilemap: TileMap = null;
     tiles: SpriteSheet = null;
 
-    render3(ctx: CanvasRenderingContext2D, bx: number, by: number) {
+    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
 	let ts = this.tilemap.tilesize;
 	let window = this.window;
 	let dx = -ts;
@@ -146,18 +146,18 @@ class ScrollLayer3 extends ScrollLayer {
 	let ty = by+dy-window.y;
 
 	// Set the drawing order.
-	let objs = {} as SpriteDictionary;
-	for (let obj of this.sprites) {
-	    if (obj.running && obj.visible) {
-		let bounds = obj.getBounds();
+	let sprites = {} as SpriteDictionary;
+	for (let sprite of this.sprites) {
+	    if (sprite.running && sprite.visible) {
+		let bounds = sprite.getBounds();
 		if (bounds !== null && bounds.overlapsRect(window)) {
 		    let x = int((bounds.x+bounds.width/2)/ts);
 		    let y = int((bounds.y+bounds.height/2)/ts);
 		    let k = x+','+y;
-		    if (!objs.hasOwnProperty(k)) {
-			objs[k] = [];
+		    if (!sprites.hasOwnProperty(k)) {
+			sprites[k] = [];
 		    }
-		    objs[k].push(obj);
+		    sprites[k].push(sprite);
 		}
 	    }
 	}
@@ -165,14 +165,14 @@ class ScrollLayer3 extends ScrollLayer {
 	// Draw the tilemap.
 	function f(x:number, y:number, c:number) {
 	    let k = x+','+y;
-	    if (objs.hasOwnProperty(k)) {
-		for (let obj of objs[k]) {
-		    if (obj instanceof Entity3d) {
-			if (!obj.isFloating()) {
-			    obj.render3(ctx, tx, ty);
+	    if (sprites.hasOwnProperty(k)) {
+		for (let sprite of sprites[k]) {
+		    if (sprite instanceof Entity3d) {
+			if (!sprite.isFloating()) {
+			    sprite.render3(ctx, tx, ty);
 			}
 		    } else {
-			obj.render(ctx, tx, ty);
+			sprite.render(ctx, tx, ty);
 		    }
 		}
 	    }
@@ -185,18 +185,18 @@ class ScrollLayer3 extends ScrollLayer {
 	    ctx, bx+dx, by+dy, window, this.tiles, f);
 	
 	// Draw floating objects.
-	for (let obj of this.sprites) {
-	    if (obj.running && obj.visible) {
-		let bounds = obj.getBounds();
+	for (let sprite of this.sprites) {
+	    if (sprite.running && sprite.visible) {
+		let bounds = sprite.getBounds();
 		if (bounds === null) {
-		    obj.render(ctx, bx, by);
+		    sprite.render(ctx, bx, by);
 		} else if (bounds.overlaps(window)) {
-		    if (obj instanceof Entity3d) {
-			if (obj.isFloating()) {
-			    obj.render3(ctx, tx, ty);
+		    if (sprite instanceof Entity3d) {
+			if (sprite.isFloating()) {
+			    sprite.render3(ctx, tx, ty);
 			}
 		    } else {
-			obj.render(ctx, tx, ty);
+			sprite.render(ctx, tx, ty);
 		    }
 		}
 	    }
@@ -268,7 +268,7 @@ class Player extends Entity3d {
     }
     
     getObstaclesFor3(range: Box, context: string) {
-	let window = this.scene.layer.window;
+	let window = this.scene.layer3.window;
 	let tilemap = this.scene.tilemap;
 	let ts = tilemap.tilesize;
 	let bs = new Vec3(ts, ts, ts);
@@ -326,7 +326,7 @@ class Player extends Entity3d {
 	} else {
 	    this.shadowz = 0;
 	}
-	let window = this.scene.layer.window;
+	let window = this.scene.layer3.window;
 	if (!window.overlaps(this.getCollider())) {
 	    this.stop();
 	}
@@ -341,12 +341,12 @@ class Player extends Entity3d {
     collidedWith(entity: Entity) {
 	if (entity instanceof Thingy) {
 	    entity.stop();
-	    let obj = new Projectile(this.pos.move(0,-16));
-	    obj.imgsrc = SPRITES.get(S.YAY);
-	    obj.movement = new Vec2(0,-4);
-	    obj.lifetime = 0.5;
-	    obj.zOrder = 2;
-	    this.scene.layer.addObject(obj);
+	    let yay = new Projectile(this.pos.move(0,-16));
+	    yay.imgsrc = SPRITES.get(S.YAY);
+	    yay.movement = new Vec2(0,-4);
+	    yay.lifetime = 0.5;
+	    yay.zOrder = 2;
+	    this.scene.add(yay);
 	    this.scored.fire();
 	}
     }
@@ -359,7 +359,7 @@ class Player extends Entity3d {
 class Game extends Scene {
     
     tilemap: TileMap;
-    layer: ScrollLayer3;
+    layer3: ScrollLayer3;
     player: Player;
     speed: Vec2;
 
@@ -377,15 +377,15 @@ class Game extends Scene {
 	this.tilemap = new TileMap(32, ROWS.map((c:number) => {
 	    return new Int32Array(12).fill(c);
 	}));
-	this.layer = new ScrollLayer3(this.tilemap.bounds);
-	this.layer.tilemap = this.tilemap;
-	this.layer.tiles = TILES;
+	this.layer3 = new ScrollLayer3(this.tilemap.bounds);
+	this.layer3.tilemap = this.tilemap;
+	this.layer3.tiles = TILES;
 	this.speed = new Vec2(2, 0);
 	this.player = new Player(this, this.screen.center());
 	this.player.scored.subscribe(() => {
 	    this.speed.x += 1;
 	});
-	this.layer.addObject(this.player);
+	this.add(this.player);
 	this.tilemap.set(8, 2, T.BLOCK);
 	
 	// show a banner.
@@ -396,12 +396,16 @@ class Game extends Scene {
 	banner.update = (() => {
 	    banner.visible = (phase(banner.time, 0.5) != 0);
 	});
-	this.layer.addObject(banner);
+	this.add(banner);
+    }
+
+    add(task: Task) {
+    	this.layer3.addTask(task);
     }
 
     tick(t: number) {
 	super.tick(t);
-	this.layer.tick(t);
+	this.layer3.tick(t);
 	this.moveAll(this.speed);
     }
 
@@ -417,22 +421,22 @@ class Game extends Scene {
 	ctx.fillStyle = 'rgb(0,128,224)';
 	ctx.fillRect(bx, by, this.screen.width, this.screen.height);
 	super.render(ctx, bx, by);
-	let dy = (this.screen.height-this.layer.window.height)/2
-	this.layer.render3(ctx, bx, by+dy);
+	let dy = (this.screen.height-this.layer3.window.height)/2
+	this.layer3.render(ctx, bx, by+dy);
     }
 
     moveAll(v: Vec2) {
-	this.layer.moveCenter(v);
+	this.layer3.moveCenter(v);
 	let ts = this.tilemap.tilesize;
-	let window = this.layer.window;
+	let window = this.layer3.window;
 	let x0 = int(window.x/ts);
 	let y0 = int(window.y/ts);
 	if (x0 !== 0 || y0 !== 0) {
 	    // warp all the tiles and characters.
 	    this.shiftTiles(x0, y0);
 	    let vw = new Vec2(-x0*ts, -y0*ts);
-	    this.layer.moveCenter(vw);
-	    this.layer.moveAll(vw);
+	    this.layer3.moveCenter(vw);
+	    this.layer3.moveAll(vw);
 	}
 	if (this.player.running) {
 	    this.player.moveIfPossible3(new Vec3(v.x, v.y, 0), 'fall');
@@ -458,7 +462,7 @@ class Game extends Scene {
 		let y = rnd(1, this.tilemap.height-1);
 		let p = new Vec2(x+this.tilemap.width, y);
 		let rect = this.tilemap.map2coord(p);
-		this.layer.addObject(new Thingy(this, rect.center()));
+		this.add(new Thingy(this, rect.center()));
 		this.tilemap.set(x, y, T.NONE);
 	    }
 	}

@@ -92,9 +92,9 @@ class Pong extends GameScene {
 	super.init();
 	// Places the objects.
 	this.paddle = new Paddle(this.screen);
-	this.addObject(this.paddle);
+	this.add(this.paddle);
 	this.ball = new Ball(this.screen);
-	this.addObject(this.ball);
+	this.add(this.ball);
     }
 
     tick(t: number) {

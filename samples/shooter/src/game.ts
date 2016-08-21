@@ -61,7 +61,7 @@ class Player extends Entity {
 		var bullet = new Bullet(this.pos);
 		bullet.movement = new Vec2(8, 0);
 		bullet.frame = this.scene.screen;
-		this.layer.addObject(bullet);
+		this.layer.addTask(bullet);
 		playSound(APP.audios['pew']);
 		this.nextfire = 4;
 	    }
@@ -179,7 +179,7 @@ class Shooter extends GameScene {
 	restartGame.stopped.subscribe(() => { this.init(); });
 	this.player = new Player(this, this.screen.center());
 	this.player.chain(restartGame);
-	this.addObject(this.player);
+	this.add(this.player);
 	this.stars = new StarSprite(this.screen, 100);
 	this.stars.imgsrc = new FillImageSource('white', new Rect(0,0,1,1));
 	this.stars.velocity = new Vec2(-4, 0);
@@ -202,7 +202,7 @@ class Shooter extends GameScene {
 	    }
 	    // Increase the score when it's killed.
 	    enemy.killed.subscribe(() => { this.score++; this.updateScore(); });
-	    this.addObject(enemy);
+	    this.add(enemy);
 	    this.nextenemy = 10+rnd(20);
 	}
 	this.nextenemy--;

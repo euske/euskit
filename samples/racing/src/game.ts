@@ -149,7 +149,7 @@ class Racing extends GameScene {
 	super.init();
 	
 	this.player = new Player(this, this.screen.center());
-	this.addObject(this.player);
+	this.add(this.player);
 
 	this.track = new Track(int(this.screen.width/16),
 			       int(this.screen.height/16)+2);
@@ -173,7 +173,7 @@ class Racing extends GameScene {
 		this.player.running = false;
 		let blinker = new Blinker(this.player, 0.2, 1.0);
 		blinker.stopped.subscribe(() => { this.init(); });
-		this.addObject(blinker);
+		this.add(blinker);
 		this.app.setMusic();
 		playSound(this.app.audios['plunge']);
 	    }

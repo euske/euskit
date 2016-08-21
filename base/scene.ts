@@ -148,12 +148,7 @@ class GameScene extends Scene {
 	this.layer.render(ctx, bx, by);
     }
 
-    addObject(obj: Task) {
-	this.layer.addObject(obj);
+    add(task: Task) {
+	this.layer.addTask(task);
     }
-    
-    removeObject(obj: Task) {
-	this.layer.removeObject(obj);
-    }
-
 }

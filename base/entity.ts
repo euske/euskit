@@ -117,12 +117,12 @@ class Task {
 	if (this.running) {
 	    this.stopped.subscribe(() => {
 		if (this.layer !== null) {
-		    this.layer.addObject(task)
+		    this.layer.addTask(task)
 		}
 	    });
 	} else {
 	    if (this.layer !== null) {
-		this.layer.addObject(task)
+		this.layer.addTask(task)
 	    }
 	}
 	return task;
@@ -164,6 +164,16 @@ class Sprite extends Task {
 	return '<Sprite: '+this.pos+'>';
     }
   
+    start(layer: Layer) {
+	super.start(layer);
+	this.layer.addSprite(this);
+    }
+
+    stop() {
+	super.stop();
+	this.layer.removeSprite(this);
+    }
+    
     getBounds(pos: Vec2=null) {
 	pos = (pos !== null)? pos : this.pos;
 	if (pos !== null && this.imgsrc !== null) {
@@ -335,6 +345,16 @@ class Entity extends Sprite {
 	return '<Entity: '+this.pos+'>';
     }
 
+    start(layer: Layer) {
+	super.start(layer);
+	this.layer.addEntity(this);
+    }
+
+    stop() {
+	super.stop();
+	this.layer.removeEntity(this);
+    }
+    
     getCollider(pos: Vec2=null) {
 	pos = (pos !== null)? pos : this.pos;
 	if (pos !== null && this.collider !== null) {

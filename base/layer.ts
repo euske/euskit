@@ -29,97 +29,86 @@ class Layer {
   
     tick(t: number) {
 	this.time = t;
-	for (let obj of this.tasks) {
-	    if (obj.running) {
-		obj.tick(t);
+	for (let task of this.tasks) {
+	    if (task.running) {
+		task.tick(t);
 	    }
 	}
-	this.cleanObjects(this.tasks);
-	this.cleanObjects(this.sprites);
-	this.cleanObjects(this.entities);
 	this.checkCollisions();
+	this.tasks = this.tasks.filter((task: Task) => { return task.running; });
     }
     
+    addTask(task: Task) {
+	if (task.layer === null) {
+	    task.start(this);
+	}
+	this.tasks.push(task);
+    }
+
+    addSprite(sprite: Sprite) {
+	this.sprites.push(sprite);
+	this.sprites.sort((a:Sprite, b:Sprite) => { return a.zOrder-b.zOrder; });
+    }
+
+    removeSprite(sprite: Sprite) {
+	removeElement(this.sprites, sprite);
+    }
+
+    addEntity(entity: Entity) {
+	this.entities.push(entity);
+    }
+
+    removeEntity(entity: Entity) {
+	removeElement(this.entities, entity);
+    }
+
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
-	for (let obj of this.sprites) {
-	    if (obj.running && obj.visible) {
-		obj.render(ctx, bx, by);
+	for (let sprite of this.sprites) {
+	    if (sprite.running && sprite.visible) {
+		sprite.render(ctx, bx, by);
 	    }
 	}
     }
 
     moveAll(v: Vec2) {
-	for (let obj of this.sprites) {
-	    if (!obj.running) continue;
-	    if (obj.getBounds() === null) continue;
-	    obj.pos = obj.pos.add(v);
-	}
-    }
-
-    addObject(obj: Task) {
-	if (obj instanceof Task) {
-	    if (obj.layer === null) {
-		obj.start(this);
-	    }
-	    this.tasks.push(obj);
-	}
-	if (obj instanceof Sprite) {
-	    this.sprites.push(obj);
-	    this.sprites.sort((a:Sprite, b:Sprite) => { return a.zOrder-b.zOrder; });
-	}
-	if (obj instanceof Entity) {
-	    this.entities.push(obj);
-	}
-    }
-
-    removeObject(obj: Task) {
-	if (obj instanceof Task) {
-	    removeElement(this.tasks, obj);
-	}
-	if (obj instanceof Sprite) {
-	    removeElement(this.sprites, obj);
-	}
-	if (obj instanceof Entity) {
-	    removeElement(this.entities, obj);
+	for (let sprite of this.sprites) {
+	    if (!sprite.running) continue;
+	    if (sprite.getBounds() === null) continue;
+	    sprite.pos = sprite.pos.add(v);
 	}
     }
 
     checkCollisions() {
 	for (let i = 0; i < this.entities.length; i++) {
-	    let obj0 = this.entities[i];
-	    if (obj0.running && obj0.collider !== null) {
-		let a = this.findObjects(
-		    obj0.getCollider(),
+	    let entity0 = this.entities[i];
+	    if (entity0.running && entity0.collider !== null) {
+		let a = this.findEntities(
+		    entity0.getCollider(),
 		    this.entities.slice(i+1));
-		for (let obj1 of a) {
-		    obj0.collidedWith(obj1);
-		    obj1.collidedWith(obj0);
+		for (let entity1 of a) {
+		    entity0.collidedWith(entity1);
+		    entity1.collidedWith(entity0);
 		}
 	    }
 	}
     }
     
-    findObjects(shape: Shape,
-		objs: Entity[]=null,
-		f: (e:Entity)=>boolean=null) {
-	if (objs === null) {
-	    objs = this.entities;
+    findEntities(shape: Shape,
+		 entities: Entity[]=null,
+		 f: (e:Entity)=>boolean=null) {
+	if (entities === null) {
+	    entities = this.entities;
 	}
 	let a:Entity[] = [];
-	for (let obj1 of objs) {
-	    if (obj1.running && obj1.collider !== null &&
-		(f === null || f(obj1)) &&
-		obj1.getCollider().overlaps(shape)) {
-		a.push(obj1);
+	for (let entity1 of entities) {
+	    if (entity1.running && entity1.collider !== null &&
+		(f === null || f(entity1)) &&
+		entity1.getCollider().overlaps(shape)) {
+		a.push(entity1);
 	    }
 	}
 	return a;
     }
-
-    private cleanObjects(objs: Task[]) {
-	removeElements(objs, (obj: Task) => { return !obj.running; });
-    }
-
 }
 
 
@@ -164,11 +153,11 @@ class ScrollLayer extends Layer {
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
 	bx -= this.window.x;
 	by -= this.window.y;
-	for (let obj of this.sprites) {
-	    if (obj.running && obj.visible) {
-		let bounds = obj.getBounds()
+	for (let sprite of this.sprites) {
+	    if (sprite.running && sprite.visible) {
+		let bounds = sprite.getBounds()
 		if (bounds === null || bounds.overlaps(this.window)) {
-		    obj.render(ctx, bx, by);
+		    sprite.render(ctx, bx, by);
 		}
 	    }
 	}

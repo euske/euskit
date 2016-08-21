@@ -180,8 +180,6 @@ Legend:
   <td>A random element of <code>a</code>.</td></tr>
 <tr><td><code>removeElement(a, obj)</code></td>
   <td>Removes an element from <code>a</code>.</td></tr>
-<tr><td><code>removeElements(a, f)</code></td>
-  <td>Removes elements from <code>a</code>. <code>f(x) =&gt; boolean</code></td></tr>
 <tr><td><code>str2array(img)</code></td>
   <td>Converts a string to a number array.</td></tr>
 </table>
@@ -748,17 +746,13 @@ at once and interact each other.
 <tr class=overridable><td><code>.tick(t)</code></td>
   <td>Invoked for every frame.</td></tr>
 <tr><td><code>.render(ctx, bx, by)</code></td>
-  <td>Draws all the objects at the location (<code>bx</code>, <code>by</code>).</td></tr>
+  <td>Draws all the sprites at the location (<code>bx</code>, <code>by</code>).</td></tr>
 <tr><td><code>.moveAll(v)</code></td>
-  <td>Moves all the objects by <code>v</code>.</td></tr>
-<tr><td><code>.addObject(obj)</code></td>
+  <td>Moves all the sprites by <code>v</code>.</td></tr>
+<tr><td><code>.addTask(task)</code></td>
   <td>Adds a <code>Task</code>/<code>Sprite</code>/<code>Entity</code> to the list.</td></tr>
-<tr><td><code>.removeObject(obj)</code></td>
-  <td>Removes a <code>Task</code>/<code>Sprite</code>/<code>Entity</code> from the list.</td></tr>
-<tr><td><code>.checkCollisions()</code></td>
-  <td>Checks collision for each <code>Entity</code> and calls <code>.collidedWith()</code> for those collided.</td></tr>
-<tr><td><code>.findObjects(shape, <em>[objs, [f]]</em>)</code></td>
-  <td>Returns a list of objects that overlap <code>shape</code>.</td></tr>
+<tr><td><code>.findEntities(shape, <em>[entities, [f]]</em>)</code></td>
+  <td>Returns a list of entities that overlap <code>shape</code>.</td></tr>
 </table>
 
 <a name="Scene"><h3>Scene (<code>scene.ts</code>)</h3></a>
@@ -1048,21 +1042,17 @@ Only shows the objects within the window.
 <tr class=overridable><td><code>.tick(t)</code></td>
   <td>Invoked for every frame.</td></tr>
 <tr class=inherited><td><code>.render(ctx, bx, by)</code></td>
-  <td>Draws all the objects at the location (<code>bx</code>, <code>by</code>).</td></tr>
+  <td>Draws all the sprites at the location (<code>bx</code>, <code>by</code>).</td></tr>
 <tr class=inherited><td><code>.moveAll(v)</code></td>
-  <td>Moves all the objects by <code>v</code>.</td></tr>
+  <td>Moves all the sprites by <code>v</code>.</td></tr>
 <tr><td><code>.moveCenter(v)</code></td>
   <td>Moves the window by <code>v</code>.</td></tr>
 <tr><td><code>.setCenter(bounds, rect)</code></td>
   <td>Centers the window around <code>rect</code>.</td></tr>
-<tr class=inherited><td><code>.addObject(obj)</code></td>
+<tr class=inherited><td><code>.addTask(task)</code></td>
   <td>Adds a <code>Task</code>/<code>Sprite</code>/<code>Entity</code> to the list.</td></tr>
-<tr class=inherited><td><code>.removeObject(obj)</code></td>
-  <td>Removes a <code>Task</code>/<code>Sprite</code>/<code>Entity</code> from the list.</td></tr>
-<tr class=inherited><td><code>.checkCollisions()</code></td>
-  <td>Checks collision for each <code>Entity</code> and calls <code>.collidedWith()</code> for those collided.</td></tr>
-<tr class=inherited><td><code>.findObjects(rect, <em>[objs, [f]]</em>)</code></td>
-  <td>Returns a list of objects that overlap <code>rect</code>.</td></tr>
+<tr class=inherited><td><code>.findEntities(rect, <em>[entities, [f]]</em>)</code></td>
+  <td>Returns a list of entities that overlap <code>rect</code>.</td></tr>
 </table>
 
 <a name="GameScene"><h3>GameScene (<code>scene.ts</code>)</h3></a>
@@ -1080,10 +1070,8 @@ a few convenient methods.
   <td>A <code>Layer</code> for this scene.</td></tr>
 <tr><td><code>.entities</code></td>
   <td>An alias to <code>layer.entities</code>.</td></tr>
-<tr><td><code>.addObject(obj)</code></td>
+<tr><td><code>.addTask(task)</code></td>
   <td>Adds a <code>Task</code>/<code>Sprite</code>/<code>Entity</code> to the list.</td></tr>
-<tr><td><code>.removeObject(obj)</code></td>
-  <td>Removes a <code>Task</code>/<code>Sprite</code>/<code>Entity</code> from the list.</td></tr>
 <tr class=inherited><td><code>.changeScene(scene)</code></td>
   <td>Signals the <code>App</code> to switch to a scene.</td></tr>
 <tr class=overridable><td><code>.init()</code></td>

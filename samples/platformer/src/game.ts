@@ -140,11 +140,11 @@ class Game extends GameScene {
 	this.profile = new GridProfile(this.tilemap);
 	
 	this.player = new Player(this, this.screen.center());
-	this.addObject(this.player);
+	this.add(this.player);
 
 	let monster = new Monster(this, this.screen.center())
 	monster.target = this.player;
-	this.addObject(monster);
+	this.add(monster);
     }
 
     tick(t: number) {

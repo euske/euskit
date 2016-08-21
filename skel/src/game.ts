@@ -51,7 +51,7 @@ class Game extends GameScene {
     init() {
 	super.init();
 	this.player = new Player(this, this.screen.center());
-	this.addObject(this.player);
+	this.add(this.player);
     }
 
     tick(t: number) {
