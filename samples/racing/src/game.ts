@@ -4,7 +4,7 @@
 /// <reference path="../../../base/text.ts" />
 /// <reference path="../../../base/scene.ts" />
 /// <reference path="../../../base/tilemap.ts" />
-/// <reference path="../../../base/tween.ts" />
+/// <reference path="../../../base/animation.ts" />
 /// <reference path="../../../base/app.ts" />
 
 //  Racing

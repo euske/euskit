@@ -55,10 +55,10 @@ class Queue extends Task {
 }
 
 
-//  Tweener
-//  Base class for all tweeners.
+//  Animator
+//  Base class for all animator.
 //
-class Tweener extends Task {
+class Animator extends Task {
     
     sprite: Sprite;
     
@@ -71,7 +71,7 @@ class Tweener extends Task {
 
 //  Blinker
 //
-class Blinker extends Tweener {
+class Blinker extends Animator {
 
     interval: number;
     
