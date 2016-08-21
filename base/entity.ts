@@ -2,21 +2,6 @@
 /// <reference path="geom.ts" />
 /// <reference path="tilemap.ts" />
 
-function getContact(collider0: Shape, v: Vec2, colliders: Shape[], bounds: Rect[])
-{
-    if (colliders !== null) {
-	for (let collider1 of colliders) {
-	    v = collider0.contact(v, collider1);
-	}
-    }
-    if (bounds !== null) {
-	for (let rect of bounds) {
-	    v = collider0.contactBounds(v, rect);
-	}
-    }
-    return v;
-}
-
 
 //  ImageSource
 //

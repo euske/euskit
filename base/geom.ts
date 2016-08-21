@@ -171,7 +171,7 @@ interface Shape {
     add<T extends Shape>(v: Vec2): T;
     equals<T extends Shape>(shape: T): boolean;
     overlaps(shape: Shape): boolean;
-    contact(v: Vec2, shape: Shape): Vec2;
+    contactShape(v: Vec2, shape: Shape): Vec2;
     contactBounds(v: Vec2, rect: Rect): Vec2;
     containsPt(p: Vec2): boolean;
     getAABB(): Rect;
@@ -446,7 +446,7 @@ class Rect implements Shape {
 	}
     }    
 
-    contact(v: Vec2, shape: Shape): Vec2 {
+    contactShape(v: Vec2, shape: Shape): Vec2 {
 	if (shape instanceof Rect) {
 	    return this.contactRect(v, shape);
 	} else if (shape instanceof Circle) {
@@ -654,7 +654,7 @@ class Circle implements Shape {
 	}
     }    
 
-    contact(v: Vec2, shape: Shape): Vec2 {
+    contactShape(v: Vec2, shape: Shape): Vec2 {
 	if (shape instanceof Circle) {
 	    return this.contactCircle(v, shape);
 	} else if (shape instanceof Rect) {
@@ -939,4 +939,21 @@ class Box {
 	return v;
     }
 
+}
+
+
+// getContact: returns a motion vector that satisfies the given constraints.
+function getContact(collider0: Shape, v: Vec2, colliders: Shape[], bounds: Rect[])
+{
+    if (colliders !== null) {
+	for (let collider1 of colliders) {
+	    v = collider0.contactShape(v, collider1);
+	}
+    }
+    if (bounds !== null) {
+	for (let rect of bounds) {
+	    v = collider0.contactBounds(v, rect);
+	}
+    }
+    return v;
 }
