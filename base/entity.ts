@@ -91,8 +91,7 @@ class Task {
     time: number = 0;
     stopped: Signal;
 
-    constructor(lifetime=Infinity) {
-	this.lifetime = lifetime;
+    constructor() {
 	this.stopped = new Signal(this);
     }
 

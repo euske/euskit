@@ -171,7 +171,9 @@ class Racing extends GameScene {
 		this.updateScore();
 	    } else {
 		this.player.running = false;
-		let blinker = new Blinker(this.player, 0.2, 1.0);
+		let blinker = new Blinker(this.player);
+		blinker.interval = 0.2;
+		blinker.lifetime = 1.0;
 		blinker.stopped.subscribe(() => { this.init(); });
 		this.add(blinker);
 		this.app.setMusic();

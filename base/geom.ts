@@ -56,6 +56,10 @@ class Vec2 {
     distance(v: Vec2) {
 	return this.sub(v).len();
     }
+
+    interp(v: Vec2, t: number) {
+	return new Vec2((1.0-t)*this.x+t*v.x, (1.0-t)*this.y+t*v.y);
+    }
     
     clamp(bounds: Vec2) {
 	return new Vec2(
@@ -147,6 +151,13 @@ class Vec3 {
     
     distance(v: Vec3) {
 	return this.sub(v).len();
+    }
+    
+    interp(v: Vec3, t: number) {
+	return new Vec3(
+	    (1.0-t)*this.x+t*v.x,
+	    (1.0-t)*this.y+t*v.y,
+	    (1.0-t)*this.z+t*v.z);
     }
     
     clamp(bounds: Vec3) {
