@@ -312,7 +312,7 @@ class Color {
     b: number;
     a: number;
 
-    constructor(r: number, g: number, b: number, a=-1.0) {
+    constructor(r: number, g: number, b: number, a=1.0) {
 	this.r = r;
 	this.g = g;
 	this.b = b;
@@ -334,8 +334,26 @@ class Color {
 	}
     }
 
+    add(t: number) {
+	return new Color(this.r+t, this.g+t, this.b+t, this.a);
+    }
+    
+    multiply(t: number) {
+	return new Color(this.r*t, this.g*t, this.b*t, this.a);
+    }
+    
     setAlpha(a: number) {
 	return new Color(this.r, this.g, this.b, a);
     }
 
+}
+
+function genColor(r: number, t: number=1.0) {
+    r *= 2*Math.PI;
+    t *= 0.5;
+    return new Color(
+	(Math.sin(r)+1)*t,
+	(Math.sin(r+2*Math.PI/3)+1)*t,
+	(Math.sin(r+4*Math.PI/3)+1)*t,
+	1.0);
 }
