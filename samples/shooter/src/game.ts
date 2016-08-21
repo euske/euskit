@@ -169,8 +169,8 @@ class Shooter extends GameScene {
 	super(app);
 	SPRITES = new ImageSpriteSheet(
 	    APP.images['sprites'], new Vec2(16,16), new Vec2(8,8));
-	let font = new Font(APP.images['font'], 'white');
-	this.scoreBox = new TextBox(this.screen.inflate(-8,-8), font);
+	this.scoreBox = new TextBox(this.screen.inflate(-8,-8));
+	this.scoreBox.font = new Font(APP.images['font'], 'white');
     }
     
     init() {

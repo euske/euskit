@@ -115,18 +115,16 @@ class TextSegment {
 class TextBox extends Sprite {
 
     frame: Rect;
-    font: Font;
-    header: string;
+    font: Font = null;
+    header: string = '';
     linespace: number = 0;
     padding: number = 0;
     background: string = null;
     segments: TextSegment[] = [];
     
-    constructor(frame: Rect, font: Font=null, header='') {
+    constructor(frame: Rect) {
 	super(new Vec2());
 	this.frame = frame;
-	this.font = font;
-	this.header = header;
     }
 
     toString() {
@@ -148,10 +146,12 @@ class TextBox extends Sprite {
 	bx += this.pos.x;
 	by += this.pos.y;
 	if (this.background !== null) {
-	    let rect = this.frame.inflate(this.padding, this.padding);
 	    ctx.fillStyle = this.background;
-	    ctx.fillRect(bx+rect.x, by+rect.y, rect.width, rect.height);
+	    ctx.fillRect(bx+this.frame.x, by+this.frame.y,
+			 this.frame.width, this.frame.height);
 	}
+	bx += this.frame.x+this.padding;
+	by += this.frame.y+this.padding;
 	for (let i = 0; i < this.segments.length; i++) {
 	    let seg = this.segments[i];
 	    seg.font.renderString(ctx, seg.text, bx+seg.bounds.x, by+seg.bounds.y);
@@ -175,28 +175,26 @@ class TextBox extends Sprite {
 
     addNewline(font: Font=null) {
 	font = (font !== null)? font : this.font;
-	let x = this.frame.x;
-	let y = this.frame.y;
+	let height = this.frame.height-this.padding*2;
+	let y = 0;
 	if (this.segments.length !== 0) {
 	    y = this.segments[this.segments.length-1].bounds.bottom()+this.linespace;
 	}
-	let newseg = this.addSegment(new Vec2(x, y), '', font);
-	let dy = newseg.bounds.bottom() - this.frame.bottom();
+	let newseg = this.addSegment(new Vec2(0, y), '', font);
+	let dy = newseg.bounds.bottom() - height;
 	if (0 < dy) {
-	    for (let i = this.segments.length-1; 0 <= i; i--) {
-		let seg = this.segments[i];
+	    // scrolling.
+	    this.segments = this.segments.filter((seg) => {
 		seg.bounds.y -= dy;
-		if (seg.bounds.y < this.frame.y) {
-		    this.segments.splice(i, 1);
-		}
-	    }
+		return 0 <= seg.bounds.y;
+	    });
 	}
 	return newseg;
     }
 
-    addText(text: string, font: Font) {
+    addText(text: string, font: Font=null) {
 	font = (font !== null)? font : this.font;
-	let rx = this.frame.right();
+	let width = this.frame.width-this.padding*2;
 	for (let i = 0; i < text.length; ) {
 	    if (text[i] == '\n') {
 		this.addNewline(font);
@@ -211,7 +209,7 @@ class TextBox extends Sprite {
 	    let size = font.getSize(s);
 	    let last = ((this.segments.length === 0)? null :
 			this.segments[this.segments.length-1]);	
-	    if (last === null || rx < last.bounds.right()+size.x) {
+	    if (last === null || width < last.bounds.right()+size.x) {
 		last = this.addNewline(font);
 	    } else if (last.font !== font) {
 		let pt = new Vec2(last.bounds.right(), last.bounds.y);
@@ -231,6 +229,7 @@ class TextBox extends Sprite {
 	let line = '';
 	let a:string[] = [];
 	let word = /\w+\W*/;
+	let width = this.frame.width-this.padding*2;
 	while (true) {
 	    let m = word.exec(text);
 	    if (m == null) {
@@ -240,11 +239,11 @@ class TextBox extends Sprite {
 	    let i = m.index+m[0].length
 	    let w = text.substr(0, i);
 	    let size = font.getSize(w);
-	    if (this.frame.width < x+size.x) {
+	    if (width < x+size.x) {
 		a.push(line);
 		line = header;
 		size = font.getSize(line);
-		x = this.frame.x+size.x;
+		x = size.x;
 	    }
 	    line += w;
 	    x += size.x;
@@ -272,13 +271,15 @@ class TextBox extends Sprite {
 	    valign='top',
 	    font: Font=null) {
 	font = (font !== null)? font : this.font;
-	let y = this.frame.y;
+	let width = this.frame.width-this.padding*2;
+	let height = this.frame.height-this.padding*2;
+	let y = 0;
 	switch (valign) {
 	case 'center':
-	    y += (this.frame.height-this.getSize(lines, font).y)/2;
+	    y += (height-this.getSize(lines, font).y)/2;
 	    break;
 	case 'bottom':
-	    y += this.frame.height-this.getSize(lines, font).y;
+	    y += height-this.getSize(lines, font).y;
 	    break;
 	}
 	for (let i = 0; i < lines.length; i++) {
@@ -287,10 +288,10 @@ class TextBox extends Sprite {
 	    let x = this.frame.x;
 	    switch (halign) {
 	    case 'center':
-		x += (this.frame.width-size.x)/2;
+		x += (width-size.x)/2;
 		break;
 	    case 'right':
-		x += this.frame.width-size.x;
+		x += width-size.x;
 		break;
 	    }
 	    let bounds = new Rect(x, y, size.x, size.y);
@@ -353,6 +354,11 @@ class DisplayTask extends TextTask {
 	super(dialog);
 	this.text = text;
 	this.font = dialog.font;
+    }
+
+    start(layer: Layer) {
+	super.start(layer);
+	this.text = this.dialog.wrapLines(this.text, this.font)
     }
 
     tick(t: number) {
@@ -498,8 +504,8 @@ class DialogBox extends TextBox {
     cursor: TextSegment = null;
     blinking: number = 0;
     
-    constructor(frame: Rect, font: Font, header='') {
-	super(frame, font, header);
+    constructor(frame: Rect) {
+	super(frame);
     }
 
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {

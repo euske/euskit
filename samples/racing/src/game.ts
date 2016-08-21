@@ -140,8 +140,10 @@ class Racing extends GameScene {
 	super(app);
 	SPRITES = new ImageSpriteSheet(APP.images['sprites'], new Vec2(16,32));
 	let font = new ShadowFont(APP.images['font'], 'white');
-	this.scoreBox = new TextBox(this.screen.inflate(-2,-2), font);
-	this.highScoreBox = new TextBox(this.screen.inflate(-2,-2), font);
+	this.scoreBox = new TextBox(this.screen.inflate(-2,-2));
+	this.scoreBox.font = font;
+	this.highScoreBox = new TextBox(this.screen.inflate(-2,-2));
+	this.highScoreBox.font = font;
 	this.highScore = -1;
     }
     
