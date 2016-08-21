@@ -18,6 +18,82 @@ function getContact(collider0: Shape, v: Vec2, colliders: Shape[], bounds: Rect[
 }
 
 
+//  ImageSource
+//
+class ImageSource {
+    dstRect: Rect;
+    
+    constructor(dstRect: Rect) {
+	this.dstRect = dstRect;
+    }
+}
+
+class HTMLImageSource extends ImageSource {
+    image: HTMLImageElement;
+    srcRect: Rect;
+    
+    constructor(image: HTMLImageElement, srcRect: Rect, dstRect: Rect) {
+	super(dstRect);
+	this.image = image;
+	this.srcRect = srcRect;
+    }
+}
+
+class FillImageSource extends ImageSource {
+    color: string;
+    
+    constructor(color: string, dstRect: Rect) {
+	super(dstRect);
+	this.color = color;
+    }
+}
+
+
+//  SpriteSheet
+// 
+class SpriteSheet {
+    constructor() {
+    }
+    
+    get(x:number, y=0, origin: Vec2=null) {
+	return null as ImageSource;
+    }
+}
+
+class ImageSpriteSheet extends SpriteSheet {
+    image: HTMLImageElement;
+    size: Vec2;
+    origin: Vec2;
+
+    constructor(image: HTMLImageElement, size: Vec2, origin: Vec2=null) {
+	super();
+	this.image = image;
+	this.size = size;
+	this.origin = (origin !== null)? origin : new Vec2();
+    }
+
+    get(x:number, y=0, origin: Vec2=null) {
+	origin = (origin !== null)? origin : this.origin;
+	let srcRect = new Rect(x*this.size.x, y*this.size.y, this.size.x, this.size.y);
+	let dstRect = new Rect(-origin.x, -origin.y, this.size.x, this.size.y);
+	return new HTMLImageSource(this.image, srcRect, dstRect);
+    }
+}
+
+class SimpleSpriteSheet extends SpriteSheet {
+    imgsrcs: FillImageSource[];
+
+    constructor(imgsrcs: FillImageSource[]) {
+	super();
+	this.imgsrcs = imgsrcs;
+    }
+
+    get(x:number, y=0, origin: Vec2=null) {
+	return this.imgsrcs[x];
+    }
+}
+
+
 //  Task
 //  A single procedure that runs at each frame.
 //
