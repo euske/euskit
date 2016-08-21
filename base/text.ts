@@ -333,7 +333,7 @@ class PauseTask extends TextTask {
     }
 
     ff() {
-	this.die();
+	this.stop();
     }
 
 }
@@ -358,7 +358,7 @@ class DisplayTask extends TextTask {
     tick(t: number) {
 	super.tick(t);
 	if (this.text.length <= this._index) {
-	    this.die();
+	    this.stop();
 	} else if (this.speed === 0) {
 	    this.ff();
 	} else {
@@ -381,7 +381,7 @@ class DisplayTask extends TextTask {
 	    this.dialog.addText(this.text.substr(this._index, 1), this.font);
 	    this._index++;
 	}
-	this.die();
+	this.stop();
     }
 
 }
@@ -456,12 +456,12 @@ class MenuTask extends TextTask {
 	    break;
 	case KeySym.Action:
 	    if (this.current !== null) {
-		this.die();
+		this.stop();
 		this.selected.fire(this.current.value);
 	    };
 	    return;
 	case KeySym.Cancel:
-	    this.die();
+	    this.stop();
 	    this.selected.fire(null);
 	    return;
 	}
@@ -532,7 +532,7 @@ class DialogBox extends TextBox {
 		task.start(this.layer);
 	    }
 	    task.tick(t);
-	    if (task.alive) break;
+	    if (task.running) break;
 	    this.removeTask(task);
 	}
 	if (this.autohide && task === null) {
@@ -548,7 +548,7 @@ class DialogBox extends TextBox {
 		task.start(this.layer);
 	    }
 	    task.keydown(key);
-	    if (task.alive) break;
+	    if (task.running) break;
 	    this.removeTask(task);
 	    break;
 	}
@@ -562,7 +562,7 @@ class DialogBox extends TextBox {
 		task.start(this.layer);
 	    }
 	    task.ff();
-	    if (task.alive) break;
+	    if (task.running) break;
 	    this.removeTask(task);
 	}
     }

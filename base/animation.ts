@@ -9,12 +9,12 @@
 class Queue extends Task {
 
     tasks: Task[];
-    dieWhenEmpty: boolean;
+    stopWhenEmpty: boolean;
 
-    constructor(tasks: Task[]=null, dieWhenEmpty=true) {
+    constructor(tasks: Task[]=null, stopWhenEmpty=true) {
 	super();
 	this.tasks = (tasks !== null)? tasks : [];
-	this.dieWhenEmpty = dieWhenEmpty;
+	this.stopWhenEmpty = stopWhenEmpty;
     }
   
     add(task: Task) {
@@ -45,11 +45,11 @@ class Queue extends Task {
 		task.start(this.layer);
 	    }
 	    task.tick(t);
-	    if (task.alive) break;
+	    if (task.running) break;
 	    this.remove(task);
 	}
-	if (this.dieWhenEmpty && task === null) {
-	    this.die();
+	if (this.stopWhenEmpty && task === null) {
+	    this.stop();
 	}
     }
 }

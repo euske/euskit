@@ -634,10 +634,10 @@ and its method is executed periodically.
   <td>The elapsed time since the task started (in seconds).</td></tr>
 <tr><td><code>.lifetime</code></td>
   <td>The duration that the task can run.</td></tr>
-<tr><td><code>.died</code></td>
-  <td>A <code>Signal</code> that is signaled when the task dies.</td></tr>
-<tr><td><code>.die()</code></td>
-  <td>Kills the task.</td></tr>
+<tr><td><code>.stopped</code></td>
+  <td>A <code>Signal</code> that is signaled when the task stops.</td></tr>
+<tr><td><code>.stop()</code></td>
+  <td>Terminates the task.</td></tr>
 <tr class=overridable><td><code>.update()</code></td>
   <td>Updates for the current frame.</td></tr>
 </table>
@@ -654,8 +654,8 @@ A <code>Sprite</code> represents something that's shown on the screen.
   <td>A <code>Layer</code> that the sprite belongs to.</td></tr>
 <tr class=inherited><td><code>.time</code></td>
   <td>The elapsed time since the sprite started.</td></tr>
-<tr class=inherited><td><code>.died</code></td>
-  <td>A <code>Signal</code> that is signaled when the sprite dies.</td></tr>
+<tr class=inherited><td><code>.stopped</code></td>
+  <td>A <code>Signal</code> that is signaled when the sprite stops.</td></tr>
 <tr><td><code>.pos</code></td>
   <td>The position of the sprite.</td></tr>
 <tr><td><code>.imgsrc</code></td>
@@ -666,8 +666,8 @@ A <code>Sprite</code> represents something that's shown on the screen.
   <td>The order that the sprite is drawn to the screen.</td></tr>
 <tr><td><code>.scale</code></td>
   <td>A vector for the polarity of the sprite image.</td></tr>
-<tr><td><code>.die()</code></td>
-  <td>Kills the sprite.</td></tr>
+<tr><td><code>.stop()</code></td>
+  <td>Terminates the sprite.</td></tr>
 <tr><td><code>.getBounds([pos])</code></td>
   <td>Returns the bounds for the given <code>pos</code>.</td></tr>
 <tr><td><code>.movePos(v)</code></td>
@@ -690,8 +690,8 @@ An <code>Entity</code> is a physical object that's visible and has a physical bo
   <td>A <code>Layer</code> that the entity belongs to.</td></tr>
 <tr class=inherited><td><code>.time</code></td>
   <td>The elapsed time since the entity started.</td></tr>
-<tr class=inherited><td><code>.died</code></td>
-  <td>A <code>Signal</code> that is signaled when the entity dies.</td></tr>
+<tr class=inherited><td><code>.stopped</code></td>
+  <td>A <code>Signal</code> that is signaled when the entity stops.</td></tr>
 <tr class=inherited><td><code>.pos</code></td>
   <td>The position of the sprite.</td></tr>
 <tr class=inherited><td><code>.imgsrc</code></td>
@@ -702,8 +702,8 @@ An <code>Entity</code> is a physical object that's visible and has a physical bo
   <td>The order that the entity is drawn to the screen.</td></tr>
 <tr class=inherited><td><code>.scale</code></td>
   <td>A vector for the polarity of the entity image.</td></tr>
-<tr class=inherited><td><code>.die()</code></td>
-  <td>Kills the entity.</td></tr>
+<tr class=inherited><td><code>.stop()</code></td>
+  <td>Terminates the entity.</td></tr>
 <tr class=inherited><td><code>.getBounds([pos])</code></td>
   <td>Returns the bounds for the given <code>pos</code>.</td></tr>
 <tr class=inherited><td><code>.movePos(v)</code></td>
@@ -905,8 +905,8 @@ Suitable for charcters or objects that can jump or fall.
   <td>A <code>Layer</code> that the entity belongs to.</td></tr>
 <tr class=inherited><td><code>.time</code></td>
   <td>The elapsed time since the entity started.</td></tr>
-<tr class=inherited><td><code>.died</code></td>
-  <td>A <code>Signal</code> that is signaled when the entity dies.</td></tr>
+<tr class=inherited><td><code>.stopped</code></td>
+  <td>A <code>Signal</code> that is signaled when the entity stops.</td></tr>
 <tr class=inherited><td><code>.bounds</code></td>
   <td>A <code>Rect</code> for the entity's size and position.</td></tr>
 <tr class=inherited><td><code>.imgsrc</code></td>
@@ -923,8 +923,8 @@ Suitable for charcters or objects that can jump or fall.
   <td>A vector for the maximum speed (absolute values).</td></tr>
 <tr><td><code>.jumpfunc</code></td>
   <td>A gravity function <code>(vy:number, t:number) =&gt; number</code></td></tr>
-<tr class=inherited><td><code>.die()</code></td>
-  <td>Kills the entity.</td></tr>
+<tr class=inherited><td><code>.stop()</code></td>
+  <td>Terminates the entity.</td></tr>
 <tr class=inherited><td><code>.movePos(v)</code></td>
   <td>Moves the entity by <code>v</code>.</td></tr>
 <tr class=inherited><td><code>.collider</code></td>
@@ -974,8 +974,8 @@ Suitable for tile-based platformer games.
   <td>A <code>Layer</code> that the entity belongs to.</td></tr>
 <tr class=inherited><td><code>.time</code></td>
   <td>The elapsed time since the entity started.</td></tr>
-<tr class=inherited><td><code>.died</code></td>
-  <td>A <code>Signal</code> that is signaled when the entity dies.</td></tr>
+<tr class=inherited><td><code>.stopped</code></td>
+  <td>A <code>Signal</code> that is signaled when the entity stops.</td></tr>
 <tr class=inherited><td><code>.bounds</code></td>
   <td>A <code>Rect</code> for the entity's size and position.</td></tr>
 <tr class=inherited><td><code>.imgsrc</code></td>
@@ -994,8 +994,8 @@ Suitable for tile-based platformer games.
   <td>A gravity function <code>(vy:number, t:number) =&gt; number</code></td></tr>
 <tr><td><code>.tilemap</code></td>
   <td>A <code>TileMap</code> that interacts with the entity.</td></tr>
-<tr class=inherited><td><code>.die()</code></td>
-  <td>Kills the entity.</td></tr>
+<tr class=inherited><td><code>.stop()</code></td>
+  <td>Terminates the entity.</td></tr>
 <tr class=inherited><td><code>.movePos(v)</code></td>
   <td>Moves the entity by <code>v</code>.</td></tr>
 <tr class=inherited><td><code>.collider</code></td>
@@ -1177,11 +1177,11 @@ A <code>Queue</code> is a list of <code>Task</code>s that are executed sequentia
   <td>The <code>Layer</code> that the queue belongs to.</td></tr>
 <tr class=inherited><td><code>.time</code></td>
   <td>The elapsed time since the queue started.</td></tr>
-<tr class=inherited><td><code>.died</code></td>
+<tr class=inherited><td><code>.stopped</code></td>
   <td>A <code>Signal</code> that is signaled when the queue finishes.</td></tr>
 <tr><td><code>.tasks</code></td>
   <td>A list of <code>Task</code>s to be executed.</td></tr>
-<tr><td><code>.dieWhenEmpty</code></td>
+<tr><td><code>.stopWhenEmpty</code></td>
   <td>Set <code>true</code> to automatically kill the queue when there's no <code>Task</code>.</td></tr>
 <tr><td><code>.getCurrent()</code></td>
   <td>Returns the current <code>Task</code> or <code>null</code>.</td></tr>

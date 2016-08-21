@@ -30,7 +30,7 @@ class Layer {
     tick(t: number) {
 	this.time = t;
 	for (let obj of this.tasks) {
-	    if (obj.alive) {
+	    if (obj.running) {
 		obj.tick(t);
 	    }
 	}
@@ -42,7 +42,7 @@ class Layer {
     
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
 	for (let obj of this.sprites) {
-	    if (obj.alive && obj.visible) {
+	    if (obj.running && obj.visible) {
 		obj.render(ctx, bx, by);
 	    }
 	}
@@ -50,7 +50,7 @@ class Layer {
 
     moveAll(v: Vec2) {
 	for (let obj of this.sprites) {
-	    if (!obj.alive) continue;
+	    if (!obj.running) continue;
 	    if (obj.getBounds() === null) continue;
 	    obj.pos = obj.pos.add(v);
 	}
@@ -87,7 +87,7 @@ class Layer {
     checkCollisions() {
 	for (let i = 0; i < this.entities.length; i++) {
 	    let obj0 = this.entities[i];
-	    if (obj0.alive && obj0.collider !== null) {
+	    if (obj0.running && obj0.collider !== null) {
 		let a = this.findObjects(
 		    obj0.getCollider(),
 		    this.entities.slice(i+1));
@@ -107,7 +107,7 @@ class Layer {
 	}
 	let a:Entity[] = [];
 	for (let obj1 of objs) {
-	    if (obj1.alive && obj1.collider !== null &&
+	    if (obj1.running && obj1.collider !== null &&
 		(f === null || f(obj1)) &&
 		obj1.getCollider().overlaps(shape)) {
 		a.push(obj1);
@@ -117,7 +117,7 @@ class Layer {
     }
 
     private cleanObjects(objs: Task[]) {
-	removeElements(objs, (obj: Task) => { return !obj.alive; });
+	removeElements(objs, (obj: Task) => { return !obj.running; });
     }
 
 }
@@ -165,7 +165,7 @@ class ScrollLayer extends Layer {
 	bx -= this.window.x;
 	by -= this.window.y;
 	for (let obj of this.sprites) {
-	    if (obj.alive && obj.visible) {
+	    if (obj.running && obj.visible) {
 		let bounds = obj.getBounds()
 		if (bounds === null || bounds.overlaps(this.window)) {
 		    obj.render(ctx, bx, by);

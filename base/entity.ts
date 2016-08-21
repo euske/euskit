@@ -84,16 +84,16 @@ class SimpleSpriteSheet extends SpriteSheet {
 //
 class Task {
 
-    alive: boolean = true;
+    running: boolean = true;
     layer: Layer = null;
     lifetime: number = Infinity;
     time0: number = 0;
     time: number = 0;
-    died: Signal;
+    stopped: Signal;
 
     constructor(lifetime=Infinity) {
 	this.lifetime = lifetime;
-	this.died = new Signal(this);
+	this.stopped = new Signal(this);
     }
 
     toString() {
@@ -106,24 +106,16 @@ class Task {
 	this.time = 0;
     }
 
-    tick(t: number) {
-	this.update();
-	this.time = t - this.time0;
-	if (this.lifetime <= this.time) {
-	    this.die();
-	}
-    }
-  
-    die() {
-	if (this.alive) {
-	    this.alive = false;
-	    this.died.fire();
+    stop() {
+	if (this.running) {
+	    this.running = false;
+	    this.stopped.fire();
 	}
     }
 
     chain(task: Task) {
-	if (this.alive) {
-	    this.died.subscribe(() => {
+	if (this.running) {
+	    this.stopped.subscribe(() => {
 		if (this.layer !== null) {
 		    this.layer.addObject(task)
 		}
@@ -134,6 +126,14 @@ class Task {
 	    }
 	}
 	return task;
+    }
+  
+    tick(t: number) {
+	this.update();
+	this.time = t - this.time0;
+	if (this.lifetime <= this.time) {
+	    this.stop();
+	}
     }
   
     update() {
@@ -410,7 +410,7 @@ class Projectile extends Entity {
 	    this.movePos(this.movement);
 	    if (this.frame !== null &&
 		!this.getCollider().overlaps(this.frame)) {
-		this.die();
+		this.stop();
 	    }
 	}
     }

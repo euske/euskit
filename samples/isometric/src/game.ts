@@ -148,7 +148,7 @@ class ScrollLayer3 extends ScrollLayer {
 	// Set the drawing order.
 	let objs = {} as SpriteDictionary;
 	for (let obj of this.sprites) {
-	    if (obj.alive && obj.visible) {
+	    if (obj.running && obj.visible) {
 		let bounds = obj.getBounds();
 		if (bounds !== null && bounds.overlapsRect(window)) {
 		    let x = int((bounds.x+bounds.width/2)/ts);
@@ -186,7 +186,7 @@ class ScrollLayer3 extends ScrollLayer {
 	
 	// Draw floating objects.
 	for (let obj of this.sprites) {
-	    if (obj.alive && obj.visible) {
+	    if (obj.running && obj.visible) {
 		let bounds = obj.getBounds();
 		if (bounds === null) {
 		    obj.render(ctx, bx, by);
@@ -328,7 +328,7 @@ class Player extends Entity3d {
 	}
 	let window = this.scene.layer.window;
 	if (!window.overlaps(this.getCollider())) {
-	    this.die();
+	    this.stop();
 	}
     }
   
@@ -340,7 +340,7 @@ class Player extends Entity3d {
 
     collidedWith(entity: Entity) {
 	if (entity instanceof Thingy) {
-	    entity.die();
+	    entity.stop();
 	    let obj = new Projectile(this.pos.move(0,-16));
 	    obj.imgsrc = SPRITES.get(S.YAY);
 	    obj.movement = new Vec2(0,-4);
@@ -434,7 +434,7 @@ class Game extends Scene {
 	    this.layer.moveCenter(vw);
 	    this.layer.moveAll(vw);
 	}
-	if (this.player.alive) {
+	if (this.player.running) {
 	    this.player.moveIfPossible3(new Vec3(v.x, v.y, 0), 'fall');
 	}
     }

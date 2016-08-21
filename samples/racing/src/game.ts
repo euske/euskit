@@ -172,7 +172,7 @@ class Racing extends GameScene {
 	    } else {
 		this.player.running = false;
 		let blinker = new Blinker(this.player, 0.2, 1.0);
-		blinker.died.subscribe(() => { this.init(); });
+		blinker.stopped.subscribe(() => { this.init(); });
 		this.addObject(blinker);
 		this.app.setMusic();
 		playSound(this.app.audios['plunge']);

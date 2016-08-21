@@ -89,7 +89,7 @@ class Player extends Entity {
     collidedWith(entity: Entity) {
 	if (entity instanceof EnemyBase) {
 	    playSound(APP.audios['explosion']);
-	    this.die();
+	    this.stop();
 	    this.chain(new Explosion(this.pos));
 	}
     }
@@ -113,7 +113,7 @@ class EnemyBase extends Projectile {
     collidedWith(entity: Entity) {
 	if (entity instanceof Bullet) {
 	    playSound(APP.audios['explosion']);
-	    this.die();
+	    this.stop();
 	    this.killed.fire();
 	    this.chain(new Explosion(this.pos));
 	}
@@ -176,7 +176,7 @@ class Shooter extends GameScene {
     init() {
 	super.init();
 	let restartGame = new Task(2);
-	restartGame.died.subscribe(() => { this.init(); });
+	restartGame.stopped.subscribe(() => { this.init(); });
 	this.player = new Player(this, this.screen.center());
 	this.player.chain(restartGame);
 	this.addObject(this.player);
