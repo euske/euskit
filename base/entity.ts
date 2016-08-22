@@ -443,14 +443,24 @@ interface JumpFunc {
 }
 class PhysicalEntity extends Entity {
 
+    jumped: Signal;
+    landed: Signal;
     velocity: Vec2 = new Vec2();
     maxspeed: Vec2 = new Vec2(6,6);
-    jumpfunc: JumpFunc = (vy:number, t:number) => { return (0 <= t && t <= 5)? -4 : vy+1; };
+    jumpfunc: JumpFunc = (vy:number, t:number) => {
+	return (0 <= t && t <= 5)? -4 : vy+1;
+    };
     
     protected _jumpt: number = Infinity;
     protected _jumpend: number = 0;
     protected _landed: boolean = false;
     
+    constructor(pos: Vec2) {
+	super(pos);
+	this.jumped = new Signal(this);
+	this.landed = new Signal(this);
+    }
+
     setJumpFunc(jumpfunc: JumpFunc) {
 	this.jumpfunc = jumpfunc;
     }
@@ -458,7 +468,7 @@ class PhysicalEntity extends Entity {
     setJump(jumpend: number) {
 	if (0 < jumpend) {
 	    if (this.isLanded()) {
-		this.jump();
+		this.jumped.fire();
 		this._jumpt = 0;
 	    }
 	}
@@ -468,7 +478,7 @@ class PhysicalEntity extends Entity {
     update() {
 	super.update();
 	this.fall();
-	if (this._jumpt < this._jumpend) {
+	if (this.isJumping()) {
 	    this._jumpt++;
 	} else {
 	    this._jumpt = Infinity;
@@ -482,18 +492,14 @@ class PhysicalEntity extends Entity {
 	    this.velocity = this.moveIfPossible(v, 'fall');
 	    let landed = (0 < vy && this.velocity.y == 0);
 	    if (!this._landed && landed) {
-		this.land();
+		this.landed.fire();
 	    }
 	    this._landed = landed;
 	}
     }
 
-    land() {
-	// [OVERRIDE]
-    }
-
-    jump() {
-	// [OVERRIDE]
+    isJumping() {
+	return (this._jumpt < this._jumpend);
     }
 
     isLanded() {
