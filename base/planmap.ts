@@ -203,9 +203,9 @@ enum ActionType {
 //  PlatformerActor
 //
 interface PlatformerActor extends PlanActor {
-    isMovable(v: Vec2): boolean;
-    isLanded(): boolean;
-    isHolding(): boolean;
+    canMove(v: Vec2): boolean;
+    canJump(): boolean;
+    canFall(): boolean;
     getGridPos(): Vec2;
     getGridBox(): Rect;
     getGridBoxAt(p: Vec2): Rect;
@@ -219,8 +219,8 @@ interface PlatformerActor extends PlanActor {
     canStandAt(p: Vec2): boolean;
     canClimbUp(p: Vec2): boolean;
     canClimbDown(p: Vec2): boolean;
-    canFall(p0: Vec2, p1: Vec2): boolean;
-    canJump(p0: Vec2, p1: Vec2): boolean;
+    canFallTo(p0: Vec2, p1: Vec2): boolean;
+    canJumpTo(p0: Vec2, p1: Vec2): boolean;
 }
 
 //  PlatformerAction
@@ -311,7 +311,7 @@ class PlatformerPlanMap extends PlanMap {
 		    //   ...|  |
 		    //   ...+-X+ (p.x,p.y)
 		    //     ######
-		    if (actor.canFall(fp, p)) {
+		    if (actor.canFallTo(fp, p)) {
 			let dc = Math.abs(v.x)+Math.abs(v.y);
 			this.addAction(start, new PlatformerAction(
 			    fp, a0, a0.cost+dc, null, ActionType.FALL));
@@ -337,7 +337,7 @@ class PlatformerPlanMap extends PlanMap {
 		    //  |  |...
 		    //  +-X+... (jp.x,jp.y) original position.
 		    // ######
-		    if (actor.canJump(jp, p)) {
+		    if (actor.canJumpTo(jp, p)) {
 			let dc = Math.abs(v.x)+Math.abs(v.y);
 			this.addAction(start, new PlatformerAction(
 			    jp, a0, a0.cost+dc, null, ActionType.JUMP));
@@ -359,7 +359,7 @@ class PlatformerPlanMap extends PlanMap {
 		    //  |  |...
 		    //  +-X+... (jp.x,jp.y) original position.
 		    // ######
-		    if (actor.canJump(jp, p)) {
+		    if (actor.canJumpTo(jp, p)) {
 			let dc = Math.abs(v.x)+Math.abs(v.y);
 			this.addAction(start, new PlatformerAction(
 			    jp, a0, a0.cost+dc, null, ActionType.JUMP));

@@ -363,7 +363,7 @@ class Entity extends Sprite {
 	}
     }
   
-    isMovable(v0: Vec2, context=null as string) {
+    canMove(v0: Vec2, context=null as string) {
 	let v1 = this.getMove(this.pos, v0, context);
 	return v1.equals(v0);
     }
@@ -467,7 +467,7 @@ class PhysicalEntity extends Entity {
 
     setJump(jumpend: number) {
 	if (0 < jumpend) {
-	    if (this.isLanded()) {
+	    if (this.canJump()) {
 		this.jumped.fire();
 		this._jumpt = 0;
 	    }
@@ -486,7 +486,7 @@ class PhysicalEntity extends Entity {
     }
   
     fall() {
-	if (!this.isHolding()) {
+	if (this.canFall()) {
 	    let vy = this.jumpfunc(this.velocity.y, this._jumpt);
 	    let v = new Vec2(this.velocity.x, vy);
 	    this.velocity = this.moveIfPossible(v, 'fall');
@@ -502,12 +502,12 @@ class PhysicalEntity extends Entity {
 	return (this._jumpt < this._jumpend);
     }
 
-    isLanded() {
+    canJump() {
 	return this._landed;
     }
 
-    isHolding() {
-	return false;
+    canFall() {
+	return true;
     }
 
 }
@@ -524,13 +524,13 @@ class PlatformerEntity extends PhysicalEntity {
 	this.tilemap = tilemap;
     }
     
-    isHolding() {
+    canFall() {
 	let range = this.getCollider().getAABB();
-	return (this.tilemap.findTile(this.tilemap.isGrabbable, range) !== null);
+	return (this.tilemap.findTile(this.tilemap.isGrabbable, range) === null);
     }
 
     getObstaclesFor(range: Rect, context=null as string): Rect[] {
-	let f = ((context != 'fall' || this.isHolding())?
+	let f = ((context != 'fall' || !this.canFall())?
 		 this.tilemap.isObstacle :
 		 this.tilemap.isStoppable);
 	return this.tilemap.getTileRects(f, range);

@@ -80,7 +80,7 @@ class Entity3d extends Entity {
 	    new Vec3(bounds.width, bounds.height, this.depth));
     }
 
-    isMovable3(v0: Vec3, context=null as string) {
+    canMove3(v0: Vec3, context=null as string) {
 	let v1 = this.getMove3(this.getPos3(), v0, context);
 	return v1.equals(v0);
     }
@@ -293,8 +293,12 @@ class Player extends Entity3d {
 	return (tilemap.tilesize/2 < this.z);
     }
     
-    isLanded3() {
-	return (0 <= this.velocity3.z && !this.isMovable3(new Vec3(0,0,-1)));
+    canJump3() {
+	return (0 <= this.velocity3.z && !this.canMove3(new Vec3(0,0,-1)));
+    }
+
+    canFall3() {
+	return true;
     }
 
     setMove(v: Vec2) {
@@ -303,7 +307,7 @@ class Player extends Entity3d {
     
     setJump(jumpend: number) {
 	if (0 < jumpend) {
-	    if (this.isLanded3()) {
+	    if (this.canJump3()) {
 		this._jumpt = 0;
 	    }
 	}
@@ -333,9 +337,11 @@ class Player extends Entity3d {
     }
   
     fall() {
-	let vz = this.jumpfunc3(this.velocity3.z, this._jumpt);
-	let v = new Vec3(this.velocity3.x, this.velocity3.y, vz);
-	this.velocity3 = this.moveIfPossible3(v, 'fall').clamp(this.maxspeed3);
+	if (this.canFall3()) {
+	    let vz = this.jumpfunc3(this.velocity3.z, this._jumpt);
+	    let v = new Vec3(this.velocity3.x, this.velocity3.y, vz);
+	    this.velocity3 = this.moveIfPossible3(v, 'fall').clamp(this.maxspeed3);
+	}
     }
 
     collidedWith(entity: Entity) {
