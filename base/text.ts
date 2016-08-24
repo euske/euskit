@@ -152,8 +152,7 @@ class TextBox extends Sprite {
 	}
 	bx += this.frame.x+this.padding;
 	by += this.frame.y+this.padding;
-	for (let i = 0; i < this.segments.length; i++) {
-	    let seg = this.segments[i];
+	for (let seg of this.segments) {
 	    seg.font.renderString(ctx, seg.text, bx+seg.bounds.x, by+seg.bounds.y);
 	}
     }
@@ -242,8 +241,7 @@ class TextBox extends Sprite {
 	    if (width < x+size.x) {
 		a.push(line);
 		line = header;
-		size = font.getSize(line);
-		x = size.x;
+		x = font.getSize(line).x;
 	    }
 	    line += w;
 	    x += size.x;
@@ -282,8 +280,7 @@ class TextBox extends Sprite {
 	    y += height-this.getSize(lines, font).y;
 	    break;
 	}
-	for (let i = 0; i < lines.length; i++) {
-	    let text = lines[i];
+	for (let text of lines) {
 	    let size = font.getSize(text);
 	    let x = this.frame.x;
 	    switch (halign) {
@@ -434,8 +431,7 @@ class MenuTask extends TextTask {
 
     start(layer: Layer) {
 	super.start(layer);
-	for (let i = 0; i < this.items.length; i++) {
-	    let item = this.items[i];
+	for (let item of this.items) {
 	    this.dialog.addSegment(item.pos, item.text, this.font);
 	}
 	this.updateCursor();
