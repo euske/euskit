@@ -373,8 +373,8 @@ class Entity extends Sprite {
 	let collider = this.collider.add(pos);
 	let hitbox0 = collider.getAABB();
 	let range = hitbox0.union(hitbox0.add(v));
-	let obstacles = this.getObstaclesFor(range, context);
-	let fences = this.getFencesFor(range, context);
+	let obstacles = this.getObstaclesFor(range, v, context);
+	let fences = this.getFencesFor(range, v, context);
 	let d = getContact(collider, v, obstacles, fences);
 	v = v.sub(d);
 	collider = collider.add(d);
@@ -393,12 +393,12 @@ class Entity extends Sprite {
 			hitbox1.y-hitbox0.y);
     }
   
-    getObstaclesFor(range: Rect, context: string): Shape[] {
+    getObstaclesFor(range: Rect, v: Vec2, context: string): Shape[] {
 	// [OVERRIDE]
 	return null;
     }
   
-    getFencesFor(range: Rect, context: string): Rect[] {
+    getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
 	// [OVERRIDE]
 	return null;
     }
@@ -529,7 +529,7 @@ class PlatformerEntity extends PhysicalEntity {
 	return (this.tilemap.findTile(this.tilemap.isGrabbable, range) === null);
     }
 
-    getObstaclesFor(range: Rect, context=null as string): Rect[] {
+    getObstaclesFor(range: Rect, v: Vec2, context=null as string): Rect[] {
 	let f = ((context != 'fall' || !this.canFall())?
 		 this.tilemap.isObstacle :
 		 this.tilemap.isStoppable);

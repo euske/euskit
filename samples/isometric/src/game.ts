@@ -89,7 +89,7 @@ class Entity3d extends Entity {
 	let collider0 = this.getCollider3(pos);
 	let collider1 = collider0;
 	let range = collider1.union(collider1.add(v));
-	let obstacles = this.getObstaclesFor3(range, context);
+	let obstacles = this.getObstaclesFor3(range, v, context);
 	let d = getContact3(collider1, v, obstacles);
 	v = v.sub(d);
 	collider1 = collider1.add(d);
@@ -115,7 +115,7 @@ class Entity3d extends Entity {
 	return false;
     }
     
-    getObstaclesFor3(range: Box, context: string): Box[] {
+    getObstaclesFor3(range: Box, v: Vec3, context: string): Box[] {
 	return null;
     }
 
@@ -267,7 +267,7 @@ class Player extends Entity3d {
 	this.usermove3 = new Vec3();
     }
     
-    getObstaclesFor3(range: Box, context: string) {
+    getObstaclesFor3(range: Box, v: Vec3, context: string) {
 	let window = this.scene.layer3.window;
 	let tilemap = this.scene.tilemap;
 	let ts = tilemap.tilesize;

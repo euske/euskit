@@ -39,7 +39,7 @@ class Player extends Entity {
 	this.usermove = v.scale(4);
     }
     
-    getFencesFor(range: Rect, context: string): Rect[] {
+    getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
 	// Restrict its position within the screen.
 	return [this.scene.screen];
     }
