@@ -3,14 +3,15 @@
 /// <reference path="entity.ts" />
 
 
-function makeGlyphs(src: HTMLImageElement, color: string=null)
+function makeGlyphs(src: HTMLImageElement, color: string=null,
+		    inverted=false)
 {
     let dst = createCanvas(src.width, src.height);
     let ctx = getEdgeyContext(dst);
     ctx.clearRect(0, 0, dst.width, dst.height);
     ctx.drawImage(src, 0, 0);
     if (color !== null) {
-	ctx.globalCompositeOperation = 'source-in';
+	ctx.globalCompositeOperation = (inverted)? 'source-out' : 'source-in';
 	ctx.fillStyle = color;
 	ctx.fillRect(0, 0, dst.width, dst.height);
     }
@@ -24,30 +25,63 @@ class Font {
 
     width: number;
     height: number;
-    protected _width0: number;
-    protected _height0: number;
-    private _glyphs: HTMLCanvasElement;
+    background: string = null;
+
+    protected _csize: number;
+    protected _glyphs: HTMLCanvasElement;
     
     constructor(glyphs: HTMLImageElement, color: string=null, scale=1) {
-	this._width0 = glyphs.height;
-	this._height0 = glyphs.height;
-	this.width = scale*this._width0;
-	this.height = scale*this._height0;
-	this._glyphs = makeGlyphs(glyphs, color);
+	this._csize = glyphs.height;
+	this.width = this._csize*scale;
+	this.height = this._csize*scale;
+	this.initGlyphs(glyphs, color);
     }
 
     getSize(text: string) {
 	return new Vec2(this.width * text.length, this.height);
     }
+
+    initGlyphs(glyphs: HTMLImageElement, color: string=null) {
+	this._glyphs = makeGlyphs(glyphs, color);
+    }
+
+    renderString(
+	ctx: CanvasRenderingContext2D,
+	text: string, x: number, y: number) {
+	this.renderBackground(ctx, text, x, y);
+	this.renderGlyphs(ctx, this._glyphs, this._csize, text, x, y);
+    }
   
-    renderString(ctx: CanvasRenderingContext2D,
-		 text: string, x: number, y: number) {
+    renderBackground(
+	ctx: CanvasRenderingContext2D,
+	text: string, x: number, y: number) {
+	if (this.background !== null) {
+	    let size = this.getSize(text);
+	    ctx.fillStyle = this.background;
+	    ctx.fillRect(x, y, size.x, size.y);
+	}
+    }
+
+    renderGlyphs(
+	ctx: CanvasRenderingContext2D,
+	glyphs: HTMLCanvasElement, csize: number,
+	text: string, x: number, y: number) {
 	for (let i = 0; i < text.length; i++) {
 	    let c = text.charCodeAt(i)-32;
-	    ctx.drawImage(this._glyphs,
-			  c*this._width0, 0, this._width0, this._height0,
+	    ctx.drawImage(glyphs,
+			  c*csize, 0, csize, glyphs.height,
 			  x+this.width*i, y, this.width, this.height);
 	}
+    }
+}
+
+
+//  InvertedFont
+//
+class InvertedFont extends Font {
+
+    initGlyphs(glyphs: HTMLImageElement, color: string=null) {
+	this._glyphs = makeGlyphs(glyphs, color, true);
     }
 }
 
@@ -57,13 +91,14 @@ class Font {
 class ShadowFont extends Font {
 
     shadowdist: number;
+    
     private _glyphs2: HTMLCanvasElement;
     
     constructor(glyphs: HTMLImageElement, color: string=null, scale=1,
 		shadowcolor='black', shadowdist=1) {
 	super(glyphs, color, scale);
-	this._glyphs2 = makeGlyphs(glyphs, shadowcolor);
 	this.shadowdist = shadowdist;
+	this._glyphs2 = makeGlyphs(glyphs, shadowcolor);
     }
 
     getSize2(text: string) {
@@ -71,41 +106,13 @@ class ShadowFont extends Font {
 	return size.move(this.shadowdist, this.shadowdist);
     }
   
-    renderString(ctx: CanvasRenderingContext2D, 
-		 text: string, x: number, y: number) {
-	let x1 = x+this.shadowdist;
-	let y1 = y+this.shadowdist;
-	for (let i = 0; i < text.length; i++) {
-	    let c = text.charCodeAt(i)-32;
-	    ctx.drawImage(this._glyphs2,
-			  c*this._width0, 0, this._width0, this._height0,
-			  x1+this.width*i, y1, this.width, this.height);
-	}
-	super.renderString(ctx, text, x, y);
-    }
-}
-
-
-//  HighlightFont
-//
-class HighlightFont extends Font {
-
-    background: string;
-    
-    constructor(glyphs: HTMLImageElement, color: string='black', scale=1,
-		background='white') {
-	super(glyphs, color, scale);
-	this.background = background;
-    }
-    
-    renderString(ctx: CanvasRenderingContext2D,
-		 text: string, x: number, y: number) {
-	if (this.background !== null) {
-	    let size = super.getSize(text);
-	    ctx.fillStyle = this.background;
-	    ctx.fillRect(x, y, size.x, size.y);
-	}
-	super.renderString(ctx, text, x, y);
+    renderString(
+	ctx: CanvasRenderingContext2D,
+	text: string, x: number, y: number) {
+	this.renderBackground(ctx, text, x, y);
+	this.renderGlyphs(ctx, this._glyphs, this._csize, text, x, y);
+	this.renderGlyphs(ctx, this._glyphs2, this._csize, text,
+			  x+this.shadowdist, y+this.shadowdist);
     }
 }
 
@@ -425,7 +432,6 @@ class MenuItem {
 
 class MenuTask extends TextTask {
 
-    font: Font;
     selected: Signal;
     vertical: Boolean = true;
     items: MenuItem[] = [];
@@ -434,7 +440,6 @@ class MenuTask extends TextTask {
     
     constructor(dialog: DialogBox) {
 	super(dialog);
-	this.font = dialog.font;
 	this.selected = new Signal(this);
     }
 
@@ -454,7 +459,7 @@ class MenuTask extends TextTask {
     start(layer: Layer) {
 	super.start(layer);
 	for (let item of this.items) {
-	    item.seg = this.dialog.addSegment(item.pos, item.text, this.font);
+	    item.seg = this.dialog.addSegment(item.pos, item.text);
 	}
 	this.updateSelection();
     }
@@ -501,7 +506,13 @@ class MenuTask extends TextTask {
     }
 
     updateSelection() {
-	this.dialog.highlight = this.current.seg;
+	for (let item of this.items) {
+	    if (item === this.current) {
+		item.seg.font = this.dialog.hifont;
+	    } else {
+		item.seg.font = this.dialog.font;
+	    }
+	}
     }
 
 }
@@ -515,29 +526,15 @@ class DialogBox extends TextBox {
     autohide: boolean = false;
     sound: HTMLAudioElement = null;
     queue: TextTask[] = [];
-    highlight: TextSegment = null;
     hifont: Font = null;
     
     constructor(frame: Rect) {
 	super(frame);
     }
 
-    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
-	super.render(ctx, bx, by);
-	let seg = this.highlight;
-	if (seg !== null && this.hifont !== null) {
-	    bx += this.pos.x+this.frame.x+this.padding;
-	    by += this.pos.y+this.frame.y+this.padding;
-	    this.hifont.renderString(
-		ctx, seg.text,
-		bx+seg.bounds.x, by+seg.bounds.y);
-	}
-    }
-
     clear() {
 	super.clear();
 	this.queue = [];
-	this.highlight = null;
     }
 
     tick(t: number) {
@@ -619,9 +616,8 @@ class DialogBox extends TextBox {
 	return task;
     }
 
-    addMenu(font: Font=null) {
+    addMenu() {
 	let task = new MenuTask(this);
-	task.font = (font !== null)? font : this.font;
 	this.addTask(task);
 	return task;
     }
