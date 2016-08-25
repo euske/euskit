@@ -3,16 +3,18 @@
 /// <reference path="entity.ts" />
 
 
-function MakeGlyphs(src: HTMLImageElement, color: string)
+function makeGlyphs(src: HTMLImageElement, color: string=null)
 {
-  let dst = createCanvas(src.width, src.height);
-  let ctx = getEdgeyContext(dst);
-  ctx.clearRect(0, 0, dst.width, dst.height);
-  ctx.drawImage(src, 0, 0);
-  ctx.globalCompositeOperation = 'source-in';
-  ctx.fillStyle = color;
-  ctx.fillRect(0, 0, dst.width, dst.height);
-  return dst;
+    let dst = createCanvas(src.width, src.height);
+    let ctx = getEdgeyContext(dst);
+    ctx.clearRect(0, 0, dst.width, dst.height);
+    ctx.drawImage(src, 0, 0);
+    if (color !== null) {
+	ctx.globalCompositeOperation = 'source-in';
+	ctx.fillStyle = color;
+	ctx.fillRect(0, 0, dst.width, dst.height);
+    }
+    return dst;
 }
 
 
@@ -31,14 +33,7 @@ class Font {
 	this._height0 = glyphs.height;
 	this.width = scale*this._width0;
 	this.height = scale*this._height0;
-	if (color === null) {
-	    this._glyphs = createCanvas(glyphs.width, glyphs.height);
-	    let ctx = getEdgeyContext(this._glyphs);
-	    ctx.clearRect(0, 0, glyphs.width, glyphs.height);
-	    ctx.drawImage(glyphs, 0, 0);
-	} else {
-	    this._glyphs = MakeGlyphs(glyphs, color);
-	}
+	this._glyphs = makeGlyphs(glyphs, color);
     }
 
     getSize(text: string) {
@@ -54,7 +49,6 @@ class Font {
 			  x+this.width*i, y, this.width, this.height);
 	}
     }
-
 }
 
 
@@ -68,7 +62,7 @@ class ShadowFont extends Font {
     constructor(glyphs: HTMLImageElement, color: string=null, scale=1,
 		shadowcolor='black', shadowdist=1) {
 	super(glyphs, color, scale);
-	this._glyphs2 = MakeGlyphs(glyphs, shadowcolor);
+	this._glyphs2 = makeGlyphs(glyphs, shadowcolor);
 	this.shadowdist = shadowdist;
     }
 
@@ -89,7 +83,24 @@ class ShadowFont extends Font {
 	}
 	super.renderString(ctx, text, x, y);
     }
+}
 
+
+//  HighlightFont
+//
+class HighlightFont extends Font {
+
+    background: string = null;
+    
+    renderString(ctx: CanvasRenderingContext2D,
+		 text: string, x: number, y: number) {
+	if (this.background !== null) {
+	    let size = super.getSize(text);
+	    ctx.fillStyle = this.background;
+	    ctx.fillRect(x, y, size.x, size.y);
+	}
+	super.renderString(ctx, text, x, y);
+    }
 }
 
 
