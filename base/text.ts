@@ -90,7 +90,13 @@ class ShadowFont extends Font {
 //
 class HighlightFont extends Font {
 
-    background: string = null;
+    background: string;
+    
+    constructor(glyphs: HTMLImageElement, color: string='black', scale=1,
+		background='white') {
+	super(glyphs, color, scale);
+	this.background = background;
+    }
     
     renderString(ctx: CanvasRenderingContext2D,
 		 text: string, x: number, y: number) {
@@ -408,6 +414,7 @@ class MenuItem {
     pos: Vec2;
     text: string;
     value: any;
+    seg: TextSegment = null;
 
     constructor(pos: Vec2, text: string, value: any) {
 	this.pos = pos;
@@ -419,9 +426,8 @@ class MenuItem {
 class MenuTask extends TextTask {
 
     font: Font;
-    cursor: TextSegment;
     selected: Signal;
-    vertical: boolean = false;
+    vertical: Boolean = true;
     items: MenuItem[] = [];
     current: MenuItem = null;
     sound: HTMLAudioElement = null;
@@ -429,7 +435,6 @@ class MenuTask extends TextTask {
     constructor(dialog: DialogBox) {
 	super(dialog);
 	this.font = dialog.font;
-	this.cursor = new TextSegment(new Vec2(), '>', this.font);
 	this.selected = new Signal(this);
     }
 
@@ -437,15 +442,21 @@ class MenuTask extends TextTask {
 	value = (value !== null)? value : text;
 	let item = new MenuItem(pos, text, value);
 	this.items.push(item);
+	if (2 <= this.items.length) {
+	    let item0 = this.items[0];
+	    let item1 = this.items[this.items.length-1];
+	    this.vertical = (Math.abs(item0.pos.x - item1.pos.x) <
+			     Math.abs(item0.pos.y - item1.pos.y));
+	}
 	return item;
     }
 
     start(layer: Layer) {
 	super.start(layer);
 	for (let item of this.items) {
-	    this.dialog.addSegment(item.pos, item.text, this.font);
+	    item.seg = this.dialog.addSegment(item.pos, item.text, this.font);
 	}
-	this.updateCursor();
+	this.updateSelection();
     }
 
     ff() {
@@ -456,16 +467,16 @@ class MenuTask extends TextTask {
 	let keysym = getKeySym(key);
 	switch (keysym) {
 	case KeySym.Left:
-	    d = (this.vertical)? -999 : -1;
+	    d = (this.vertical)? -Infinity : -1;
 	    break;
 	case KeySym.Right:
-	    d = (this.vertical)? +999 : +1;
+	    d = (this.vertical)? +Infinity : +1;
 	    break;
 	case KeySym.Up:
-	    d = (this.vertical)? -1 : -999;
+	    d = (this.vertical)? -1 : -Infinity;
 	    break;
 	case KeySym.Down:
-	    d = (this.vertical)? +1 : +999;
+	    d = (this.vertical)? +1 : +Infinity;
 	    break;
 	case KeySym.Action:
 	    if (this.current !== null) {
@@ -483,18 +494,14 @@ class MenuTask extends TextTask {
 		 this.items.indexOf(this.current));
 	i = clamp(0, i+d, this.items.length-1);
 	this.current = this.items[i];
-	this.updateCursor();
+	this.updateSelection();
 	if (this.sound !== null) {
 	    playSound(this.sound);
 	}
     }
 
-    updateCursor() {
-	if (this.current !== null) {
-	    this.cursor.bounds.x = this.current.pos.x - this.cursor.bounds.width*2;
-	    this.cursor.bounds.y = this.current.pos.y;
-	    this.dialog.cursor = this.cursor;
-	}
+    updateSelection() {
+	this.dialog.highlight = this.current.seg;
     }
 
 }
@@ -508,8 +515,8 @@ class DialogBox extends TextBox {
     autohide: boolean = false;
     sound: HTMLAudioElement = null;
     queue: TextTask[] = [];
-    cursor: TextSegment = null;
-    blinking: number = 0;
+    highlight: TextSegment = null;
+    hifont: Font = null;
     
     constructor(frame: Rect) {
 	super(frame);
@@ -517,22 +524,20 @@ class DialogBox extends TextBox {
 
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
 	super.render(ctx, bx, by);
-	let cursor = this.cursor;
-	if (cursor !== null) {
-	    bx += this.pos.x;
-	    by += this.pos.y;
-	    if (phase(this.time, this.blinking)) {
-		cursor.font.renderString(
-		    ctx, cursor.text,
-		    bx+cursor.bounds.x, by+cursor.bounds.y);
-	    }
+	let seg = this.highlight;
+	if (seg !== null && this.hifont !== null) {
+	    bx += this.pos.x+this.frame.x+this.padding;
+	    by += this.pos.y+this.frame.y+this.padding;
+	    this.hifont.renderString(
+		ctx, seg.text,
+		bx+seg.bounds.x, by+seg.bounds.y);
 	}
     }
 
     clear() {
 	super.clear();
 	this.queue = [];
-	this.cursor = null;
+	this.highlight = null;
     }
 
     tick(t: number) {
