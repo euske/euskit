@@ -105,3 +105,53 @@ class Tweener extends Animator {
 	return this.srcpos.interp(this.dstpos, t);
     }
 }
+
+
+//  PolyTweener
+//
+class PolyTweener extends Tweener {
+
+    n: number;
+
+    constructor(sprite: Sprite, n=2) {
+	super(sprite);
+	this.n = n;
+    }
+}
+
+
+//  PolyTweenerIn
+//
+class PolyTweenerIn extends PolyTweener {
+
+    getPos(t: number) {
+	t = Math.pow(t, this.n);
+	return this.srcpos.interp(this.dstpos, t);
+    }
+}
+
+
+//  PolyTweenerOut
+//
+class PolyTweenerOut extends PolyTweener {
+
+    getPos(t: number) {
+	t = 1.0 - Math.pow(1.0-t, this.n)
+	return this.srcpos.interp(this.dstpos, t);
+    }
+}
+
+
+//  PolyTweenerInOut
+//
+class PolyTweenerInOut extends PolyTweener {
+
+    getPos(t: number) {
+	if (t < 0.5) {
+	    t = 0.5*Math.pow(2*t, this.n); // in
+	} else {
+	    t = 0.5*(2.0 - Math.pow(2.0-2*t, this.n)); // out
+	}
+	return this.srcpos.interp(this.dstpos, t);
+    }
+}
