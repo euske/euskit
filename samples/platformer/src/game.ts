@@ -17,7 +17,7 @@
 
 PlanningEntity.debug = true;
 const jumpfunc = (vy:number, t:number) => {
-    return (0 <= t && t <= 5)? -8 : vy+2;
+    return (0 <= t && t <= 6)? -8 : vy+2;
 };
 
 
@@ -40,20 +40,59 @@ class WorldObject {
 class Player extends PlatformerEntity {
 
     scene: Game;
-    usermove: Vec2;
+    usermove: Vec2 = new Vec2();
+    holding: boolean = false;	// true if holding a ladder.
 
     constructor(scene: Game, pos: Vec2) {
 	super(scene.tilemap, pos);
 	this.imgsrc = scene.sprites.get(0);
 	this.collider = this.imgsrc.dstRect;
 	this.scene = scene;
-	this.usermove = new Vec2();
 	this.setJumpFunc(jumpfunc);
     }
 
+    hasLadder() {
+	return this.hasTile(this.tilemap.isGrabbable);
+    }
+
+    canFall() {
+	if (this.holding) {
+	    return false;
+	}
+	return super.canFall();
+    }
+
+    getObstaclesFor(range: Rect, v: Vec2, context=null as string): Rect[] {
+	if (this.holding) {
+	    return this.tilemap.getTileRects(this.tilemap.isObstacle, range);
+	}
+	return super.getObstaclesFor(range, v, context);
+    }
+    
     update() {
 	super.update();
-	this.moveIfPossible(this.usermove);
+	if (this.holding || 0 <= this.usermove.y) {
+	    this.moveIfPossible(this.usermove);
+	}
+	if (this.holding) {
+	    // Release the ladder.
+	    if (!this.hasLadder()) {
+		this.holding = false;
+	    }
+	} else if (this.usermove.y < 0) {
+	    // Grab the ladder.
+	    if (this.hasLadder()) {
+		this.holding = true;
+	    }
+	}
+    }
+    
+    setJump(jumpend: number) {
+	if (0 < jumpend) {
+	    // Release the ladder when jumping.
+	    this.holding = false;
+	}
+	super.setJump(jumpend);
     }
     
     setMove(v: Vec2) {

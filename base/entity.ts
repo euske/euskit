@@ -498,12 +498,16 @@ class PhysicalEntity extends Entity {
 	}
     }
 
+    isLanded() {
+	return this._landed;
+    }
+    
     isJumping() {
 	return (this._jumpt < this._jumpend);
     }
 
     canJump() {
-	return this._landed;
+	return this.isLanded();
     }
 
     canFall() {
@@ -524,16 +528,19 @@ class PlatformerEntity extends PhysicalEntity {
 	this.tilemap = tilemap;
     }
     
+    hasTile(f: TileFunc, pos: Vec2=null) {
+	let range = this.getCollider(pos).getAABB();
+	return (this.tilemap.findTile(f, range) !== null);
+    }
+
     canFall() {
-	let range = this.getCollider().getAABB();
-	return (this.tilemap.findTile(this.tilemap.isGrabbable, range) === null);
+	return !this.hasTile(this.tilemap.isStoppable);
     }
 
     getObstaclesFor(range: Rect, v: Vec2, context=null as string): Rect[] {
-	let f = ((context != 'fall' || !this.canFall())?
-		 this.tilemap.isObstacle :
-		 this.tilemap.isStoppable);
+	let f = ((context == 'fall' && this.canFall())?
+		 this.tilemap.isStoppable :
+		 this.tilemap.isObstacle);
 	return this.tilemap.getTileRects(f, range);
     }
-  
 }
