@@ -6,6 +6,7 @@ all:
 	cd racing; $(MAKE) $@
 	cd platformer; $(MAKE) $@
 	cd isometric; $(MAKE) $@
+	cd adventure; $(MAKE) $@
 
 clean:
 	-cd pong; $(MAKE) $@
@@ -13,3 +14,4 @@ clean:
 	-cd racing; $(MAKE) $@
 	-cd platformer; $(MAKE) $@
 	-cd isometric; $(MAKE) $@
+	-cd adventure; $(MAKE) $@

@@ -21,7 +21,7 @@ class Player extends Entity {
 
     scene: Racing;
     usermove: Vec2 = new Vec2();
-    running: boolean = true;
+    alive: boolean = true;
 
     constructor(scene: Racing, pos: Vec2) {
 	super(pos);
@@ -32,7 +32,9 @@ class Player extends Entity {
 
     update() {
 	super.update();
-	this.moveIfPossible(this.usermove);
+	if (this.alive) {
+	    this.moveIfPossible(this.usermove);
+	}
     }
     
     setMove(v: Vec2) {
@@ -163,7 +165,7 @@ class Racing extends GameScene {
 
     tick(t: number) {
 	super.tick(t);
-	if (this.player.running) {
+	if (this.player.alive) {
 	    this.player.setMove(this.app.keyDir);
 	    let b = this.player.getCollider().move(0, this.track.offset) as Rect;
 	    if (this.track.isFloor(b)) {
@@ -172,7 +174,7 @@ class Racing extends GameScene {
 		this.score += int(lowerbound(0, Math.sqrt(speed)-2));
 		this.updateScore();
 	    } else {
-		this.player.running = false;
+		this.player.alive = false;
 		let blinker = new Blinker(this.player);
 		blinker.interval = 0.2;
 		blinker.lifetime = 1.0;
