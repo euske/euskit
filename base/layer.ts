@@ -141,14 +141,14 @@ class Layer {
 	return null;
     }
 
-    mousedown(p: Vec2, button: number) {
+    onMouseDown(p: Vec2, button: number) {
 	if (button == 0) {
 	    this.mouseFocus = this.findSpriteAt(p);
 	    this.mouseActive = this.mouseFocus;
 	}
     }
     
-    mouseup(p: Vec2, button: number) {
+    onMouseUp(p: Vec2, button: number) {
 	if (button == 0) {
 	    this.mouseFocus = this.findSpriteAt(p);
 	    if (this.mouseFocus !== null &&
@@ -159,7 +159,7 @@ class Layer {
 	}
     }
     
-    mousemove(p: Vec2) {
+    onMouseMove(p: Vec2) {
 	if (this.mouseActive === null) {
 	    this.mouseFocus = this.findSpriteAt(p);
 	}

@@ -166,6 +166,15 @@ class TextBox extends Sprite {
 	return new Vec2(w, h-this.linespace);
     }
 
+    getBounds(pos: Vec2=null) {
+	pos = (pos !== null)? pos : this.pos;
+	if (pos !== null) {
+	    return this.frame.add(pos);
+	} else {
+	    return null;
+	}
+    }
+  
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
 	ctx.save();
 	ctx.translate(bx+int(this.pos.x+this.frame.x), by+int(this.pos.y+this.frame.y));
@@ -337,18 +346,18 @@ class TextTask extends Task {
     ff() {
     }
 
-    keydown(key: number) {
+    onKeyDown(key: number) {
 	this.ff();
     }
 
-    mousedown(p: Vec2, button: number) {
+    onMouseDown(p: Vec2, button: number) {
 	this.ff();
     }
 
-    mouseup(p: Vec2, button: number) {
+    onMouseUp(p: Vec2, button: number) {
     }
     
-    mousemove(p: Vec2) {
+    onMouseMove(p: Vec2) {
     }
 }
 
@@ -476,7 +485,7 @@ class MenuTask extends TextTask {
     ff() {
     }
 
-    keydown(key: number) {
+    onKeyDown(key: number) {
 	let d = 0;
 	let keysym = getKeySym(key);
 	switch (keysym) {
@@ -514,7 +523,7 @@ class MenuTask extends TextTask {
 	}
     }
 
-    mousedown(p: Vec2, button: number) {
+    onMouseDown(p: Vec2, button: number) {
 	this.updateFocus(p);
 	this.updateSelection();
 	if (button == 0 && this.focus !== null) {
@@ -522,7 +531,7 @@ class MenuTask extends TextTask {
 	}
     }
 
-    mouseup(p: Vec2, button: number) {
+    onMouseUp(p: Vec2, button: number) {
 	this.updateFocus(p);
 	this.updateSelection();
 	if (button == 0 && this.focus !== null) {
@@ -533,7 +542,7 @@ class MenuTask extends TextTask {
 	}
     }
     
-    mousemove(p: Vec2) {
+    onMouseMove(p: Vec2) {
 	this.updateFocus(p);
 	this.updateSelection();
     }
@@ -600,37 +609,37 @@ class DialogBox extends TextBox {
 	}
     }
 
-    keydown(key: number) {
+    onKeyDown(key: number) {
 	let task = this.getCurrentTask();
 	if (task !== null) {
-	    task.keydown(key);
+	    task.onKeyDown(key);
 	}
     }
 
-    mousedown(p: Vec2, button: number) {
+    onMouseDown(p: Vec2, button: number) {
 	let task = this.getCurrentTask();
 	if (task !== null) {
 	    p = p.move(-(this.pos.x+this.frame.x+this.padding),
 		       -(this.pos.y+this.frame.y+this.padding));
-	    task.mousedown(p, button);
+	    task.onMouseDown(p, button);
 	}
     }
     
-    mouseup(p: Vec2, button: number) {
+    onMouseUp(p: Vec2, button: number) {
 	let task = this.getCurrentTask();
 	if (task !== null) {
 	    p = p.move(-(this.pos.x+this.frame.x+this.padding),
 		       -(this.pos.y+this.frame.y+this.padding));
-	    task.mouseup(p, button);
+	    task.onMouseUp(p, button);
 	}
     }
     
-    mousemove(p: Vec2) {
+    onMouseMove(p: Vec2) {
 	let task = this.getCurrentTask();
 	if (task !== null) {
 	    p = p.move(-(this.pos.x+this.frame.x+this.padding),
 		       -(this.pos.y+this.frame.y+this.padding));
-	    task.mousemove(p);
+	    task.onMouseMove(p);
 	}
     }
     

@@ -140,7 +140,7 @@ class App {
 	    }
 	    break;
 	}
-	this.scene.keydown(ev.keyCode);
+	this.scene.onKeyDown(ev.keyCode);
     }
 
     keyup(ev: KeyboardEvent) {
@@ -181,7 +181,7 @@ class App {
 	    }
 	    break;
 	}
-	this.scene.keyup(ev.keyCode);
+	this.scene.onKeyUp(ev.keyCode);
     }
 
     updateMousePos(ev: MouseEvent) {
@@ -200,7 +200,7 @@ class App {
 		this.mouseButton = true;
 		break;
 	    }
-	    this.scene.mousedown(this.mousePos, ev.button);
+	    this.scene.onMouseDown(this.mousePos, ev.button);
 	}
     }
 
@@ -213,7 +213,7 @@ class App {
 		this.mouseButton = false;
 		break;
 	    }
-	    this.scene.mouseup(this.mousePos, ev.button);
+	    this.scene.onMouseUp(this.mousePos, ev.button);
 	}
     }
 
@@ -221,7 +221,7 @@ class App {
 	// [OVERRIDE]
 	if (ev.target === this.frame) {
 	    this.updateMousePos(ev);
-	    this.scene.mousemove(this.mousePos);
+	    this.scene.onMouseMove(this.mousePos);
 	}
     }
 

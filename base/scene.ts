@@ -47,23 +47,23 @@ class Scene {
 	// [OVERRIDE]
     }
 
-    keydown(key: number) {
+    onKeyDown(key: number) {
 	// [OVERRIDE]
     }
 
-    keyup(key: number) {
+    onKeyUp(key: number) {
 	// [OVERRIDE]
     }
 
-    mousedown(p: Vec2, button: number) {
+    onMouseDown(p: Vec2, button: number) {
 	// [OVERRIDE]
     }
 
-    mouseup(p: Vec2, button: number) {
+    onMouseUp(p: Vec2, button: number) {
 	// [OVERRIDE]
     }
     
-    mousemove(p: Vec2) {
+    onMouseMove(p: Vec2) {
 	// [OVERRIDE]
     }
 
@@ -106,11 +106,11 @@ class HTMLScene extends Scene {
 	// [OVERRIDE]
     }
 
-    mousedown(p: Vec2, button: number) {
+    onMouseDown(p: Vec2, button: number) {
 	this.change();
     }
 
-    keydown(key: number) {
+    onKeyDown(key: number) {
 	this.change();
     }
   
@@ -151,5 +151,20 @@ class GameScene extends Scene {
 
     add(task: Task) {
 	this.layer.addTask(task);
+    }
+
+    onMouseDown(p: Vec2, button: number) {
+	super.onMouseDown(p, button);
+	this.layer.onMouseDown(p, button);
+    }
+
+    onMouseUp(p: Vec2, button: number) {
+	super.onMouseUp(p, button);
+	this.layer.onMouseUp(p, button);
+    }
+    
+    onMouseMove(p: Vec2) {
+	super.onMouseMove(p);
+	this.layer.onMouseMove(p);
     }
 }
