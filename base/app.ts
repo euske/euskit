@@ -200,7 +200,7 @@ class App {
 		this.mouseButton = true;
 		break;
 	    }
-	    this.scene.mousedown(this.mousePos.x, this.mousePos.y, ev.button);
+	    this.scene.mousedown(this.mousePos, ev.button);
 	}
     }
 
@@ -213,7 +213,7 @@ class App {
 		this.mouseButton = false;
 		break;
 	    }
-	    this.scene.mouseup(this.mousePos.x, this.mousePos.y, ev.button);
+	    this.scene.mouseup(this.mousePos, ev.button);
 	}
     }
 
@@ -221,7 +221,7 @@ class App {
 	// [OVERRIDE]
 	if (ev.target === this.frame) {
 	    this.updateMousePos(ev);
-	    this.scene.mousemove(this.mousePos.x, this.mousePos.y);
+	    this.scene.mousemove(this.mousePos);
 	}
     }
 

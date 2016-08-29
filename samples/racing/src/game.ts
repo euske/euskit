@@ -26,7 +26,7 @@ class Player extends Entity {
     constructor(scene: Racing, pos: Vec2) {
 	super(pos);
 	this.scene = scene;
-	this.imgsrc = SPRITES.get(0, 0, new Vec2(8,8));
+	this.imgsrc = SPRITES.get(0, 0, 1, 1, new Vec2(8,8));
 	this.collider = this.imgsrc.dstRect;
     }
 
@@ -138,7 +138,7 @@ class Racing extends GameScene {
 
     constructor(app: App) {
 	super(app);
-	SPRITES = new ImageSpriteSheet(APP.images['sprites'], new Vec2(16,32));
+	SPRITES = new ImageSpriteSheet(APP.images['sprites'], new Vec2(16,32), new Vec2(0,0));
 	let font = new ShadowFont(APP.images['font'], 'white');
 	this.scoreBox = new TextBox(this.screen.inflate(-2,-2));
 	this.scoreBox.font = font;

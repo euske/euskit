@@ -40,7 +40,7 @@ class SpriteSheet {
     constructor() {
     }
     
-    get(x:number, y=0, origin: Vec2=null) {
+    get(x:number, y=0, w=1, h=1, origin: Vec2=null) {
 	return null as ImageSource;
     }
 }
@@ -54,13 +54,19 @@ class ImageSpriteSheet extends SpriteSheet {
 	super();
 	this.image = image;
 	this.size = size;
-	this.origin = (origin !== null)? origin : new Vec2();
+	this.origin = origin;
     }
 
-    get(x:number, y=0, origin: Vec2=null) {
-	origin = (origin !== null)? origin : this.origin;
-	let srcRect = new Rect(x*this.size.x, y*this.size.y, this.size.x, this.size.y);
-	let dstRect = new Rect(-origin.x, -origin.y, this.size.x, this.size.y);
+    get(x:number, y=0, w=1, h=1, origin: Vec2=null) {
+	if (origin === null) {
+	    if (this.origin === null) {
+		origin = new Vec2(w*this.size.x/2, h*this.size.y/2);
+	    } else {
+		origin = this.origin;
+	    }
+	}
+	let srcRect = new Rect(x*this.size.x, y*this.size.y, w*this.size.x, h*this.size.y);
+	let dstRect = new Rect(-origin.x, -origin.y, w*this.size.x, h*this.size.y);
 	return new HTMLImageSource(this.image, srcRect, dstRect);
     }
 }
@@ -73,7 +79,7 @@ class SimpleSpriteSheet extends SpriteSheet {
 	this.imgsrcs = imgsrcs;
     }
 
-    get(x:number, y=0, origin: Vec2=null) {
+    get(x:number, y=0, w=1, h=1, origin: Vec2=null) {
 	return this.imgsrcs[x];
     }
 }
@@ -153,6 +159,7 @@ class Sprite extends Task {
     zOrder: number = 0;
     scale: Vec2 = new Vec2(1, 1);
     rotation: number = 0;
+    mouseSelectable: boolean = false;
 
     constructor(pos: Vec2) {
 	super();
@@ -171,6 +178,14 @@ class Sprite extends Task {
     stop() {
 	super.stop();
 	this.layer.removeSprite(this);
+    }
+
+    isFocused() {
+	return (this.layer !== null && this.layer.mouseFocus === this);
+    }
+    
+    isActive() {
+	return (this.layer !== null && this.layer.mouseActive === this);
     }
     
     getBounds(pos: Vec2=null) {
@@ -197,7 +212,7 @@ class Sprite extends Task {
 	let imgsrc = this.imgsrc
 	if (imgsrc !== null) {
 	    ctx.save();
-	    ctx.translate(bx+this.pos.x, by+this.pos.y);
+	    ctx.translate(bx+int(this.pos.x), by+int(this.pos.y));
 	    if (this.rotation) {
 		ctx.rotate(this.rotation);
 	    }
@@ -239,7 +254,7 @@ class TiledSprite extends Sprite {
 	let imgsrc = this.imgsrc as HTMLImageSource;
 	if (imgsrc !== null) {
 	    ctx.save();
-	    ctx.translate(bx+this.bounds.x, by+this.bounds.y);
+	    ctx.translate(bx+int(this.bounds.x), by+int(this.bounds.y));
 	    ctx.beginPath();
 	    ctx.rect(0, 0, this.bounds.width, this.bounds.height);
 	    ctx.clip();
@@ -311,7 +326,7 @@ class StarSprite extends Sprite {
 	let imgsrc = this.imgsrc
 	if (imgsrc !== null) {
 	    ctx.save();
-	    ctx.translate(bx+this.bounds.x, by+this.bounds.y);
+	    ctx.translate(bx+int(this.bounds.x), by+int(this.bounds.y));
 	    for (let star of this._stars) {
 		let dstRect = star.p.expand(star.s, star.s);
 		if (imgsrc instanceof FillImageSource) {

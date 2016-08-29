@@ -110,9 +110,9 @@ class ShadowFont extends Font {
 	ctx: CanvasRenderingContext2D,
 	text: string, x: number, y: number) {
 	this.renderBackground(ctx, text, x, y);
-	this.renderGlyphs(ctx, this._glyphs, this._csize, text, x, y);
 	this.renderGlyphs(ctx, this._glyphs2, this._csize, text,
 			  x+this.shadowdist, y+this.shadowdist);
+	this.renderGlyphs(ctx, this._glyphs, this._csize, text, x, y);
     }
 }
 
@@ -167,18 +167,17 @@ class TextBox extends Sprite {
     }
 
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
-	bx += this.pos.x;
-	by += this.pos.y;
+	ctx.save();
+	ctx.translate(bx+int(this.pos.x+this.frame.x), by+int(this.pos.y+this.frame.y));
 	if (this.background !== null) {
 	    ctx.fillStyle = this.background;
-	    ctx.fillRect(bx+this.frame.x, by+this.frame.y,
-			 this.frame.width, this.frame.height);
+	    ctx.fillRect(0, 0, this.frame.width, this.frame.height);
 	}
-	bx += this.frame.x+this.padding;
-	by += this.frame.y+this.padding;
 	for (let seg of this.segments) {
-	    seg.font.renderString(ctx, seg.text, bx+seg.bounds.x, by+seg.bounds.y);
+	    seg.font.renderString(ctx, seg.text,
+				  this.padding+seg.bounds.x, this.padding+seg.bounds.y);
 	}
+	ctx.restore();
     }
 
     clear() {
@@ -306,7 +305,7 @@ class TextBox extends Sprite {
 	}
 	for (let text of lines) {
 	    let size = font.getSize(text);
-	    let x = this.frame.x;
+	    let x = 0;
 	    switch (halign) {
 	    case 'center':
 		x += (width-size.x)/2;
@@ -342,6 +341,15 @@ class TextTask extends Task {
 	this.ff();
     }
 
+    mousedown(p: Vec2, button: number) {
+	this.ff();
+    }
+
+    mouseup(p: Vec2, button: number) {
+    }
+    
+    mousemove(p: Vec2) {
+    }
 }
 
 
@@ -436,6 +444,7 @@ class MenuTask extends TextTask {
     vertical: Boolean = true;
     items: MenuItem[] = [];
     current: MenuItem = null;
+    focus: MenuItem = null;
     sound: HTMLAudioElement = null;
     
     constructor(dialog: DialogBox) {
@@ -466,7 +475,7 @@ class MenuTask extends TextTask {
 
     ff() {
     }
-  
+
     keydown(key: number) {
 	let d = 0;
 	let keysym = getKeySym(key);
@@ -505,16 +514,52 @@ class MenuTask extends TextTask {
 	}
     }
 
+    mousedown(p: Vec2, button: number) {
+	this.updateFocus(p);
+	this.updateSelection();
+	if (button == 0 && this.focus !== null) {
+	    this.current = this.focus;
+	}
+    }
+
+    mouseup(p: Vec2, button: number) {
+	this.updateFocus(p);
+	this.updateSelection();
+	if (button == 0 && this.focus !== null) {
+	    if (this.current === this.focus) {
+		this.stop();
+		this.selected.fire(this.current.value);
+	    }
+	}
+    }
+    
+    mousemove(p: Vec2) {
+	this.updateFocus(p);
+	this.updateSelection();
+    }
+
+    updateFocus(p: Vec2) {
+	for (let item of this.items) {
+	    if (item.seg !== null) {
+		if (item.seg.bounds.inflate(1,1).containsPt(p)) {
+		    this.focus = item;
+		    return;
+		}
+	    }
+	}
+	this.focus = null;
+    }
+
     updateSelection() {
 	for (let item of this.items) {
-	    if (item === this.current) {
+	    if (item === this.current ||
+		item === this.focus) {
 		item.seg.font = this.dialog.hifont;
 	    } else {
 		item.seg.font = this.dialog.font;
 	    }
 	}
     }
-
 }
 
 
@@ -556,19 +601,39 @@ class DialogBox extends TextBox {
     }
 
     keydown(key: number) {
-	while (true) {
-	    let task = this.getCurrentTask();
-	    if (task === null) break;
-	    if (task.layer === null) {
-		task.start(this.layer);
-	    }
+	let task = this.getCurrentTask();
+	if (task !== null) {
 	    task.keydown(key);
-	    if (task.running) break;
-	    this.removeTask(task);
-	    break;
 	}
     }
 
+    mousedown(p: Vec2, button: number) {
+	let task = this.getCurrentTask();
+	if (task !== null) {
+	    p = p.move(-(this.pos.x+this.frame.x+this.padding),
+		       -(this.pos.y+this.frame.y+this.padding));
+	    task.mousedown(p, button);
+	}
+    }
+    
+    mouseup(p: Vec2, button: number) {
+	let task = this.getCurrentTask();
+	if (task !== null) {
+	    p = p.move(-(this.pos.x+this.frame.x+this.padding),
+		       -(this.pos.y+this.frame.y+this.padding));
+	    task.mouseup(p, button);
+	}
+    }
+    
+    mousemove(p: Vec2) {
+	let task = this.getCurrentTask();
+	if (task !== null) {
+	    p = p.move(-(this.pos.x+this.frame.x+this.padding),
+		       -(this.pos.y+this.frame.y+this.padding));
+	    task.mousemove(p);
+	}
+    }
+    
     ff() {
 	while (true) {
 	    let task = this.getCurrentTask();

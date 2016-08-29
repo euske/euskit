@@ -7,13 +7,19 @@
 // 
 class Layer {
 
+    bounds: Rect = null;
     time: number = 0;
     tasks: Task[];
     sprites: Sprite[];
     entities: Entity[];
+    
+    mouseFocus: Sprite = null;
+    mouseActive: Sprite = null;
+    clicked: Signal;
 
     constructor() {
 	this.init();
+	this.clicked = new Signal(this);
     }
 
     toString() {
@@ -25,6 +31,8 @@ class Layer {
 	this.tasks = [];
 	this.sprites = [];
 	this.entities = [];
+	this.mouseFocus = null;
+	this.mouseActive = null;
     }
   
     tick(t: number) {
@@ -34,7 +42,7 @@ class Layer {
 		task.tick(t);
 	    }
 	}
-	this.checkCollisions();
+	this.checkEntityCollisions();
 	this.tasks = this.tasks.filter((task: Task) => { return task.running; });
     }
     
@@ -78,36 +86,83 @@ class Layer {
 	}
     }
 
-    checkCollisions() {
+    checkEntityCollisions() {
+	this.checkEntityPairs(
+	    (e0:Entity, e1:Entity) => {
+		e0.collidedWith(e1);
+		e1.collidedWith(e0);
+	    });
+    }
+
+    checkEntityPairs(f: (e0:Entity, e1:Entity)=>any) {
 	for (let i = 0; i < this.entities.length; i++) {
 	    let entity0 = this.entities[i];
-	    if (entity0.running && entity0.collider !== null) {
-		let a = this.findEntities(
-		    entity0.getCollider(),
+	    if (entity0.running) {
+		let collider0 = entity0.getCollider();
+		if (collider0 !== null) {
+		    let a = this.findEntities(
+			(e:Entity) => {
+			    let collider1 = e.getCollider();
+			    return (entity0 !== e &&
+				    collider1 !== null &&
+				    collider0.overlaps(collider1));
+		    },
 		    this.entities.slice(i+1));
-		for (let entity1 of a) {
-		    entity0.collidedWith(entity1);
-		    entity1.collidedWith(entity0);
+		    for (let e of a) {
+			f(entity0, e);
+		    }
 		}
 	    }
 	}
     }
-    
-    findEntities(shape: Shape,
-		 entities: Entity[]=null,
-		 f: (e:Entity)=>boolean=null) {
+
+    findEntities(f: (e:Entity)=>boolean,
+		 entities: Entity[]=null) {
 	if (entities === null) {
 	    entities = this.entities;
 	}
 	let a:Entity[] = [];
 	for (let entity1 of entities) {
-	    if (entity1.running && entity1.collider !== null &&
-		(f === null || f(entity1)) &&
-		entity1.getCollider().overlaps(shape)) {
+	    if (entity1.running && f(entity1)) {
 		a.push(entity1);
 	    }
 	}
 	return a;
+    }
+    
+    findSpriteAt(p: Vec2) {
+	for (let i = this.sprites.length-1; 0 <= i; i--) {
+	    let sprite = this.sprites[i]; // from reversed order.
+	    if (sprite.mouseSelectable &&
+		sprite.getBounds().containsPt(p)) {
+		return sprite;
+	    }
+	}
+	return null;
+    }
+
+    mousedown(p: Vec2, button: number) {
+	if (button == 0) {
+	    this.mouseFocus = this.findSpriteAt(p);
+	    this.mouseActive = this.mouseFocus;
+	}
+    }
+    
+    mouseup(p: Vec2, button: number) {
+	if (button == 0) {
+	    this.mouseFocus = this.findSpriteAt(p);
+	    if (this.mouseFocus !== null &&
+		this.mouseFocus === this.mouseActive) {
+		this.clicked.fire(this.mouseActive);
+	    }
+	    this.mouseActive = null;
+	}
+    }
+    
+    mousemove(p: Vec2) {
+	if (this.mouseActive === null) {
+	    this.mouseFocus = this.findSpriteAt(p);
+	}
     }
 }
 

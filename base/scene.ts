@@ -55,15 +55,15 @@ class Scene {
 	// [OVERRIDE]
     }
 
-    mousedown(x: number, y: number, button: number) {
+    mousedown(p: Vec2, button: number) {
 	// [OVERRIDE]
     }
 
-    mouseup(x: number, y: number, button: number) {
+    mouseup(p: Vec2, button: number) {
 	// [OVERRIDE]
     }
     
-    mousemove(x: number, y: number) {
+    mousemove(p: Vec2) {
 	// [OVERRIDE]
     }
 
@@ -106,7 +106,7 @@ class HTMLScene extends Scene {
 	// [OVERRIDE]
     }
 
-    mousedown(x: number, y: number, button: number) {
+    mousedown(p: Vec2, button: number) {
 	this.change();
     }
 
@@ -127,6 +127,7 @@ class GameScene extends Scene {
     constructor(app: App) {
 	super(app);
 	this.layer = new ScrollLayer(this.screen);
+	this.layer.bounds = this.screen;
     }
 
     init() {

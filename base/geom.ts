@@ -246,6 +246,10 @@ class Rect implements Shape {
 	return new Rect(this.x+v.x, this.y+v.y, this.width, this.height);  
     }
     
+    sub(v: Vec2) {
+	return new Rect(this.x-v.x, this.y-v.y, this.width, this.height);  
+    }
+    
     inflate(dw: number, dh: number) {
 	return new Rect(this.x-dw, this.y-dh, this.width+dw*2, this.height+dh*2);
     }
@@ -308,7 +312,7 @@ class Rect implements Shape {
     }
     
     containsPt(p: Vec2) {
-	return (this.x < p.x && this.y < p.y &&
+	return (this.x <= p.x && this.y <= p.y &&
 		p.x < this.x+this.width && p.y < this.y+this.height);
     }
     
@@ -509,6 +513,10 @@ class Circle implements Shape {
     
     add(v: Vec2) {
 	return new Circle(this.center.add(v), this.radius);
+    }
+    
+    sub(v: Vec2) {
+	return new Circle(this.center.sub(v), this.radius);
     }
     
     inflate(dr: number) {
@@ -753,6 +761,10 @@ class Box {
 	return new Box(this.origin.add(v), this.size);
     }
     
+    sub(v: Vec3) {
+	return new Box(this.origin.sub(v), this.size);
+    }
+    
     inflate(dx: number, dy: number, dz: number) {
 	return new Box(this.origin.move(-dx, -dy, -dz),
 		       this.size.move(dx*2, dy*2, dz*2));
@@ -775,9 +787,9 @@ class Box {
     
     containsPt(p: Vec3) {
 	return (this.origin.x <= p.x && this.origin.y <= p.y && this.origin.z <= p.z &&
-		p.x <= this.origin.x+this.size.x &&
-		p.y <= this.origin.y+this.size.y &&
-		p.z <= this.origin.z+this.size.z);
+		p.x < this.origin.x+this.size.x &&
+		p.y < this.origin.y+this.size.y &&
+		p.z < this.origin.z+this.size.z);
     }
     
     overlapsBox(box: Box) {
