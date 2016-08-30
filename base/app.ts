@@ -44,6 +44,7 @@ class App {
     private _music: HTMLAudioElement = null;
     private _loop_start: number = 0;
     private _loop_end: number = 0;
+    private _touch_id: any = null;
 
     private _key_left: boolean = false;
     private _key_right: boolean = false;
@@ -184,7 +185,7 @@ class App {
 	this.scene.onKeyUp(ev.keyCode);
     }
 
-    updateMousePos(ev: MouseEvent) {
+    updateMousePos(ev: MouseEvent|Touch) {
 	let bounds = this.frame.getBoundingClientRect();
 	this.mousePos = new Vec2(
 	    (ev.clientX-bounds.left)*this.canvas.width/bounds.width,
@@ -192,41 +193,68 @@ class App {
     }
 
     mousedown(ev: MouseEvent) {
-	// [OVERRIDE]
-	if (ev.target === this.frame) {
-	    this.updateMousePos(ev);
-	    switch (ev.button) {
-	    case 0:
-		this.mouseButton = true;
-		break;
-	    }
-	    this.scene.onMouseDown(this.mousePos, ev.button);
+	this.updateMousePos(ev);
+	switch (ev.button) {
+	case 0:
+	    this.mouseButton = true;
+	    break;
 	}
+	this.scene.onMouseDown(this.mousePos, ev.button);
     }
 
     mouseup(ev: MouseEvent) {
-	// [OVERRIDE]
-	if (ev.target === this.frame) {
-	    this.updateMousePos(ev);
-	    switch (ev.button) {
-	    case 0:
-		this.mouseButton = false;
-		break;
-	    }
-	    this.scene.onMouseUp(this.mousePos, ev.button);
+	this.updateMousePos(ev);
+	switch (ev.button) {
+	case 0:
+	    this.mouseButton = false;
+	    break;
 	}
+	this.scene.onMouseUp(this.mousePos, ev.button);
     }
 
     mousemove(ev: MouseEvent) {
-	// [OVERRIDE]
-	if (ev.target === this.frame) {
-	    this.updateMousePos(ev);
-	    this.scene.onMouseMove(this.mousePos);
+	this.updateMousePos(ev);
+	this.scene.onMouseMove(this.mousePos);
+    }
+
+    touchstart(ev: TouchEvent) {
+	let touches = ev.changedTouches;
+	for (let i = 0; i < touches.length; i++) {
+	    let t = touches[i];
+	    if (this._touch_id === null) {
+		this._touch_id = t.identifier;
+		this.mouseButton = true;
+		this.updateMousePos(t);
+		this.scene.onMouseDown(this.mousePos, 0);
+	    }
+	}
+    }
+
+    touchend(ev: TouchEvent) {
+	let touches = ev.changedTouches;
+	for (let i = 0; i < touches.length; i++) {
+	    let t = touches[i];
+	    if (this._touch_id !== null) {
+		this._touch_id = null;
+		this.mouseButton = false;
+		this.updateMousePos(t);
+		this.scene.onMouseUp(this.mousePos, 0);
+	    }
+	}
+    }
+
+    touchmove(ev: TouchEvent) {
+	let touches = ev.changedTouches;
+	for (let i = 0; i < touches.length; i++) {
+	    let t = touches[i];
+	    if (this._touch_id == t.identifier) {
+		this.updateMousePos(t);
+		this.scene.onMouseMove(this.mousePos);
+	    }
 	}
     }
 
     focus() {
-	// [OVERRIDE]
 	this.active = true;
 	if (this._music !== null && 0 < this._music.currentTime) {
 	    this._music.play();
@@ -234,7 +262,6 @@ class App {
     }
 
     blur() {
-	// [OVERRIDE]
 	if (this._music !== null) {
 	    this._music.pause();
 	}
@@ -242,9 +269,7 @@ class App {
     }
 
     init(scene: Scene) {
-	// [OVERRIDE]
 	removeChildren(this.frame.parentNode, 'div');
-	
 	this.setMusic();
 	this.scene = scene;
 	this.scene.init();
@@ -270,8 +295,6 @@ class App {
     }
 
     tick() {
-	// [OVERRIDE]
-	// [GAME SPECIFIC CODE]
 	this.scene.tick(this.ticks/this.framerate);
 	this.ticks++;
 	if (0 < this._keylock) {
@@ -291,7 +314,6 @@ class App {
     }
 
     repaint() {
-	// [OVERRIDE]
 	this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	this.ctx.save();
 	this.scene.render(this.ctx, 0, 0);
@@ -400,6 +422,27 @@ function main<T extends Scene>(
 	}
     }
     
+    function touchstart(e: TouchEvent) {
+	if (APP.active) {
+	    APP.touchstart(e);
+	    e.preventDefault();
+	}
+    }
+    
+    function touchend(e: TouchEvent) {
+	if (APP.active) {
+	    APP.touchend(e);
+	    e.preventDefault();
+	}
+    }
+    
+    function touchmove(e: TouchEvent) {
+	if (APP.active) {
+	    APP.touchmove(e);
+	    e.preventDefault();
+	}
+    }
+    
     function focus(e: FocusEvent) {
 	if (!APP.active) {
 	    APP.focus();
@@ -427,13 +470,16 @@ function main<T extends Scene>(
 
     APP.init(new scene0(APP));
     APP.focus();
-    window.addEventListener('keydown', keydown);
-    window.addEventListener('keyup', keyup);
-    window.addEventListener('mousedown', mousedown);
-    window.addEventListener('mouseup', mouseup);
-    window.addEventListener('mousemove', mousemove);
     window.addEventListener('focus', focus);
     window.addEventListener('blur', blur);
+    window.addEventListener('keydown', keydown);
+    window.addEventListener('keyup', keyup);
+    frame.addEventListener('mousedown', mousedown, false);
+    frame.addEventListener('mouseup', mouseup, false);
+    frame.addEventListener('mousemove', mousemove, false);
+    frame.addEventListener('touchstart', touchstart, false);
+    frame.addEventListener('touchend', touchend, false);
+    frame.addEventListener('touchmove', touchmove, false);
     timer = window.setInterval(tick, 1000/framerate);
     frame.focus();
 }
