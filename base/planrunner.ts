@@ -243,7 +243,8 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 
     profile: GridProfile;
     gridbox: Rect;
-    
+
+    private _jumpfunc0: JumpFunc = null;
     jumppts: Vec2[] = null;
     fallpts: Vec2[] = null;
     timeout: number = 30;
@@ -270,12 +271,17 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 	    Math.ceil(hitbox.height/gs)*gs);
     }
 
-    setJumpFunc(jumpfunc: JumpFunc) {
-	super.setJumpFunc(jumpfunc);
-	this.jumppts = calcJumpRange(this.profile.gridsize, this.speed, jumpfunc);
-	this.fallpts = calcFallRange(this.profile.gridsize, this.speed, jumpfunc);
-	//log("jumppts="+this.jumppts);
-	//log("fallpts="+this.fallpts);
+    updateJumpPts() {
+	if (this.jumpfunc !== null &&
+	    this.jumpfunc !== this._jumpfunc0) {
+	    this.jumppts = calcJumpRange(
+		this.profile.gridsize, this.speed, this.jumpfunc);
+	    this.fallpts = calcFallRange(
+		this.profile.gridsize, this.speed, this.jumpfunc);
+	    //log("jumppts="+this.jumppts);
+	    //log("fallpts="+this.fallpts);
+	    this._jumpfunc0 = this.jumpfunc;
+	}
     }
 
     updateRangeMaps() {
@@ -308,6 +314,7 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 	let goal = this.profile.coord2grid(p);
 	let range = goal.expand(size, size);
 	let start = this.getGridPos();
+	this.updateJumpPts();
 	this.updateRangeMaps();
 	let plan = new PlatformerPlanMap(this.profile);
 	plan.initPlan(goal);

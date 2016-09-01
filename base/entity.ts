@@ -460,11 +460,9 @@ class PhysicalEntity extends Entity {
 
     jumped: Signal;
     landed: Signal;
+    jumpfunc: JumpFunc;
     velocity: Vec2 = new Vec2();
     maxspeed: Vec2 = new Vec2(6,6);
-    jumpfunc: JumpFunc = (vy:number, t:number) => {
-	return (0 <= t && t <= 5)? -4 : vy+1;
-    };
     
     protected _jumpt: number = Infinity;
     protected _jumpend: number = 0;
@@ -474,10 +472,9 @@ class PhysicalEntity extends Entity {
 	super(pos);
 	this.jumped = new Signal(this);
 	this.landed = new Signal(this);
-    }
-
-    setJumpFunc(jumpfunc: JumpFunc) {
-	this.jumpfunc = jumpfunc;
+	this.jumpfunc = (vy:number, t:number) => {
+	    return (0 <= t && t <= 5)? -4 : vy+1;
+	};
     }
 
     setJump(jumpend: number) {
