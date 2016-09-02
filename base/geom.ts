@@ -418,7 +418,9 @@ class Rect implements Shape {
     }
     
     contactRect(v: Vec2, rect: Rect) {
-	assert(!this.overlapsRect(rect), 'rect overlapped');
+	if (this.overlapsRect(rect)) {
+	    return new Vec2();
+	}
 	
 	if (0 < v.x) {
 	    v = this.contactVLine(v, rect.x, rect.y, rect.y+rect.height);
@@ -608,7 +610,10 @@ class Circle implements Shape {
     }
     
     contactCircle(v: Vec2, circle: Circle) {
-	//assert(!this.overlapsCircle(circle), 'circle overlapped');
+	if (this.overlapsCircle(circle)) {
+	    return new Vec2();
+	}
+	
 	let d = circle.center.sub(this.center);
 	let dv = d.x*v.x + d.y*v.y;
 	let v2 = v.len2();
@@ -631,7 +636,10 @@ class Circle implements Shape {
     }
 
     contactRect(v: Vec2, rect: Rect) {
-	//assert(!this.overlapsRect(rect), 'rect overlapped');
+	if (this.overlapsRect(rect)) {
+	    return new Vec2();
+	}
+
 	if (0 < v.x) {
 	    v = this.contactVLine(v, rect.x, rect.y, rect.y+rect.height);
 	} else if (v.x < 0) {
@@ -927,7 +935,9 @@ class Box {
     }
     
     contactBox(v: Vec3, box: Box) {
-	assert(!this.overlapsBox(box), 'box overlapped');
+	if (this.overlapsBox(box)) {
+	    return new Vec3();
+	}
 	
 	if (0 < v.x) {
 	    v = this.contactYZPlane(v, box.origin.x, 

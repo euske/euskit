@@ -16,7 +16,7 @@
 
 
 PlanningEntity.debug = true;
-const jumpfunc = (vy:number, t:number) => {
+const JUMPFUNC = (vy:number, t:number) => {
     return (0 <= t && t <= 6)? -8 : vy+2;
 };
 
@@ -41,14 +41,14 @@ class Player extends PlatformerEntity {
 
     scene: Game;
     usermove: Vec2 = new Vec2();
-    holding: boolean = false;	// true if holding a ladder.
+    holding: boolean = false;
 
     constructor(scene: Game, pos: Vec2) {
 	super(scene.tilemap, pos);
 	this.imgsrc = scene.sprites.get(0);
 	this.collider = this.imgsrc.dstRect;
 	this.scene = scene;
-	this.setJumpFunc(jumpfunc);
+	this.jumpfunc = JUMPFUNC;
     }
 
     hasLadder() {
@@ -56,14 +56,11 @@ class Player extends PlatformerEntity {
     }
 
     canFall() {
-	if (this.holding) {
-	    return false;
-	}
-	return super.canFall();
+	return !(this.holding && this.hasLadder());
     }
 
     getObstaclesFor(range: Rect, v: Vec2, context=null as string): Rect[] {
-	if (this.holding) {
+	if (!this.holding) {
 	    return this.tilemap.getTileRects(this.tilemap.isObstacle, range);
 	}
 	return super.getObstaclesFor(range, v, context);
@@ -71,20 +68,17 @@ class Player extends PlatformerEntity {
     
     update() {
 	super.update();
-	if (this.holding || 0 <= this.usermove.y) {
-	    this.moveIfPossible(this.usermove);
-	}
-	if (this.holding) {
-	    // Release the ladder.
-	    if (!this.hasLadder()) {
-		this.holding = false;
-	    }
-	} else if (this.usermove.y < 0) {
-	    // Grab the ladder.
-	    if (this.hasLadder()) {
+	let v = this.usermove;
+	if (this.hasLadder()) {
+	    if (v.y < 0) {
+		// Grab the ladder.
 		this.holding = true;
 	    }
 	}
+	if (!this.hasLadder() && v.y < 0) {
+	    v = new Vec2(v.x, 0);
+	}
+	this.moveIfPossible(v);
     }
     
     setJump(jumpend: number) {
@@ -114,8 +108,8 @@ class Monster extends PlanningEntity {
 	this.scene = scene;
 	this.imgsrc = scene.sprites.get(4);
 	this.collider = this.imgsrc.dstRect;
+	this.jumpfunc = JUMPFUNC;
 	this.setHitbox(this.imgsrc.dstRect);
-	this.setJumpFunc(jumpfunc);
     }
 
     update() {

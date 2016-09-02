@@ -507,6 +507,8 @@ class PhysicalEntity extends Entity {
 		this.landed.fire();
 	    }
 	    this._landed = landed;
+	} else {
+	    this.velocity = new Vec2();
 	}
     }
 
@@ -545,12 +547,8 @@ class PlatformerEntity extends PhysicalEntity {
 	return (this.tilemap.findTile(f, range) !== null);
     }
 
-    canFall() {
-	return !this.hasTile(this.tilemap.isStoppable);
-    }
-
     getObstaclesFor(range: Rect, v: Vec2, context=null as string): Rect[] {
-	let f = ((context == 'fall' && this.canFall())?
+	let f = ((context == 'fall')?
 		 this.tilemap.isStoppable :
 		 this.tilemap.isObstacle);
 	return this.tilemap.getTileRects(f, range);
