@@ -21,8 +21,9 @@ interface DivDictionary {
 //
 class App {
 
+    size: Vec2;
     framerate: number;
-    frame: HTMLCanvasElement;
+    elem: HTMLElement;
     images: ImageDictionary;
     audios: AudioDictionary;
     labels: DivDictionary;
@@ -51,21 +52,21 @@ class App {
     private _key_up: boolean = false;
     private _key_down: boolean = false;
     
-    constructor(framerate: number,
-		scale: number,
-		frame: HTMLCanvasElement,
+    constructor(size: Vec2,
+		framerate: number,
+		elem: HTMLCanvasElement,
 		images: ImageDictionary,
 		audios: AudioDictionary,
 		labels: DivDictionary) {
+	this.size = size;
 	this.framerate = framerate;
-	this.frame = frame;
+	this.elem = elem;
 	this.images = images;
 	this.audios = audios;
 	this.labels = labels;
 
 	// Initialize the off-screen bitmap.
-	this.canvas = createCanvas(this.frame.width/scale,
-				   this.frame.height/scale);
+	this.canvas = createCanvas(this.size.x, this.size.y);
 	this.ctx = getEdgeyContext(this.canvas);
     }
 
@@ -77,7 +78,7 @@ class App {
 	e.style.width = bounds.width+'px';
 	e.style.height = bounds.height+'px';
 	e.style.padding = '0px';
-	this.frame.parentNode.appendChild(e);
+	this.elem.parentNode.appendChild(e);
 	return e;
     }
 
@@ -186,7 +187,7 @@ class App {
     }
 
     updateMousePos(ev: MouseEvent|Touch) {
-	let bounds = this.frame.getBoundingClientRect();
+	let bounds = this.elem.getBoundingClientRect();
 	this.mousePos = new Vec2(
 	    (ev.clientX-bounds.left)*this.canvas.width/bounds.width,
 	    (ev.clientY-bounds.top)*this.canvas.height/bounds.height);
@@ -269,7 +270,7 @@ class App {
     }
 
     init(scene: Scene) {
-	removeChildren(this.frame.parentNode, 'div');
+	removeChildren(this.elem.parentNode, 'div');
 	this.setMusic();
 	this.scene = scene;
 	this.scene.init();
@@ -329,7 +330,7 @@ var APP: App;
 // main: sets up the browser interaction.
 function main<T extends Scene>(
     scene0: { new(app:App):T; },
-    canvasId='game', scale=2, framerate=30)
+    canvasId='game', width=320, height=240, framerate=30)
 {
     function getprops(a: NodeListOf<Element>) {
 	let d:any = {};
@@ -344,7 +345,8 @@ function main<T extends Scene>(
     let labels = getprops(document.getElementsByClassName('label')) as DivDictionary;
     let frame = document.getElementById(canvasId) as HTMLCanvasElement;
     let ctx = getEdgeyContext(frame);
-    APP = new App(framerate, scale, frame, images, audios, labels);
+    let size = new Vec2(width, height);
+    APP = new App(size, framerate, frame, images, audios, labels);
     let timer: number;
 
     function repaint() {

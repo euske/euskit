@@ -84,10 +84,10 @@ class HTMLScene extends Scene {
     init() {
 	super.init();
 	let scene = this;
-	let frame = this.app.frame;
+	let bounds = this.app.elem.getBoundingClientRect();
 	let e = this.app.addElement(
-	    new Rect(frame.width/8, frame.height/4,
-		     3*frame.width/4, frame.height/2));
+	    new Rect(bounds.width/8, bounds.height/4,
+		     3*bounds.width/4, bounds.height/2));
 	e.align = 'left';
 	e.style.padding = '10px';
 	e.style.color = 'black';
