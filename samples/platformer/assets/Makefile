@@ -4,7 +4,7 @@ PYTHON=python
 SOX=sox
 LAME=lame
 
-AUDIOS=
+AUDIOS=jump.mp3 pick.mp3 ending.mp3
 
 all: $(AUDIOS)
 

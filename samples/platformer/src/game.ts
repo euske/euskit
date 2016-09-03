@@ -87,6 +87,9 @@ class Player extends PlatformerEntity {
 	    this.holding = false;
 	}
 	super.setJump(jumpend);
+	if (0 < jumpend && this.isJumping()) {
+	    playSound(APP.audios['jump']);
+	}
     }
     
     setMove(v: Vec2) {
