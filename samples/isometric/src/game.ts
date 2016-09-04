@@ -365,6 +365,7 @@ class Player extends Entity3d {
 class Game extends Scene {
     
     tilemap: TileMap;
+    layer: Layer;
     layer3: ScrollLayer3;
     player: Player;
     speed: Vec2;
@@ -383,6 +384,7 @@ class Game extends Scene {
 	this.tilemap = new TileMap(32, ROWS.map((c:number) => {
 	    return new Int32Array(12).fill(c);
 	}));
+	this.layer = new Layer();
 	this.layer3 = new ScrollLayer3(this.tilemap.bounds);
 	this.layer3.tilemap = this.tilemap;
 	this.layer3.tiles = TILES;
@@ -402,7 +404,7 @@ class Game extends Scene {
 	banner.update = (() => {
 	    banner.visible = (phase(banner.time, 0.5) != 0);
 	});
-	this.add(banner);
+	this.layer.addTask(banner);
     }
 
     add(task: Task) {
@@ -411,6 +413,7 @@ class Game extends Scene {
 
     tick(t: number) {
 	super.tick(t);
+	this.layer.tick(t);
 	this.layer3.tick(t);
 	this.moveAll(this.speed);
     }
@@ -429,6 +432,7 @@ class Game extends Scene {
 	super.render(ctx, bx, by);
 	let dy = (this.screen.height-this.layer3.window.height)/2
 	this.layer3.render(ctx, bx, by+dy);
+	this.layer.render(ctx, bx, by);
     }
 
     moveAll(v: Vec2) {
