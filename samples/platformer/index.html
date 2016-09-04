@@ -5,21 +5,17 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <title>Platformer</title>
 <script language="javascript" src="js/game.js"></script>
-<body bgcolor="black" text="white" link="cyan" onload="main(Game,'game',640,480);">
+<body bgcolor="black" text="white" link="cyan" onload="main(Game,640,480);">
 <h1 align=center>Platformer</h1>
 <div style="margin: 1em;" align=center>
-  <div style="position:relative; width:640px; height:480px;">
-    <canvas id="game" 
-	    style="position:absolute; top:0; left:0; background:gray;"
-	    width="640" height="480"></canvas>
-  </div>
+  <div id="game" style="position:relative; width:640px; height:480px;"></div>
 </div>
 <div style="display:none;">
   <img id="font" src="assets/font.png">
   <img id="sprites" src="assets/sprites.png">
   <img id="tiles" src="assets/tiles.png">
-  <audio id="jump" src="assets/jump.mp3" preload="auto">
-  <audio id="pick" src="assets/pick.mp3" preload="auto">
-  <audio id="ending" src="assets/ending.mp3" preload="auto">
+  <audio id="jump" src="assets/jump.mp3" preload="auto"></audio>
+  <audio id="pick" src="assets/pick.mp3" preload="auto"></audio>
+  <audio id="ending" src="assets/ending.mp3" preload="auto"></audio>
 </div>
 </body>

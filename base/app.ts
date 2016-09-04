@@ -54,7 +54,7 @@ class App {
     
     constructor(size: Vec2,
 		framerate: number,
-		elem: HTMLCanvasElement,
+		elem: HTMLElement,
 		images: ImageDictionary,
 		audios: AudioDictionary,
 		labels: DivDictionary) {
@@ -78,7 +78,7 @@ class App {
 	e.style.width = bounds.width+'px';
 	e.style.height = bounds.height+'px';
 	e.style.padding = '0px';
-	this.elem.parentNode.appendChild(e);
+	this.elem.appendChild(e);
 	return e;
     }
 
@@ -270,7 +270,7 @@ class App {
     }
 
     init(scene: Scene) {
-	removeChildren(this.elem.parentNode, 'div');
+	removeChildren(this.elem, 'div');
 	this.setMusic();
 	this.scene = scene;
 	this.scene.init();
@@ -330,7 +330,7 @@ var APP: App;
 // main: sets up the browser interaction.
 function main<T extends Scene>(
     scene0: { new(app:App):T; },
-    canvasId='game', width=320, height=240, framerate=30)
+    width=320, height=240, elemId='game', framerate=30)
 {
     function getprops(a: NodeListOf<Element>) {
 	let d:any = {};
@@ -343,23 +343,16 @@ function main<T extends Scene>(
     let images = getprops(document.getElementsByTagName('img')) as ImageDictionary;
     let audios = getprops(document.getElementsByTagName('audio')) as AudioDictionary;
     let labels = getprops(document.getElementsByClassName('label')) as DivDictionary;
-    let frame = document.getElementById(canvasId) as HTMLCanvasElement;
-    let ctx = getEdgeyContext(frame);
+    let elem = document.getElementById(elemId);
     let size = new Vec2(width, height);
-    APP = new App(size, framerate, frame, images, audios, labels);
     let timer: number;
+    APP = new App(size, framerate, elem, images, audios, labels);
+    let canvas = APP.canvas;
 
-    function repaint() {
-	ctx.drawImage(APP.canvas,
-		      0, 0, APP.canvas.width, APP.canvas.height,
-		      0, 0, frame.width, frame.height);
-    }    
-    
     function tick() {
 	if (APP.active) {
 	    APP.tick();
 	    APP.repaint();
-	    repaint();
 	}
     }
     
@@ -448,40 +441,59 @@ function main<T extends Scene>(
     function focus(e: FocusEvent) {
 	if (!APP.active) {
 	    APP.focus();
-	    repaint();
 	}
     }
     
     function blur(e: FocusEvent) {
 	if (APP.active) {
 	    APP.blur();
-	    repaint();
 	}
 	let size = 50;
+	const ctx = canvas.getContext('2d');
 	ctx.save();
 	ctx.fillStyle = 'rgba(0,0,64, 0.5)'; // gray out.
-	ctx.fillRect(0, 0, frame.width, frame.height);
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	ctx.fillStyle = 'lightgray';
 	ctx.beginPath();		// draw a play button.
-	ctx.moveTo(frame.width/2-size, frame.height/2-size);
-	ctx.lineTo(frame.width/2-size, frame.height/2+size);
-	ctx.lineTo(frame.width/2+size, frame.height/2);
+	ctx.moveTo(canvas.width/2-size, canvas.height/2-size);
+	ctx.lineTo(canvas.width/2-size, canvas.height/2+size);
+	ctx.lineTo(canvas.width/2+size, canvas.height/2);
 	ctx.fill();
 	ctx.restore();
     }
 
+    function resize(e: Event) {
+	let bounds = elem.getBoundingClientRect();
+	let cw = bounds.width, ch = bounds.height;
+	if (canvas.height*bounds.width < canvas.width*bounds.height) {
+	    ch = int(canvas.height * bounds.width / canvas.width);
+	} else {
+	    cw = int(canvas.width * bounds.height / canvas.height);
+	}
+	canvas.style.position = 'absolute';
+	canvas.style.padding = '0px';
+	canvas.style.left = ((bounds.width-cw)/2)+'px';
+	canvas.style.top = ((bounds.height-ch)/2)+'px';
+	canvas.style.width = cw+'px';
+	canvas.style.height = ch+'px';
+    }
+    
     APP.init(new scene0(APP));
     APP.focus();
+    elem.appendChild(canvas);
+    elem.addEventListener('mousedown', mousedown, false);
+    elem.addEventListener('mouseup', mouseup, false);
+    elem.addEventListener('mousemove', mousemove, false);
+    elem.addEventListener('touchstart', touchstart, false);
+    elem.addEventListener('touchend', touchend, false);
+    elem.addEventListener('touchmove', touchmove, false);
+    elem.focus();
+    resize(null);
     window.addEventListener('focus', focus);
     window.addEventListener('blur', blur);
     window.addEventListener('keydown', keydown);
     window.addEventListener('keyup', keyup);
-    frame.addEventListener('mousedown', mousedown, false);
-    frame.addEventListener('mouseup', mouseup, false);
-    frame.addEventListener('mousemove', mousemove, false);
-    frame.addEventListener('touchstart', touchstart, false);
-    frame.addEventListener('touchend', touchend, false);
-    frame.addEventListener('touchmove', touchmove, false);
+    window.addEventListener('resize', resize);
     timer = window.setInterval(tick, 1000/framerate);
-    frame.focus();
+    window.focus();
 }

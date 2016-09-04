@@ -5,19 +5,15 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <title>Racing</title>
 <script language="javascript" src="js/game.js"></script>
-<body bgcolor="black" text="white" link="cyan" onload="main(Racing,'game',128,160);">
+<body bgcolor="black" text="white" link="cyan" onload="main(Racing,128,160);">
 <h1 align=center>Racing</h1>
 <div style="margin: 1em;" align=center>
-  <div style="position:relative; width:512px; height:640px;">
-    <canvas id="game" 
-	    style="position:absolute; top:0; left:0; background:gray;"
-	    width="512" height="640"></canvas>
-  </div>
+  <div id="game" style="position:relative; width:512px; height:640px;"></div>
 </div>
 <div style="display:none;">
   <img id="font" src="assets/font.png">
   <img id="sprites" src="assets/sprites.png">
-  <audio id="music" src="assets/music.mp3" preload="auto">
-  <audio id="plunge" src="assets/plunge.mp3" preload="auto">
+  <audio id="music" src="assets/music.mp3" preload="auto"></audio>
+  <audio id="plunge" src="assets/plunge.mp3" preload="auto"></audio>
 </div>
 </body>
