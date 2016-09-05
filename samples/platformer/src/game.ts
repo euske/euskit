@@ -19,7 +19,7 @@ PlanningEntity.debug = true;
 const JUMPFUNC = (vy:number, t:number) => {
     return (0 <= t && t <= 6)? -8 : vy+2;
 };
-
+const MAXSPEED = new Vec2(16, 16);
 
 
 //  WorldObject
@@ -49,6 +49,7 @@ class Player extends PlatformerEntity {
 	this.collider = this.imgsrc.dstRect;
 	this.scene = scene;
 	this.jumpfunc = JUMPFUNC;
+	this.maxspeed = MAXSPEED;
     }
 
     hasLadder() {
@@ -59,6 +60,10 @@ class Player extends PlatformerEntity {
 	return !(this.holding && this.hasLadder());
     }
 
+    isLanded() {
+	return (this.holding && this.hasLadder()) || super.isLanded();
+    }
+    
     getObstaclesFor(range: Rect, v: Vec2, context=null as string): Rect[] {
 	if (!this.holding) {
 	    return this.tilemap.getTileRects(this.tilemap.isObstacle, range);
@@ -75,8 +80,10 @@ class Player extends PlatformerEntity {
 		this.holding = true;
 	    }
 	}
-	if (!this.hasLadder() && v.y < 0) {
+	if (!this.holding) {
 	    v = new Vec2(v.x, 0);
+	} else if (!this.hasLadder()) {
+	    v = new Vec2(v.x, lowerbound(0, v.y));
 	}
 	this.moveIfPossible(v);
     }
@@ -112,6 +119,7 @@ class Monster extends PlanningEntity {
 	this.imgsrc = scene.sprites.get(4);
 	this.collider = this.imgsrc.dstRect;
 	this.jumpfunc = JUMPFUNC;
+	this.maxspeed = MAXSPEED;
 	this.setHitbox(this.imgsrc.dstRect);
     }
 

@@ -501,7 +501,8 @@ class PhysicalEntity extends Entity {
 	if (this.canFall()) {
 	    let vy = this.jumpfunc(this.velocity.y, this._jumpt);
 	    let v = new Vec2(this.velocity.x, vy);
-	    this.velocity = this.moveIfPossible(v, 'fall');
+	    v = this.moveIfPossible(v, 'fall');
+	    this.velocity = v.clamp(this.maxspeed);
 	    let landed = (0 < vy && this.velocity.y == 0);
 	    if (!this._landed && landed) {
 		this.landed.fire();
