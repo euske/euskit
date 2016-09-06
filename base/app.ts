@@ -448,7 +448,7 @@ function main<T extends Scene>(
 	if (APP.active) {
 	    APP.blur();
 	}
-	let size = 50;
+	let size = Math.min(canvas.width, canvas.height)/8;
 	const ctx = canvas.getContext('2d');
 	ctx.save();
 	ctx.fillStyle = 'rgba(0,0,64, 0.5)'; // gray out.
@@ -476,6 +476,7 @@ function main<T extends Scene>(
 	canvas.style.top = ((bounds.height-ch)/2)+'px';
 	canvas.style.width = cw+'px';
 	canvas.style.height = ch+'px';
+	canvas.style['image-rendering' as any] = 'crisp-edges';
     }
     
     APP.init(new scene0(APP));
