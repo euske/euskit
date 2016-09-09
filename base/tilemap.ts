@@ -146,8 +146,13 @@ class TileMap {
 	}
     }
 
-    findTile(f0: TileFunc, range: Rect) {
-	return this.apply((x,y,c)=>{return f0(c);}, this.coord2map(range));
+    findTile(f0: TileFunc, rect: Rect=null) {
+	return this.apply((x,y,c)=>{return f0(c);}, rect);
+    }
+
+    findTileByCoord(f0: TileFunc, range: Rect) {
+	let p = this.apply((x,y,c)=>{return f0(c);}, this.coord2map(range));
+	return (p === null)? null : this.map2coord(p);
     }
 
     getTileRects(f0: TileFunc, range:Rect): Rect[] {

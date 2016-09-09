@@ -168,25 +168,29 @@ class Game extends GameScene {
 	    "00000000000000000000",
 	    "00001000000000000000",
 	    "00000100002000000000",
-	    "00000010002110000000",
+	    "00000010082110000000",
 	    "00110000112000110000",
 	    
 	    "00000001002001000100",
 	    "00000011002001100001",
 	    "00010000011201110000",
-	    "00111000000201111000",
+	    "00111000090201111000",
 	    "11111111111111111111",
 	];
 	this.tilemap = new TileMap(32, MAP.map((v:string) => { return str2array(v); }));
 	this.tilemap.isObstacle = ((c:number) => { return c == 1; });
 	this.tilemap.isGrabbable = ((c:number) => { return c == 2; });
-	this.tilemap.isStoppable = ((c:number) => { return c != 0; });
+	this.tilemap.isStoppable = ((c:number) => { return c == 1 || c == 2; });
 	this.profile = new GridProfile(this.tilemap);
-	
-	this.player = new Player(this, this.screen.center());
+
+	// Place the player.
+	let p = this.tilemap.findTile((c:number) => { return c == 8; });
+	this.player = new Player(this, this.tilemap.map2coord(p).center());
 	this.add(this.player);
 
-	let monster = new Monster(this, this.screen.center())
+	// Place a monster.
+	let q = this.tilemap.findTile((c:number) => { return c == 9; });
+	let monster = new Monster(this, this.tilemap.map2coord(q).center());
 	monster.target = this.player;
 	this.add(monster);
     }
@@ -208,11 +212,11 @@ class Game extends GameScene {
 	// Render the background tiles.
 	this.tilemap.renderWindowFromBottomLeft(
 	    ctx, bx, by, this.layer.window, this.tiles,
-	    (x,y,c) => { return (c == 0 || c == 2)? 0 : -1; });
+	    (x,y,c) => { return (c != 1)? 0 : -1; });
 	// Render the map tiles.
 	this.tilemap.renderWindowFromBottomLeft(
 	    ctx, bx, by, this.layer.window, this.tiles,
-	    (x,y,c) => { return (c == 0)? -1 : c; });
+	    (x,y,c) => { return (c == 1 || c == 2)? c : -1; });
 	super.render(ctx, bx, by);
     }
 }

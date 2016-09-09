@@ -77,7 +77,7 @@ class Track extends TileMap {
 
     // isFloor: returns true if there's a floor below the car.
     isFloor(rect: Rect) {
-	return this.findTile((c:number) => { return c == FLOOR; }, rect);
+	return this.findTileByCoord((c:number) => { return c == FLOOR; }, rect);
     }
     
     proceed(speed: number) {

@@ -545,7 +545,7 @@ class PlatformerEntity extends PhysicalEntity {
     
     hasTile(f: TileFunc, pos: Vec2=null) {
 	let range = this.getCollider(pos).getAABB();
-	return (this.tilemap.findTile(f, range) !== null);
+	return (this.tilemap.findTileByCoord(f, range) !== null);
     }
 
     getObstaclesFor(range: Rect, v: Vec2, context=null as string): Rect[] {

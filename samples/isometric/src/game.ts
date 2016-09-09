@@ -325,7 +325,7 @@ class Player extends Entity3d {
 	}
 	let tilemap = this.scene.tilemap;
 	if (this.isFloating() &&
-	    tilemap.findTile(isBlock, this.getBounds())) {
+	    tilemap.findTileByCoord(isBlock, this.getBounds())) {
 	    this.shadowz = tilemap.tilesize;
 	} else {
 	    this.shadowz = 0;
