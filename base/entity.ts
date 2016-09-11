@@ -301,6 +301,7 @@ class StarSprite extends Sprite {
 	super(new Vec2());
 	this.bounds = bounds
 	this.maxdepth = maxdepth;
+	this.imgsrc = new FillImageSource('white', new Rect(0,0,1,1));
 	for (let i = 0; i < nstars; i++) {
 	    let star = new Star();
 	    star.init(this.maxdepth);
