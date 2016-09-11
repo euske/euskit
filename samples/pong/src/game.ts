@@ -25,7 +25,7 @@ class Paddle extends Entity {
 	// Initializes the position and shape.
 	super(screen.anchor(0,-1).move(0,-20));
 	let bounds = new Rect(-20,-5,40,10);
-	this.imgsrc = new FillImageSource('green', bounds);
+	this.sprite.imgsrc = new FillImageSource('green', bounds);
 	this.collider = bounds;
 	this.screen = screen;
 	this.vx = 0;
@@ -34,7 +34,7 @@ class Paddle extends Entity {
     update() {
 	// Updates the position.
 	let pos = this.pos.move(this.vx*4, 0);
-	let bounds = this.getBounds(pos);
+	let bounds = this.getCollider(pos).getAABB();
 	if (0 <= bounds.x && bounds.right() <= this.screen.right()) {
 	    this.pos = pos;
 	}
@@ -53,7 +53,7 @@ class Ball extends Entity {
 	// Initializes the position and shape.
 	super(screen.center());
 	let bounds = new Rect(-5,-5,10,10);
-	this.imgsrc = new FillImageSource('white', bounds);
+	this.sprite.imgsrc = new FillImageSource('white', bounds);
 	this.collider = bounds;
 	this.screen = screen;
 	this.v = new Vec2(rnd(2)*8-4, -4);
@@ -62,7 +62,7 @@ class Ball extends Entity {
     update() {
 	// Updates the position.
 	let pos = this.pos.add(this.v);
-	let bounds = this.getBounds(pos);
+	let bounds = this.getCollider(pos).getAABB();
 	if (bounds.x < 0 || this.screen.right() < bounds.right()) {
 	    this.v.x = -this.v.x;
 	}

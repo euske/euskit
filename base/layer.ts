@@ -1,5 +1,6 @@
 /// <reference path="utils.ts" />
 /// <reference path="geom.ts" />
+/// <reference path="sprite.ts" />
 /// <reference path="entity.ts" />
 
 
@@ -72,17 +73,16 @@ class Layer {
 
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
 	for (let sprite of this.sprites) {
-	    if (sprite.running && sprite.visible) {
+	    if (sprite.visible) {
 		sprite.render(ctx, bx, by);
 	    }
 	}
     }
 
     moveAll(v: Vec2) {
-	for (let sprite of this.sprites) {
-	    if (!sprite.running) continue;
-	    if (sprite.getBounds() === null) continue;
-	    sprite.pos = sprite.pos.add(v);
+	for (let entity of this.entities) {
+	    if (!entity.running) continue;
+	    entity.movePos(v);
 	}
     }
 
@@ -209,7 +209,7 @@ class ScrollLayer extends Layer {
 	bx -= this.window.x;
 	by -= this.window.y;
 	for (let sprite of this.sprites) {
-	    if (sprite.running && sprite.visible) {
+	    if (sprite.visible) {
 		let bounds = sprite.getBounds()
 		if (bounds === null || bounds.overlaps(this.window)) {
 		    sprite.render(ctx, bx, by);

@@ -45,8 +45,8 @@ class Player extends PlatformerEntity {
 
     constructor(scene: Game, pos: Vec2) {
 	super(scene.tilemap, pos);
-	this.imgsrc = scene.sprites.get(0);
-	this.collider = this.imgsrc.dstRect;
+	this.sprite.imgsrc = scene.sprites.get(0);
+	this.collider = this.sprite.imgsrc.dstRect;
 	this.scene = scene;
 	this.jumpfunc = JUMPFUNC;
 	this.maxspeed = MAXSPEED;
@@ -116,11 +116,11 @@ class Monster extends PlanningEntity {
     constructor(scene: Game, pos: Vec2) {
 	super(scene.profile, scene.tilemap, pos);
 	this.scene = scene;
-	this.imgsrc = scene.sprites.get(4);
-	this.collider = this.imgsrc.dstRect;
+	this.sprite.imgsrc = scene.sprites.get(4);
+	this.collider = this.sprite.imgsrc.dstRect;
 	this.jumpfunc = JUMPFUNC;
 	this.maxspeed = MAXSPEED;
-	this.setHitbox(this.imgsrc.dstRect);
+	this.setHitbox(this.sprite.imgsrc.dstRect);
     }
 
     update() {

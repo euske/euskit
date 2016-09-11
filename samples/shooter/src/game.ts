@@ -19,7 +19,7 @@ class Bullet extends Projectile {
     constructor(pos: Vec2) {
 	super(pos);
 	let bounds = new Rect(-4, -1, 8, 2);
-	this.imgsrc = new FillImageSource('white', bounds)
+	this.sprite.imgsrc = new FillImageSource('white', bounds)
 	this.collider = bounds;
     }
 }
@@ -27,10 +27,10 @@ class Bullet extends Projectile {
 
 //  Explosion
 //
-class Explosion extends Sprite {
+class Explosion extends Entity {
     constructor(pos: Vec2) {
 	super(pos);
-	this.imgsrc = SPRITES.get(4);
+	this.sprite.imgsrc = SPRITES.get(4);
 	this.lifetime = 0.2;
     }
 }
@@ -48,8 +48,8 @@ class Player extends Entity {
     constructor(scene: Shooter, pos: Vec2) {
 	super(pos);
 	this.scene = scene;
-	this.imgsrc = SPRITES.get(0);
-	this.collider = this.imgsrc.dstRect;
+	this.sprite.imgsrc = SPRITES.get(0);
+	this.collider = this.sprite.imgsrc.dstRect;
     }
 
     update() {
@@ -127,8 +127,8 @@ class Enemy1 extends EnemyBase {
 
     constructor(scene: Shooter, pos: Vec2) {
 	super(scene, pos);
-	this.imgsrc = SPRITES.get(1);
-	this.collider = this.imgsrc.dstRect;
+	this.sprite.imgsrc = SPRITES.get(1);
+	this.collider = this.sprite.imgsrc.dstRect;
 	this.movement = new Vec2(-rnd(1,8), rnd(3)-1);
     }
 }
@@ -140,8 +140,8 @@ class Enemy2 extends EnemyBase {
 
     constructor(scene: Shooter, pos: Vec2) {
 	super(scene, pos);
-	this.imgsrc = SPRITES.get(2);
-	this.collider = this.imgsrc.dstRect;
+	this.sprite.imgsrc = SPRITES.get(2);
+	this.collider = this.sprite.imgsrc.dstRect;
 	this.movement = new Vec2(-rnd(1,4), 0);
     }
 
@@ -182,8 +182,6 @@ class Shooter extends GameScene {
 	this.player.chain(restartGame);
 	this.add(this.player);
 	this.stars = new StarSprite(this.screen, 100);
-	this.stars.imgsrc = new FillImageSource('white', new Rect(0,0,1,1));
-	this.stars.velocity = new Vec2(-4, 0);
 	this.nextenemy = 0;
 	this.score = 0;
 	this.updateScore();
@@ -191,7 +189,7 @@ class Shooter extends GameScene {
 
     tick(t: number) {
 	super.tick(t);
-	this.stars.tick(t);
+	this.stars.move(new Vec2(-4, 0));
 	// Spawn an enemy at a random interval.
 	if (this.nextenemy == 0) {
 	    let pos = new Vec2(this.screen.width, rnd(this.screen.height));

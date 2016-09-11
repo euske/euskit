@@ -147,7 +147,7 @@ class TextBox extends Sprite {
     segments: TextSegment[] = [];
     
     constructor(frame: Rect) {
-	super(new Vec2());
+	super();
 	this.frame = frame;
     }
 
@@ -166,18 +166,17 @@ class TextBox extends Sprite {
 	return new Vec2(w, h-this.linespace);
     }
 
-    getBounds(pos: Vec2=null) {
-	pos = (pos !== null)? pos : this.pos;
-	if (pos !== null) {
-	    return this.frame.add(pos);
-	} else {
-	    return null;
-	}
+    getBounds() {
+	return this.frame;
+    }
+  
+    getInnerBounds() {
+	return this.frame.inflate(-this.padding, -this.padding);
     }
   
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
 	ctx.save();
-	ctx.translate(bx+int(this.pos.x+this.frame.x), by+int(this.pos.y+this.frame.y));
+	ctx.translate(bx+int(this.frame.x), by+int(this.frame.y));
 	if (this.background !== null) {
 	    ctx.fillStyle = this.background;
 	    ctx.fillRect(0, 0, this.frame.width, this.frame.height);
@@ -332,6 +331,29 @@ class TextBox extends Sprite {
 }
 
 
+//  BannerBox
+//
+class BannerBox extends Task {
+
+    textbox: TextBox;
+    interval: number = 0;
+    
+    constructor(frame: Rect, font: Font, text: string) {
+	super();
+	this.textbox = new TextBox(frame);
+	this.textbox.font = font;
+	this.textbox.putText([text], 'center', 'center');
+    }
+
+    update() {
+	super.update();
+	if (0 < this.interval) {
+	    this.textbox.visible = (phase(this.time, this.interval) != 0);
+	}
+    }
+}
+
+
 //  TextTask
 //
 class TextTask extends Task {
@@ -391,12 +413,12 @@ class DisplayTask extends TextTask {
     constructor(dialog: DialogBox, text: string) {
 	super(dialog);
 	this.text = text;
-	this.font = dialog.font;
+	this.font = dialog.textbox.font;
     }
 
     start(layer: Layer) {
 	super.start(layer);
-	this.text = this.dialog.wrapLines(this.text, this.font)
+	this.text = this.dialog.textbox.wrapLines(this.text, this.font)
     }
 
     tick(t: number) {
@@ -410,7 +432,7 @@ class DisplayTask extends TextTask {
 	    let sound = false;
 	    while (this._index < n) {
 		let c = this.text.substr(this._index, 1);
-		this.dialog.addText(c, this.font);
+		this.dialog.textbox.addText(c, this.font);
 		this._index++;
 		sound = sound || (/\w/.test(c));
 	    }
@@ -422,7 +444,7 @@ class DisplayTask extends TextTask {
 
     ff() {
 	while (this._index < this.text.length) {
-	    this.dialog.addText(this.text.substr(this._index, 1), this.font);
+	    this.dialog.textbox.addText(this.text.substr(this._index, 1), this.font);
 	    this._index++;
 	}
 	this.stop();
@@ -477,7 +499,7 @@ class MenuTask extends TextTask {
     start(layer: Layer) {
 	super.start(layer);
 	for (let item of this.items) {
-	    item.seg = this.dialog.addSegment(item.pos, item.text);
+	    item.seg = this.dialog.textbox.addSegment(item.pos, item.text);
 	}
 	this.updateSelection();
     }
@@ -512,10 +534,12 @@ class MenuTask extends TextTask {
 	    this.selected.fire(null);
 	    return;
 	}
-	
-	let i = ((this.current === null)? 0 : 
-		 this.items.indexOf(this.current));
-	i = clamp(0, i+d, this.items.length-1);
+
+	let i:number = 0;
+	if (this.current !== null) {
+	    i = this.items.indexOf(this.current);
+	    i = clamp(0, i+d, this.items.length-1);
+	}
 	this.current = this.items[i];
 	this.updateSelection();
 	if (this.sound !== null) {
@@ -565,7 +589,7 @@ class MenuTask extends TextTask {
 		item === this.focus) {
 		item.seg.font = this.dialog.hifont;
 	    } else {
-		item.seg.font = this.dialog.font;
+		item.seg.font = this.dialog.textbox.font;
 	    }
 	}
     }
@@ -574,23 +598,39 @@ class MenuTask extends TextTask {
 
 //  DialogBox
 //
-class DialogBox extends TextBox {
+class DialogBox extends Task {
 
+    textbox: TextBox;
     speed: number = 0;
     autohide: boolean = false;
     sound: HTMLAudioElement = null;
     queue: TextTask[] = [];
     hifont: Font = null;
     
-    constructor(frame: Rect) {
-	super(frame);
+    constructor(textbox: TextBox) {
+	super();
+	this.textbox = textbox;
     }
 
     clear() {
-	super.clear();
+	this.textbox.clear();
 	this.queue = [];
     }
 
+    start(layer: Layer) {
+	super.start(layer);
+	if (this.textbox !== null) {
+	    this.layer.addSprite(this.textbox);
+	}
+    }
+
+    stop() {
+	if (this.textbox !== null) {
+	    this.layer.removeSprite(this.textbox);
+	}
+	super.stop();
+    }
+    
     tick(t: number) {
 	super.tick(t);
 	let task:TextTask = null;
@@ -605,7 +645,7 @@ class DialogBox extends TextBox {
 	    this.removeTask(task);
 	}
 	if (this.autohide && task === null) {
-	    this.visible = false;
+	    this.textbox.visible = false;
 	}
     }
 
@@ -619,8 +659,8 @@ class DialogBox extends TextBox {
     onMouseDown(p: Vec2, button: number) {
 	let task = this.getCurrentTask();
 	if (task !== null) {
-	    p = p.move(-(this.pos.x+this.frame.x+this.padding),
-		       -(this.pos.y+this.frame.y+this.padding));
+	    let bounds = this.textbox.getInnerBounds();
+	    p = p.move(-bounds.x, -bounds.y);
 	    task.onMouseDown(p, button);
 	}
     }
@@ -628,8 +668,8 @@ class DialogBox extends TextBox {
     onMouseUp(p: Vec2, button: number) {
 	let task = this.getCurrentTask();
 	if (task !== null) {
-	    p = p.move(-(this.pos.x+this.frame.x+this.padding),
-		       -(this.pos.y+this.frame.y+this.padding));
+	    let bounds = this.textbox.getInnerBounds();
+	    p = p.move(-bounds.x, -bounds.y);
 	    task.onMouseUp(p, button);
 	}
     }
@@ -637,8 +677,8 @@ class DialogBox extends TextBox {
     onMouseMove(p: Vec2) {
 	let task = this.getCurrentTask();
 	if (task !== null) {
-	    p = p.move(-(this.pos.x+this.frame.x+this.padding),
-		       -(this.pos.y+this.frame.y+this.padding));
+	    let bounds = this.textbox.getInnerBounds();
+	    p = p.move(-bounds.x, -bounds.y);
 	    task.onMouseMove(p);
 	}
     }
@@ -663,14 +703,14 @@ class DialogBox extends TextBox {
     addTask(task: TextTask) {
 	this.queue.push(task);
 	if (this.autohide) {
-	    this.visible = true;
+	    this.textbox.visible = true;
 	}
     }
     
     removeTask(task: TextTask) {
 	removeElement(this.queue, task);
 	if (this.autohide && this.queue.length == 0) {
-	    this.visible = false;
+	    this.textbox.visible = false;
 	}
     }
 
@@ -685,7 +725,7 @@ class DialogBox extends TextBox {
 	let task = new DisplayTask(this, text);
 	task.speed = (0 <= speed)? speed : this.speed;
 	task.sound = (sound !== null)? sound : this.sound;
-	task.font = (font !== null)? font : this.font;
+	task.font = (font !== null)? font : this.textbox.font;
 	this.addTask(task);
 	return task;
     }

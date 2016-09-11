@@ -21,36 +21,38 @@ function getContact3(hitbox: Box, v: Vec3, boxes: Box[])
 }
 
 
-//  Entity3d
+//  Sprite3d
 //
-class Entity3d extends Entity {
+class Sprite3d extends Sprite {
 
+    entity: Entity3d;
     shadow: HTMLImageSource = null;
-    depth: number = 0;
-
-    z: number = 0;
     shadowz: number = 0;
-    velocity3: Vec3 = new Vec3();
-    maxspeed3: Vec3 = new Vec3();
+    floating: boolean = false;
     
-    getPos3() {
-	return new Vec3(this.pos.x, this.pos.y, this.z);
+    constructor(entity: Entity3d=null) {
+	super();
+	this.entity = entity;
     }
-    
-    movePos3(v: Vec3) {
-	this.pos = this.pos.move(v.x, v.y);
-	this.z += v.z;
+
+    getBounds() {
+	if (this.entity !== null && this.imgsrc !== null) {
+	    return this.imgsrc.dstRect.add(this.entity.pos);
+	}
+	return null;
     }
 
     render3(ctx: CanvasRenderingContext2D, bx: number, by: number) {
-	bx += this.pos.x;
-	by += this.pos.y;
+	let pos = this.entity.pos;
+	let z = this.entity.z;
+	bx += pos.x;
+	by += pos.y;
 	let shadow = this.shadow;
 	if (shadow !== null) {
 	    // Render the shadow first.
 	    let srcRect = shadow.srcRect;
 	    let dstRect = shadow.dstRect;
-	    let d = (this.z-this.shadowz)/4;
+	    let d = (z-this.shadowz)/4;
 	    if (d*2 <= dstRect.width && d*2 <= dstRect.height) {
 		ctx.drawImage(
 		    this.shadow.image,
@@ -66,15 +68,43 @@ class Entity3d extends Entity {
 	    ctx.drawImage(
 		imgsrc.image,
 		srcRect.x, srcRect.y, srcRect.width, srcRect.height,
-		bx+dstRect.x, by+dstRect.y-this.z/2,
+		bx+dstRect.x, by+dstRect.y-z/2,
 		dstRect.width, dstRect.height);
 	}
     }
+}
+
+
+//  Entity3d
+//
+class Entity3d extends Entity {
+
+    sprite3: Sprite3d;
+    depth: number = 0;
+
+    z: number = 0;
+    velocity3: Vec3 = new Vec3();
+    maxspeed3: Vec3 = new Vec3();
     
+    constructor(pos: Vec2) {
+	super(pos);
+	this.sprite3 = new Sprite3d(this);
+	this.sprite = this.sprite3;
+    }
+    
+    getPos3() {
+	return new Vec3(this.pos.x, this.pos.y, this.z);
+    }
+    
+    movePos3(v: Vec3) {
+	this.pos = this.pos.move(v.x, v.y);
+	this.z += v.z;
+    }
+
     getCollider3(pos3: Vec3=null) {
 	let pos = (pos3 !== null)? new Vec2(pos3.x, pos3.y) : this.pos;
 	let z = (pos3 !== null)? pos3.z : this.z;
-	let bounds = this.getBounds(pos);
+	let bounds = this.sprite3.imgsrc.dstRect.add(pos);
 	return new Box(
 	    new Vec3(bounds.x, bounds.y, z),
 	    new Vec3(bounds.width, bounds.height, this.depth));
@@ -111,10 +141,6 @@ class Entity3d extends Entity {
 	return collider1.origin.sub(collider0.origin);
     }
     
-    isFloating() {
-	return false;
-    }
-    
     getObstaclesFor3(range: Box, v: Vec3, context: string): Box[] {
 	return null;
     }
@@ -148,7 +174,7 @@ class ScrollLayer3 extends ScrollLayer {
 	// Set the drawing order.
 	let sprites = {} as SpriteDictionary;
 	for (let sprite of this.sprites) {
-	    if (sprite.running && sprite.visible) {
+	    if (sprite.visible) {
 		let bounds = sprite.getBounds();
 		if (bounds !== null && bounds.overlapsRect(window)) {
 		    let x = int((bounds.x+bounds.width/2)/ts);
@@ -167,8 +193,8 @@ class ScrollLayer3 extends ScrollLayer {
 	    let k = x+','+y;
 	    if (sprites.hasOwnProperty(k)) {
 		for (let sprite of sprites[k]) {
-		    if (sprite instanceof Entity3d) {
-			if (!sprite.isFloating()) {
+		    if (sprite instanceof Sprite3d) {
+			if (!sprite.floating) {
 			    sprite.render3(ctx, tx, ty);
 			}
 		    } else {
@@ -186,13 +212,13 @@ class ScrollLayer3 extends ScrollLayer {
 	
 	// Draw floating objects.
 	for (let sprite of this.sprites) {
-	    if (sprite.running && sprite.visible) {
+	    if (sprite.visible) {
 		let bounds = sprite.getBounds();
 		if (bounds === null) {
 		    sprite.render(ctx, bx, by);
 		} else if (bounds.overlaps(window)) {
-		    if (sprite instanceof Entity3d) {
-			if (sprite.isFloating()) {
+		    if (sprite instanceof Sprite3d) {
+			if (sprite.floating) {
 			    sprite.render3(ctx, tx, ty);
 			}
 		    } else {
@@ -231,10 +257,10 @@ class Thingy extends Entity3d {
 
     constructor(scene: Game, pos: Vec2) {
 	super(pos);
-	this.imgsrc = SPRITES.get(S.THINGY);
-	this.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
-	this.collider = this.imgsrc.dstRect.inflate(-4, -4);
-	this.zOrder = 0;
+	this.sprite3.imgsrc = SPRITES.get(S.THINGY);
+	this.sprite3.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
+	this.sprite3.zOrder = 0;
+	this.collider = this.sprite3.imgsrc.dstRect.inflate(-4, -4);
 	this.z = 4;
     }
 }
@@ -257,10 +283,10 @@ class Player extends Entity3d {
 	super(pos);
 	this.scene = scene;
 	this.scored = new Signal(this);
-	this.imgsrc = SPRITES.get(S.PLAYER)
-	this.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
-	this.collider = this.imgsrc.dstRect.inflate(-4, -4);
-	this.zOrder = 1;
+	this.sprite3.imgsrc = SPRITES.get(S.PLAYER)
+	this.sprite3.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
+	this.sprite3.zOrder = 1;
+	this.collider = this.sprite3.imgsrc.dstRect.inflate(-4, -4);
 	this.depth = scene.tilemap.tilesize;
 	this.maxspeed3 = new Vec3(16, 16, 16);
 	this.jumpfunc3 = (vz:number,t:number) => { return (0<=t && t<=7)? 8 : vz-2; };
@@ -286,11 +312,6 @@ class Player extends Entity3d {
 	let area = new Rect(range.origin.x, range.origin.y, range.size.x, range.size.y);
 	tilemap.apply(f, tilemap.coord2map(area));
 	return boxes;
-    }
-    
-    isFloating() {
-	let tilemap = this.scene.tilemap;
-	return (tilemap.tilesize/2 < this.z);
     }
     
     canJump3() {
@@ -324,11 +345,12 @@ class Player extends Entity3d {
 	    this._jumpt = Infinity;
 	}
 	let tilemap = this.scene.tilemap;
-	if (this.isFloating() &&
-	    tilemap.findTileByCoord(isBlock, this.getBounds())) {
-	    this.shadowz = tilemap.tilesize;
+	this.sprite3.floating = (tilemap.tilesize/2 < this.z);
+	if (this.sprite3.floating &&
+	    tilemap.findTileByCoord(isBlock, this.sprite.getBounds())) {
+	    this.sprite3.shadowz = tilemap.tilesize;
 	} else {
-	    this.shadowz = 0;
+	    this.sprite3.shadowz = 0;
 	}
 	let window = this.scene.layer3.window;
 	if (!window.overlaps(this.getCollider())) {
@@ -348,10 +370,10 @@ class Player extends Entity3d {
 	if (entity instanceof Thingy) {
 	    entity.stop();
 	    let yay = new Projectile(this.pos.move(0,-16));
-	    yay.imgsrc = SPRITES.get(S.YAY);
+	    yay.sprite.imgsrc = SPRITES.get(S.YAY);
+	    yay.sprite.zOrder = 2;
 	    yay.movement = new Vec2(0,-4);
 	    yay.lifetime = 0.5;
-	    yay.zOrder = 2;
 	    this.scene.add(yay);
 	    this.scored.fire();
 	}
@@ -397,13 +419,12 @@ class Game extends Scene {
 	this.tilemap.set(8, 2, T.BLOCK);
 	
 	// show a banner.
-	let banner = new TextBox(this.screen);
-	banner.font = new ShadowFont(APP.images['font'], 'white');
-	banner.putText(['GET ALL TEH DAMN THINGIES!'], 'center', 'center');
+	let banner = new BannerBox(
+	    this.screen, 
+	    new ShadowFont(APP.images['font'], 'white'),
+	    'GET ALL TEH DAMN THINGIES!');
 	banner.lifetime = 2.0;
-	banner.update = (() => {
-	    banner.visible = (phase(banner.time, 0.5) != 0);
-	});
+	banner.interval = 0.5;
 	this.layer.addTask(banner);
     }
 

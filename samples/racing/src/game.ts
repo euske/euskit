@@ -26,8 +26,8 @@ class Player extends Entity {
     constructor(scene: Racing, pos: Vec2) {
 	super(pos);
 	this.scene = scene;
-	this.imgsrc = SPRITES.get(0, 0, 1, 1, new Vec2(8,8));
-	this.collider = this.imgsrc.dstRect;
+	this.sprite.imgsrc = SPRITES.get(0, 0, 1, 1, new Vec2(8,8));
+	this.collider = this.sprite.imgsrc.dstRect;
     }
 
     update() {
@@ -175,7 +175,7 @@ class Racing extends GameScene {
 		this.updateScore();
 	    } else {
 		this.player.alive = false;
-		let blinker = new Blinker(this.player);
+		let blinker = new Blinker(this.player.sprite);
 		blinker.interval = 0.2;
 		blinker.lifetime = 1.0;
 		blinker.stopped.subscribe(() => { this.init(); });

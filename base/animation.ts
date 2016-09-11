@@ -54,30 +54,36 @@ class Queue extends Task {
 }
 
 
-//  Animator
-//  Base class for all animator.
+//  Blinker
 //
-class Animator extends Task {
-    
+class Blinker extends Task {
+
     sprite: Sprite;
+    interval: number = 1.0;
     
     constructor(sprite: Sprite) {
 	super();
 	this.sprite = sprite;
-    }    
-}
-
-
-//  Blinker
-//
-class Blinker extends Animator {
-
-    interval: number = 1.0;
+    }
     
     update() {
 	super.update();
 	this.sprite.visible = (phase(this.time, this.interval) == 0);
     }
+}
+
+
+//  Animator
+//  Base class for all animator.
+//
+class Animator extends Task {
+    
+    entity: Entity;
+    
+    constructor(entity: Entity) {
+	super();
+	this.entity = entity;
+    }    
 }
 
 
@@ -90,14 +96,14 @@ class Tweener extends Animator {
     
     start(layer: Layer) {
 	super.start(layer);
-	this.srcpos = this.sprite.pos.copy();
+	this.srcpos = this.entity.pos.copy();
     }
     
     update() {
 	super.update();
 	if (this.srcpos !== null && this.dstpos !== null) {
 	    let t = this.time / this.lifetime;
-	    this.sprite.pos = this.getPos(t);
+	    this.entity.pos = this.getPos(t);
 	}
     }
 
@@ -113,8 +119,8 @@ class PolyTweener extends Tweener {
 
     n: number;
 
-    constructor(sprite: Sprite, n=2) {
-	super(sprite);
+    constructor(entity: Entity, n=2) {
+	super(entity);
 	this.n = n;
     }
 }

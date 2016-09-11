@@ -16,7 +16,7 @@ let HIFONT: Font;
 // 
 class PictureScene extends GameScene {
 
-    textBox: DialogBox;
+    dialogBox: DialogBox;
     image0: HTMLImageElement = null;
     image1: HTMLImageElement = null;
     alpha: number = 0;
@@ -29,17 +29,18 @@ class PictureScene extends GameScene {
 	let width = this.screen.width-16;
 	let height = (lineheight+linespace)*6-linespace+padding*2;
 	let rect = this.screen.resize(width, height, 0, -1).move(0,-8);
-	this.textBox = new DialogBox(rect);
-	this.textBox.font = FONT;
-	this.textBox.hifont = HIFONT;
-	this.textBox.padding = padding;
-	this.textBox.linespace = linespace;
-	this.textBox.background = 'rgba(0,0,0,0.5)'
+	let textbox = new TextBox(rect);
+	textbox.font = FONT;
+	textbox.padding = padding;
+	textbox.linespace = linespace;
+	textbox.background = 'rgba(0,0,0,0.5)'
+	this.dialogBox = new DialogBox(textbox);
+	this.dialogBox.hifont = HIFONT;
     }
     
     init() {
 	super.init();
-	this.add(this.textBox);
+	this.add(this.dialogBox);
     }
 
     tick(t: number) {
@@ -51,22 +52,22 @@ class PictureScene extends GameScene {
 
     onKeyDown(key: number) {
 	super.onKeyDown(key);
-	this.textBox.onKeyDown(key);
+	this.dialogBox.onKeyDown(key);
     }    
 
     onMouseDown(p: Vec2, button: number) {
 	super.onMouseDown(p, button);
-	this.textBox.onMouseDown(p, button);
+	this.dialogBox.onMouseDown(p, button);
     }    
 
     onMouseUp(p: Vec2, button: number) {
 	super.onMouseUp(p, button);
-	this.textBox.onMouseUp(p, button);
+	this.dialogBox.onMouseUp(p, button);
     }    
 
     onMouseMove(p: Vec2) {
 	super.onMouseMove(p);
-	this.textBox.onMouseMove(p);
+	this.dialogBox.onMouseMove(p);
     }    
 
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
@@ -86,7 +87,7 @@ class PictureScene extends GameScene {
 	ctx.restore();
 	super.render(ctx, bx, by);
 	// draw a textbox border.
-	let rect = this.textBox.frame.inflate(-2,-2);
+	let rect = this.dialogBox.textbox.frame.inflate(-2,-2);
 	ctx.strokeStyle = 'white';
 	ctx.lineWidth = 2;
 	ctx.strokeRect(bx+rect.x, by+rect.y, rect.width, rect.height);
@@ -110,10 +111,10 @@ class Scene1 extends PictureScene {
     }
     init() {
 	super.init();
-	this.textBox.addDisplay(
+	this.dialogBox.addDisplay(
 	    'It was a perfect sunny day. '+
 	    'I was driving a sleepy countryside.', 10);
-	let menu = this.textBox.addMenu();
+	let menu = this.dialogBox.addMenu();
 	menu.addItem(new Vec2(20,30), 'I like an eggplant.');
 	menu.addItem(new Vec2(20,40), 'This is nuts.');
 	menu.addItem(new Vec2(20,50), 'Gimme a cucumber.');
@@ -132,10 +133,10 @@ class Scene2 extends PictureScene {
     }
     init() {
 	super.init();
-	this.textBox.addDisplay(
+	this.dialogBox.addDisplay(
 	    'I was fed up with cities. The beauty of '+
 	    'a city makes everyone anonymous.', 10);
-	let menu = this.textBox.addMenu();
+	let menu = this.dialogBox.addMenu();
 	menu.addItem(new Vec2(20,40), 'O RLY?');
 	menu.addItem(new Vec2(20,50), 'Beautiful quote.');
 	menu.addItem(new Vec2(20,60), '43914745.');
@@ -154,10 +155,10 @@ class Scene3 extends PictureScene {
     }
     init() {
 	super.init();
-	this.textBox.addDisplay(
+	this.dialogBox.addDisplay(
 	    'But eventually, people can\'t really '+
 	    'forget about their loved ones.', 10);
-	let menu = this.textBox.addMenu();
+	let menu = this.dialogBox.addMenu();
 	menu.addItem(new Vec2(20,30), 'ZZzzz.');
 	menu.addItem(new Vec2(20,40), 'Only if what I think is what you think.');
 	menu.addItem(new Vec2(20,50), 'xxThisSucks1729xx');

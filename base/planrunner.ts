@@ -237,12 +237,26 @@ class PlatformerActionRunner {
 }
 
 
+class PlanMapSprite extends Sprite {
+
+    start: Vec2 = null;
+    plan: PlanMap = null;
+    
+    render(ctx:CanvasRenderingContext2D, bx:number, by:number) {
+	if (this.plan !== null) {
+	    this.plan.render(ctx, bx, by, this.start);
+	}
+    }
+}
+
+
 //  PlanningEntity
 //
 class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 
     profile: GridProfile;
-    gridbox: Rect;
+    mapSprite: PlanMapSprite = null;
+    gridbox: Rect = null;
 
     private _jumpfunc0: JumpFunc = null;
     jumppts: Vec2[] = null;
@@ -261,6 +275,23 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
     constructor(profile:GridProfile, tilemap:TileMap, pos: Vec2) {
 	super(tilemap, pos);
 	this.profile = profile;
+	if (PlanningEntity.debug) {
+	    this.mapSprite = new PlanMapSprite();
+	}
+    }
+
+    start(layer: Layer) {
+	super.start(layer);
+	if (this.mapSprite !== null) {
+	    this.layer.addSprite(this.mapSprite);
+	}
+    }
+
+    stop() {
+	if (this.mapSprite !== null) {
+	    this.layer.removeSprite(this.mapSprite);
+	}
+	super.stop();
     }
 
     setHitbox(hitbox: Rect) {
@@ -299,10 +330,16 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 
     startPlan(runner: PlatformerActionRunner) {
 	this.runner = runner;
+	if (this.mapSprite !== null) {
+	    this.mapSprite.plan = runner.plan;
+	}
 	//log("begin:"+this.runner);
     }
   
     stopPlan() {
+	if (this.mapSprite !== null) {
+	    this.mapSprite.plan = null;
+	}
 	if (this.runner !== null) {
 	    //log("end:  "+this.runner);
 	    this.movement = new Vec2();
@@ -314,6 +351,9 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 	let goal = this.profile.coord2grid(p);
 	let range = goal.expand(size, size);
 	let start = this.getGridPos();
+	if (this.mapSprite !== null) {
+	    this.mapSprite.start = start;
+	}
 	this.updateJumpPts();
 	this.updateRangeMaps();
 	let plan = new PlatformerPlanMap(this.profile);
@@ -335,14 +375,6 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 	this.moveIfPossible(this.movement);
     }
 
-    render(ctx:CanvasRenderingContext2D, bx:number, by:number) {
-	super.render(ctx, bx, by);
-	if (PlanningEntity.debug && this.runner !== null) {
-	    let start = this.getGridPos();
-	    this.runner.plan.render(ctx, bx, by, start);
-	}
-    }
-    
     // PlatformerActor methods
     
     getJumpPoints() {
