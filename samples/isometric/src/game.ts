@@ -289,7 +289,9 @@ class Player extends Entity3d {
 	this.collider = this.sprite3.imgsrc.dstRect.inflate(-4, -4);
 	this.depth = scene.tilemap.tilesize;
 	this.maxspeed3 = new Vec3(16, 16, 16);
-	this.jumpfunc3 = (vz:number,t:number) => { return (0<=t && t<=7)? 8 : vz-2; };
+	this.jumpfunc3 = (vz:number,t:number) => {
+	    return (0<=t && t<=7)? 8 : vz-2;
+	};
 	this.usermove3 = new Vec3();
     }
     
@@ -309,7 +311,8 @@ class Player extends Entity3d {
 	    }
 	    return false;
 	}
-	let area = new Rect(range.origin.x, range.origin.y, range.size.x, range.size.y);
+	let area = new Rect(range.origin.x, range.origin.y,
+			    range.size.x, range.size.y);
 	tilemap.apply(f, tilemap.coord2map(area));
 	return boxes;
     }
@@ -378,7 +381,6 @@ class Player extends Entity3d {
 	    this.scored.fire();
 	}
     }
-    
 }
 
 
@@ -390,6 +392,7 @@ class Game extends Scene {
     layer: Layer;
     layer3: ScrollLayer3;
     player: Player;
+    score: number;
     speed: Vec2;
 
     constructor(app: App) {
@@ -410,10 +413,16 @@ class Game extends Scene {
 	this.layer3 = new ScrollLayer3(this.tilemap.bounds);
 	this.layer3.tilemap = this.tilemap;
 	this.layer3.tiles = TILES;
+	this.score = 0;
 	this.speed = new Vec2(2, 0);
 	this.player = new Player(this, this.screen.center());
 	this.player.scored.subscribe(() => {
+	    this.score += 1;
 	    this.speed.x += 1;
+	});
+	this.player.stopped.subscribe(() => {
+	    this.app.lockKeys();
+	    this.changeScene(new GameOver(this.app, this.score));
 	});
 	this.add(this.player);
 	this.tilemap.set(8, 2, T.BLOCK);
@@ -500,4 +509,19 @@ class Game extends Scene {
 	this.tilemap.shift(-vx, -vy);
     }
 
+}
+
+
+//  GameOver
+// 
+class GameOver extends HTMLScene {
+    
+    constructor(app: App, score: number) {
+	var html = `<strong>Game Over!</strong><p>Score: ${score}`;
+	super(app, html);
+    }
+
+    change() {
+	this.changeScene(new Game(this.app));
+    }
 }
