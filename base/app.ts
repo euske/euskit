@@ -439,12 +439,14 @@ function main<T extends Scene>(
     }
     
     function focus(e: FocusEvent) {
+	log("APP.focus");
 	if (!APP.active) {
 	    APP.focus();
 	}
     }
     
     function blur(e: FocusEvent) {
+	log("APP.blur");
 	if (APP.active) {
 	    APP.blur();
 	}
@@ -463,6 +465,7 @@ function main<T extends Scene>(
     }
 
     function resize(e: Event) {
+	log("APP.resize");
 	let bounds = elem.getBoundingClientRect();
 	let cw = bounds.width, ch = bounds.height;
 	if (canvas.height*bounds.width < canvas.width*bounds.height) {
