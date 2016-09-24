@@ -206,6 +206,7 @@ interface PlatformerActor extends PlanActor {
     canMove(v: Vec2): boolean;
     canJump(): boolean;
     canFall(): boolean;
+    isClearedFor(p: Vec2): boolean;
     getGridPos(): Vec2;
     getGridBox(): Rect;
     getGridBoxAt(p: Vec2): Rect;

@@ -154,12 +154,12 @@ class PlatformerActionRunner {
 	    
 	case ActionType.JUMP:
 	    if (actor.canJump() && actor.canFall() &&
-		actor.canJumpTo(cur, dst)) {
+		actor.isClearedFor(dst)) {
 		actor.jumpToward(dst);
 		// once you leap, the action is considered finished.
 		this.action = new PlatformerAction(
 		    dst, this.action.next, this.action.next.cost,
-		    null, ActionType.WALK);
+		    null, ActionType.FALL);
 		this.count = this.timeout;
 	    } else {
 		// not landed, holding something, or has no clearance.
@@ -457,7 +457,7 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 	//       #
 	return !this.stoppable.exists(this.tilemap.coord2map(rect));
     }
-
+    
     moveToward(p: Vec2) {
 	let p0 = this.pos;
 	let p1 = this.getGridBoxAt(p).center();
@@ -470,5 +470,17 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
     jumpToward(p: Vec2) {
 	this.setJump(Infinity);
 	this.moveToward(p);
+    }
+    
+    isClearedFor(p1: Vec2) {
+	let hb0 = this.getGridBox();
+	let hb1 = this.getGridBoxAt(p1);
+	let xc = (hb0.x < hb1.x)? hb1.x : hb1.right();
+	let x0 = Math.min(xc, hb0.x);
+	let x1 = Math.max(xc, hb0.right());
+	let y0 = Math.min(hb0.y, hb1.y);
+	let y1 = Math.max(hb0.bottom(), hb1.bottom());
+	let rect = new Rect(x0, y0, x1-x0, y1-y0);
+	return !this.stoppable.exists(this.tilemap.coord2map(rect));
     }
 }
