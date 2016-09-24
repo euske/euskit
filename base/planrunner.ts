@@ -258,9 +258,8 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
     mapSprite: PlanMapSprite = null;
     gridbox: Rect = null;
 
-    private _jumpfunc0: JumpFunc = null;
-    jumppts: Vec2[] = null;
-    fallpts: Vec2[] = null;
+    private _jumppts: Vec2[] = null;
+    private _fallpts: Vec2[] = null;
     timeout: number = 30;
     speed: number = 4;
     
@@ -302,19 +301,6 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 	    Math.ceil(hitbox.height/gs)*gs);
     }
 
-    updateJumpPts() {
-	if (this.jumpfunc !== null &&
-	    this.jumpfunc !== this._jumpfunc0) {
-	    this.jumppts = calcJumpRange(
-		this.profile.gridsize, this.speed, this.jumpfunc);
-	    this.fallpts = calcFallRange(
-		this.profile.gridsize, this.speed, this.jumpfunc);
-	    //log("jumppts="+this.jumppts);
-	    //log("fallpts="+this.fallpts);
-	    this._jumpfunc0 = this.jumpfunc;
-	}
-    }
-
     updateRangeMaps() {
 	this.obstacle = this.tilemap.getRangeMap(
 	    'obstacle', this.tilemap.isObstacle);
@@ -354,7 +340,6 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 	if (this.mapSprite !== null) {
 	    this.mapSprite.start = start;
 	}
-	this.updateJumpPts();
 	this.updateRangeMaps();
 	let plan = new PlatformerPlanMap(this.profile);
 	plan.initPlan(goal);
@@ -378,10 +363,18 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
     // PlatformerActor methods
     
     getJumpPoints() {
-	return this.jumppts;
+	if (this._jumppts === null) {
+	    this._jumppts = calcJumpRange(
+		this.profile.gridsize, this.speed, this.jumpfunc);
+	}
+	return this._jumppts;
     }
     getFallPoints() {
-	return this.fallpts;
+	if (this._fallpts === null) {
+	    this._fallpts = calcFallRange(
+		this.profile.gridsize, this.speed, this.jumpfunc);
+	}
+	return this._fallpts;
     }
     getGridPos() {
 	return this.profile.coord2grid(this.pos);
