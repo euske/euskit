@@ -1,9 +1,11 @@
-// Misc. routines.
+/** 
+ * Utility functions.
+ */
 
-// log(...): alias of window.console.log()
+/** Alias of window.console.log() */
 const log = window.console.log.bind(window.console);
 
-// assert(x, msg): raises an exception if the condition is not met.
+/** Raises an exception if the condition is not met. */
 function assert(x: boolean, msg="assertion error")
 {
     if (!x) {
@@ -11,7 +13,7 @@ function assert(x: boolean, msg="assertion error")
     }
 }
 
-// applyMixins(class, [baseclass, ...]): create a mixin class.
+/** Creates a mixin class. */
 function applyMixins(derivedCtor: any, baseCtors: any[]) {
     baseCtors.forEach(baseCtor => {
 	Object.getOwnPropertyNames(baseCtor.prototype).forEach(name => {
@@ -36,13 +38,13 @@ const upperbound = Math.min;
 // lowerbound(x, y):
 const lowerbound = Math.max;
 
-// clamp(v0, v, v1): limit the value within v0-v1.
+/** Limits the value so that v0 <= v <= v1. */
 function clamp(v0: number, v: number, v1: number)
 {
     return Math.min(Math.max(v, v0), v1);
 }
 
-// sign(v): return -1, 0, +1
+/** Returns -1, 0, or +1 depending on the sign. */
 function sign(v: number)
 {
     if (v < 0) {
@@ -54,14 +56,14 @@ function sign(v: number)
     }
 }
 
-// phase(t, duration, n): returns phase if t is within the on interval.
-function phase(t: number, duration: number, n=2)
+/** Returns the phase for t with the given interval. */
+function phase(t: number, interval: number, n=2)
 {
-    if (duration === 0) return 0;
-    return int(n*t/duration) % n;
+    if (interval === 0) return 0;
+    return int(n*t/interval) % n;
 }
 
-// rnd(a, b): returns a random number.
+/** Generates a random number in [0,a) or [a,b). */
 function frnd(a: number, b=0)
 {
     if (b < a) {
@@ -72,12 +74,17 @@ function frnd(a: number, b=0)
     return a+(Math.random()*(b-a));
 }
 
+/** Generates an integer random number in [0,a) or [a,b). */
 function rnd(a: number, b=0)
 {
     return int(frnd(a, b));
 }
 
-// format: pretty print a number.
+/** Returns a pretty printed string. 
+ * @param v Number to format.
+ * @param n Number of digits to fill.
+ * @param c Filler character.
+ */
 function format(v: number, n=3, c=' ')
 {
     let s = '';
@@ -92,13 +99,13 @@ function format(v: number, n=3, c=' ')
     return s;
 }
 
-// choice(a)
+/** Picks a random element. */
 function choice<T>(a: T[])
 {
     return a[rnd(a.length)];
 }
 
-// removeElement(a, obj): remove an element from a.
+/** Removes an element. */
 function removeElement<T>(a: T[], obj: T)
 {
     const i = a.indexOf(obj);
@@ -108,7 +115,10 @@ function removeElement<T>(a: T[], obj: T)
     return a;
 }
 
-// str2array(str): converts a string to an array.
+/** Creates an array from a string.
+ * @param s Source string.
+ * @param f Conversion function.
+ */
 function str2array(s: string, f: (c:string)=>number=parseInt)
 {
     const a = new Int32Array(s.length);
@@ -118,7 +128,10 @@ function str2array(s: string, f: (c:string)=>number=parseInt)
     return a;
 }
 
-// removeChildren(node, name): remove all child nodes with the given name.
+/** Removes all child DOM Nodes with the given name. 
+ * @param node Parent DOM Node.
+ * @param name Name of child Nodes to be removed.
+ */
 function removeChildren(node: Node, name: string)
 {
     name = name.toLowerCase();
@@ -131,7 +144,10 @@ function removeChildren(node: Node, name: string)
     }
 }
 
-// createCanvas(width, height): create a canvas with the given size.
+/** Creates a canvas with the given size.
+ * @param width Width.
+ * @param height Height.
+ */
 function createCanvas(width: number, height: number): HTMLCanvasElement
 {
     const canvas = document.createElement('canvas');
@@ -140,7 +156,9 @@ function createCanvas(width: number, height: number): HTMLCanvasElement
     return canvas;
 }
 
-// getEdgeyContext(canvas): returns a pixellated canvas 2D context.
+/** Creates a pixellated canvas 2D context.
+ * @param canvas Target Canvas object.
+ */
 function getEdgeyContext(canvas: HTMLCanvasElement): CanvasRenderingContext2D
 {
     const ctx = canvas.getContext('2d');
@@ -151,7 +169,7 @@ function getEdgeyContext(canvas: HTMLCanvasElement): CanvasRenderingContext2D
     return ctx;
 }
 
-// image2array(img): converts an image to 2D array.
+/** Creates a 2D array from an image. */
 function image2array(img: HTMLImageElement)
 {
     interface ColorMap {
@@ -186,7 +204,10 @@ function image2array(img: HTMLImageElement)
     return map;
 }
 
-// drawImageScaled: draw a scaled image.
+/** Draw a scaled image. 
+ *  When the destination width/height is negative, 
+ *  the image is flipped.
+ */
 function drawImageScaled(
     ctx: CanvasRenderingContext2D,
     src: HTMLImageElement,
@@ -203,15 +224,14 @@ function drawImageScaled(
     ctx.restore();
 }
 
-// playSound(sound): play a sound resource.
+/** Play a sound resource. */
 function playSound(sound: HTMLAudioElement, start=0)
 {
     sound.currentTime = start;
     sound.play();
 }
 
-// getKeySym(keyCode): convert directional keys to symbol.
-// cf. https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode
+/** Key Symbol */
 enum KeySym {
     Unknown = 0,
     Left,
@@ -221,13 +241,16 @@ enum KeySym {
     Action,
     Cancel,
 }
+
+/** Returns the key symbol for the key.
+ * cf. https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode
+ */
 function getKeySym(keyCode: number): KeySym
 {
     switch (keyCode) {
     case 37:			// LEFT
     case 65:			// A
     case 72:			// H
-    case 81:			// Q (AZERTY)
 	return KeySym.Left;
     case 39:			// RIGHT
     case 68:			// D
@@ -245,6 +268,7 @@ function getKeySym(keyCode: number): KeySym
     case 16:			// SHIFT
     case 32:			// SPACE
     case 90:			// Z
+    case 89:			// Y (QWERTZ)
 	return KeySym.Action;
     case 8:			// BACKSPACE
     case 27:			// ESCAPE
@@ -256,16 +280,23 @@ function getKeySym(keyCode: number): KeySym
 }
 
 
-//  Signal: an event system
-//
 interface Action {
     (...params:any[]): any;
 }
+
+/** Subscribable event object.
+ *  A Signal object can have multiple receivers.
+ */
 class Signal {
 
+    /** Sender object. */
     sender: any;
+    /** List of receivers. */
     receivers: Action[] = [];
-    
+
+    /** Creates a new Signal.
+     * @param sender Sender object.
+     */
     constructor(sender: any) {
 	this.sender = sender;
     }
@@ -274,14 +305,21 @@ class Signal {
 	return ('<Signal('+this.sender+') '+this.receivers+'>');
     }
   
+    /** Adds a receiver function for the signal.
+     * @param recv Receiver function to add.
+     */
     subscribe(recv: Action) {
 	this.receivers.push(recv);
     }
   
+    /** Removes a receiver function for the signal.
+     * @param recv Receiver function to remove.
+     */
     unsubscribe(recv: Action) {
 	removeElement(this.receivers, recv);
     }
-  
+
+    /** Notifies all the receivers with the given arguments. */
     fire(...params: any[]) {
 	for (let receiver of this.receivers) {
 	    const args = Array.prototype.slice.call(arguments);
@@ -292,15 +330,39 @@ class Signal {
 }
 
 
-//  Color
-//
+/** Convenience object for generating/mixing RGB values.
+ */
 class Color {
 
+    /** Red. */
     r: number;
+    /** Green. */
     g: number;
+    /** Blue. */
     b: number;
+    /** Alpha. */
     a: number;
 
+    /** Generates a Color value. 
+     * @param h Hue.
+     * @param v Brightness.
+     */
+    static generate(h: number, v: number=1.0) {
+	h *= 2*Math.PI;
+	v *= 0.5;
+	return new Color(
+	    (Math.sin(h)+1)*v,
+	    (Math.sin(h+2*Math.PI/3)+1)*v,
+	    (Math.sin(h+4*Math.PI/3)+1)*v,
+	    1.0);
+    }
+
+    /** Creates a new Color.
+     * @param r Red.
+     * @param g Green.
+     * @param b Blue.
+     * @param a Alpha.
+     */
     constructor(r: number, g: number, b: number, a=1.0) {
 	this.r = r;
 	this.g = g;
@@ -323,26 +385,25 @@ class Color {
 	}
     }
 
-    add(t: number) {
-	return new Color(this.r+t, this.g+t, this.b+t, this.a);
-    }
-    
+    /** Multiplies the brightness. */
     multiply(t: number) {
 	return new Color(this.r*t, this.g*t, this.b*t, this.a);
     }
-    
+
+    /** Changes the alpha value. */
     setAlpha(a: number) {
 	return new Color(this.r, this.g, this.b, a);
     }
 
-}
-
-function genColor(r: number, t: number=1.0) {
-    r *= 2*Math.PI;
-    t *= 0.5;
-    return new Color(
-	(Math.sin(r)+1)*t,
-	(Math.sin(r+2*Math.PI/3)+1)*t,
-	(Math.sin(r+4*Math.PI/3)+1)*t,
-	1.0);
+    /** Blends with another Color. 
+     * @param color Color to bland.
+     * @param t Blending ratio.
+     */
+    blend(color: Color, t: number) {
+	return new Color(
+	    this.r*(1-t) + color.r*t,
+	    this.g*(1-t) + color.g*t,
+	    this.b*(1-t) + color.b*t,
+	    this.a*(1-t) + color.a*t);
+    }
 }
