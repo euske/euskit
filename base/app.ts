@@ -467,6 +467,7 @@ function main<T extends Scene>(
     function resize(e: Event) {
 	log("APP.resize");
 	let bounds = elem.getBoundingClientRect();
+	// Center the canvas.
 	let cw = bounds.width, ch = bounds.height;
 	if (canvas.height*bounds.width < canvas.width*bounds.height) {
 	    ch = int(canvas.height * bounds.width / canvas.width);
@@ -479,7 +480,6 @@ function main<T extends Scene>(
 	canvas.style.top = ((bounds.height-ch)/2)+'px';
 	canvas.style.width = cw+'px';
 	canvas.style.height = ch+'px';
-	canvas.style['image-rendering' as any] = 'crisp-edges';
     }
     
     APP.init(new scene0(APP));

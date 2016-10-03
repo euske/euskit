@@ -10,16 +10,15 @@ class Layer {
 
     bounds: Rect = null;
     time: number = 0;
-    tasks: Task[];
-    sprites: Sprite[];
-    entities: Entity[];
+    tasks: Task[] = [];
+    sprites: Sprite[] = [];
+    entities: Entity[] = [];
     
     mouseFocus: Sprite = null;
     mouseActive: Sprite = null;
     clicked: Signal;
 
     constructor() {
-	this.init();
 	this.clicked = new Signal(this);
     }
 

@@ -714,8 +714,8 @@ class DialogBox extends Task {
 	}
     }
 
-    addPause(ticks: number) {
-	let task = new PauseTask(this, ticks);
+    addPause(duration: number) {
+	let task = new PauseTask(this, duration);
 	this.addTask(task);
 	return task;
     }

@@ -67,6 +67,39 @@ class Task {
 }
 
 
+//  SoundTask
+//
+class SoundTask extends Task {
+
+    startTime: number = 0;
+    sound: HTMLAudioElement;
+    
+    constructor(sound: HTMLAudioElement = null) {
+	super();
+	this.sound = sound;
+    }
+
+    start(layer: Layer) {
+	super.start(layer);
+	log("sound:start");
+	this.sound.currentTime = this.startTime;
+	this.sound.play();
+    }
+
+    update() {
+	super.update();
+	if (this.sound.ended) {
+	    this.stop();
+	}
+    }
+
+    stop() {
+	this.sound.pause();
+	super.stop();
+    }
+}
+
+
 //  Entity
 //  A character that can interact with other characters.
 //
