@@ -316,7 +316,6 @@ class App {
 
 
 //  Global App instance.
-var APP: App;
 var IMAGES: ImageAsset;
 var SOUNDS: SoundAsset;
 var TEXTS: TextAsset;
@@ -340,24 +339,24 @@ function main<T extends Scene>(
     let elem = document.getElementById(elemId);
     let size = new Vec2(width, height);
     let timer: number;
-    APP = new App(size, framerate, elem);
-    let canvas = APP.canvas;
+    let app = new App(size, framerate, elem);
+    let canvas = app.canvas;
 
     function tick() {
-	if (APP.active) {
-	    APP.tick();
-	    APP.repaint();
+	if (app.active) {
+	    app.tick();
+	    app.repaint();
 	}
     }
     
     function keydown(e: KeyboardEvent) {
-	if (APP.active) {
+	if (app.active) {
 	    switch (e.keyCode) {
 	    case 17:			// Control
 	    case 18:			// Meta
 		break;
 	    default:
-		APP.keydown(e);
+		app.keydown(e);
 		break;
 	    }
 	    switch (e.keyCode) {
@@ -381,68 +380,68 @@ function main<T extends Scene>(
     }
     
     function keyup(e: KeyboardEvent) {
-	if (APP.active) {
+	if (app.active) {
 	    switch (e.keyCode) {
 	    case 17:			// Control
 	    case 18:			// Meta
 		break;
 	    default:
-		APP.keyup(e);
+		app.keyup(e);
 		break;
 	    }
 	}
     }
     
     function mousedown(e: MouseEvent) {
-	if (APP.active) {
-	    APP.mousedown(e);
+	if (app.active) {
+	    app.mousedown(e);
 	}
     }
     
     function mouseup(e: MouseEvent) {
-	if (APP.active) {
-	    APP.mouseup(e);
+	if (app.active) {
+	    app.mouseup(e);
 	}
     }
     
     function mousemove(e: MouseEvent) {
-	if (APP.active) {
-	    APP.mousemove(e);
+	if (app.active) {
+	    app.mousemove(e);
 	}
     }
     
     function touchstart(e: TouchEvent) {
-	if (APP.active) {
-	    APP.touchstart(e);
+	if (app.active) {
+	    app.touchstart(e);
 	    e.preventDefault();
 	}
     }
     
     function touchend(e: TouchEvent) {
-	if (APP.active) {
-	    APP.touchend(e);
+	if (app.active) {
+	    app.touchend(e);
 	    e.preventDefault();
 	}
     }
     
     function touchmove(e: TouchEvent) {
-	if (APP.active) {
-	    APP.touchmove(e);
+	if (app.active) {
+	    app.touchmove(e);
 	    e.preventDefault();
 	}
     }
     
     function focus(e: FocusEvent) {
-	log("APP.focus");
-	if (!APP.active) {
-	    APP.focus();
+	log("app.focus");
+	if (!app.active) {
+	    app.focus();
 	}
     }
     
     function blur(e: FocusEvent) {
-	log("APP.blur");
-	if (APP.active) {
-	    APP.blur();
+	log("app.blur");
+	if (app.active) {
+	    app.blur();
 	}
 	let size = Math.min(canvas.width, canvas.height)/8;
 	const ctx = canvas.getContext('2d');
@@ -459,7 +458,7 @@ function main<T extends Scene>(
     }
 
     function resize(e: Event) {
-	log("APP.resize");
+	log("app.resize");
 	let bounds = elem.getBoundingClientRect();
 	// Center the canvas.
 	let cw = bounds.width, ch = bounds.height;
@@ -476,8 +475,8 @@ function main<T extends Scene>(
 	canvas.style.height = ch+'px';
     }
     
-    APP.init(new scene0(APP));
-    APP.focus();
+    app.init(new scene0(app));
+    app.focus();
     elem.appendChild(canvas);
     elem.addEventListener('mousedown', mousedown, false);
     elem.addEventListener('mouseup', mouseup, false);
