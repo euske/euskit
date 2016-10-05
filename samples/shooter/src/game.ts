@@ -175,8 +175,7 @@ class Shooter extends GameScene {
 
     constructor(app: App) {
 	super(app);
-	this.scoreBox = new TextBox(this.screen.inflate(-8,-8));
-	this.scoreBox.font = FONT;
+	this.scoreBox = new TextBox(this.screen.inflate(-8,-8), FONT);
     }
     
     init() {

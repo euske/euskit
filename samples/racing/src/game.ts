@@ -148,10 +148,8 @@ class Racing extends GameScene {
 
     constructor(app: App) {
 	super(app);
-	this.scoreBox = new TextBox(this.screen.inflate(-2,-2));
-	this.scoreBox.font = FONT;
-	this.highScoreBox = new TextBox(this.screen.inflate(-2,-2));
-	this.highScoreBox.font = FONT;
+	this.scoreBox = new TextBox(this.screen.inflate(-2,-2), FONT);
+	this.highScoreBox = new TextBox(this.screen.inflate(-2,-2), FONT);
 	this.highScore = -1;
     }
     

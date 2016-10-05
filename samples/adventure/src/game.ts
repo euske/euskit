@@ -36,13 +36,11 @@ class PictureScene extends GameScene {
 	let width = this.screen.width-16;
 	let height = (lineheight+linespace)*6-linespace+padding*2;
 	let rect = this.screen.resize(width, height, 0, -1).move(0,-8);
-	let textbox = new TextBox(rect);
-	textbox.font = FONT;
+	let textbox = new TextBox(rect, FONT);
 	textbox.padding = padding;
 	textbox.linespace = linespace;
 	textbox.background = 'rgba(0,0,0,0.5)'
-	this.dialogBox = new DialogBox(textbox);
-	this.dialogBox.hifont = HIFONT;
+	this.dialogBox = new DialogBox(textbox, HIFONT);
     }
     
     init() {

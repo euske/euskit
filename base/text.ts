@@ -139,16 +139,17 @@ class TextSegment {
 class TextBox extends Sprite {
 
     frame: Rect;
-    font: Font = null;
+    font: Font;
     header: string = '';
     linespace: number = 0;
     padding: number = 0;
     background: string = null;
     segments: TextSegment[] = [];
     
-    constructor(frame: Rect) {
+    constructor(frame: Rect, font: Font=null) {
 	super();
 	this.frame = frame;
+	this.font = font;
     }
 
     toString() {
@@ -340,8 +341,7 @@ class BannerBox extends Task {
     
     constructor(frame: Rect, font: Font, text: string) {
 	super();
-	this.textbox = new TextBox(frame);
-	this.textbox.font = font;
+	this.textbox = new TextBox(frame, font);
 	this.textbox.putText([text], 'center', 'center');
     }
 
@@ -601,15 +601,16 @@ class MenuTask extends TextTask {
 class DialogBox extends Task {
 
     textbox: TextBox;
+    hifont: Font;
     speed: number = 0;
     autohide: boolean = false;
     sound: HTMLAudioElement = null;
     queue: TextTask[] = [];
-    hifont: Font = null;
     
-    constructor(textbox: TextBox) {
+    constructor(textbox: TextBox, hifont: Font=null) {
 	super();
 	this.textbox = textbox;
+	this.hifont = hifont;
     }
 
     clear() {
