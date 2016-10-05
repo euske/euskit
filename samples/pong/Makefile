@@ -1,9 +1,11 @@
 # Makefile
+RM=rm -f
+TSC=tsc
 
 all:
-	cd src; $(MAKE) $@
 	cd assets; $(MAKE) $@
+	$(TSC)
 
 clean:
-	-cd src; $(MAKE) $@
 #	-cd assets; $(MAKE) $@
+	-$(RM) -r js
