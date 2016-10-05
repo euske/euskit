@@ -19,7 +19,7 @@
 let SPRITES: SpriteSheet;
 let TILES: SpriteSheet;
 addInitHook(() => {
-    PlanningEntity.debug = true;
+    //PlanningEntity.debug = true;
     SPRITES = new ImageSpriteSheet(
 	IMAGES['sprites'], new Vec2(32,32), new Vec2(16,16));
     TILES = new ImageSpriteSheet(
@@ -111,6 +111,19 @@ class Player extends PlatformerEntity {
     setMove(v: Vec2) {
 	this.usermove = v.scale(8);
     }
+
+    collidedWith(entity: Entity) {
+	super.collidedWith(entity);
+	if (entity instanceof Thingy) {
+	    playSound(SOUNDS['pick']);
+	    entity.stop();
+	    let yay = new Projectile(this.pos.move(0,-16));
+	    yay.sprite.imgsrc = SPRITES.get(3);
+	    yay.movement = new Vec2(0,-4);
+	    yay.lifetime = 0.5;
+	    this.scene.add(yay);
+	}
+    }
 }
 applyMixins(Player, [WorldObject]);
 
@@ -147,8 +160,28 @@ class Monster extends PlanningEntity {
 applyMixins(Monster, [WorldObject]);
 
 
+//  Thingy
+//
+class Thingy extends Entity {
+    
+    constructor(pos: Vec2) {
+	super(pos);
+	this.sprite.imgsrc = SPRITES.get(2);
+	this.collider = this.sprite.imgsrc.dstRect.inflate(-4, -4);
+    }
+}
+
+
 //  Game
 // 
+enum T {
+    NONE = 0,
+    BLOCK = 1,
+    LADDER = 2,
+    THINGY = 3,
+    ENEMY = 8,
+    PLAYER = 9,
+}
 class Game extends GameScene {
 
     tilemap: TileMap;
@@ -164,34 +197,45 @@ class Game extends GameScene {
 	    "00000000000000000000",
 	    "00000000000000000000",
 
-	    "00000000000000000000",
+	    "00003000000000000000",
 	    "00001000000000000000",
 	    "00000100002000000000",
-	    "00000010082110000000",
+	    "00000010092110000000",
 	    "00110000112000110000",
 	    
 	    "00000001002001000100",
 	    "00000011002001100001",
 	    "00010000011201110000",
-	    "00111000090201111000",
+	    "00111000080201111000",
 	    "11111111111111111111",
 	];
 	this.tilemap = new TileMap(32, MAP.map((v:string) => { return str2array(v); }));
-	this.tilemap.isObstacle = ((c:number) => { return c == 1; });
-	this.tilemap.isGrabbable = ((c:number) => { return c == 2; });
-	this.tilemap.isStoppable = ((c:number) => { return c == 1 || c == 2; });
+	this.tilemap.isObstacle = ((c:number) => { return c == T.BLOCK; });
+	this.tilemap.isGrabbable = ((c:number) => { return c == T.LADDER; });
+	this.tilemap.isStoppable = ((c:number) => { return c == T.BLOCK || c == T.LADDER; });
 	this.profile = new GridProfile(this.tilemap);
 
 	// Place the player.
-	let p = this.tilemap.findTile((c:number) => { return c == 8; });
+	let p = this.tilemap.findTile((c:number) => { return c == T.PLAYER; });
 	this.player = new Player(this, this.tilemap.map2coord(p).center());
 	this.add(this.player);
 
-	// Place a monster.
-	let q = this.tilemap.findTile((c:number) => { return c == 9; });
-	let monster = new Monster(this, this.tilemap.map2coord(q).center());
-	monster.target = this.player;
-	this.add(monster);
+	// Place monsters and stuff.
+	this.tilemap.apply((x:number, y:number, c:number) => {
+	    let rect = this.tilemap.map2coord(new Vec2(x,y));
+	    switch (c) {
+	    case T.THINGY:
+		let thingy = new Thingy(rect.center());
+		this.add(thingy);
+		break;
+	    case T.ENEMY:
+		let monster = new Monster(this, rect.center());
+		monster.target = this.player;
+		this.add(monster);
+		break;
+	    }
+	    return false;
+	});
     }
 
     tick(t: number) {
