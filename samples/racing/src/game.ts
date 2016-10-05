@@ -12,7 +12,15 @@
 //  A simple racing game with a circular map.
 //
 
-let SPRITES:ImageSpriteSheet = null;
+
+//  Initialize the resources.
+let FONT: Font;
+let SPRITES:ImageSpriteSheet;
+addInitHook(() => {
+    FONT = new Font(IMAGES['font'], 'white');
+    SPRITES = new ImageSpriteSheet(
+	IMAGES['sprites'], new Vec2(16,32), new Vec2(0,0));
+});
 
 
 //  Player
@@ -140,12 +148,10 @@ class Racing extends GameScene {
 
     constructor(app: App) {
 	super(app);
-	SPRITES = new ImageSpriteSheet(IMAGES['sprites'], new Vec2(16,32), new Vec2(0,0));
-	let font = new ShadowFont(IMAGES['font'], 'white');
 	this.scoreBox = new TextBox(this.screen.inflate(-2,-2));
-	this.scoreBox.font = font;
+	this.scoreBox.font = FONT;
 	this.highScoreBox = new TextBox(this.screen.inflate(-2,-2));
-	this.highScoreBox.font = font;
+	this.highScoreBox.font = FONT;
 	this.highScore = -1;
     }
     

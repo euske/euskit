@@ -10,7 +10,15 @@
 //  A basic shoot-em up using multiple enemy types.
 //
 
-let SPRITES:ImageSpriteSheet = null;
+
+//  Initialize the resources.
+let FONT: Font;
+let SPRITES:ImageSpriteSheet;
+addInitHook(() => {
+    FONT = new Font(IMAGES['font'], 'white');
+    SPRITES = new ImageSpriteSheet(
+	IMAGES['sprites'], new Vec2(16,16), new Vec2(8,8));
+});
 
 
 //  Bullet
@@ -167,10 +175,8 @@ class Shooter extends GameScene {
 
     constructor(app: App) {
 	super(app);
-	SPRITES = new ImageSpriteSheet(
-	    IMAGES['sprites'], new Vec2(16,16), new Vec2(8,8));
 	this.scoreBox = new TextBox(this.screen.inflate(-8,-8));
-	this.scoreBox.font = new Font(IMAGES['font'], 'white');
+	this.scoreBox.font = FONT;
     }
     
     init() {

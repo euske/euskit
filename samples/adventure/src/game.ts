@@ -8,8 +8,15 @@
 //
 //  A simple text adventure game with multiple scenes.
 //
+
+
+//  Initialize the resources.
 let FONT: Font;
 let HIFONT: Font;
+addInitHook(() => {
+    FONT = new Font(IMAGES['font'], 'white');
+    HIFONT = new InvertedFont(IMAGES['font'], 'white');
+});
 
 
 //  PictureScene
@@ -172,12 +179,6 @@ class Scene3 extends PictureScene {
 //  Adventure
 // 
 class Adventure extends Scene {
-    
-    constructor(app: App) {
-	super(app);
-	FONT = new Font(IMAGES['font'], 'white');
-	HIFONT = new InvertedFont(IMAGES['font'], 'white');
-    }
     
     init() {
 	super.init();

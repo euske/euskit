@@ -9,6 +9,16 @@
 ///
 
 
+//  Initialize the resources.
+let FONT: Font;
+let SPRITES:ImageSpriteSheet;
+addInitHook(() => {
+    FONT = new Font(IMAGES['font'], 'white');
+    SPRITES = new ImageSpriteSheet(
+	IMAGES['sprites'], new Vec2(16,16), new Vec2(8,8));
+});
+
+
 //  Player
 //
 class Player extends Entity {
@@ -19,7 +29,7 @@ class Player extends Entity {
     constructor(scene: Game, pos: Vec2) {
 	super(pos);
 	this.scene = scene;
-	this.sprite.imgsrc = scene.sprites.get(0);
+	this.sprite.imgsrc = SPRITES.get(0);
 	this.collider = this.sprite.imgsrc.dstRect;
 	this.usermove = new Vec2();
     }
@@ -40,13 +50,6 @@ class Player extends Entity {
 class Game extends GameScene {
 
     player: Player;
-    sprites: SpriteSheet;
-
-    constructor(app: App) {
-	super(app);
-	this.sprites = new ImageSpriteSheet(
-	    IMAGES['sprites'], new Vec2(16,16), new Vec2(8,8));
-    }
     
     init() {
 	super.init();

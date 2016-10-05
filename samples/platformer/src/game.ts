@@ -15,7 +15,16 @@
 //
 
 
-PlanningEntity.debug = true;
+//  Initialize the resources.
+let SPRITES: SpriteSheet;
+let TILES: SpriteSheet;
+addInitHook(() => {
+    PlanningEntity.debug = true;
+    SPRITES = new ImageSpriteSheet(
+	IMAGES['sprites'], new Vec2(32,32), new Vec2(16,16));
+    TILES = new ImageSpriteSheet(
+	IMAGES['tiles'], new Vec2(48,48), new Vec2(0,16));
+});
 const JUMPFUNC = (vy:number, t:number) => {
     return (0 <= t && t <= 6)? -8 : vy+2;
 };
@@ -45,7 +54,7 @@ class Player extends PlatformerEntity {
 
     constructor(scene: Game, pos: Vec2) {
 	super(scene.tilemap, pos);
-	this.sprite.imgsrc = scene.sprites.get(0);
+	this.sprite.imgsrc = SPRITES.get(0);
 	this.collider = this.sprite.imgsrc.dstRect;
 	this.scene = scene;
 	this.jumpfunc = JUMPFUNC;
@@ -116,7 +125,7 @@ class Monster extends PlanningEntity {
     constructor(scene: Game, pos: Vec2) {
 	super(scene.profile, scene.tilemap, pos);
 	this.scene = scene;
-	this.sprite.imgsrc = scene.sprites.get(4);
+	this.sprite.imgsrc = SPRITES.get(4);
 	this.collider = this.sprite.imgsrc.dstRect;
 	this.jumpfunc = JUMPFUNC;
 	this.maxspeed = MAXSPEED;
@@ -145,16 +154,6 @@ class Game extends GameScene {
     tilemap: TileMap;
     player: Player;
     profile: GridProfile;
-    sprites: SpriteSheet;
-    tiles: SpriteSheet;
-
-    constructor(app: App) {
-	super(app);
-	this.sprites = new ImageSpriteSheet(
-	    IMAGES['sprites'], new Vec2(32,32), new Vec2(16,16));
-	this.tiles = new ImageSpriteSheet(
-	    IMAGES['tiles'], new Vec2(48,48), new Vec2(0,16));
-    }
     
     init() {
 	super.init();
@@ -211,11 +210,11 @@ class Game extends GameScene {
 	ctx.fillRect(bx, by, this.screen.width, this.screen.height);
 	// Render the background tiles.
 	this.tilemap.renderWindowFromBottomLeft(
-	    ctx, bx, by, this.layer.window, this.tiles,
+	    ctx, bx, by, this.layer.window, TILES,
 	    (x,y,c) => { return (c != 1)? 0 : -1; });
 	// Render the map tiles.
 	this.tilemap.renderWindowFromBottomLeft(
-	    ctx, bx, by, this.layer.window, this.tiles,
+	    ctx, bx, by, this.layer.window, TILES,
 	    (x,y,c) => { return (c == 1 || c == 2)? c : -1; });
 	super.render(ctx, bx, by);
     }

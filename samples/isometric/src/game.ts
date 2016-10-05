@@ -243,10 +243,19 @@ enum S {
     THINGY = 2,
     YAY = 3,
 }
-let SPRITES: SpriteSheet = null;
-let TILES: SpriteSheet = null;
+//  Initialize the resources.
+let FONT: Font;
+let SPRITES: SpriteSheet;
+let TILES: SpriteSheet;
 let isBlock = (c:number) => { return c == T.BLOCK; };
 let isWall = (c:number) => { return c == T.WALL; };
+addInitHook(() => {
+    FONT = new ShadowFont(IMAGES['font'], 'white'),
+    SPRITES = new ImageSpriteSheet(
+	IMAGES['sprites'], new Vec2(32,32), new Vec2(16,16));
+    TILES = new ImageSpriteSheet(
+	IMAGES['tiles'], new Vec2(48,48), new Vec2(0,8));
+});
 
 
 //  Thingy
@@ -394,14 +403,6 @@ class Game extends Scene {
     player: Player;
     score: number;
     speed: Vec2;
-
-    constructor(app: App) {
-	super(app);
-	SPRITES = new ImageSpriteSheet(
-	    IMAGES['sprites'], new Vec2(32,32), new Vec2(16,16));
-	TILES = new ImageSpriteSheet(
-	    IMAGES['tiles'], new Vec2(48,48), new Vec2(0,8));
-    }
     
     init() {
 	super.init();
@@ -429,8 +430,7 @@ class Game extends Scene {
 	
 	// show a banner.
 	let banner = new BannerBox(
-	    this.screen, 
-	    new ShadowFont(IMAGES['font'], 'white'),
+	    this.screen, FONT,
 	    'GET ALL TEH DAMN THINGIES!');
 	banner.lifetime = 2.0;
 	banner.interval = 0.5;

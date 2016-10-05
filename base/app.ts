@@ -4,17 +4,6 @@
 /// <reference path="scene.ts" />
 
 
-interface ImageAsset {
-    [index: string]: HTMLImageElement;
-}
-interface SoundAsset {
-    [index: string]: HTMLAudioElement;
-}
-interface TextAsset {
-    [index: string]: HTMLDivElement;
-}
-
-
 //  App
 //  handles the event loop and global state management.
 //  It also has shared resources (images, audios, etc.)
@@ -315,10 +304,29 @@ class App {
 }
 
 
-//  Global App instance.
-var IMAGES: ImageAsset;
-var SOUNDS: SoundAsset;
-var TEXTS: TextAsset;
+//  Global asset variables.
+interface ImageAsset {
+    [index: string]: HTMLImageElement;
+}
+interface SoundAsset {
+    [index: string]: HTMLAudioElement;
+}
+interface TextAsset {
+    [index: string]: HTMLDivElement;
+}
+interface InitHook {
+    (): any;
+}
+
+var IMAGES: ImageAsset = {};
+var SOUNDS: SoundAsset = {};
+var TEXTS: TextAsset = {};
+var HOOKS: InitHook[] = [];
+
+// addInitHook: adds an initialization hoook.
+function addInitHook(hook: InitHook) {
+    HOOKS.push(hook);
+}
 
 // main: sets up the browser interaction.
 function main<T extends Scene>(
@@ -333,12 +341,8 @@ function main<T extends Scene>(
 	return d;
     }
   
-    IMAGES = getprops(document.getElementsByTagName('img')) as ImageAsset;
-    SOUNDS = getprops(document.getElementsByTagName('audio')) as SoundAsset;
-    TEXTS = getprops(document.getElementsByClassName('label')) as TextAsset;
     let elem = document.getElementById(elemId);
     let size = new Vec2(width, height);
-    let timer: number;
     let app = new App(size, framerate, elem);
     let canvas = app.canvas;
 
@@ -475,6 +479,13 @@ function main<T extends Scene>(
 	canvas.style.height = ch+'px';
     }
     
+    IMAGES = getprops(document.getElementsByTagName('img')) as ImageAsset;
+    SOUNDS = getprops(document.getElementsByTagName('audio')) as SoundAsset;
+    TEXTS = getprops(document.getElementsByClassName('label')) as TextAsset;
+    for (let hook of HOOKS) {
+	hook();
+    }
+    
     app.init(new scene0(app));
     app.focus();
     elem.appendChild(canvas);
@@ -491,6 +502,6 @@ function main<T extends Scene>(
     window.addEventListener('keydown', keydown);
     window.addEventListener('keyup', keyup);
     window.addEventListener('resize', resize);
-    timer = window.setInterval(tick, 1000/framerate);
+    window.setInterval(tick, 1000/framerate);
     window.focus();
 }
