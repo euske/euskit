@@ -140,8 +140,8 @@ class Racing extends GameScene {
 
     constructor(app: App) {
 	super(app);
-	SPRITES = new ImageSpriteSheet(APP.images['sprites'], new Vec2(16,32), new Vec2(0,0));
-	let font = new ShadowFont(APP.images['font'], 'white');
+	SPRITES = new ImageSpriteSheet(IMAGES['sprites'], new Vec2(16,32), new Vec2(0,0));
+	let font = new ShadowFont(IMAGES['font'], 'white');
 	this.scoreBox = new TextBox(this.screen.inflate(-2,-2));
 	this.scoreBox.font = font;
 	this.highScoreBox = new TextBox(this.screen.inflate(-2,-2));
@@ -160,7 +160,7 @@ class Racing extends GameScene {
 
 	this.score = 0;
 	this.updateScore();
-	this.app.setMusic(this.app.audios['music'], 0, 19.1);
+	this.app.setMusic(SOUNDS['music'], 0, 19.1);
     }
 
     tick(t: number) {
@@ -181,7 +181,7 @@ class Racing extends GameScene {
 		blinker.stopped.subscribe(() => { this.init(); });
 		this.add(blinker);
 		this.app.setMusic();
-		playSound(this.app.audios['plunge']);
+		playSound(SOUNDS['plunge']);
 	    }
 	}
     }

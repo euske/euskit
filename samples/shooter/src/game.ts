@@ -62,7 +62,7 @@ class Player extends Entity {
 		bullet.movement = new Vec2(8, 0);
 		bullet.frame = this.scene.screen;
 		this.layer.addTask(bullet);
-		playSound(APP.audios['pew']);
+		playSound(SOUNDS['pew']);
 		this.nextfire = 4;
 	    }
 	    this.nextfire--;
@@ -88,7 +88,7 @@ class Player extends Entity {
 
     collidedWith(entity: Entity) {
 	if (entity instanceof EnemyBase) {
-	    playSound(APP.audios['explosion']);
+	    playSound(SOUNDS['explosion']);
 	    this.stop();
 	    this.chain(new Explosion(this.pos));
 	}
@@ -112,7 +112,7 @@ class EnemyBase extends Projectile {
     
     collidedWith(entity: Entity) {
 	if (entity instanceof Bullet) {
-	    playSound(APP.audios['explosion']);
+	    playSound(SOUNDS['explosion']);
 	    this.stop();
 	    this.killed.fire();
 	    this.chain(new Explosion(this.pos));
@@ -168,9 +168,9 @@ class Shooter extends GameScene {
     constructor(app: App) {
 	super(app);
 	SPRITES = new ImageSpriteSheet(
-	    APP.images['sprites'], new Vec2(16,16), new Vec2(8,8));
+	    IMAGES['sprites'], new Vec2(16,16), new Vec2(8,8));
 	this.scoreBox = new TextBox(this.screen.inflate(-8,-8));
-	this.scoreBox.font = new Font(APP.images['font'], 'white');
+	this.scoreBox.font = new Font(IMAGES['font'], 'white');
     }
     
     init() {

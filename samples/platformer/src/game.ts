@@ -95,7 +95,7 @@ class Player extends PlatformerEntity {
 	}
 	super.setJump(jumpend);
 	if (0 < jumpend && this.isJumping()) {
-	    playSound(APP.audios['jump']);
+	    playSound(SOUNDS['jump']);
 	}
     }
     
@@ -151,9 +151,9 @@ class Game extends GameScene {
     constructor(app: App) {
 	super(app);
 	this.sprites = new ImageSpriteSheet(
-	    APP.images['sprites'], new Vec2(32,32), new Vec2(16,16));
+	    IMAGES['sprites'], new Vec2(32,32), new Vec2(16,16));
 	this.tiles = new ImageSpriteSheet(
-	    APP.images['tiles'], new Vec2(48,48), new Vec2(0,16));
+	    IMAGES['tiles'], new Vec2(48,48), new Vec2(0,16));
     }
     
     init() {

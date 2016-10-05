@@ -45,7 +45,7 @@ class Game extends GameScene {
     constructor(app: App) {
 	super(app);
 	this.sprites = new ImageSpriteSheet(
-	    APP.images['sprites'], new Vec2(16,16), new Vec2(8,8));
+	    IMAGES['sprites'], new Vec2(16,16), new Vec2(8,8));
     }
     
     init() {

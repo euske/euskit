@@ -398,9 +398,9 @@ class Game extends Scene {
     constructor(app: App) {
 	super(app);
 	SPRITES = new ImageSpriteSheet(
-	    app.images['sprites'], new Vec2(32,32), new Vec2(16,16));
+	    IMAGES['sprites'], new Vec2(32,32), new Vec2(16,16));
 	TILES = new ImageSpriteSheet(
-	    app.images['tiles'], new Vec2(48,48), new Vec2(0,8));
+	    IMAGES['tiles'], new Vec2(48,48), new Vec2(0,8));
     }
     
     init() {
@@ -430,7 +430,7 @@ class Game extends Scene {
 	// show a banner.
 	let banner = new BannerBox(
 	    this.screen, 
-	    new ShadowFont(APP.images['font'], 'white'),
+	    new ShadowFont(IMAGES['font'], 'white'),
 	    'GET ALL TEH DAMN THINGIES!');
 	banner.lifetime = 2.0;
 	banner.interval = 0.5;

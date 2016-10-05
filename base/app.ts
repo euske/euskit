@@ -4,13 +4,13 @@
 /// <reference path="scene.ts" />
 
 
-interface ImageDictionary {
+interface ImageAsset {
     [index: string]: HTMLImageElement;
 }
-interface AudioDictionary {
+interface SoundAsset {
     [index: string]: HTMLAudioElement;
 }
-interface DivDictionary {
+interface TextAsset {
     [index: string]: HTMLDivElement;
 }
 
@@ -24,9 +24,6 @@ class App {
     size: Vec2;
     framerate: number;
     elem: HTMLElement;
-    images: ImageDictionary;
-    audios: AudioDictionary;
-    labels: DivDictionary;
 
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
@@ -54,16 +51,10 @@ class App {
     
     constructor(size: Vec2,
 		framerate: number,
-		elem: HTMLElement,
-		images: ImageDictionary,
-		audios: AudioDictionary,
-		labels: DivDictionary) {
+		elem: HTMLElement) {
 	this.size = size;
 	this.framerate = framerate;
 	this.elem = elem;
-	this.images = images;
-	this.audios = audios;
-	this.labels = labels;
 
 	// Initialize the off-screen bitmap.
 	this.canvas = createCanvas(this.size.x, this.size.y);
@@ -326,6 +317,9 @@ class App {
 
 //  Global App instance.
 var APP: App;
+var IMAGES: ImageAsset;
+var SOUNDS: SoundAsset;
+var TEXTS: TextAsset;
 
 // main: sets up the browser interaction.
 function main<T extends Scene>(
@@ -340,13 +334,13 @@ function main<T extends Scene>(
 	return d;
     }
   
-    let images = getprops(document.getElementsByTagName('img')) as ImageDictionary;
-    let audios = getprops(document.getElementsByTagName('audio')) as AudioDictionary;
-    let labels = getprops(document.getElementsByClassName('label')) as DivDictionary;
+    IMAGES = getprops(document.getElementsByTagName('img')) as ImageAsset;
+    SOUNDS = getprops(document.getElementsByTagName('audio')) as SoundAsset;
+    TEXTS = getprops(document.getElementsByClassName('label')) as TextAsset;
     let elem = document.getElementById(elemId);
     let size = new Vec2(width, height);
     let timer: number;
-    APP = new App(size, framerate, elem, images, audios, labels);
+    APP = new App(size, framerate, elem);
     let canvas = APP.canvas;
 
     function tick() {
