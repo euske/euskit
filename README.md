@@ -34,7 +34,7 @@ class Paddle extends Entity {
         // Initializes the position and shape.
         super(screen.anchor(0,-1).move(0,-20));
         let bounds = new Rect(-20,-5,40,10);
-        this.imgsrc = new DummyImageSource('green', bounds);
+        this.sprite.imgsrc = new FillImageSource('green', bounds);
         this.collider = bounds;
         this.screen = screen;
         this.vx = 0;
@@ -43,7 +43,7 @@ class Paddle extends Entity {
     update() {
         // Updates the position.
         let pos = this.pos.move(this.vx*4, 0);
-        let bounds = this.getBounds(pos);
+        let bounds = this.getCollider(pos).getAABB();
         if (0 <= bounds.x && bounds.right() <= this.screen.right()) {
             this.pos = pos;
         }
@@ -59,7 +59,7 @@ class Ball extends Entity {
         // Initializes the position and shape.
         super(screen.center());
         let bounds = new Rect(-5,-5,10,10);
-        this.imgsrc = new DummyImageSource('white', bounds);
+        this.sprite.imgsrc = new FillImageSource('white', bounds);
         this.collider = bounds;
         this.screen = screen;
         this.v = new Vec2(rnd(2)*8-4, -4);
@@ -68,7 +68,7 @@ class Ball extends Entity {
     update() {
         // Updates the position.
         let pos = this.pos.add(this.v);
-        let bounds = this.getBounds(pos);
+        let bounds = this.getCollider(pos).getAABB();
         if (bounds.x < 0 || this.screen.right() < bounds.right()) {
             this.v.x = -this.v.x;
         }
@@ -78,7 +78,7 @@ class Ball extends Entity {
         this.pos = this.pos.add(this.v);
     }
 
-    collide(entity: Entity) {
+    collidedWith(entity: Entity) {
         // Bounces when hit the paddle.
         if (entity instanceof Paddle) {
             this.v.y = -4;
@@ -135,14 +135,7 @@ Here's the HTML for it:
 <body bgcolor="black" text="white" onload="main(Pong);">
 <h1 align=center>Pong</h1>
 <div style="margin: 1em;" align=center>
-  <div style="position:relative; width:640px; height:480px;">
-    <canvas id="game" 
-            style="position:absolute; top:0; left:0; background:gray;"
-            width="640" height="480"></canvas>
-  </div>
-</div>
-<div style="display:none;">
-  <img id="font" src="assets/font.png">
+  <div id="game" style="position:relative; width:640px; height:480px;"></div>
 </div>
 </body>
 ```
