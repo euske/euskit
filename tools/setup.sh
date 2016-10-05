@@ -27,7 +27,7 @@ cp "$basedir"/base/*.ts "$dst"/base
 cp "$basedir"/skel/.gitignore "$dst"
 cp "$basedir"/skel/Makefile "$dst"
 cp "$basedir"/skel/index.html "$dst"
-cp "$basedir"/skel/src/Makefile "$dst"/src
+cp "$basedir"/skel/tsconfig.json "$dst"
 cp "$basedir"/skel/assets/.gitignore "$dst"/assets
 cp "$basedir"/skel/assets/* "$dst"/assets
 sed 's+^/// <reference path="../../base+/// <reference path="../base+' \
