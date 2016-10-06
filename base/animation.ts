@@ -69,7 +69,7 @@ class Blinker extends Task {
     
     update() {
 	super.update();
-	this.sprite.visible = (phase(this.time, this.interval) == 0);
+	this.sprite.visible = (phase(this.getTime(), this.interval) == 0);
     }
 }
 
@@ -103,7 +103,7 @@ class Tweener extends Animator {
     update() {
 	super.update();
 	if (this.srcpos !== null && this.dstpos !== null) {
-	    let t = this.time / this.lifetime;
+	    let t = this.getTime() / this.lifetime;
 	    this.entity.pos = this.getPos(t);
 	}
     }

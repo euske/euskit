@@ -348,7 +348,7 @@ class BannerBox extends Task {
     update() {
 	super.update();
 	if (0 < this.interval) {
-	    this.textbox.visible = (phase(this.time, this.interval) != 0);
+	    this.textbox.visible = (phase(this.getTime(), this.interval) != 0);
 	}
     }
 }
@@ -428,7 +428,7 @@ class DisplayTask extends TextTask {
 	} else if (this.speed === 0) {
 	    this.ff();
 	} else {
-	    let n = this.time*this.speed;
+	    let n = this.getTime()*this.speed;
 	    let sound = false;
 	    while (this._index < n) {
 		let c = this.text.substr(this._index, 1);

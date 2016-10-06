@@ -12,8 +12,7 @@ class Task {
     running: boolean = true;
     layer: Layer = null;
     lifetime: number = Infinity;
-    time0: number = 0;
-    time: number = 0;
+    startTime: number = 0;
     stopped: Signal;
 
     constructor() {
@@ -21,12 +20,15 @@ class Task {
     }
 
     toString() {
-	return '<Task: time='+this.time+'>';
+	return '<Task: time='+this.getTime()+'>';
+    }
+
+    getTime() {
+	return (this.layer.time - this.startTime);
     }
   
     start() {
-	this.time0 = this.layer.time;
-	this.time = 0;
+	this.startTime = this.layer.time;
     }
 
     stop() {
@@ -53,8 +55,8 @@ class Task {
   
     tick(t: number) {
 	this.update();
-	this.time = t - this.time0;
-	if (this.lifetime <= this.time) {
+	let dt = t - this.startTime;
+	if (this.lifetime <= dt) {
 	    this.stop();
 	}
     }
