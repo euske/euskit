@@ -47,9 +47,8 @@ class Layer {
     }
     
     addTask(task: Task) {
-	if (task.layer === null) {
-	    task.start(this);
-	}
+	task.layer = this;
+	task.start();
 	this.tasks.push(task);
     }
 

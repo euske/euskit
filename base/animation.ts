@@ -41,7 +41,8 @@ class Queue extends Task {
 	    task = this.getCurrentTask();
 	    if (task === null) break;
 	    if (task.layer === null) {
-		task.start(this.layer);
+		task.layer = this.layer;
+		task.start();
 	    }
 	    task.tick(t);
 	    if (task.running) break;
@@ -94,8 +95,8 @@ class Tweener extends Animator {
     srcpos: Vec2 = null;
     dstpos: Vec2 = null;
     
-    start(layer: Layer) {
-	super.start(layer);
+    start() {
+	super.start();
 	this.srcpos = this.entity.pos.copy();
     }
     

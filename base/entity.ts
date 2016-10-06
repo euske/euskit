@@ -24,9 +24,8 @@ class Task {
 	return '<Task: time='+this.time+'>';
     }
   
-    start(layer: Layer) {
-	this.layer = layer;
-	this.time0 = layer.time;
+    start() {
+	this.time0 = this.layer.time;
 	this.time = 0;
     }
 
@@ -79,8 +78,8 @@ class SoundTask extends Task {
 	this.sound = sound;
     }
 
-    start(layer: Layer) {
-	super.start(layer);
+    start() {
+	super.start();
 	log("sound:start");
 	this.sound.currentTime = this.startTime;
 	this.sound.play();
@@ -119,8 +118,8 @@ class Entity extends Task {
 	return '<Entity: '+this.pos+'>';
     }
 
-    start(layer: Layer) {
-	super.start(layer);
+    start() {
+	super.start();
 	this.layer.addEntity(this);
 	if (this.sprite !== null) {
 	    this.layer.addSprite(this.sprite);

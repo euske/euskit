@@ -416,8 +416,8 @@ class DisplayTask extends TextTask {
 	this.font = dialog.textbox.font;
     }
 
-    start(layer: Layer) {
-	super.start(layer);
+    start() {
+	super.start();
 	this.text = this.dialog.textbox.wrapLines(this.text, this.font)
     }
 
@@ -496,8 +496,8 @@ class MenuTask extends TextTask {
 	return item;
     }
 
-    start(layer: Layer) {
-	super.start(layer);
+    start() {
+	super.start();
 	for (let item of this.items) {
 	    item.seg = this.dialog.textbox.addSegment(item.pos, item.text);
 	}
@@ -618,8 +618,8 @@ class DialogBox extends Task {
 	this.queue = [];
     }
 
-    start(layer: Layer) {
-	super.start(layer);
+    start() {
+	super.start();
 	if (this.textbox !== null) {
 	    this.layer.addSprite(this.textbox);
 	}
@@ -639,7 +639,8 @@ class DialogBox extends Task {
 	    task = this.getCurrentTask();
 	    if (task === null) break;
 	    if (task.layer === null) {
-		task.start(this.layer);
+		task.layer = this.layer;
+		task.start();
 	    }
 	    task.tick(t);
 	    if (task.running) break;
@@ -689,7 +690,8 @@ class DialogBox extends Task {
 	    let task = this.getCurrentTask();
 	    if (task === null) break;
 	    if (task.layer === null) {
-		task.start(this.layer);
+		task.layer = this.layer;
+		task.start();
 	    }
 	    task.ff();
 	    if (task.running) break;
