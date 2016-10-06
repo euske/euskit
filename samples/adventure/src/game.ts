@@ -48,8 +48,8 @@ class PictureScene extends GameScene {
 	this.add(this.dialogBox);
     }
 
-    tick(t: number) {
-	super.tick(t);
+    update() {
+	super.update();
 	if (this.alpha < 1.0) {
 	    this.alpha = upperbound(1.0, this.alpha+0.05);
 	}

@@ -97,8 +97,8 @@ class Pong extends GameScene {
 	this.add(this.ball);
     }
 
-    tick(t: number) {
-	super.tick(t);
+    update() {
+	super.update();
 	// Restarts when the ball goes out of screen.
 	if (this.screen.height < this.ball.pos.y) {
 	    this.init();

@@ -192,8 +192,8 @@ class Shooter extends GameScene {
 	this.updateScore();
     }
 
-    tick(t: number) {
-	super.tick(t);
+    update() {
+	super.update();
 	this.stars.move(new Vec2(-4, 0));
 	// Spawn an enemy at a random interval.
 	if (this.nextenemy == 0) {

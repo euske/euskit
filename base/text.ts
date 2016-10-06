@@ -421,8 +421,8 @@ class DisplayTask extends TextTask {
 	this.text = this.dialog.textbox.wrapLines(this.text, this.font)
     }
 
-    tick(t: number) {
-	super.tick(t);
+    update() {
+	super.update();
 	if (this.text.length <= this._index) {
 	    this.stop();
 	} else if (this.speed === 0) {

@@ -167,8 +167,8 @@ class Racing extends GameScene {
 	this.app.setMusic(SOUNDS['music'], 0, 19.1);
     }
 
-    tick(t: number) {
-	super.tick(t);
+    update() {
+	super.update();
 	if (this.player.alive) {
 	    this.player.setMove(this.app.keyDir);
 	    let b = this.player.getCollider().move(0, this.track.offset) as Rect;

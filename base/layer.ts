@@ -42,8 +42,12 @@ class Layer {
 		task.tick(t);
 	    }
 	}
-	this.checkEntityCollisions();
+	this.update();
 	this.tasks = this.tasks.filter((task: Task) => { return task.running; });
+    }
+
+    update() {
+	this.checkEntityCollisions();
     }
     
     addTask(task: Task) {

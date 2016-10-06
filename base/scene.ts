@@ -10,7 +10,6 @@ class Scene {
 
     app: App;
     screen: Rect;
-    time: number = 0;
 
     constructor(app: App) {
 	this.app = app;
@@ -27,8 +26,11 @@ class Scene {
     }
 
     tick(t: number) {
+	this.update()
+    }
+
+    update() {
 	// [OVERRIDE]
-	this.time = t;
     }
 
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {

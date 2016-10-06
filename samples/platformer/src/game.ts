@@ -238,8 +238,8 @@ class Game extends GameScene {
 	});
     }
 
-    tick(t: number) {
-	super.tick(t);
+    update() {
+	super.update();
 	this.player.setMove(this.app.keyDir);
 	this.layer.setCenter(this.tilemap.bounds,
 			     this.player.pos.expand(80,80));
