@@ -4,20 +4,13 @@ Euskit
 A minimalistic HTML5 framework for 2D games written in TypeScript.
 (The name was suggested by Mr. Rat King)
 
-Features
---------
  * Suitable for old-school pixel art games.
- * Simple and straightforward API.
+ * <a href="http://euske.github.io/euskit/docs/api.html">Simple and straightforward API</a>.
 
 Prerequisites
 -------------
  * TypeScript compiler
  * Unix system (GNU Make) to build.
-
-API Documentation
------------------
-
-Here are the <a href="http://euske.github.io/euskit/docs/api.html">API docs</a>.
 
 Example: Pong
 --------------
