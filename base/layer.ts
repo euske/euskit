@@ -42,14 +42,10 @@ class Layer {
 		task.tick(t);
 	    }
 	}
-	this.update();
+	this.checkEntityCollisions();
 	this.tasks = this.tasks.filter((task: Task) => { return task.running; });
     }
 
-    update() {
-	this.checkEntityCollisions();
-    }
-    
     addTask(task: Task) {
 	task.layer = this;
 	task.start();
