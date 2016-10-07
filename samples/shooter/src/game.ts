@@ -173,8 +173,8 @@ class Shooter extends GameScene {
     score: number;
     scoreBox: TextBox;
 
-    constructor(app: App) {
-	super(app);
+    constructor() {
+	super();
 	this.scoreBox = new TextBox(this.screen.inflate(-8,-8), FONT);
     }
     

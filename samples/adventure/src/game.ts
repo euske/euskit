@@ -28,8 +28,8 @@ class PictureScene extends GameScene {
     image1: HTMLImageElement = null;
     alpha: number = 0;
 
-    constructor(app: App) {
-	super(app);
+    constructor() {
+	super();
 	let lineheight = 8;
 	let linespace = 4;
 	let padding = 8;
@@ -110,8 +110,8 @@ class PictureScene extends GameScene {
 //  Scene1
 // 
 class Scene1 extends PictureScene {
-    constructor(app: App) {
-	super(app);
+    constructor() {
+	super();
 	this.image1 = IMAGES['scene1'];
     }
     init() {
@@ -124,7 +124,7 @@ class Scene1 extends PictureScene {
 	menu.addItem(new Vec2(20,40), 'This is nuts.');
 	menu.addItem(new Vec2(20,50), 'Gimme a cucumber.');
 	menu.selected.subscribe(() => {
-	    this.changeScene(new Scene2(this.app));
+	    this.changeScene(new Scene2());
 	});
     }
 }
@@ -132,8 +132,8 @@ class Scene1 extends PictureScene {
 //  Scene2
 // 
 class Scene2 extends PictureScene {
-    constructor(app: App) {
-	super(app);
+    constructor() {
+	super();
 	this.image1 = IMAGES['scene2'];
     }
     init() {
@@ -146,7 +146,7 @@ class Scene2 extends PictureScene {
 	menu.addItem(new Vec2(20,50), 'Beautiful quote.');
 	menu.addItem(new Vec2(20,60), '43914745.');
 	menu.selected.subscribe(() => {
-	    this.changeScene(new Scene3(this.app));
+	    this.changeScene(new Scene3());
 	});
     }
 }
@@ -154,8 +154,8 @@ class Scene2 extends PictureScene {
 //  Scene3
 // 
 class Scene3 extends PictureScene {
-    constructor(app: App) {
-	super(app);
+    constructor() {
+	super();
 	this.image1 = IMAGES['scene3'];
     }
     init() {
@@ -168,7 +168,7 @@ class Scene3 extends PictureScene {
 	menu.addItem(new Vec2(20,40), 'Only if what I think is what you think.');
 	menu.addItem(new Vec2(20,50), 'xxThisSucks1729xx');
 	menu.selected.subscribe(() => {
-	    this.changeScene(new Scene1(this.app));
+	    this.changeScene(new Scene1());
 	});
     }
 }
@@ -180,6 +180,6 @@ class Adventure extends Scene {
     
     init() {
 	super.init();
-	this.changeScene(new Scene1(this.app));
+	this.changeScene(new Scene1());
     }
 }

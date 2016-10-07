@@ -422,8 +422,8 @@ class Game extends Scene {
 	    this.speed.x += 1;
 	});
 	this.player.stopped.subscribe(() => {
-	    this.app.lockKeys();
-	    this.changeScene(new GameOver(this.app, this.score));
+	    APP.lockKeys();
+	    this.changeScene(new GameOver(this.score));
 	});
 	this.add(this.player);
 	this.tilemap.set(8, 2, T.BLOCK);
@@ -516,12 +516,12 @@ class Game extends Scene {
 // 
 class GameOver extends HTMLScene {
     
-    constructor(app: App, score: number) {
+    constructor(score: number) {
 	var html = `<strong>Game Over!</strong><p>Score: ${score}`;
-	super(app, html);
+	super(html);
     }
 
     change() {
-	this.changeScene(new Game(this.app));
+	this.changeScene(new Game());
     }
 }

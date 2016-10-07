@@ -303,7 +303,7 @@ class Game extends GameScene {
 
     update() {
 	super.update();
-	this.player.setMove(this.app.keyDir);
+	this.player.setMove(APP.keyDir);
 	this.layer.setCenter(this.tilemap.bounds,
 			     this.player.pos.expand(80,80));
     }
@@ -321,8 +321,8 @@ class Game extends GameScene {
 	this.thingies--;
 	if (this.thingies == 0) {
 	    this.add(new DelayTask(2, () => { 
-		this.app.lockKeys();
-		this.changeScene(new Ending(this.app));
+		APP.lockKeys();
+		this.changeScene(new Ending());
 	    }));
 	}
     }
@@ -347,12 +347,12 @@ class Game extends GameScene {
 // 
 class Ending extends HTMLScene {
     
-    constructor(app: App) {
+    constructor() {
 	var html = '<strong>You Won!</strong><p>Yay!';
-	super(app, html);
+	super(html);
     }
 
     change() {
-	this.changeScene(new Game(this.app));
+	this.changeScene(new Game());
     }
 }

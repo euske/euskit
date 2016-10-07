@@ -146,8 +146,8 @@ class Racing extends GameScene {
     highScore: number;
     highScoreBox: TextBox;
 
-    constructor(app: App) {
-	super(app);
+    constructor() {
+	super();
 	this.scoreBox = new TextBox(this.screen.inflate(-2,-2), FONT);
 	this.highScoreBox = new TextBox(this.screen.inflate(-2,-2), FONT);
 	this.highScore = -1;
@@ -164,13 +164,13 @@ class Racing extends GameScene {
 
 	this.score = 0;
 	this.updateScore();
-	this.app.setMusic(SOUNDS['music'], 0, 19.1);
+	APP.setMusic(SOUNDS['music'], 0, 19.1);
     }
 
     update() {
 	super.update();
 	if (this.player.alive) {
-	    this.player.setMove(this.app.keyDir);
+	    this.player.setMove(APP.keyDir);
 	    let b = this.player.getCollider().move(0, this.track.offset) as Rect;
 	    if (this.track.isFloor(b)) {
 		let speed = int((1.0-this.player.pos.y/this.screen.height)*16);
@@ -184,7 +184,7 @@ class Racing extends GameScene {
 		blinker.lifetime = 1.0;
 		blinker.stopped.subscribe(() => { this.init(); });
 		this.add(blinker);
-		this.app.setMusic();
+		APP.setMusic();
 		playSound(SOUNDS['plunge']);
 	    }
 	}

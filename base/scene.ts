@@ -8,17 +8,14 @@
 //
 class Scene {
 
-    app: App;
     screen: Rect;
 
-    constructor(app: App) {
-	this.app = app;
-	this.screen = new Rect(0, 0, app.canvas.width, app.canvas.height);
+    constructor() {
+	this.screen = new Rect(0, 0, APP.canvas.width, APP.canvas.height);
     }
 
     changeScene(scene: Scene) {
-	let app = this.app;
-	app.post(function () { app.init(scene); });
+	APP.post(function () { APP.init(scene); });
     }
   
     init() {
@@ -78,16 +75,16 @@ class HTMLScene extends Scene {
 
     text: string;
 
-    constructor(app: App, text: string) {
-	super(app);
+    constructor(text: string) {
+	super();
 	this.text = text;
     }
 
     init() {
 	super.init();
 	let scene = this;
-	let bounds = this.app.elem.getBoundingClientRect();
-	let e = this.app.addElement(
+	let bounds = APP.elem.getBoundingClientRect();
+	let e = APP.addElement(
 	    new Rect(bounds.width/8, bounds.height/4,
 		     3*bounds.width/4, bounds.height/2));
 	e.align = 'left';
@@ -126,8 +123,8 @@ class GameScene extends Scene {
     layer: ScrollLayer;
     entities: Entity[];
 
-    constructor(app: App) {
-	super(app);
+    constructor() {
+	super();
 	this.layer = new ScrollLayer(this.screen);
 	this.layer.bounds = this.screen;
     }

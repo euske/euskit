@@ -322,6 +322,7 @@ var IMAGES: ImageAsset = {};
 var SOUNDS: SoundAsset = {};
 var TEXTS: TextAsset = {};
 var HOOKS: InitHook[] = [];
+var APP: App = null;
 
 // addInitHook: adds an initialization hoook.
 function addInitHook(hook: InitHook) {
@@ -330,7 +331,7 @@ function addInitHook(hook: InitHook) {
 
 // main: sets up the browser interaction.
 function main<T extends Scene>(
-    scene0: { new(app:App):T; },
+    scene0: { new():T; },
     width=320, height=240, elemId='game', framerate=30)
 {
     function getprops(a: NodeListOf<Element>) {
@@ -478,7 +479,8 @@ function main<T extends Scene>(
 	canvas.style.width = cw+'px';
 	canvas.style.height = ch+'px';
     }
-    
+
+    APP = app;
     IMAGES = getprops(document.getElementsByTagName('img')) as ImageAsset;
     SOUNDS = getprops(document.getElementsByTagName('audio')) as SoundAsset;
     TEXTS = getprops(document.getElementsByClassName('label')) as TextAsset;
@@ -486,7 +488,7 @@ function main<T extends Scene>(
 	hook();
     }
     
-    app.init(new scene0(app));
+    app.init(new scene0());
     app.focus();
     elem.appendChild(canvas);
     elem.addEventListener('mousedown', mousedown, false);
