@@ -68,6 +68,20 @@ class Task {
 }
 
 
+//  DelayTask
+//
+class DelayTask extends Task {
+    
+    constructor(lifetime: number=Infinity, proc: ()=>any=null) {
+	super();
+	this.lifetime = lifetime;
+	if (proc !== null) {
+	    this.stopped.subscribe(proc);
+	}
+    }
+}
+
+
 //  SoundTask
 //
 class SoundTask extends Task {
