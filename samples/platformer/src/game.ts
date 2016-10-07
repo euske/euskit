@@ -58,18 +58,29 @@ class WorldObject {
     
 }
 
+function findShadowPos(tilemap: TileMap, pos: Vec2) {
+    let rect = tilemap.coord2map(pos);
+    let p = new Vec2(rect.x, rect.y);
+    while (p.y < tilemap.height) {
+	let c = tilemap.get(p.x, p.y+1);
+	if (c == T.BLOCK || c == -1) break;
+	p.y++;
+    }
+    return tilemap.map2coord(p).center();
+}
+
 
 //  ShadowSprite
 //  An EntitySprite with shadow.
 //
 class ShadowSprite extends EntitySprite {
 
-    shadow: ImageSource;
+    shadow: HTMLImageSource = null;
     shadowPos: Vec2 = null;
     
     constructor(entity: Entity=null) {
 	super(entity);
-	this.shadow = SPRITES.get(S.SHADOW);
+	this.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
     }
 
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
@@ -78,19 +89,16 @@ class ShadowSprite extends EntitySprite {
 	if (this.entity !== null && imgsrc !== null && pos !== null) {
 	    ctx.save();
 	    ctx.translate(bx+int(pos.x), by+int(pos.y));
+	    let srcRect = imgsrc.srcRect;
 	    let dstRect = imgsrc.dstRect;
-	    if (imgsrc instanceof FillImageSource) {
-		ctx.fillStyle = imgsrc.color;
-		ctx.fillRect(
-		    dstRect.x, dstRect.y, dstRect.width, dstRect.height);
-	    } else if (imgsrc instanceof HTMLImageSource) {
-		let srcRect = imgsrc.srcRect;
-		drawImageScaled(
-		    ctx, imgsrc.image,
+	    // Shadow gets smaller based on its ground distance.
+	    let d = (pos.y - this.entity.pos.y)/4;
+	    if (d*2 <= dstRect.width && d*2 <= dstRect.height) {
+		ctx.drawImage(
+		    imgsrc.image,
 		    srcRect.x, srcRect.y, srcRect.width, srcRect.height,
-		    dstRect.x, dstRect.y,
-		    dstRect.width*this.scale.x,
-		    dstRect.height*this.scale.y);
+		    dstRect.x+d, dstRect.y+d*2,
+		    dstRect.width-d*2, dstRect.height-d*2);
 	    }
 	    ctx.restore();
 	}
@@ -152,11 +160,7 @@ class Player extends PlatformerEntity {
 	} else if (!this.hasLadder()) {
 	    v = new Vec2(v.x, lowerbound(0, v.y));
 	}
-	if (this.isLanded() && !this.holding) {
-	    (this.sprite as ShadowSprite).shadowPos = this.pos;
-	} else {
-	    (this.sprite as ShadowSprite).shadowPos = null;
-	}
+	(this.sprite as ShadowSprite).shadowPos = findShadowPos(this.tilemap, this.pos);
 	this.moveIfPossible(v);
     }
     
@@ -214,11 +218,7 @@ class Monster extends PlanningEntity {
 		this.startPlan(runner);
 	    }
 	}
-	if (this.isLanded()) {
-	    (this.sprite as ShadowSprite).shadowPos = this.pos;
-	} else {
-	    (this.sprite as ShadowSprite).shadowPos = null;
-	}
+	(this.sprite as ShadowSprite).shadowPos = findShadowPos(this.tilemap, this.pos);
 	this.move();
     }
 }

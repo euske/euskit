@@ -55,7 +55,7 @@ class Sprite3d extends Sprite {
 	    let d = (z-this.shadowz)/4;
 	    if (d*2 <= dstRect.width && d*2 <= dstRect.height) {
 		ctx.drawImage(
-		    this.shadow.image,
+		    shadow.image,
 		    srcRect.x, srcRect.y, srcRect.width, srcRect.height,
 		    bx+dstRect.x+d, by+dstRect.y+d-this.shadowz/2,
 		    dstRect.width-d*2, dstRect.height-d*2);
