@@ -10,7 +10,12 @@ A minimalistic HTML5 framework for 2D games written in TypeScript.
 Samples
 -------
 
- * <a href="http://euske.github.io/euskit/samples/pong/index.html"><img src="http://euske.github.io/euskit/samples/pong/index.html" width="160" height="120" alt="Pong"></a>
+ * <a href="http://euske.github.io/euskit/samples/pong/index.html"><img src="http://euske.github.io/euskit/samples/pong/gameplay.gif" width="160" height="120" alt="Pong"></a>
+ * <a href="http://euske.github.io/euskit/samples/shooter/index.html"><img src="http://euske.github.io/euskit/samples/shooter/gameplay.gif" width="160" height="120" alt="Shoter"></a>
+ * <a href="http://euske.github.io/euskit/samples/racing/index.html"><img src="http://euske.github.io/euskit/samples/racing/gameplay.gif" width="128" height="160" alt="Racing"></a>
+ * <a href="http://euske.github.io/euskit/samples/platformer/index.html"><img src="http://euske.github.io/euskit/samples/platformer/gameplay.gif" width="160" height="120" alt="Platformer"></a>
+ * <a href="http://euske.github.io/euskit/samples/isometric/index.html"><img src="http://euske.github.io/euskit/samples/isometric/gameplay.gif" width="160" height="120" alt="Isometric"></a>
+ * <a href="http://euske.github.io/euskit/samples/adventure/index.html"><img src="http://euske.github.io/euskit/samples/adventure/gameplay.gif" width="160" height="120" alt="Adventure"></a>
 
 Prerequisites
 -------------
