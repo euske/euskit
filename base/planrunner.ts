@@ -436,19 +436,31 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 	// ######
 	let hb0 = this.getGridBoxAt(p0);
 	let hb1 = this.getGridBoxAt(p1);
-	let xc = (hb0.x < hb1.x)? hb1.x : hb1.right();
+	let xc = (p0.x < p1.x)? hb1.x : hb1.right();
 	let x0 = Math.min(xc, hb0.x);
 	let x1 = Math.max(xc, hb0.right());
 	let y0 = Math.min(hb0.y, hb1.y);
 	let y1 = Math.max(hb0.bottom(), hb1.bottom());
-	let rect = new Rect(x0, y0, x1-x0, y1-y0);
-	// XXX extra care is needed not to allow the following case:
+	if (this.obstacle.exists(
+	    this.tilemap.coord2map(new Rect(x0, y0, x1-x0, y1-y0)))) {
+	    return false;
+	}
+	// Extra care is needed not to allow the following case:
 	//      .#
 	//    +--+
 	//    |  |  (this is impossiburu!)
 	//    +-X+
 	//       #
-	return !this.stoppable.exists(this.tilemap.coord2map(rect));
+	let rect = this.tilemap.coord2map(hb1);
+	let dx = sign(p1.x - p0.x);
+	let rect1 = rect.anchor(-dx, 1).expand(1, 1, -dx, -1);
+	let rect2 = rect.anchor(-dx, -1).expand(1, 1, -dx, 1);
+	if (this.obstacle.exists(rect1) &&
+	    !this.obstacle.exists(rect1.move(-dx,0)) &&
+	    this.obstacle.exists(rect2)) {
+	    return false;
+	}
+	return true;
     }
     
     moveToward(p: Vec2) {
