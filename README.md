@@ -7,131 +7,15 @@ A minimalistic HTML5 framework for 2D games written in TypeScript.
  * Suitable for old-school pixel art games.
  * <a href="http://euske.github.io/euskit/docs/api.html">Simple and straightforward API</a>.
 
+Samples
+-------
+
+ * <a href="http://euske.github.io/euskit/samples/pong/index.html"><img src="http://euske.github.io/euskit/samples/pong/index.html" width="160" height="120" alt="Pong"></a>
+
 Prerequisites
 -------------
  * TypeScript compiler
  * Unix system (GNU Make) to build.
-
-Example: Pong
---------------
-
-Here's a sample code for <a href="http://euske.github.io/euskit/samples/pong/index.html">Pong</a>:
-
-```typescript
-class Paddle extends Entity {
-
-    screen: Rect;               // Screen bounds.
-    vx: number;                 // Moving direction.
-
-    constructor(screen: Rect) {
-        // Initializes the position and shape.
-        super(screen.anchor(0,-1).move(0,-20));
-        let bounds = new Rect(-20,-5,40,10);
-        this.sprite.imgsrc = new FillImageSource('green', bounds);
-        this.collider = bounds;
-        this.screen = screen;
-        this.vx = 0;
-    }
-
-    update() {
-        // Updates the position.
-        let pos = this.pos.move(this.vx*4, 0);
-        let bounds = this.getCollider(pos).getAABB();
-        if (0 <= bounds.x && bounds.right() <= this.screen.right()) {
-            this.pos = pos;
-        }
-    }
-}
-
-class Ball extends Entity {
-
-    screen: Rect;               // Screen bounds.
-    v: Vec2;                    // Moving direction.
-
-    constructor(screen: Rect) {
-        // Initializes the position and shape.
-        super(screen.center());
-        let bounds = new Rect(-5,-5,10,10);
-        this.sprite.imgsrc = new FillImageSource('white', bounds);
-        this.collider = bounds;
-        this.screen = screen;
-        this.v = new Vec2(rnd(2)*8-4, -4);
-    }
-
-    update() {
-        // Updates the position.
-        let pos = this.pos.add(this.v);
-        let bounds = this.getCollider(pos).getAABB();
-        if (bounds.x < 0 || this.screen.right() < bounds.right()) {
-            this.v.x = -this.v.x;
-        }
-        if (bounds.y < 0) {
-            this.v.y = -this.v.y;
-        }
-        this.pos = this.pos.add(this.v);
-    }
-
-    collidedWith(entity: Entity) {
-        // Bounces when hit the paddle.
-        if (entity instanceof Paddle) {
-            this.v.y = -4;
-        }
-    }
-}
-
-class Pong extends GameScene {
-
-    paddle: Paddle;
-    ball: Ball;
-
-    init() {
-        super.init();
-        // Places the objects.
-        this.paddle = new Paddle(this.screen);
-        this.add(this.paddle);
-        this.ball = new Ball(this.screen);
-        this.add(this.ball);
-    }
-
-    tick(t: number) {
-        super.tick(t);
-        // Restarts when the ball goes out of screen.
-        if (this.screen.height < this.ball.pos.y) {
-            this.init();
-        }
-    }
-
-    setDir(v: Vec2) {
-        // Changes the paddle direction.
-        this.paddle.vx = v.x;
-    }
-
-    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
-        // Paints the background.
-        ctx.fillStyle = 'rgb(0,0,64)';
-        ctx.fillRect(bx, by, this.screen.width, this.screen.height);
-        // Paints everything else.
-        super.render(ctx, bx, by);
-    }
-}
-```
-
-Here's the HTML for it:
-
-```html
-<!DOCTYPE html>
-<html><head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>Pong</title>
-<script language="javascript" src="js/game.js"></script>
-<body bgcolor="black" text="white" onload="main(Pong);">
-<h1 align=center>Pong</h1>
-<div style="margin: 1em;" align=center>
-  <div id="game" style="position:relative; width:640px; height:480px;"></div>
-</div>
-</body>
-```
 
 Terms and Conditions
 --------------------
