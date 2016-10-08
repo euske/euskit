@@ -52,7 +52,7 @@ class WorldObject {
     
     scene: Game;
     
-    getFencesFor(range: Rect, context: string): Rect[] {
+    getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
 	return [this.scene.screen];
     }
     
@@ -109,7 +109,7 @@ class ShadowSprite extends EntitySprite {
 
 //  Player
 //
-class Player extends PlatformerEntity {
+class Player extends PlatformerEntity implements WorldObject {
 
     scene: Game;
     usermove: Vec2 = new Vec2();
@@ -193,7 +193,7 @@ applyMixins(Player, [WorldObject]);
 
 //  Monster
 //
-class Monster extends PlanningEntity {
+class Monster extends PlanningEntity implements WorldObject {
 
     scene: Game;
     target: Entity;
@@ -249,22 +249,20 @@ class Game extends GameScene {
     init() {
 	super.init();
 	const MAP = [
-	    "00000000000000000000",
-	    "00000000000000000000",
-	    "00000000000000000000",
-	    "00000000000000000000",
-	    "00000000000000000000",
-
-	    "00003000000000000000",
-	    "00001000000000000000",
-	    "00000100002000000000",
-	    "00000010092110000000",
-	    "00110000112000110000",
-	    
-	    "00000001002001000100",
-	    "00000011002001100001",
-	    "00010000011201110000",
-	    "00111000080201111000",
+	    "00000000000000300000",
+	    "00002111210001121100",
+	    "00112000200000020000",
+	    "00000000200000111211",
+	    "00300011111000000200",
+	    "00100300002000000200",
+	    "00000000002111121100",
+	    "00000110002000020000",
+	    "00000000002000020830",
+	    "00110002111000111111",
+	    "00000002000000002000",
+	    "11030111112110002003",
+	    "00010000002000112110",
+	    "31020100092000002000",
 	    "11111111111111111111",
 	];
 	this.tilemap = new TileMap(32, MAP.map((v:string) => { return str2array(v); }));
