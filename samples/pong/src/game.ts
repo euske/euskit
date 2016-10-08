@@ -23,7 +23,7 @@ class Paddle extends Entity {
 
     constructor(screen: Rect) {
 	// Initializes the position and shape.
-	super(screen.anchor(0,-1).move(0,-20));
+	super(screen.anchor(0,+1).move(0,-20));
 	let bounds = new Rect(-20,-5,40,10);
 	this.sprite.imgsrc = new FillImageSource('green', bounds);
 	this.collider = bounds;

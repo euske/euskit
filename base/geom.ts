@@ -256,16 +256,16 @@ class Rect implements Shape {
     
     anchor(vx=0, vy=0) {
 	let x: number, y: number;
-	if (0 < vx) {
+	if (vx < 0) {
 	    x = this.x;
-	} else if (vx < 0) {
+	} else if (0 < vx) {
 	    x = this.x+this.width;
 	} else {
 	    x = this.x+this.width/2;
 	}
-	if (0 < vy) {
+	if (vy < 0) {
 	    y = this.y;
-	} else if (vy < 0) {
+	} else if (0 < vy) {
 	    y = this.y+this.height;
 	} else {
 	    y = this.y+this.height/2;
@@ -737,23 +737,23 @@ class Box {
     
     anchor(vx=0, vy=0, vz=0) {
 	let x: number, y: number, z: number;
-	if (0 < vx) {
+	if (vx < 0) {
 	    x = this.origin.x;
-	} else if (vx < 0) {
+	} else if (0 < vx) {
 	    x = this.origin.x+this.size.x;
 	} else {
 	    x = this.origin.x+this.size.x/2;
 	}
-	if (0 < vy) {
+	if (vy < 0) {
 	    y = this.origin.y;
-	} else if (vy < 0) {
+	} else if (0 < vy) {
 	    y = this.origin.y+this.size.y;
 	} else {
 	    y = this.origin.y+this.size.y/2;
 	}
-	if (0 < vz) {
+	if (vz < 0) {
 	    z = this.origin.z;
-	} else if (vz < 0) {
+	} else if (0 < vz) {
 	    z = this.origin.z+this.size.z;
 	} else {
 	    z = this.origin.z+this.size.z/2;
