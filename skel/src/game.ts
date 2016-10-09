@@ -50,11 +50,16 @@ class Player extends Entity {
 class Game extends GameScene {
 
     player: Player;
+    scoreBox: TextBox;
+    score: number;
     
     init() {
 	super.init();
+	this.scoreBox = new TextBox(this.screen.inflate(-8,-8), FONT);
 	this.player = new Player(this, this.screen.center());
 	this.add(this.player);
+	this.score = 0;
+	this.updateScore();
     }
 
     update() {
@@ -69,5 +74,11 @@ class Game extends GameScene {
 	ctx.fillStyle = 'rgb(0,0,0)';
 	ctx.fillRect(bx, by, this.screen.width, this.screen.height);
 	super.render(ctx, bx, by);
+	this.scoreBox.render(ctx, bx, by);
+    }
+
+    updateScore() {
+	this.scoreBox.clear();
+	this.scoreBox.putText(['SCORE: '+this.score]);
     }
 }
