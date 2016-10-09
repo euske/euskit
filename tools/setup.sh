@@ -23,7 +23,9 @@ echo "setting up for: $dst"
 mkdir "$dst"/src || :  # ignore errors
 mkdir "$dst"/base || :  # ignore errors
 mkdir "$dst"/assets || :  # ignore errors
+mkdir "$dst"/tools || :  # ignore errors
 cp "$basedir"/base/*.ts "$dst"/base
+cp "$basedir"/tools/*.py "$dst"/tools
 cp "$basedir"/skel/.gitignore "$dst"
 sed 's+^BASEDIR=../base+BASEDIR=./base+' \
     "$basedir"/skel/Makefile > "$dst"/Makefile

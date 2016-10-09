@@ -1,6 +1,9 @@
 # Makefile
 RM=rm -f
 TSC=tsc
+PYTHON=python
+WATCHER=$(PYTHON) tools/watcher.py
+
 BASEDIR=../base
 BASES= \
 	$(BASEDIR)/animation.ts \
@@ -22,6 +25,9 @@ all: js/game.js
 clean:
 #	-cd assets; $(MAKE) $@
 	-$(RM) -r js
+
+watch:
+	$(WATCHER) $(BASES) src/game.ts
 
 js/game.js: $(BASES) src/game.ts
 	$(TSC)
