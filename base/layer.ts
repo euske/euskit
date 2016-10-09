@@ -48,8 +48,8 @@ class Layer {
 
     addTask(task: Task) {
 	task.layer = this;
-	task.start();
 	this.tasks.push(task);
+	task.start();
     }
 
     addSprite(sprite: Sprite) {

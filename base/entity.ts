@@ -12,7 +12,7 @@ class Task {
     running: boolean = true;
     layer: Layer = null;
     lifetime: number = Infinity;
-    startTime: number = 0;
+    started: number = 0;
     stopped: Signal;
 
     constructor() {
@@ -24,11 +24,11 @@ class Task {
     }
 
     getTime() {
-	return (this.layer.time - this.startTime);
+	return (this.layer.time - this.started);
     }
   
     start() {
-	this.startTime = this.layer.time;
+	this.started = this.layer.time;
     }
 
     stop() {
@@ -55,7 +55,7 @@ class Task {
   
     tick(t: number) {
 	this.update();
-	let dt = t - this.startTime;
+	let dt = t - this.started;
 	if (this.lifetime <= dt) {
 	    this.stop();
 	}
@@ -86,19 +86,18 @@ class DelayTask extends Task {
 //
 class SoundTask extends Task {
 
-    startTime: number = 0;
     sound: HTMLAudioElement;
+    startTime: number;
     
-    constructor(sound: HTMLAudioElement = null) {
+    constructor(sound: HTMLAudioElement=null, startTime: number=0) {
 	super();
 	this.sound = sound;
+	this.startTime = startTime;
     }
 
     start() {
 	super.start();
-	log("sound:start");
-	this.sound.currentTime = this.startTime;
-	this.sound.play();
+	playSound(this.sound, this.startTime);
     }
 
     update() {
