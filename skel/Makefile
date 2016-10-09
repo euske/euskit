@@ -2,6 +2,7 @@
 RM=rm -f
 TSC=tsc
 PYTHON=python
+RSYNC=rsync -auvz
 WATCHER=$(PYTHON) tools/watcher.py
 
 BASEDIR=../base
@@ -19,6 +20,8 @@ BASES= \
 	$(BASEDIR)/tilemap.ts \
 	$(BASEDIR)/utils.ts
 
+REMOTE_DIR=yourhost.example.com:public_html/game
+
 all: js/game.js
 	cd assets; $(MAKE) $@
 
@@ -28,6 +31,9 @@ clean:
 
 watch:
 	$(WATCHER) $(BASES) src/game.ts
+
+upload: all
+	$(RSYNC) --exclude '.*' --exclude '*.wav' --exclude Makefile index.html js assets $(REMOTE_DIR)
 
 js/game.js: $(BASES) src/game.ts
 	$(TSC)

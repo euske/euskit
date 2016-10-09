@@ -17,24 +17,36 @@ a { font-weight: bold; }
 <body>
 <h1><a href="https://github.com/euske/euskit">Euskit</a> User Guide</h1>
 
-<h2><a name="howtocreate">1. How To Create a New Project</a></h2>
-<p>
-On Unix, type:
+<h2><a name="howtocreate">1. Project Lifecycle</a></h2>
+<ol>
+<li> Type the following command.
+All the necessary files and template code will be copied.
 <blockquote><pre>
 $ ./tools/setup.sh /path/to/project
 </pre></blockquote>
-All the necessary files and template code will be copied.
-
-<h2><a name="filestructure">2. Project File Structure</a></h2>
-<ul>
-<li> <code>./</code> &nbsp; Project directory.
+<li> Here's the files in the new project directory:
   <ul>
   <li> <code>Makefile</code> &nbsp; Build file.
   <li> <code>index.html</code> &nbsp; Game page.
-  <li> <code>assets/</code> &nbsp; Game assets (images and sounds)
+  <li> <code>tsconfig.json</code> &nbsp; TypeScript compiler settings.
+  <li> <code>tools/</code> &nbsp; Support tools (Python scripts).
   <li> <code>base/*.ts</code> &nbsp; Euskit base library code.
   <li> <code>src/game.ts</code> &nbsp; Game source code.
-</ul>
+  <li> <code>assets/</code> &nbsp; Game assets.
+  </ul>
+<li> Change the game code at <code>src/game.ts</code>.
+<li> Add/remove the game assets at <code>assets/</code>
+  and fix <code>index.html</code> accordingly.
+<li> Type <code>make</code> to build the game.
+<li> Open <code>index.html</code> to run the game.
+<li> When finished, upload the following files to a web server:
+  <ul>
+  <li> <code>index.html</code> &nbsp; Game page.
+  <li> <code>js/game.js</code> &nbsp; Generated JavaScritp code.
+  <li> <code>assets/</code> &nbsp; Game assets.
+  </ul>
+<li> Done!
+</ol>
 
 <h2><a name="objects">3. Basic Objects</a></h2>
 

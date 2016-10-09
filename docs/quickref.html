@@ -12,10 +12,10 @@ a { font-weight: bold; }
 .inherited { background: #cccccc; }
 .overridable { background: #ccffcc; }
 </style>
-<title>Euskit API Reference</title>
+<title>Euskit Quick Reference</title>
 </head>
 <body>
-<h1><a href="https://github.com/euske/euskit">Euskit</a> API Reference</h1>
+<h1><a href="https://github.com/euske/euskit">Euskit</a> Quick Reference</h1>
 
 <div>
 Functions:
@@ -27,8 +27,6 @@ Functions:
 <br>Utility Classes:
 <a href="#Signal"><code>Signal</code></a>,
 <a href="#Color"><code>Color</code></a>,
-<a href="#ImageSource"><code>ImageSource</code></a>,
-<a href="#SpriteSheet"><code>SpriteSheet</code></a>,
 <a href="#Vec2"><code>Vec2</code></a>,
 <a href="#Vec3"><code>Vec3</code></a>,
 <a href="#Rect"><code>Rect</code></a>,
@@ -36,10 +34,12 @@ Functions:
 <a href="#Shape"><code>Shape</code></a>,
 <a href="#Box"><code>Box</code></a>,
 <a href="#TileMap"><code>TileMap</code></a>,
-<a href="#RangeMap"><code>RangeMap</code></a>
+<a href="#RangeMap"><code>RangeMap</code></a>,
+<a href="#ImageSource"><code>ImageSource</code></a>,
+<a href="#SpriteSheet"><code>SpriteSheet</code></a>,
+<a href="#Sprite"><code>Sprite</code></a>
 <br>Basic Classes:
 <a href="#Task"><code>Task</code></a>,
-<a href="#Sprite"><code>Sprite</code></a>,
 <a href="#Entity"><code>Entity</code></a>,
 <a href="#Layer"><code>Layer</code></a>,
 <a href="#Scene"><code>Scene</code></a>,
@@ -115,9 +115,9 @@ Legend:
     <a href="#Task"><code>Task</code></a>: 
     A process that gets called for every frame.<br>
     <a href="#Sprite"><code>Sprite</code></a>: 
-    A <code>Task</code> that is visible on screen.<br>
+    A visible object on a layer.<br>
     <a href="#Entity"><code>Entity</code></a>: 
-    A <code>Sprite</code> that can collide another <code>Entity</code>.<br>
+    A <code>Task</code> that can collide another <code>Entity</code>.<br>
   </div>
 </div>
 
@@ -127,8 +127,14 @@ Legend:
 <table border>
 <tr><td><code>APP</td>
   <td>The global App instance.</td></tr>
-<tr><td><code>run(ctor, <em>[canvasId, [scale, [framerate]]]</em>)</code></td>
-  <td>Starts a game from the Scene <code>ctor</code>.</td></tr>
+<tr><td><code>IMAGES</td>
+  <td>The global image reources.</td></tr>
+<tr><td><code>SOUNDS</td>
+  <td>The global sound reources.</td></tr>
+<tr><td><code>TEXTS</td>
+  <td>The global text reources.</td></tr>
+<tr><td><code>main(ctor, <em>[width, [height,<br>&nbsp; [canvasId, [framerate]]]]</em>)</code></td>
+  <td>Starts an app from the specified Scene.</td></tr>
 </table>
 
 <h4>How to Use</h4>
@@ -136,8 +142,8 @@ Legend:
 &lt;script&gt;
   class Scene1 extends Scene { ... }
 &lt;/script&gt;
-&lt;body onload="run(Scene1, 'main', 2, 30);"&gt;
-&lt;canvas id="main" width="640" height="480"&gt;&lt;/canvas&gt;
+&lt;body onload="main(Scene1, 'game', 320, 240, 30);"&gt;
+&lt;div id="main" style="width:640px; height:480px"&gt;&lt;/div&gt;
 </pre></blockquote>
 
 <a name="misc"><h3>Misc. functions (<code>utils.ts</code>)</h3></a>
@@ -164,7 +170,7 @@ Legend:
   <td>Limits a value to [<code>v0</code>, <code>v1</code>].</td></tr>
 <tr><td><code>sign(v)</code></td>
   <td>-1, 0 or +1 based on the sign of <code>v</code>.</td></tr>
-<tr><td><code>phase(t, duration, n)</code></td>
+<tr><td><code>phase(t, interval, n)</code></td>
   <td>Returns the phase for time <code>t</code>.</td></tr>
 <tr><td><code>frnd(a, <em>[b]</em>)</code></td>
   <td>Generates a value [0,<code>a</code>) or [<code>a</code>,<code>b</code>)</td></tr>
@@ -236,29 +242,8 @@ A <code>Color</code> represents an RGBA value.
   <td>The alpha value.</td></tr>
 <tr><td><code>.setAlpha(a)</code></td>
   <td>Creates a <code>Color</code> with a given alpha.</td></tr>
-</table>
-
-<a name="ImageSource"><h3>ImageSource (<code>utils.ts</code>)</h3></a>
-<p>
-An <code>ImageSource</code> is a portion of a <code>&lt;img&gt;</code> 
-that is used for rendering Sprites.
-<table border>
-<tr><td><code>new HTMLImageSource(image, srcRect, dstRect)</code></td>
-  <td>Creates a <code>ImageSource</code> from <code>&lt;img&gt;</code>.</td></tr>
-<tr><td><code>new FillImageSource(color, dstRect)</code></td>
-  <td>Creates a <code>ImageSource</code> with a solid color.</td></tr>
-</table>
-
-<a name="SpriteSheet"><h3>SpriteSheet (<code>utils.ts</code>)</h3></a>
-<p>
-A set of <code>ImageSource</code> objects indexed by a number.
-<table border>
-<tr><td><code>new ImageSpriteSheet(image, size, <em>[origin]</em>)</code></td>
-  <td>Creates a <code>SpriteSheet</code> from <code>&lt;img&gt;</code>.</td></tr>
-<tr><td><code>new SimpleSpriteSheet(imgsrcs)</code></td>
-  <td>Creates a <code>SpriteSheet</code> with solid colors.</td></tr>
-<tr><td><code>.get(i)</code></td>
-  <td>The <code>i</code>-th <code>ImageSource</code>.</td></tr>
+<tr><td><code>Color.generate(h, <em>[v]</em>)</code></td>
+  <td>Creates a <code>Color</code> with a given hue.</td></tr>
 </table>
 
 <a name="Vec2"><h3>Vec2 (<code>geom.ts</code>)</h3></a>
@@ -295,6 +280,8 @@ A <code>Vec2</code> represents two-dimensional vector that has (x, y) elements.
   <td>(<code>clamp(x)</code>, <code>clamp(y)</code>).</td></tr>
 <tr><td><code>.move(dx, dy)</code></td>
   <td>(<code>x+dx</code>, <code>y+dy</code>).</td></tr>
+<tr><td><code>.interpolate(v, t)</code></td>
+  <td>(<code>this*(1-t) + v*t)</code>.</td></tr>
 <tr><td><code>.rotate(d)</code></td>
   <td>Creates a rotated vector in radian (clockwise...0&lt;<code>d</code>)</td></tr>
 <tr><td><code>.rot90(d)</code></td>
@@ -339,6 +326,8 @@ A <code>Vec3</code> represents three-dimensional vector that has (x, y, z) eleme
   <td>(<code>clamp(x)</code>, <code>clamp(y)</code>, <code>clamp(z)</code>).</td></tr>
 <tr><td><code>.move(dx, dy, dz)</code></td>
   <td>(<code>x+dx</code>, <code>y+dy</code>, <code>z+dz</code>).</td></tr>
+<tr><td><code>.interpolate(v, t)</code></td>
+  <td>(<code>this*(1-t) + v*t)</code>.</td></tr>
 </table>
 
 <a name="Rect"><h3>Rect (<code>geom.ts</code>)</h3></a>
@@ -358,10 +347,26 @@ has its position (x, y) and size (width, height).
   <td>The height of the rectangle.</td></tr>
 <tr><td><code>.copy()</code></td>
   <td>Duplicates the rectangle.</td></tr>
+<tr><td><code>.equals(rect)</code></td>
+  <td><code>true</code> if <code>rect</code> is identical.</td></tr>
+<tr><td><code>.isZero()</code></td>
+  <td><code>true</code> if the rectangle is empty.</td></tr>
+<tr><td><code>.right()</code></td>
+  <td>The right edge of the rectangle.</td></tr>
+<tr><td><code>.bottom()</code></td>
+  <td>The bottom edge of the rectangle.</td></tr>
+<tr><td><code>.centerx()</code></td>
+  <td>The center-x of the rectangle.</td></tr>
+<tr><td><code>.centery()</code></td>
+  <td>The center-y of the rectangle.</td></tr>
+<tr><td><code>.center()</code></td>
+  <td>The center of the rectangle.</td></tr>
 <tr><td><code>.move(dx, dy)</code></td>
   <td>Creates a rectangle moved by (<code>dx</code>, <code>dy</code>).</td></tr>
 <tr><td><code>.add(v)</code></td>
   <td>Creates a rectangle moved by <code>v</code>.</td></tr>
+<tr><td><code>.sub(v)</code></td>
+  <td>Creates a rectangle moved by <code>-v</code>.</td></tr>
 <tr><td><code>.inflate(dw, dh)</code></td>
   <td>Creates a inflated/deflated rectangle by (<code>dw</code>, <code>dh</code>):
     <div style="margin-left:1em;">
@@ -379,6 +384,39 @@ has its position (x, y) and size (width, height).
 	  <g style="font-size: 75%;">
 	    <text x="1" y="20">dw</text>
 	    <text x="46" y="10">dh</text>
+	  </g>
+	</g>
+      </svg>
+    </div>
+  </td></tr>
+<tr><td><code>.anchor(<em>[vx, [vy]]</em>)</code></td>
+  <td>The anchor point of the rectangle:
+    <div style="margin-left:1em;">
+      <svg xmlns="http://www.w3.org/2000/svg" 
+	   xmlns:xlink="http://www.w3.org/1999/xlink"
+	   version="1.1" width="125" height="49">
+	<g transform="translate(2.5,2.5)">
+	  <g fill="none" stroke="black" stroke-width="1">
+	    <rect x="0" y="0" width="120" height="44" />
+	    <circle cx="0" cy="0" r="2" />
+	    <circle cx="60" cy="0" r="2" />
+	    <circle cx="120" cy="0" r="2" />
+	    <circle cx="0" cy="22" r="2" />
+	    <circle cx="60" cy="22" r="2" />
+	    <circle cx="120" cy="22" r="2" />
+	    <circle cx="0" cy="44" r="2" />
+	    <circle cx="60" cy="44" r="2" />
+	    <circle cx="120" cy="44" r="2" />
+	  </g>
+	  <g style="font-size: 75%;">
+	    <text x="0" y="11" text-anchor="begin">(-1,-1)</text>
+	    <text x="60" y="11" text-anchor="middle">(0,-1)</text>
+	    <text x="120" y="11" text-anchor="end">(+1,-1)</text>
+	    <text x="0" y="26" text-anchor="begin">(-1,0)</text>
+	    <text x="120" y="26" text-anchor="end">(+1,0)</text>
+	    <text x="0" y="41" text-anchor="begin">(-1,+1)</text>
+	    <text x="60" y="41" text-anchor="middle">(0,+1)</text>
+	    <text x="120" y="41" text-anchor="end">(+1,+1)</text>
 	  </g>
 	</g>
       </svg>
@@ -427,64 +465,47 @@ has its position (x, y) and size (width, height).
     </div>
   </td></tr>
 <tr><td><code>.resize(w, h, <em>[vx, [vy]]</em>)</code></td>
-  <td>Creates a resized rectangle.</td></tr>
-<tr><td><code>.union(rect)</code></td>
-  <td>Combines two rectangles (union).</td></tr>
-<tr><td><code>.intersection(rect)</code></td>
-  <td>Combines two rectangles (intersection).</td></tr>
-<tr><td><code>.clamp(bounds)</code></td>
-  <td>Moves the rectangle so that it fits <code>bounds</code>.</td></tr>
-<tr><td><code>.equals(rect)</code></td>
-  <td><code>true</code> if <code>rect</code> is identical.</td></tr>
-<tr><td><code>.isZero()</code></td>
-  <td><code>true</code> if the rectangle is empty.</td></tr>
-<tr><td><code>.right()</code></td>
-  <td>The right edge of the rectangle.</td></tr>
-<tr><td><code>.bottom()</code></td>
-  <td>The bottom edge of the rectangle.</td></tr>
-<tr><td><code>.centerx()</code></td>
-  <td>The center-x of the rectangle.</td></tr>
-<tr><td><code>.centery()</code></td>
-  <td>The center-y of the rectangle.</td></tr>
-<tr><td><code>.center()</code></td>
-  <td>The center of the rectangle.</td></tr>
-<tr><td><code>.anchor(<em>[vx, [vy]]</em>)</code></td>
-  <td>The anchor point of the rectangle:
+  <td>Creates a resized rectangle.
     <div style="margin-left:1em;">
       <svg xmlns="http://www.w3.org/2000/svg" 
 	   xmlns:xlink="http://www.w3.org/1999/xlink"
-	   version="1.1" width="125" height="49">
-	<g transform="translate(2.5,2.5)">
+	   version="1.1" width="200" height="90">
+	<marker id="arrow" viewBox="-5 -5 10 10" orient="auto">
+	  <polygon points="-5,-5 5,0 -5,5" fill="black" stroke="none" />
+	</marker>
+	<g transform="translate(36.5,4.5)">
 	  <g fill="none" stroke="black" stroke-width="1">
-	    <rect x="0" y="0" width="120" height="44" />
-	    <circle cx="0" cy="0" r="2" />
-	    <circle cx="60" cy="0" r="2" />
-	    <circle cx="120" cy="0" r="2" />
-	    <circle cx="0" cy="22" r="2" />
-	    <circle cx="60" cy="22" r="2" />
-	    <circle cx="120" cy="22" r="2" />
-	    <circle cx="0" cy="44" r="2" />
-	    <circle cx="60" cy="44" r="2" />
-	    <circle cx="120" cy="44" r="2" />
+	    <rect x="30" y="30" width="40" height="20" />
+	    <rect x="0" y="10" width="100" height="60" />
+	    <line x1="0" y1="29" x2="100" y2="29" />
+	    <line x1="0" y1="51" x2="100" y2="51" />
+	    <line x1="29" y1="10" x2="29" y2="70" />
+	    <line x1="71" y1="10" x2="71" y2="70" />
+	    <g marker-end="url(#arrow)" stroke-width="2">
+	      <line x1="25" y1="25" x2="5" y2="15" />
+	      <line x1="75" y1="25" x2="95" y2="15" />
+	      <line x1="25" y1="55" x2="5" y2="65" />
+	      <line x1="75" y1="55" x2="95" y2="65" />
+	      <line x1="25" y1="40" x2="5" y2="40" />
+	      <line x1="75" y1="40" x2="95" y2="40" />
+	      <line x1="50" y1="25" x2="50" y2="15" />
+	      <line x1="50" y1="55" x2="50" y2="65" />
+	    </g>
 	  </g>
 	  <g style="font-size: 75%;">
-	    <text x="0" y="11" text-anchor="begin">(-1,-1)</text>
-	    <text x="60" y="11" text-anchor="middle">(0,-1)</text>
-	    <text x="120" y="11" text-anchor="end">(+1,-1)</text>
-	    <text x="0" y="26" text-anchor="begin">(-1,0)</text>
-	    <text x="120" y="26" text-anchor="end">(+1,0)</text>
-	    <text x="0" y="41" text-anchor="begin">(-1,+1)</text>
-	    <text x="60" y="41" text-anchor="middle">(0,+1)</text>
-	    <text x="120" y="41" text-anchor="end">(+1,+1)</text>
+	    <text x="0" y="8" text-anchor="end">(-1,-1)</text>
+	    <text x="50" y="8" text-anchor="middle">(0,-1)</text>
+	    <text x="100" y="8" text-anchor="begin">(+1,-1)</text>
+	    <text x="0" y="45" text-anchor="end">(-1,0)</text>
+	    <text x="100" y="45" text-anchor="begin">(+1,0)</text>
+	    <text x="0" y="80" text-anchor="end">(-1,+1)</text>
+	    <text x="50" y="80" text-anchor="middle">(0,+1)</text>
+	    <text x="100" y="80" text-anchor="begin">(+1,+1)</text>
 	  </g>
 	</g>
       </svg>
     </div>
   </td></tr>
-<tr><td><code>.rndpt()</code></td>
-  <td>Creates a random point within the rectangle.</td></tr>
-<tr><td><code>.modpt(p)</code></td>
-  <td>Creates a modulo point with the rectangle.</td></tr>
 <tr><td><code>.xdistance(rect)</code></td>
   <td>The x-distance to <code>rect</code>.</td></tr>
 <tr><td><code>.ydistance(rect)</code></td>
@@ -495,6 +516,18 @@ has its position (x, y) and size (width, height).
   <td><code>true</code> if the rectangle contains <code>rect</code>.</td></tr>
 <tr><td><code>.overlapsRect(rect)</code></td>
   <td><code>true</code> if the rectangle overlaps <code>rect</code>.</td></tr>
+<tr><td><code>.overlapsCircle(circle)</code></td>
+  <td><code>true</code> if the rectangle overlaps <code>circle</code>.</td></tr>
+<tr><td><code>.union(rect)</code></td>
+  <td>Combines two rectangles (union).</td></tr>
+<tr><td><code>.intersection(rect)</code></td>
+  <td>Combines two rectangles (intersection).</td></tr>
+<tr><td><code>.clamp(bounds)</code></td>
+  <td>Moves the rectangle so that it fits <code>bounds</code>.</td></tr>
+<tr><td><code>.rndpt()</code></td>
+  <td>Creates a random point within the rectangle.</td></tr>
+<tr><td><code>.modpt(p)</code></td>
+  <td>Creates a modulo point with the rectangle.</td></tr>
 <tr><td><code>.contactRect(v, rect)</code></td>
   <td>Trims a vector so that it doesn't collide <code>rect</code>.</td></tr>
 <tr><td><code>.contactBounds(v, bounds)</code></td>
@@ -511,11 +544,43 @@ A <code>Circle</code> represents a circle that has its center and radius.
   <td>The center of the circle.</td></tr>
 <tr><td><code>.radius</code></td>
   <td>The radius of the circle.</td></tr>
+<tr><td><code>.equals(circle)</code></td>
+  <td><code>true</code> if <code>circle</code> is identical.</td></tr>
+<tr><td><code>.isZero()</code></td>
+  <td><code>true</code> if the circle is empty.</td></tr>
+<tr><td><code>.move(dx, dy)</code></td>
+  <td>Creates a circle moved by (<code>dx</code>, <code>dy</code>).</td></tr>
+<tr><td><code>.add(v)</code></td>
+  <td>Creates a circle moved by <code>v</code>.</td></tr>
+<tr><td><code>.sub(v)</code></td>
+  <td>Creates a circle moved by <code>-v</code>.</td></tr>
+<tr><td><code>.inflate(dr)</code></td>
+  <td>Creates a inflated/deflated circle by <code>dr</code>.</tr></tr>
+<tr><td><code>.resize(radius)</code></td>
+  <td>Creates a resized circle.</tr></tr>
+<tr><td><code>.distance(p)</code></td>
+  <td>The distance to point <code>p</code>.</td></tr>
+<tr><td><code>.containsPt(p)</code></td>
+  <td><code>true</code> if the circle contains <code>p</code>.</td></tr>
+<tr><td><code>.containsCircle(circle)</code></td>
+  <td><code>true</code> if the circle contains another <code>circle</code>.</td></tr>
+<tr><td><code>.overlapsCircle(circle)</code></td>
+  <td><code>true</code> if the circle overlaps another <code>circle</code>.</td></tr>
+<tr><td><code>.overlapsRect(rect)</code></td>
+  <td><code>true</code> if the circle overlaps <code>rect</code>.</td></tr>
+<tr><td><code>.clamp(bounds)</code></td>
+  <td>Moves the circle so that it fits <code>bounds</code>.</td></tr>
+<tr><td><code>.rndpt()</code></td>
+  <td>Creates a random point within the circle.</td></tr>
+<tr><td><code>.contactCircle(v, circle)</code></td>
+  <td>Trims a vector so that it doesn't collide <code>circle</code>.</td></tr>
+<tr><td><code>.contactBounds(v, bounds)</code></td>
+  <td>Trims a vector so that it doesn't collide <code>bounds</code>.</td></tr>
 </table>
 
 <a name="Shape"><h3>Shape (<code>geom.ts</code>)</h3></a>
 <p>
-A <code>Shape</code> is an abstract interface that represents a collider.
+A <code>Shape</code> is an abstract class that represents a collider.
 <table border>
 <tr><td><code>.copy()</code></td>
   <td>Duplicates the shape.</td></tr>
@@ -527,7 +592,7 @@ A <code>Shape</code> is an abstract interface that represents a collider.
   <td><code>true</code> if <code>shape</code> is identical.</td></tr>
 <tr><td><code>.overlaps(shape)</code></td>
   <td><code>true</code> if the shape overlaps <code>shape</code>.</td></tr>
-<tr><td><code>.contact(v, shape)</code></td>
+<tr><td><code>.contactShape(v, shape)</code></td>
   <td>Trims a vector so that it doesn't collide <code>shape</code>.</td></tr>
 <tr><td><code>.contactBounds(v, shape)</code></td>
   <td>Trims a vector so that it doesn't collide <code>bounds</code>.</td></tr>
@@ -548,18 +613,6 @@ both as <code>Vec3</code>.
   <td>The size of the box.</td></tr>
 <tr><td><code>.copy()</code></td>
   <td>Duplicates the box.</td></tr>
-<tr><td><code>.move(dx, dy, dz)</code></td>
-  <td>Creates a box moved by (<code>dx</code>, <code>dy</code>, <code>dz</code>).</td></tr>
-<tr><td><code>.add(v)</code></td>
-  <td>Creates a box moved by <code>v</code>.</td></tr>
-<tr><td><code>.inflate(dx, dy, dz)</code></td>
-  <td>Creates a inflated/deflated box by (<code>dx</code>, <code>dy</code>, <code>dz</code>).</td></tr>
-<tr><td><code>.union(box)</code></td>
-  <td>Combines two boxes (union).</td></tr>
-<tr><td><code>.intersection(box)</code></td>
-  <td>Combines two boxes (intersection).</td></tr>
-<tr><td><code>.clamp(bounds)</code></td>
-  <td>Moves the box so that it fits <code>bounds</code>.</td></tr>
 <tr><td><code>.equals(box)</code></td>
   <td><code>true</code> if <code>box</code> is identical.</td></tr>
 <tr><td><code>.isZero()</code></td>
@@ -568,20 +621,42 @@ both as <code>Vec3</code>.
   <td>The center of the box.</td></tr>
 <tr><td><code>.anchor(<em>[vx, [vy, [vz]]]</em>)</code></td>
   <td>The anchor point of the box.</td></tr>
-<tr><td><code>.rndpt()</code></td>
-  <td>Creates a random point within the box.</td></tr>
+<tr><td><code>.move(dx, dy, dz)</code></td>
+  <td>Creates a box moved by (<code>dx</code>, <code>dy</code>, <code>dz</code>).</td></tr>
+<tr><td><code>.add(v)</code></td>
+  <td>Creates a box moved by <code>v</code>.</td></tr>
+<tr><td><code>.sub(v)</code></td>
+  <td>Creates a box moved by <code>-v</code>.</td></tr>
+<tr><td><code>.inflate(dx, dy, dz)</code></td>
+  <td>Creates a inflated/deflated box by (<code>dx</code>, <code>dy</code>, <code>dz</code>).</td></tr>
 <tr><td><code>.xdistance(box)</code></td>
   <td>The x-distance to <code>box</code>.</td></tr>
 <tr><td><code>.ydistance(box)</code></td>
   <td>The y-distance to <code>box</code>.</td></tr>
+<tr><td><code>.union(box)</code></td>
+  <td>Combines two boxes (union).</td></tr>
+<tr><td><code>.intersection(box)</code></td>
+  <td>Combines two boxes (intersection).</td></tr>
+<tr><td><code>.clamp(bounds)</code></td>
+  <td>Moves the box so that it fits <code>bounds</code>.</td></tr>
+<tr><td><code>.rndpt()</code></td>
+  <td>Creates a random point within the box.</td></tr>
 <tr><td><code>.zdistance(box)</code></td>
   <td>The z-distance to <code>box</code>.</td></tr>
 <tr><td><code>.containsPt(p)</code></td>
   <td><code>true</code> if the box contains <code>p</code>.</td></tr>
-<tr><td><code>.overlaps(box)</code></td>
+<tr><td><code>.overlapsBox(box)</code></td>
   <td><code>true</code> if the box overlaps <code>box</code>.</td></tr>
 <tr><td><code>.contactBox(v, box)</code></td>
   <td>Trims a vector so that it doesn't collide <code>box</code>.</td></tr>
+<tr><td><code>.union(box)</code></td>
+  <td>Combines two boxes (union).</td></tr>
+<tr><td><code>.intersection(box)</code></td>
+  <td>Combines two boxses (intersection).</td></tr>
+<tr><td><code>.clamp(bounds)</code></td>
+  <td>Moves the box so that it fits <code>bounds</code>.</td></tr>
+<tr><td><code>.rndpt()</code></td>
+  <td>Creates a random point within the box.</td></tr>
 </table>
 
 <a name="TileMap"><h3>TileMap (<code>tilemap.ts</code>)</h3></a>
@@ -620,12 +695,14 @@ A <code>TileMap</code> represents a two-dimensional array that holds map tiles.
   <td>Converts a Rect/Vec2 for tile cells to the actual size.</td></tr>
 <tr><td><code>.apply(f, <em>[rect]</em>)</code></td>
   <td>Applies a function to tiles.</td></tr>
+<tr><td><code>.shift(vx, vy, <em>[rect]</em>)</code></td>
+  <td>Shift the contents of cells in the given area.</td></tr>
 <tr><td><code>.findTile(f, rect)</code></td>
+  <td>Returns the position of the first tile in the given area.</td></tr>
+<tr><td><code>.findTileByCoord(f, rect)</code></td>
   <td>Returns the position of the first tile in the given area.</td></tr>
 <tr><td><code>.getTileRects(f, rect)</code></td>
   <td>Returns a list of actual rectangles for tiles.</td></tr>
-<tr><td><code>.scroll(vx, vy, <em>[rect]</em>)</code></td>
-  <td>Scrolls/rotates the tiles.</td></tr>
 <tr><td><code>.getRangeMap(key, f)</code></td>
   <td>Creates a <code>RangeMap</code> object for this tilemap.</td></tr>
 <tr><td><code>.renderFromBottomLeft(<br>&nbsp; ctx, bx, by,<br>&nbsp; tileset, ft,<br>&nbsp; <em>[x0, y0, w, h]</em>)</code></td>
@@ -655,6 +732,49 @@ that allows range queries for specific tiles.
   <td><code>true</code> if a specific tile exists within the given area.</td></tr>
 </table>
 
+<a name="ImageSource"><h3>ImageSource (<code>sprite.ts</code>)</h3></a>
+<p>
+An <code>ImageSource</code> is a portion of a <code>&lt;img&gt;</code> 
+that is used for rendering Sprites.
+<table border>
+<tr><td><code>new HTMLImageSource(image, srcRect, dstRect)</code></td>
+  <td>Creates a <code>ImageSource</code> from <code>&lt;img&gt;</code>.</td></tr>
+<tr><td><code>new FillImageSource(color, dstRect)</code></td>
+  <td>Creates a <code>ImageSource</code> with a solid color.</td></tr>
+</table>
+
+<a name="SpriteSheet"><h3>SpriteSheet (<code>sprite.ts</code>)</h3></a>
+<p>
+A set of <code>ImageSource</code> objects indexed by a number.
+<table border>
+<tr><td><code>new ImageSpriteSheet(image, size, <em>[origin]</em>)</code></td>
+  <td>Creates a <code>SpriteSheet</code> from <code>&lt;img&gt;</code>.</td></tr>
+<tr><td><code>new SimpleSpriteSheet(imgsrcs)</code></td>
+  <td>Creates a <code>SpriteSheet</code> with solid colors.</td></tr>
+<tr><td><code>.get(i, <em>[j, [w, [h, [origin]]]]</em>)</code></td>
+  <td>Returns the <code>i,j</code>-th <code>ImageSource</code>.</td></tr>
+</table>
+
+<a name="Sprite"><h3>Sprite (<code>sprite.ts</code>)</h3></a>
+<p>
+A <code>Sprite</code> represents something that's shown on the screen.
+<table border>
+<tr><td><code>new Sprite(<em>[imgsrc]</em>)</code></td>
+  <td>Creates a new sprite.</td></tr>
+<tr><td><code>.imgsrc</code></td>
+  <td>A <code>ImageSource</code> for the sprite's content.</td></tr>
+<tr><td><code>.visible</code></td>
+  <td><code>true</code> if the sprite is visible.</td></tr>
+<tr><td><code>.zOrder</code></td>
+  <td>The order that the sprite is drawn to the screen.</td></tr>
+<tr><td><code>.scale</code></td>
+  <td>A vector for the polarity of the sprite image.</td></tr>
+<tr><td><code>.getBounds([pos])</code></td>
+  <td>Returns the bounds for the given <code>pos</code>.</td></tr>
+<tr class=overridable><td><code>.render(ctx, bx, by)</code></td>
+  <td>Draws the sprite at the location (<code>bx</code>, <code>by</code>).</td></tr>
+</table>
+
 <a name="basic-classes"><h2>Basic Classes</h2></a>
 
 <a name="Task"><h3>Task (<code>entity.ts</code>)</h3></a>
@@ -680,92 +800,32 @@ and its method is executed periodically.
   <td>Updates for the current frame.</td></tr>
 </table>
 
-<a name="Sprite"><h3>Sprite : <a href="#Task">Task</a> (<code>entity.ts</code>)</h3></a>
-<p>
-A <code>Sprite</code> represents something that's shown on the screen.
-<table border>
-<tr><td><code>new Sprite(pos)</code></td>
-  <td>Creates a new sprite.</td></tr>
-<tr class=inherited><td><code>.alive</code></td>
-  <td><code>true</code> if the sprite is alive.</td></tr>
-<tr class=inherited><td><code>.layer</code></td>
-  <td>A <code>Layer</code> that the sprite belongs to.</td></tr>
-<tr class=inherited><td><code>.time</code></td>
-  <td>The elapsed time since the sprite started.</td></tr>
-<tr class=inherited><td><code>.stopped</code></td>
-  <td>A <code>Signal</code> that is signaled when the sprite stops.</td></tr>
-<tr><td><code>.pos</code></td>
-  <td>The position of the sprite.</td></tr>
-<tr><td><code>.imgsrc</code></td>
-  <td>A <code>ImageSource</code> for the sprite's content.</td></tr>
-<tr><td><code>.visible</code></td>
-  <td><code>true</code> if the sprite is visible.</td></tr>
-<tr><td><code>.zOrder</code></td>
-  <td>The order that the sprite is drawn to the screen.</td></tr>
-<tr><td><code>.scale</code></td>
-  <td>A vector for the polarity of the sprite image.</td></tr>
-<tr><td><code>.stop()</code></td>
-  <td>Terminates the sprite.</td></tr>
-<tr><td><code>.getBounds([pos])</code></td>
-  <td>Returns the bounds for the given <code>pos</code>.</td></tr>
-<tr><td><code>.movePos(v)</code></td>
-  <td>Moves the sprite by <code>v</code>.</td></tr>
-<tr class=overridable><td><code>.update()</code></td>
-  <td>Updates for the current frame.</td></tr>
-<tr class=overridable><td><code>.render(ctx, bx, by)</code></td>
-  <td>Draws the sprite at the location (<code>bx</code>, <code>by</code>).</td></tr>
-</table>
-
-<a name="Entity"><h3>Entity : <a href="#Sprite">Sprite</a> (<code>entity.ts</code>)</h3></a>
+<a name="Entity"><h3>Entity : <a href="#Task">Task</a> (<code>entity.ts</code>)</h3></a>
 <p>
 An <code>Entity</code> is a physical object that's visible and has a physical boundary.
 <table border>
 <tr><td><code>new Entity(pos)</code></td>
   <td>Creates a new entity.</td></tr>
-<tr class=inherited><td><code>.alive</code></td>
-  <td><code>true</code> if the entity is alive.</td></tr>
-<tr class=inherited><td><code>.layer</code></td>
-  <td>A <code>Layer</code> that the entity belongs to.</td></tr>
-<tr class=inherited><td><code>.time</code></td>
-  <td>The elapsed time since the entity started.</td></tr>
-<tr class=inherited><td><code>.stopped</code></td>
-  <td>A <code>Signal</code> that is signaled when the entity stops.</td></tr>
-<tr class=inherited><td><code>.pos</code></td>
-  <td>The position of the sprite.</td></tr>
-<tr class=inherited><td><code>.imgsrc</code></td>
-  <td>A <code>ImageSource</code> for the entity's content.</td></tr>
-<tr class=inherited><td><code>.visible</code></td>
-  <td><code>true</code> if the entity is visible.</td></tr>
-<tr class=inherited><td><code>.zOrder</code></td>
-  <td>The order that the entity is drawn to the screen.</td></tr>
-<tr class=inherited><td><code>.scale</code></td>
-  <td>A vector for the polarity of the entity image.</td></tr>
-<tr class=inherited><td><code>.stop()</code></td>
-  <td>Terminates the entity.</td></tr>
-<tr class=inherited><td><code>.getBounds([pos])</code></td>
-  <td>Returns the bounds for the given <code>pos</code>.</td></tr>
-<tr class=inherited><td><code>.movePos(v)</code></td>
-  <td>Moves the entity by <code>v</code>.</td></tr>
+<tr><td><code>.sprite</code></td>
+  <td>A <code>Sprite</code> that belongs to this entity.</td></tr>
 <tr><td><code>.collider</code></td>
   <td>A <code>Rect</code>/<code>Circle</code> for the entity's collider.</td></tr>
 <tr><td><code>.getCollider([pos])</code></td>
   <td>Returns the collider for the given <code>pos</code>.</td></tr>
-<tr class=overridable><td><code>.update()</code></td>
-  <td>Updates for the current frame.</td></tr>
-<tr class=overridable><td><code>.render(ctx, bx, by)</code></td>
-  <td>Draws the entity at the location (<code>bx</code>, <code>by</code>).</td></tr>
-<tr class=overridable><td><code>.collidedWith(entity)</code></td>
-  <td>Invoked when the entity collides another entity.</td></tr>
-<tr><td><code>.moveIfPossible(v, <em>[context]</em>)</code></td>
-  <td>Moves the entity by <code>v</code> without colliding obstacles.</td></tr>
-<tr><td><code>.isMovable(v)</code></td>
+<tr><td><code>.canMove(v)</code></td>
   <td><code>true</code> if the entity is movable toward <code>v</code>.</td></tr>
 <tr><td><code>.getMove(v)</code></td>
   <td>Trims the vector <code>v</code> so that it doesn't collide.</td></tr>
+<tr><td><code>.movePos(v)</code></td>
+  <td>Moves the entity by <code>v</code>.</td></tr>
+<tr><td><code>.moveIfPossible(v, <em>[context]</em>)</code></td>
+  <td>Moves the entity by <code>v</code> without colliding obstacles.</td></tr>
 <tr class=overridable><td><code>.getObstaclesFor(range, context)</code></td>
   <td>Returns a list of <code>Shape</code>s within <code>range</code>.</td></tr>
 <tr class=overridable><td><code>.getFencesFor(range, context)</code></td>
   <td>Returns a list of bounding rectangles that limits the entity within.</td></tr>
+<tr class=overridable><td><code>.collidedWith(entity)</code></td>
+  <td>Invoked when the entity collides another entity.</td></tr>
 </table>
 
 <a name="Layer"><h3>Layer (<code>layer.ts</code>)</h3></a>
@@ -775,24 +835,26 @@ at once and interact each other.
 <table border>
 <tr><td><code>new Layer()</code></td>
   <td>Creates a new layer.</td></tr>
+<tr><td><code>.time</code></td>
+  <td>The current time of the layer (in seconds).</td></tr>
 <tr><td><code>.tasks</code></td>
   <td>A list of <code>Task</code>s that belong to the layer.</td></tr>
 <tr><td><code>.sprites</code></td>
   <td>A list of <code>Sprite</code>s that belong to the layer.</td></tr>
 <tr><td><code>.entities</code></td>
   <td>A list of <code>Entity</code>s that belong to the layer.</td></tr>
-<tr class=overridable><td><code>.init()</code></td>
-  <td>Invoked when the layer is initialized.</td></tr>
-<tr class=overridable><td><code>.tick(t)</code></td>
-  <td>Invoked for every frame.</td></tr>
-<tr><td><code>.render(ctx, bx, by)</code></td>
-  <td>Draws all the sprites at the location (<code>bx</code>, <code>by</code>).</td></tr>
 <tr><td><code>.moveAll(v)</code></td>
   <td>Moves all the sprites by <code>v</code>.</td></tr>
 <tr><td><code>.addTask(task)</code></td>
   <td>Adds a <code>Task</code>/<code>Sprite</code>/<code>Entity</code> to the list.</td></tr>
 <tr><td><code>.findEntities(shape, <em>[entities, [f]]</em>)</code></td>
   <td>Returns a list of entities that overlap <code>shape</code>.</td></tr>
+<tr class=overridable><td><code>.init()</code></td>
+  <td>Invoked when the layer is initialized.</td></tr>
+<tr class=overridable><td><code>.tick(t)</code></td>
+  <td>Invoked for every frame.</td></tr>
+<tr class=overridable><td><code>.render(ctx, bx, by)</code></td>
+  <td>Draws all the sprites at the location (<code>bx</code>, <code>by</code>).</td></tr>
 </table>
 
 <a name="Scene"><h3>Scene (<code>scene.ts</code>)</h3></a>
@@ -800,10 +862,8 @@ at once and interact each other.
 A <code>Scene</code> represents one state of a game that can have its own
 event handling (such as title screen or cut scene).
 <table border>
-<tr><td><code>new Scene(app)</code></td>
+<tr><td><code>new Scene()</code></td>
   <td>Creates a new scene.</td></tr>
-<tr><td><code>.app</code></td>
-  <td>The <code>App</code> object that the scene belongs to.</td></tr>
 <tr><td><code>.screen</code></td>
   <td>The canvas rectangle.</td></tr>
 <tr><td><code>.changeScene(scene)</code></td>
@@ -837,18 +897,14 @@ event handling (such as title screen or cut scene).
 An <code>App</code> holds all the shared resources and is
 responsible for switching Scenes.
 <table border>
-<tr><td><code>new App(<br>&nbsp; framerate, scale,<br>&nbsp; images, audios, labels)</code></td>
+<tr><td><code>new App(size, framerate, elem)</code></td>
   <td>Creates a new app with given HTML5 resources.</td></tr>
+<tr><td><code>.size</code></td>
+  <td>The canvas size.</td></tr>
 <tr><td><code>.framerate</code></td>
   <td>The framerate.</td></tr>
-<tr><td><code>.frame</code></td>
+<tr><td><code>.canvas</code></td>
   <td>The <code>&lt;canvas&gt;</code> element.</td></tr>
-<tr><td><code>.images</code></td>
-  <td>A set of <code>&lt;img&gt;</code> elements.</td></tr>
-<tr><td><code>.audios</code></td>
-  <td>A set of <code>&lt;audio&gt;</code> elements.</td></tr>
-<tr><td><code>.labels</code></td>
-  <td>A set of <code>&lt;div&gt;</code> elements.</td></tr>
 <tr><td><code>.screen</code></td>
   <td>The canvas element.</td></tr>
 <tr><td><code>.ctx</code></td>

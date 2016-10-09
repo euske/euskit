@@ -5,7 +5,7 @@ A minimalistic HTML5 framework for 2D games written in TypeScript.
 (The name was suggested by Mr. Rat King)
 
  * Suitable for old-school pixel art games.
- * <a href="http://euske.github.io/euskit/docs/api.html">Simple and straightforward API</a>.
+ * <a href="http://euske.github.io/euskit/docs/quickref.html">Simple and straightforward API</a>.
 
 Samples
 -------
