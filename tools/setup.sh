@@ -25,7 +25,8 @@ mkdir "$dst"/base || :  # ignore errors
 mkdir "$dst"/assets || :  # ignore errors
 cp "$basedir"/base/*.ts "$dst"/base
 cp "$basedir"/skel/.gitignore "$dst"
-cp "$basedir"/skel/Makefile "$dst"
+sed 's+^BASEDIR=../base+BASEDIR=./base+' \
+    "$basedir"/skel/Makefile > "$dst"/Makefile
 cp "$basedir"/skel/index.html "$dst"
 cp "$basedir"/skel/tsconfig.json "$dst"
 cp "$basedir"/skel/assets/.gitignore "$dst"/assets
