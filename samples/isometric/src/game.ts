@@ -30,8 +30,8 @@ class Sprite3d extends Sprite {
     shadowz: number = 0;
     floating: boolean = false;
     
-    constructor(entity: Entity3d=null) {
-	super();
+    constructor(entity: Entity3d=null, imgsrc: ImageSource=null) {
+	super(imgsrc);
 	this.entity = entity;
     }
 
