@@ -89,12 +89,16 @@ class SimpleSpriteSheet extends SpriteSheet {
 //
 class Sprite {
 
-    imgsrc: ImageSource = null;
+    imgsrc: ImageSource;
     visible: boolean = true;
     zOrder: number = 0;
     scale: Vec2 = new Vec2(1, 1);
     rotation: number = 0;
     mouseSelectable: boolean = false;
+
+    constructor(imgsrc: ImageSource=null) {
+	this.imgsrc = imgsrc;
+    }
 
     toString() {
 	return '<Sprite: '+this.imgsrc+'>';
@@ -118,8 +122,8 @@ class EntitySprite extends Sprite {
 
     entity: Entity;
     
-    constructor(entity: Entity=null) {
-	super();
+    constructor(entity: Entity=null, imgsrc: ImageSource=null) {
+	super(imgsrc);
 	this.entity = entity;
     }
 
@@ -168,8 +172,8 @@ class TiledSprite extends Sprite {
     bounds: Rect;
     offset: Vec2 = new Vec2();
     
-    constructor(bounds: Rect) {
-	super();
+    constructor(bounds: Rect, imgsrc: ImageSource=null) {
+	super(imgsrc);
 	this.bounds = bounds;
     }
 

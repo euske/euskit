@@ -57,10 +57,6 @@ class Vec2 {
 	return this.sub(v).len();
     }
 
-    interp(v: Vec2, t: number) {
-	return new Vec2((1.0-t)*this.x+t*v.x, (1.0-t)*this.y+t*v.y);
-    }
-    
     clamp(bounds: Vec2) {
 	return new Vec2(
 	    clamp(-bounds.x, this.x, +bounds.x),
@@ -71,6 +67,10 @@ class Vec2 {
 	return new Vec2(this.x+dx, this.y+dy);
     }
 
+    interpolate(v: Vec2, t: number) {
+	return new Vec2((1.0-t)*this.x+t*v.x, (1.0-t)*this.y+t*v.y);
+    }
+    
     // rotate: rotates a vector clockwise by d radian.
     rotate(d: number) {
 	let s = Math.sin(d);
@@ -153,13 +153,6 @@ class Vec3 {
 	return this.sub(v).len();
     }
     
-    interp(v: Vec3, t: number) {
-	return new Vec3(
-	    (1.0-t)*this.x+t*v.x,
-	    (1.0-t)*this.y+t*v.y,
-	    (1.0-t)*this.z+t*v.z);
-    }
-    
     clamp(bounds: Vec3) {
 	return new Vec3(
 	    clamp(-bounds.x, this.x, +bounds.x),
@@ -171,6 +164,13 @@ class Vec3 {
 	return new Vec3(this.x+dx, this.y+dy, this.z+dz);
     }
 
+    interpolate(v: Vec3, t: number) {
+	return new Vec3(
+	    (1.0-t)*this.x+t*v.x,
+	    (1.0-t)*this.y+t*v.y,
+	    (1.0-t)*this.z+t*v.z);
+    }
+    
 }
 
 
@@ -311,6 +311,15 @@ class Rect implements Shape {
 	return new Rect(x, y, w, h);
     }
     
+    xdistance(rect: Rect) {
+	return Math.max(rect.x-(this.x+this.width),
+			this.x-(rect.x+rect.width));
+    }
+    ydistance(rect: Rect) {
+	return Math.max(rect.y-(this.y+this.height),
+			this.y-(rect.y+rect.height));
+    }
+    
     containsPt(p: Vec2) {
 	return (this.x <= p.x && this.y <= p.y &&
 		p.x < this.x+this.width && p.y < this.y+this.height);
@@ -321,15 +330,6 @@ class Rect implements Shape {
 		this.y <= rect.y &&
 		rect.x+rect.width <= this.x+this.width &&
 		rect.y+rect.height <= this.y+this.height);
-    }
-    
-    xdistance(rect: Rect) {
-	return Math.max(rect.x-(this.x+this.width),
-			this.x-(rect.x+rect.width));
-    }
-    ydistance(rect: Rect) {
-	return Math.max(rect.y-(this.y+this.height),
-			this.y-(rect.y+rect.height));
     }
     
     overlapsRect(rect: Rect) {
@@ -529,21 +529,21 @@ class Circle implements Shape {
 	return new Circle(this.center, radius);
     }
 
-    dist(p: Vec2) {
+    distance(p: Vec2) {
 	return this.center.sub(p).len();
     }
 
     containsPt(p: Vec2) {
-	return this.dist(p) < this.radius;
+	return this.distance(p) < this.radius;
     }
 
     containsCircle(circle: Circle) {
-	let d = this.dist(circle.center);
+	let d = this.distance(circle.center);
 	return d+circle.radius < this.radius;
     }
 
     overlapsCircle(circle: Circle) {
-	let d = this.dist(circle.center);
+	let d = this.distance(circle.center);
 	return d < this.radius+circle.radius;
     }
     

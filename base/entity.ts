@@ -188,7 +188,17 @@ class Entity extends Task {
 	return new Vec2(hitbox1.x-hitbox0.x,
 			hitbox1.y-hitbox0.y);
     }
-  
+
+    movePos(v: Vec2) {
+	this.pos = this.pos.add(v);
+    }
+    
+    moveIfPossible(v: Vec2, context=null as string) {
+	v = this.getMove(this.pos, v, context);
+	this.movePos(v);
+	return v;
+    }
+    
     getObstaclesFor(range: Rect, v: Vec2, context: string): Shape[] {
 	// [OVERRIDE]
 	return null;
@@ -202,17 +212,6 @@ class Entity extends Task {
     collidedWith(entity: Entity) {
 	// [OVERRIDE]
     }
-
-    movePos(v: Vec2) {
-	this.pos = this.pos.add(v);
-    }
-    
-    moveIfPossible(v: Vec2, context=null as string) {
-	v = this.getMove(this.pos, v, context);
-	this.movePos(v);
-	return v;
-    }
-    
 }
 
 
