@@ -8,7 +8,6 @@
 // 
 class Layer {
 
-    bounds: Rect = null;
     time: number = 0;
     tasks: Task[] = [];
     sprites: Sprite[] = [];

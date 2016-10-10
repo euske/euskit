@@ -126,7 +126,6 @@ class GameScene extends Scene {
     constructor() {
 	super();
 	this.layer = new ScrollLayer(this.screen);
-	this.layer.bounds = this.screen;
     }
 
     init() {
