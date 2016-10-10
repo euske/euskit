@@ -788,14 +788,16 @@ and its method is executed periodically.
   <td><code>true</code> if the task is running.</td></tr>
 <tr><td><code>.layer</code></td>
   <td>The <code>Layer</code> that the task belongs to.</td></tr>
-<tr><td><code>.time</code></td>
-  <td>The elapsed time since the task started (in seconds).</td></tr>
 <tr><td><code>.lifetime</code></td>
   <td>The duration that the task can run.</td></tr>
+<tr><td><code>.started</code></td>
+  <td>The time the task started.</td></tr>
 <tr><td><code>.stopped</code></td>
   <td>A <code>Signal</code> that is signaled when the task stops.</td></tr>
 <tr><td><code>.stop()</code></td>
   <td>Terminates the task.</td></tr>
+<tr><td><code>.getTime()</code></td>
+  <td>The elapsed time since the task has started (in seconds).</td></tr>
 <tr class=overridable><td><code>.update()</code></td>
   <td>Updates for the current frame.</td></tr>
 </table>
@@ -843,12 +845,28 @@ at once and interact each other.
   <td>A list of <code>Sprite</code>s that belong to the layer.</td></tr>
 <tr><td><code>.entities</code></td>
   <td>A list of <code>Entity</code>s that belong to the layer.</td></tr>
+<tr><td><code>.addTask(task)</code></td>
+  <td>Adds a <code>Task</code> to the list.</td></tr>
+<tr><td><code>.addSprite(sprite)</code></td>
+  <td>Adds a <code>Sprite</code> to the list.</td></tr>
+<tr><td><code>.removeSprite(sprite)</code></td>
+  <td>Removes a <code>Sprite</code> from the list.</td></tr>
+<tr><td><code>.addEntity(entity)</code></td>
+  <td>Adds an <code>Entity</code> to the list.</td></tr>
+<tr><td><code>.removeEntity(sprite)</code></td>
+  <td>Removes an <code>Entity</code> from the list.</td></tr>
 <tr><td><code>.moveAll(v)</code></td>
   <td>Moves all the sprites by <code>v</code>.</td></tr>
-<tr><td><code>.addTask(task)</code></td>
-  <td>Adds a <code>Task</code>/<code>Sprite</code>/<code>Entity</code> to the list.</td></tr>
-<tr><td><code>.findEntities(shape, <em>[entities, [f]]</em>)</code></td>
-  <td>Returns a list of entities that overlap <code>shape</code>.</td></tr>
+<tr><td><code>.findEntities(f, <em>[entities]</em>)</code></td>
+  <td>Returns a list of entities specified by function <code>f</code>.</td></tr>
+<tr><td><code>.findSpriteAt(p)</code></td>
+  <td>Returns a Sprite that is located at <code>p</code>.</td></tr>
+<tr><td><code>.onMouseDown(p, button)</code></td>
+  <td>Invoked when a mouse button is pressed.
+<tr><td><code>.onMouseUp(p, button)</code></td>
+  <td>Invoked when a mouse button is released.
+<tr><td><code>.onMouseMove(p)</code></td>
+  <td>Invoked when a mouse pointer is moved.
 <tr class=overridable><td><code>.init()</code></td>
   <td>Invoked when the layer is initialized.</td></tr>
 <tr class=overridable><td><code>.tick(t)</code></td>
@@ -880,16 +898,16 @@ event handling (such as title screen or cut scene).
   <td>Invoked when the action key state is changed.</td></tr>
 <tr class=overridable><td><code>.setCancel(cancel)</code></td>
   <td>Invoked when the cancel key state is changed.</td></tr>
-<tr class=overridable><td><code>.keydown(keyCode)</code></td>
+<tr class=overridable><td><code>.onKeyDown(keyCode)</code></td>
   <td>Invoked when a key is pressed.</td></tr>
-<tr class=overridable><td><code>.keyup(keyCode)</code></td>
+<tr class=overridable><td><code>.onKeyUp(keyCode)</code></td>
   <td>Invoked when a key is released.</td></tr>
-<tr class=overridable><td><code>.mousedown(x, y, button)</code></td>
+<tr class=overridable><td><code>.onMouseDown(p, button)</code></td>
   <td>Invoked when a mouse button is pressed.</td></tr>
-<tr class=overridable><td><code>.mouseup(x, y, button)</code></td>
+<tr class=overridable><td><code>.onMouseUp(p, button)</code></td>
   <td>Invoked when a mouse button is released.</td></tr>
-<tr class=overridable><td><code>.mousemove(x, y)</code></td>
-  <td>Invoked when a mouse position is changed.</td></tr>
+<tr class=overridable><td><code>.onMouseMove(p)</code></td>
+  <td>Invoked when a mouse pointer is moved.</td></tr>
 </table>
 
 <a name="App"><h3>App (<code>app.ts</code>)</h3></a>
@@ -905,8 +923,6 @@ responsible for switching Scenes.
   <td>The framerate.</td></tr>
 <tr><td><code>.canvas</code></td>
   <td>The <code>&lt;canvas&gt;</code> element.</td></tr>
-<tr><td><code>.screen</code></td>
-  <td>The canvas element.</td></tr>
 <tr><td><code>.ctx</code></td>
   <td>The <code>CanvasRenderingContext2D</code> object.</td></tr>
 <tr><td><code>.scene</code></td>
@@ -923,10 +939,10 @@ responsible for switching Scenes.
   <td>Adds a new <code>&lt;div&gt;</code> element to the canvas.</td></tr>
 <tr><td><code>.removeElement(elem)</code></td>
   <td>Removes the element from the canvas.</td></tr>
-<tr><td><code>.setMusic(music, <em>[start, [end]]</em>)</code></td>
-  <td>Starts/Stops the music loop.</td></tr>
 <tr><td><code>.lockKeys()</code></td>
   <td>Blocks accidental keyboard input for one second.</td></tr>
+<tr><td><code>.setMusic(music, <em>[start, [end]]</em>)</code></td>
+  <td>Starts/Stops the music loop.</td></tr>
 <tr><td><code>.init(scene)</code></td>
   <td>Initializes the game with the first <code>Scene</code>.</td></tr>
 <tr><td><code>.post(msg)</code></td>
@@ -936,7 +952,7 @@ responsible for switching Scenes.
 
 <a name="specialized-classes"><h2>Specialized Classes</h2></a>
 
-<a name="TiledSprite"><h3>TiledSprite : <a href="#Sprite">Sprite</a> (<code>entity.ts</code>)</h3></a>
+<a name="TiledSprite"><h3>TiledSprite : <a href="#Sprite">Sprite</a> (<code>sprite.ts</code>)</h3></a>
 <p>
 A <code>Sprite</code> shows an image repeatedly within the bounds.
 Suitable for backgrounds.
@@ -949,7 +965,7 @@ Suitable for backgrounds.
   <td>The offset of the image (in <code>Vec2</code>).</td></tr>
 </table>
 
-<a name="StarSprite"><h3>StarSprite : <a href="#Sprite">Sprite</a> (<code>entity.ts</code>)</h3></a>
+<a name="StarSprite"><h3>StarSprite : <a href="#Sprite">Sprite</a> (<code>sprite.ts</code>)</h3></a>
 <p>
 A <code>Sprite</code> that shows multiple parallaxed stars. 
 Suitable for space-y backgrounds.
@@ -1191,7 +1207,7 @@ a few convenient methods.
 <tr class=overridable><td><code>.mouseup(x, y, button)</code></td>
   <td>Invoked when a mouse button is released.</td></tr>
 <tr class=overridable><td><code>.mousemove(x, y)</code></td>
-  <td>Invoked when a mouse position is changed.</td></tr>
+  <td>Invoked when a mouse pointer is moved.</td></tr>
 </table>
 
 <a name="HTMLScene"><h3>HTMLScene (<code>scene.ts</code>)</h3></a>
