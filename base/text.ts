@@ -339,12 +339,23 @@ class BannerBox extends Task {
     textbox: TextBox;
     interval: number = 0;
     
-    constructor(frame: Rect, font: Font, text: string) {
+    constructor(frame: Rect, font: Font, lines: string[], linespace=4) {
 	super();
 	this.textbox = new TextBox(frame, font);
-	this.textbox.putText([text], 'center', 'center');
+	this.textbox.linespace = linespace;
+	this.textbox.putText(lines, 'center', 'center');
     }
 
+    start() {
+	super.start();
+	this.layer.addSprite(this.textbox);
+    }
+
+    stop() {
+	this.layer.removeSprite(this.textbox);
+	super.stop();
+    }
+    
     update() {
 	super.update();
 	if (0 < this.interval) {
