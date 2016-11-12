@@ -431,7 +431,7 @@ class Game extends Scene {
 	// show a banner.
 	let banner = new BannerBox(
 	    this.screen, FONT,
-	    'GET ALL TEH DAMN THINGIES!');
+	    ['GET ALL TEH DAMN THINGIES!']);
 	banner.lifetime = 2.0;
 	banner.interval = 0.5;
 	this.layer.addTask(banner);
