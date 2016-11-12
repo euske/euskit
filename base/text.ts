@@ -90,20 +90,20 @@ class InvertedFont extends Font {
 //
 class ShadowFont extends Font {
 
-    shadowdist: number;
+    shadowDist: number;
     
     private _glyphs2: HTMLCanvasElement;
     
     constructor(glyphs: HTMLImageElement, color: string=null, scale=1,
-		shadowcolor='black', shadowdist=1) {
+		shadowColor='black', shadowDist=1) {
 	super(glyphs, color, scale);
-	this.shadowdist = shadowdist;
-	this._glyphs2 = makeGlyphs(glyphs, shadowcolor);
+	this.shadowDist = shadowDist;
+	this._glyphs2 = makeGlyphs(glyphs, shadowColor);
     }
 
     getSize2(text: string) {
 	let size = super.getSize(text);
-	return size.move(this.shadowdist, this.shadowdist);
+	return size.move(this.shadowDist, this.shadowDist);
     }
   
     renderString(
@@ -111,7 +111,7 @@ class ShadowFont extends Font {
 	text: string, x: number, y: number) {
 	this.renderBackground(ctx, text, x, y);
 	this.renderGlyphs(ctx, this._glyphs2, this._csize, text,
-			  x+this.shadowdist, y+this.shadowdist);
+			  x+this.shadowDist, y+this.shadowDist);
 	this.renderGlyphs(ctx, this._glyphs, this._csize, text, x, y);
     }
 }
@@ -141,7 +141,7 @@ class TextBox extends Sprite {
     frame: Rect;
     font: Font;
     header: string = '';
-    linespace: number = 0;
+    lineSpace: number = 0;
     padding: number = 0;
     background: string = null;
     segments: TextSegment[] = [];
@@ -162,9 +162,9 @@ class TextBox extends Sprite {
 	for (let i = 0; i < lines.length; i++) {
 	    let size = font.getSize(lines[i]);
 	    w = Math.max(w, size.x);
-	    h = h+size.y+this.linespace;
+	    h = h+size.y+this.lineSpace;
 	}
-	return new Vec2(w, h-this.linespace);
+	return new Vec2(w, h-this.lineSpace);
     }
 
     getBounds() {
@@ -209,7 +209,7 @@ class TextBox extends Sprite {
 	let height = this.frame.height-this.padding*2;
 	let y = 0;
 	if (this.segments.length !== 0) {
-	    y = this.segments[this.segments.length-1].bounds.bottom()+this.linespace;
+	    y = this.segments[this.segments.length-1].bounds.bottom()+this.lineSpace;
 	}
 	let newseg = this.addSegment(new Vec2(0, y), '', font);
 	let dy = newseg.bounds.bottom() - height;
@@ -325,7 +325,7 @@ class TextBox extends Sprite {
 	    }
 	    let bounds = new Rect(x, y, size.x, size.y);
 	    this.segments.push({bounds:bounds, text:text, font:font});
-	    y += size.y+this.linespace;
+	    y += size.y+this.lineSpace;
 	}
     }
 
@@ -339,10 +339,10 @@ class BannerBox extends Task {
     textbox: TextBox;
     interval: number = 0;
     
-    constructor(frame: Rect, font: Font, lines: string[], linespace=4) {
+    constructor(frame: Rect, font: Font, lines: string[], lineSpace=4) {
 	super();
 	this.textbox = new TextBox(frame, font);
-	this.textbox.linespace = linespace;
+	this.textbox.lineSpace = lineSpace;
 	this.textbox.putText(lines, 'center', 'center');
     }
 
@@ -598,7 +598,7 @@ class MenuTask extends TextTask {
 	for (let item of this.items) {
 	    if (item === this.current ||
 		item === this.focus) {
-		item.seg.font = this.dialog.hifont;
+		item.seg.font = this.dialog.hiFont;
 	    } else {
 		item.seg.font = this.dialog.textbox.font;
 	    }
@@ -612,16 +612,16 @@ class MenuTask extends TextTask {
 class DialogBox extends Task {
 
     textbox: TextBox;
-    hifont: Font;
+    hiFont: Font;
     speed: number = 0;
-    autohide: boolean = false;
+    autoHide: boolean = false;
     sound: HTMLAudioElement = null;
     queue: TextTask[] = [];
     
-    constructor(textbox: TextBox, hifont: Font=null) {
+    constructor(textbox: TextBox, hiFont: Font=null) {
 	super();
 	this.textbox = textbox;
-	this.hifont = hifont;
+	this.hiFont = hiFont;
     }
 
     clear() {
@@ -657,7 +657,7 @@ class DialogBox extends Task {
 	    if (task.running) break;
 	    this.removeTask(task);
 	}
-	if (this.autohide && task === null) {
+	if (this.autoHide && task === null) {
 	    this.textbox.visible = false;
 	}
     }
@@ -716,14 +716,14 @@ class DialogBox extends Task {
 
     addTask(task: TextTask) {
 	this.queue.push(task);
-	if (this.autohide) {
+	if (this.autoHide) {
 	    this.textbox.visible = true;
 	}
     }
     
     removeTask(task: TextTask) {
 	removeElement(this.queue, task);
-	if (this.autohide && this.queue.length == 0) {
+	if (this.autoHide && this.queue.length == 0) {
 	    this.textbox.visible = false;
 	}
     }

@@ -30,15 +30,15 @@ class PictureScene extends GameScene {
 
     constructor() {
 	super();
-	let lineheight = 8;
-	let linespace = 4;
+	let lineHeight = 8;
+	let lineSpace = 4;
 	let padding = 8;
 	let width = this.screen.width-16;
-	let height = (lineheight+linespace)*6-linespace+padding*2;
+	let height = (lineHeight+lineSpace)*6-lineSpace+padding*2;
 	let rect = this.screen.resize(width, height, 0, -1).move(0,-8);
 	let textbox = new TextBox(rect, FONT);
 	textbox.padding = padding;
-	textbox.linespace = linespace;
+	textbox.lineSpace = lineSpace;
 	textbox.background = 'rgba(0,0,0,0.5)'
 	this.dialogBox = new DialogBox(textbox, HIFONT);
     }
