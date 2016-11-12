@@ -166,6 +166,10 @@ class App {
 	this.scene.onKeyUp(ev.keyCode);
     }
 
+    keypress(ev: KeyboardEvent) {
+	this.scene.onKeyPress(ev.charCode);
+    }
+
     updateMousePos(ev: MouseEvent|Touch) {
 	let bounds = this.elem.getBoundingClientRect();
 	this.mousePos = new Vec2(
@@ -396,6 +400,12 @@ function main<T extends Scene>(
 	    }
 	}
     }
+
+    function keypress(e: KeyboardEvent) {
+	if (app.active) {
+	    app.keypress(e);
+	}
+    }
     
     function mousedown(e: MouseEvent) {
 	if (app.active) {
@@ -503,6 +513,7 @@ function main<T extends Scene>(
     window.addEventListener('blur', blur);
     window.addEventListener('keydown', keydown);
     window.addEventListener('keyup', keyup);
+    window.addEventListener('keypress', keypress);
     window.addEventListener('resize', resize);
     window.setInterval(tick, 1000/framerate);
     window.focus();

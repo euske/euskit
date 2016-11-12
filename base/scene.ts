@@ -54,6 +54,10 @@ class Scene {
 	// [OVERRIDE]
     }
 
+    onKeyPress(char: number) {
+	// [OVERRIDE]
+    }
+
     onMouseDown(p: Vec2, button: number) {
 	// [OVERRIDE]
     }
