@@ -12,12 +12,15 @@
 //
 
 // getContact3: performs collision detection for given Boxes.
+const GROUND = new AAPlane(
+    new Vec3(-Infinity, -Infinity, 0),
+    new Vec3(+Infinity, +Infinity, 0));
 function getContact3(hitbox: Box, v: Vec3, boxes: Box[])
 {
     for (let box of boxes) {
 	v = hitbox.contactBox(v, box);
     }
-    return hitbox.contactXYPlane(v, 0, null);
+    return GROUND.contactBox(v, hitbox);
 }
 
 

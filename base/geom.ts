@@ -174,9 +174,10 @@ class Vec3 {
 }
 
 
-//  Line
+//  AALine
+//  Axis-aligned line
 //
-class Line {
+class AALine {
 
     x0: number;
     y0: number;
@@ -216,7 +217,7 @@ class Line {
 	    return v;
 	}
 	let dx = v.x*dy / v.y;
-	let x0 = rect.x+dx;
+	let x0 = rect.x + dx;
 	let x1 = x0+rect.width;
 	if (x1 < this.x0 || this.x1 < x0 ||
 	    (x1 == this.x0 && v.x <= 0) ||
@@ -238,7 +239,7 @@ class Line {
 	    return v;
 	}
 	let dy = v.y*dx / v.x;
-	let y0 = rect.y+dy;
+	let y0 = rect.y + dy;
 	let y1 = y0+rect.height;
 	if (y1 < this.y0 || this.y1 < y0 ||
 	    (y1 == this.y0 && v.y <= 0) ||
@@ -352,13 +353,13 @@ class Rect implements Shape {
 
     edge(vx: number, vy: number) {
 	if (vx < 0) {
-	    return new Line(this.x, this.y, this.x, this.y+this.height);
+	    return new AALine(this.x, this.y, this.x, this.y+this.height);
 	} else if (0 < vx) {
-	    return new Line(this.x+this.width, this.y, this.x+this.width, this.y+this.height);
+	    return new AALine(this.x+this.width, this.y, this.x+this.width, this.y+this.height);
 	} else if (vy < 0) {
-	    return new Line(this.x, this.y, this.x+this.width, this.y);
+	    return new AALine(this.x, this.y, this.x+this.width, this.y);
 	} else if (0 < vy) {
-	    return new Line(this.x, this.y+this.height, this.x+this.width, this.y+this.height);
+	    return new AALine(this.x, this.y+this.height, this.x+this.width, this.y+this.height);
 	} else {
 	    return null;
 	}
@@ -523,9 +524,9 @@ class Rect implements Shape {
 	    return new Vec2();
 	}
 	let x = (v.x < 0)? bounds.x : bounds.x+bounds.width;
-	v = new Line(x, -Infinity, x, +Infinity).contactRect(v, this);
+	v = new AALine(x, -Infinity, x, +Infinity).contactRect(v, this);
 	let y = (v.y < 0)? bounds.y : bounds.y+bounds.height;
-	v = new Line(-Infinity, y, +Infinity, y).contactRect(v, this);
+	v = new AALine(-Infinity, y, +Infinity, y).contactRect(v, this);
 	return v;
     }
 
@@ -749,6 +750,111 @@ class Circle implements Shape {
 }
 
 
+//  AAPlane
+//  Axis-aligned plane
+//
+class AAPlane {
+
+    p0: Vec3;
+    p1: Vec3;
+    
+    constructor(p0: Vec3, p1: Vec3) {
+	this.p0 = p0;
+	this.p1 = p1;
+    }
+
+    contactBox(v: Vec3, box: Box) {
+	if (this.p0.x == this.p1.x) {
+	    return this.contactBoxYZ(v, box, this.p0.x);
+	} else if (this.p0.y == this.p1.y) {
+	    return this.contactBoxZX(v, box, this.p0.y);
+	} else if (this.p0.z == this.p1.z) {
+	    return this.contactBoxXY(v, box, this.p0.z);
+	} else {
+	    return null;
+	}
+    }
+    
+    contactBoxYZ(v: Vec3, box: Box, x: number) {
+	let x0 = box.origin.x;
+	let x1 = x0+box.size.x;
+	let dx: number;
+	if (x <= x0 && x0+v.x < x) {
+	    dx = x-x0;
+	} else if (x1 <= x && x < x1+v.x) {
+	    dx = x-x1;
+	} else {
+	    return v;
+	}
+	let dy = v.y*dx / v.x;
+	let dz = v.z*dx / v.x;
+	let y0 = box.origin.y + dy;
+	let y1 = y0+box.size.y;
+	let z0 = box.origin.z + dz;
+	let z1 = z0+box.size.z;
+	if (y1 < this.p0.y || this.p1.y < y0 ||
+	    z1 < this.p0.z || this.p1.z < z0 ||
+	    (y1 == this.p0.y && v.y <= 0) || (this.p1.y == y0 && 0 <= v.y) ||
+	    (z1 == this.p0.z && v.z <= 0) || (this.p1.z == z0 && 0 <= v.z)) {
+	    return v;
+	}
+	return new Vec3(dx, dy, dz);
+    }
+    
+    contactBoxZX(v: Vec3, box: Box, y: number) {
+	let y0 = box.origin.y;
+	let y1 = y0+box.size.y;
+	let dy: number;
+	if (y <= y0 && y0+v.y < y) {
+	    dy = y-y0;
+	} else if (y1 <= y && y < y1+v.y) {
+	    dy = y-y1;
+	} else {
+	    return v;
+	}
+	let dz = v.z*dy / v.y;
+	let dx = v.x*dy / v.y;
+	let z0 = box.origin.z + dx;
+	let z1 = z0+box.size.z;
+	let x0 = box.origin.x + dy;
+	let x1 = x0+box.size.x;
+	if (z1 < this.p0.z || this.p1.z < z0 ||
+	    x1 < this.p0.x || this.p1.x < x0 ||
+	    (z1 == this.p0.z && v.z <= 0) || (z0 == this.p1.z && 0 <= v.z) ||
+	    (x1 == this.p0.x && v.x <= 0) || (x0 == this.p1.x && 0 <= v.x)) {
+	    return v;
+	}
+	return new Vec3(dx, dy, dz);
+    }
+    
+    contactBoxXY(v: Vec3, box: Box, z: number) {
+	let z0 = box.origin.z;
+	let z1 = z0+box.size.z;
+	let dz: number;
+	if (z <= z0 && z0+v.z < z) {
+	    dz = z-z0;
+	} else if (z1 <= z && z < z1+v.z) {
+	    dz = z-z1;
+	} else {
+	    return v;
+	}
+	let dx = v.x*dz / v.z;
+	let dy = v.y*dz / v.z;
+	let x0 = box.origin.x + dx;
+	let x1 = x0+box.size.x;
+	let y0 = box.origin.y + dy;
+	let y1 = y0+box.size.y;
+	if (x1 < this.p0.x || this.p1.x < x0 ||
+	    y1 < this.p0.y || this.p1.y < y0 ||
+	    (x1 == this.p0.x && v.x <= 0) || (x0 == this.p1.x && 0 <= v.x) ||
+	    (y1 == this.p0.y && v.y <= 0) || (y0 == this.p1.y && 0 <= v.y)) {
+	    return v;
+	}
+	return new Vec3(dx, dy, dz);
+    }
+}
+
+
 //  Box
 //
 class Box {
@@ -782,6 +888,36 @@ class Box {
 	return new Vec3(this.origin.x+this.size.x/2,
 			this.origin.y+this.size.y/2,
 			this.origin.z+this.size.z/2);
+    }
+    
+    surface(vx: number, vy: number, vz: number) {
+	if (vx < 0) {
+	    return new AAPlane(
+		this.origin,
+		this.origin.move(0, this.size.y, this.size.z));
+	} else if (0 < vx) {
+	    return new AAPlane(
+		this.origin.move(this.size.x, 0, 0),
+		this.origin.add(this.size));
+	} else if (vy < 0) {
+	    return new AAPlane(
+		this.origin,
+		this.origin.move(this.size.x, 0, this.size.z));
+	} else if (0 < vy) {
+	    return new AAPlane(
+		this.origin.move(0, this.size.y, 0),
+		this.origin.add(this.size));
+	} else if (vz < 0) {
+	    return new AAPlane(
+		this.origin,
+		this.origin.move(this.size.x, this.size.y, 0));
+	} else if (0 < vz) {
+	    return new AAPlane(
+		this.origin.move(0, 0, this.size.z),
+		this.origin.add(this.size));
+	} else {
+	    return null;
+	}
     }
     
     anchor(vx=0, vy=0, vz=0) {
@@ -899,128 +1035,27 @@ class Box {
 			this.origin.z+frnd(this.size.z));
     }
 
-    contactYZPlane(v: Vec3, x: number, rect: Rect) {
-	let dx: number, dy: number, dz: number;
-	let x0 = this.origin.x;
-	let x1 = this.origin.x+this.size.x;
-	if (x <= x0 && x0+v.x < x) {
-	    dx = x-x0;
-	} else if (x1 <= x && x < x1+v.x) {
-	    dx = x-x1;
-	} else {
-	    return v;
-	}
-	dy = v.y*dx / v.x;
-	dz = v.z*dx / v.x;
-	if (rect !== null) {
-	    let y = this.origin.y+dy;
-	    let z = this.origin.z+dz;
-	    if (y+this.size.y < rect.x || rect.x+rect.width < y ||
-		z+this.size.z < rect.y || rect.y+rect.height < z ||
-		(y+this.size.y == rect.x && v.y <= 0) ||
-		(rect.x+rect.width == y && 0 <= v.y) ||
-		(z+this.size.z == rect.y && v.z <= 0) ||
-		(rect.y+rect.height == z && 0 <= v.z)) {
-		return v;
-	    }
-	}
-	return new Vec3(dx, dy, dz);
-    }
-    
-    contactZXPlane(v: Vec3, y: number, rect: Rect) {
-	let dx: number, dy: number, dz: number;
-	let y0 = this.origin.y;
-	let y1 = this.origin.y+this.size.y;
-	if (y <= y0 && y0+v.y < y) {
-	    dy = y-y0;
-	} else if (y1 <= y && y < y1+v.y) {
-	    dy = y-y1;
-	} else {
-	    return v;
-	}
-	dz = v.z*dy / v.y;
-	dx = v.x*dy / v.y;
-	if (rect !== null) {
-	    let z = this.origin.z+dz;
-	    let x = this.origin.x+dx;
-	    if (z+this.size.z < rect.x || rect.x+rect.width < z ||
-		x+this.size.x < rect.y || rect.y+rect.height < x ||
-		(z+this.size.z == rect.x && v.z <= 0) ||
-		(rect.x+rect.width == z && 0 <= v.z) ||
-		(x+this.size.x == rect.y && v.x <= 0) ||
-		(rect.y+rect.height == x && 0 <= v.x)) {
-		return v;
-	    }
-	}
-	return new Vec3(dx, dy, dz);  
-    }
-    
-    contactXYPlane(v: Vec3, z: number, rect: Rect) {
-	let dx: number, dy: number, dz: number;
-	let z0 = this.origin.z;
-	let z1 = this.origin.z+this.size.z;
-	if (z <= z0 && z0+v.z < z) {
-	    dz = z-z0;
-	} else if (z1 <= z && z < z1+v.z) {
-	    dz = z-z1;
-	} else {
-	    return v;
-	}
-	dx = v.x*dz / v.z;
-	dy = v.y*dz / v.z;
-	if (rect !== null) {
-	    let x = this.origin.x+dx;
-	    let y = this.origin.y+dy;
-	    if (x+this.size.x < rect.x || rect.x+rect.width < x ||
-		y+this.size.y < rect.y || rect.y+rect.height < y ||
-		(x+this.size.x == rect.x && v.x <= 0) ||
-		(rect.x+rect.width == x && 0 <= v.x) ||
-		(y+this.size.y == rect.y && v.y <= 0) ||
-		(rect.y+rect.height == y && 0 <= v.y)) {
-		return v;
-	    }
-	}
-	return new Vec3(dx, dy, dz);  
-    }
-    
     contactBox(v: Vec3, box: Box) {
 	if (this.overlapsBox(box)) {
 	    return new Vec3();
 	}
-	
 	if (0 < v.x) {
-	    v = this.contactYZPlane(v, box.origin.x, 
-				    new Rect(box.origin.y, box.origin.z,
-					     box.size.y, box.size.z));
+	    v = box.surface(-1, 0, 0).contactBox(v, this);
 	} else if (v.x < 0) {
-	    v = this.contactYZPlane(v, box.origin.x+box.size.x, 
-				    new Rect(box.origin.y, box.origin.z,
-					     box.size.y, box.size.z));
+	    v = box.surface(+1, 0, 0).contactBox(v, this);
 	}
-
 	if (0 < v.y) {
-	    v = this.contactZXPlane(v, box.origin.y, 
-				    new Rect(box.origin.z, box.origin.x,
-					     box.size.z, box.size.x));
+	    v = box.surface(0, -1, 0).contactBox(v, this);
 	} else if (v.y < 0) {
-	    v = this.contactZXPlane(v, box.origin.y+box.size.y, 
-				    new Rect(box.origin.z, box.origin.x,
-					     box.size.z, box.size.x));
+	    v = box.surface(0, +1, 0).contactBox(v, this);
 	}
-	
 	if (0 < v.z) {
-	    v = this.contactXYPlane(v, box.origin.z, 
-				    new Rect(box.origin.x, box.origin.y,
-					     box.size.x, box.size.y));
+	    v = box.surface(0, 0, -1).contactBox(v, this);
 	} else if (v.z < 0) {
-	    v = this.contactXYPlane(v, box.origin.z+box.size.z, 
-				    new Rect(box.origin.x, box.origin.y,
-					     box.size.x, box.size.y));
+	    v = box.surface(0, 0, +1).contactBox(v, this);
 	}
-	
 	return v;
     }
-
 }
 
 
