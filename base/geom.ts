@@ -174,6 +174,118 @@ class Vec3 {
 }
 
 
+//  Line
+//
+class Line {
+
+    x0: number;
+    y0: number;
+    x1: number;
+    y1: number;
+
+    constructor(x0: number, y0: number, x1: number, y1: number) {
+	this.x0 = x0;	
+	this.y0 = y0;	
+	this.x1 = x1;	
+	this.y1 = y1;	
+    }
+    
+    center() {
+	return new Vec2((this.x0+this.x1)/2, (this.y0+this.y1)/2);
+    }
+    
+    contactRect(v: Vec2, rect: Rect) {
+	if (this.y0 == this.y1) {
+	    return this.contactRectH(v, rect, this.y0);
+	} else if (this.x0 == this.x1) {
+	    return this.contactRectV(v, rect, this.x0);
+	} else {
+	    return null;
+	}
+    }
+	
+    contactRectH(v: Vec2, rect: Rect, y: number) {
+	let y0 = rect.y;
+	let y1 = y0+rect.height;
+	let dy: number;
+	if (y <= y0 && y0+v.y < y) {
+	    dy = y-y0;
+	} else if (y1 <= y && y < y1+v.y) {
+	    dy = y-y1;
+	} else {
+	    return v;
+	}
+	let dx = v.x*dy / v.y;
+	let x0 = rect.x+dx;
+	let x1 = x0+rect.width;
+	if (x1 < this.x0 || this.x1 < x0 ||
+	    (x1 == this.x0 && v.x <= 0) ||
+	    (x0 == this.x1 && 0 <= v.x)) {
+	    return v;
+	}
+	return new Vec2(dx, dy);
+    }
+    
+    contactRectV(v: Vec2, rect: Rect, x: number) {
+	let x0 = rect.x;
+	let x1 = x0+rect.width;
+	let dx: number;
+	if (x <= x0 && x0+v.x < x) {
+	    dx = x-x0;
+	} else if (x1 <= x && x < x1+v.x) {
+	    dx = x-x1;
+	} else {
+	    return v;
+	}
+	let dy = v.y*dx / v.x;
+	let y0 = rect.y+dy;
+	let y1 = y0+rect.height;
+	if (y1 < this.y0 || this.y1 < y0 ||
+	    (y1 == this.y0 && v.y <= 0) ||
+	    (y0 == this.y1 && 0 <= v.y)) {
+	    return v;
+	}
+	return new Vec2(dx, dy);
+    }
+
+    contactCircle(v: Vec2, circle: Circle) {
+	if (this.y0 == this.y1) {
+	    return this.contactCircleH(v, circle, this.y0);
+	} else if (this.x0 == this.x1) {
+	    return this.contactCircleV(v, circle, this.x0);
+	} else {
+	    return null;
+	}
+    }
+	
+    contactCircleV(v: Vec2, circle: Circle, x: number) {
+	let y = circle.center.y + v.y;
+	if (this.y0 < y && y < this.y1) {
+	    x += (v.x < 0)? circle.radius : -circle.radius;
+	    let dx = x - circle.center.x;
+	    let dt = dx / v.x;
+	    if (0 <= dt && dt <= 1) {
+		return new Vec2(dx, v.y*dt);
+	    }
+	}
+	return v;
+    }
+    
+    contactCircleH(v: Vec2, circle: Circle, y: number) {
+	let x = circle.center.x + v.x;
+	if (this.x0 < x && x < this.x1) {
+	    y += (v.y < 0)? circle.radius : -circle.radius;
+	    let dy = y - circle.center.y;
+	    let dt = dy / v.y;
+	    if (0 <= dt && dt <= 1) {
+		return new Vec2(v.x*dt, dy);
+	    }
+	}
+	return v;
+    }
+}
+
+
 //  Shape
 //
 interface Shape {
@@ -236,6 +348,20 @@ class Rect implements Shape {
     }
     center() {
 	return new Vec2(this.x+this.width/2, this.y+this.height/2);
+    }
+
+    edge(vx: number, vy: number) {
+	if (vx < 0) {
+	    return new Line(this.x, this.y, this.x, this.y+this.height);
+	} else if (0 < vx) {
+	    return new Line(this.x+this.width, this.y, this.x+this.width, this.y+this.height);
+	} else if (vy < 0) {
+	    return new Line(this.x, this.y, this.x+this.width, this.y);
+	} else if (0 < vy) {
+	    return new Line(this.x, this.y+this.height, this.x+this.width, this.y+this.height);
+	} else {
+	    return null;
+	}
     }
     
     move(dx: number, dy: number) {
@@ -375,81 +501,31 @@ class Rect implements Shape {
 			this.y+fmod(p.y-this.y, this.height));
     }
     
-    contactVLine(v: Vec2, x: number, y0: number, y1: number) {
-	let dx: number, dy: number;
-	let x0 = this.x;
-	let x1 = this.x+this.width;
-	if (x <= x0 && x0+v.x < x) {
-	    dx = x-x0;
-	} else if (x1 <= x && x < x1+v.x) {
-	    dx = x-x1;
-	} else {
-	    return v;
-	}
-	dy = v.y*dx / v.x;
-	let y = this.y+dy;
-	if (y+this.height < y0 || y1 < y ||
-	    (y+this.height == y0 && v.y <= 0) ||
-	    (y1 == y && 0 <= v.y)) {
-	    return v;
-	}
-	return new Vec2(dx, dy);
-    }
-    
-    contactHLine(v: Vec2, y: number, x0: number, x1: number) {
-	let dx: number, dy: number;
-	let y0 = this.y;
-	let y1 = this.y+this.height;
-	if (y <= y0 && y0+v.y < y) {
-	    dy = y-y0;
-	} else if (y1 <= y && y < y1+v.y) {
-	    dy = y-y1;
-	} else {
-	    return v;
-	}
-	dx = v.x*dy / v.y;
-	let x = this.x+dx;
-	if (x+this.width < x0 || x1 < x ||
-	    (x+this.width == x0 && v.x <= 0) ||
-	    (x1 == x && 0 <= v.x)) {
-	    return v;
-	}
-	return new Vec2(dx, dy);
-    }
-    
     contactRect(v: Vec2, rect: Rect) {
 	if (this.overlapsRect(rect)) {
 	    return new Vec2();
 	}
-	
 	if (0 < v.x) {
-	    v = this.contactVLine(v, rect.x, rect.y, rect.y+rect.height);
+	    v = rect.edge(-1, 0).contactRect(v, this);
 	} else if (v.x < 0) {
-	    v = this.contactVLine(v, rect.x+rect.width, rect.y, rect.y+rect.height);
+	    v = rect.edge(+1, 0).contactRect(v, this);
 	}
-
 	if (0 < v.y) {
-	    v = this.contactHLine(v, rect.y, rect.x, rect.x+rect.width);
+	    v = rect.edge(0, -1).contactRect(v, this);
 	} else if (v.y < 0) {
-	    v = this.contactHLine(v, rect.y+rect.height, rect.x, rect.x+rect.width);
+	    v = rect.edge(0, +1).contactRect(v, this);
 	}
-
 	return v;
     }
 
     contactBounds(v: Vec2, bounds: Rect) {
-	if (0 < v.x) {
-	    v = this.contactVLine(v, bounds.x+bounds.width, -Infinity, +Infinity);
-	} else if (v.x < 0) {
-	    v = this.contactVLine(v, bounds.x, -Infinity, +Infinity);
+	if (!this.overlapsRect(bounds)) {
+	    return new Vec2();
 	}
-
-	if (0 < v.y) {
-	    v = this.contactHLine(v, bounds.y+bounds.height, -Infinity, +Infinity);
-	} else if (v.y < 0) {
-	    v = this.contactHLine(v, bounds.y, -Infinity, +Infinity);
-	}
-
+	let x = (v.x < 0)? bounds.x : bounds.x+bounds.width;
+	v = new Line(x, -Infinity, x, +Infinity).contactRect(v, this);
+	let y = (v.y < 0)? bounds.y : bounds.y+bounds.height;
+	v = new Line(-Infinity, y, +Infinity, y).contactRect(v, this);
 	return v;
     }
 
@@ -583,32 +659,6 @@ class Circle implements Shape {
 			this.center.y+r*Math.sin(t));
     }
     
-    contactVLine(v: Vec2, x: number, y0: number, y1: number) {
-	let y = this.center.y + v.y;
-	if (y0 < y && y < y1) {
-	    x += (v.x < 0)? this.radius : -this.radius;
-	    let dx = x - this.center.x;
-	    let dt = dx / v.x;
-	    if (0 <= dt && dt <= 1) {
-		return new Vec2(dx, v.y*dt);
-	    }
-	}
-	return v;
-    }
-    
-    contactHLine(v: Vec2, y: number, x0: number, x1: number) {
-	let x = this.center.x + v.x;
-	if (x0 < x && x < x1) {
-	    y += (v.y < 0)? this.radius : -this.radius;
-	    let dy = y - this.center.y;
-	    let dt = dy / v.y;
-	    if (0 <= dt && dt <= 1) {
-		return new Vec2(v.x*dt, dy);
-	    }
-	}
-	return v;
-    }
-    
     contactCircle(v: Vec2, circle: Circle) {
 	if (this.overlapsCircle(circle)) {
 	    return new Vec2();
@@ -641,15 +691,14 @@ class Circle implements Shape {
 	}
 
 	if (0 < v.x) {
-	    v = this.contactVLine(v, rect.x, rect.y, rect.y+rect.height);
+	    v = rect.edge(-1, 0).contactCircle(v, this);
 	} else if (v.x < 0) {
-	    v = this.contactVLine(v, rect.x+rect.width, rect.y, rect.y+rect.height);
+	    v = rect.edge(+1, 0).contactCircle(v, this);
 	}
-
 	if (0 < v.y) {
-	    v = this.contactHLine(v, rect.y, rect.x, rect.x+rect.width);
+	    v = rect.edge(0, -1).contactCircle(v, this);
 	} else if (v.y < 0) {
-	    v = this.contactHLine(v, rect.y+rect.height, rect.x, rect.x+rect.width);
+	    v = rect.edge(0, +1).contactCircle(v, this);
 	}
 
 	if (this.center.x < rect.x || this.center.y < rect.y) {
