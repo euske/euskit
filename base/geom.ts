@@ -296,7 +296,6 @@ interface Shape {
     equals<T extends Shape>(shape: T): boolean;
     overlaps(shape: Shape): boolean;
     contactShape(v: Vec2, shape: Shape): Vec2;
-    contactBounds(v: Vec2, rect: Rect): Vec2;
     containsPt(p: Vec2): boolean;
     getAABB(): Rect;
 }
@@ -519,14 +518,14 @@ class Rect implements Shape {
 	return v;
     }
 
-    contactBounds(v: Vec2, bounds: Rect) {
-	if (!this.overlapsRect(bounds)) {
+    boundRect(v: Vec2, rect: Rect) {
+	if (!this.overlapsRect(rect)) {
 	    return new Vec2();
 	}
-	let x = (v.x < 0)? bounds.x : bounds.x+bounds.width;
-	v = new AALine(x, -Infinity, x, +Infinity).contactRect(v, this);
-	let y = (v.y < 0)? bounds.y : bounds.y+bounds.height;
-	v = new AALine(-Infinity, y, +Infinity, y).contactRect(v, this);
+	let x = (v.x < 0)? this.x : this.x+this.width;
+	v = new AALine(x, -Infinity, x, +Infinity).contactRect(v, rect);
+	let y = (v.y < 0)? this.y : this.y+this.height;
+	v = new AALine(-Infinity, y, +Infinity, y).contactRect(v, rect);
 	return v;
     }
 
@@ -538,7 +537,7 @@ class Rect implements Shape {
 	} else {
 	    return false;
 	}
-    }    
+    }
 
     contactShape(v: Vec2, shape: Shape): Vec2 {
 	if (shape instanceof Rect) {
@@ -715,10 +714,6 @@ class Circle implements Shape {
 	    v = this.contactCircle(v, new Circle(new Vec2(rect.right(), rect.bottom())));
 	}
 	return v;
-    }
-
-    contactBounds(v: Vec2, bounds: Rect) {
-	return this.getAABB().contactBounds(v, bounds);
     }
 
     overlaps(shape: Shape): boolean {
@@ -1069,7 +1064,7 @@ function getContact(collider0: Shape, v: Vec2, colliders: Shape[], bounds: Rect[
     }
     if (bounds !== null) {
 	for (let rect of bounds) {
-	    v = collider0.contactBounds(v, rect);
+	    v = rect.boundRect(v, collider0.getAABB());
 	}
     }
     return v;
