@@ -29,9 +29,10 @@ Functions:
 <a href="#Color"><code>Color</code></a>,
 <a href="#Vec2"><code>Vec2</code></a>,
 <a href="#Vec3"><code>Vec3</code></a>,
+<a href="#Shape"><code>Shape</code></a>,
+<a href="#Collider"><code>Collider</code></a>,
 <a href="#Rect"><code>Rect</code></a>,
 <a href="#Circle"><code>Circle</code></a>,
-<a href="#Shape"><code>Shape</code></a>,
 <a href="#Box"><code>Box</code></a>,
 <a href="#TileMap"><code>TileMap</code></a>,
 <a href="#RangeMap"><code>RangeMap</code></a>,
@@ -330,7 +331,41 @@ A <code>Vec3</code> represents three-dimensional vector that has (x, y, z) eleme
   <td>(<code>this*(1-t) + v*t)</code>.</td></tr>
 </table>
 
-<a name="Rect"><h3>Rect (<code>geom.ts</code>)</h3></a>
+<a name="Shape"><h3>Shape (<code>geom.ts</code>)</h3></a>
+<p>
+A <code>Shape</code> is an abstract class that represents a shape.
+<table border>
+<tr><td><code>.copy()</code></td>
+  <td>Duplicates the shape.</td></tr>
+<tr><td><code>.move(dx, dy)</code></td>
+  <td>Creates a shape moved by (<code>dx</code>, <code>dy</code>).</td></tr>
+<tr><td><code>.add(v)</code></td>
+  <td>Creates a shape moved by <code>v</code>.</td></tr>
+<tr><td><code>.sub(v)</code></td>
+  <td>Creates a shape moved by <code>-v</code>.</td></tr>
+<tr><td><code>.isZero()</code></td>
+  <td><code>true</code> if the shape is empty.</td></tr>
+<tr><td><code>.equals(shape)</code></td>
+  <td><code>true</code> if <code>shape</code> is identical.</td></tr>
+<tr><td><code>.overlaps(shape)</code></td>
+  <td><code>true</code> if the shape overlaps <code>shape</code>.</td></tr>
+<tr><td><code>.containsPt(p)</code></td>
+  <td><code>true</code> if the shape contains <code>p</code>.</td></tr>
+<tr><td><code>.rndpt()</code></td>
+  <td>Creates a random point within the shape.</td></tr>
+<tr><td><code>.getAABB()</code></td>
+  <td>Returns the AABB of the shape.</td></tr>
+</table>
+
+<a name="Collider"><h3>Collider (<code>geom.ts</code>)</h3></a>
+<p>
+A <code>Collider</code> is an abstract class that represents a collider.
+<table border>
+<tr><td><code>.contact(v, shape)</code></td>
+  <td>Trims a vector so that <code>shape</code> doesn't collide with this.</td></tr>
+</table>
+
+<a name="Rect"><h3>Rect : <a href="#Shape">Shape</a>, <a href="#Collider">Collider</a> (<code>geom.ts</code>)</h3></a>
 <p>
 A <code>Rect</code> object is a 2D rectangle that 
 has its position (x, y) and size (width, height).
@@ -345,12 +380,6 @@ has its position (x, y) and size (width, height).
   <td>The width of the rectangle.</td></tr>
 <tr><td><code>.height</code></td>
   <td>The height of the rectangle.</td></tr>
-<tr><td><code>.copy()</code></td>
-  <td>Duplicates the rectangle.</td></tr>
-<tr><td><code>.equals(rect)</code></td>
-  <td><code>true</code> if <code>rect</code> is identical.</td></tr>
-<tr><td><code>.isZero()</code></td>
-  <td><code>true</code> if the rectangle is empty.</td></tr>
 <tr><td><code>.right()</code></td>
   <td>The right edge of the rectangle.</td></tr>
 <tr><td><code>.bottom()</code></td>
@@ -361,12 +390,6 @@ has its position (x, y) and size (width, height).
   <td>The center-y of the rectangle.</td></tr>
 <tr><td><code>.center()</code></td>
   <td>The center of the rectangle.</td></tr>
-<tr><td><code>.move(dx, dy)</code></td>
-  <td>Creates a rectangle moved by (<code>dx</code>, <code>dy</code>).</td></tr>
-<tr><td><code>.add(v)</code></td>
-  <td>Creates a rectangle moved by <code>v</code>.</td></tr>
-<tr><td><code>.sub(v)</code></td>
-  <td>Creates a rectangle moved by <code>-v</code>.</td></tr>
 <tr><td><code>.inflate(dw, dh)</code></td>
   <td>Creates a inflated/deflated rectangle by (<code>dw</code>, <code>dh</code>):
     <div style="margin-left:1em;">
@@ -510,8 +533,6 @@ has its position (x, y) and size (width, height).
   <td>The x-distance to <code>rect</code>.</td></tr>
 <tr><td><code>.ydistance(rect)</code></td>
   <td>The y-distance to <code>rect</code>.</td></tr>
-<tr><td><code>.containsPt(p)</code></td>
-  <td><code>true</code> if the rectangle contains <code>p</code>.</td></tr>
 <tr><td><code>.containsRect(rect)</code></td>
   <td><code>true</code> if the rectangle contains <code>rect</code>.</td></tr>
 <tr><td><code>.overlapsRect(rect)</code></td>
@@ -524,8 +545,6 @@ has its position (x, y) and size (width, height).
   <td>Combines two rectangles (intersection).</td></tr>
 <tr><td><code>.clamp(bounds)</code></td>
   <td>Moves the rectangle so that it fits <code>bounds</code>.</td></tr>
-<tr><td><code>.rndpt()</code></td>
-  <td>Creates a random point within the rectangle.</td></tr>
 <tr><td><code>.modpt(p)</code></td>
   <td>Creates a modulo point with the rectangle.</td></tr>
 <tr><td><code>.contactRect(v, rect)</code></td>
@@ -534,7 +553,7 @@ has its position (x, y) and size (width, height).
   <td>Trims a vector so that <code>rect</code> is restricted inside this.</td></tr>
 </table>
 
-<a name="Circle"><h3>Circle (<code>geom.ts</code>)</h3></a>
+<a name="Circle"><h3>Circle : <a href="#Shape">Shape</a>, <a href="#Collider">Collider</a> (<code>geom.ts</code>)</h3></a>
 <p>
 A <code>Circle</code> represents a circle that has its center and radius.
 <table border>
@@ -544,24 +563,12 @@ A <code>Circle</code> represents a circle that has its center and radius.
   <td>The center of the circle.</td></tr>
 <tr><td><code>.radius</code></td>
   <td>The radius of the circle.</td></tr>
-<tr><td><code>.equals(circle)</code></td>
-  <td><code>true</code> if <code>circle</code> is identical.</td></tr>
-<tr><td><code>.isZero()</code></td>
-  <td><code>true</code> if the circle is empty.</td></tr>
-<tr><td><code>.move(dx, dy)</code></td>
-  <td>Creates a circle moved by (<code>dx</code>, <code>dy</code>).</td></tr>
-<tr><td><code>.add(v)</code></td>
-  <td>Creates a circle moved by <code>v</code>.</td></tr>
-<tr><td><code>.sub(v)</code></td>
-  <td>Creates a circle moved by <code>-v</code>.</td></tr>
 <tr><td><code>.inflate(dr)</code></td>
   <td>Creates a inflated/deflated circle by <code>dr</code>.</tr></tr>
 <tr><td><code>.resize(radius)</code></td>
   <td>Creates a resized circle.</tr></tr>
 <tr><td><code>.distance(p)</code></td>
   <td>The distance to point <code>p</code>.</td></tr>
-<tr><td><code>.containsPt(p)</code></td>
-  <td><code>true</code> if the circle contains <code>p</code>.</td></tr>
 <tr><td><code>.containsCircle(circle)</code></td>
   <td><code>true</code> if the circle contains another <code>circle</code>.</td></tr>
 <tr><td><code>.overlapsCircle(circle)</code></td>
@@ -570,30 +577,8 @@ A <code>Circle</code> represents a circle that has its center and radius.
   <td><code>true</code> if the circle overlaps <code>rect</code>.</td></tr>
 <tr><td><code>.clamp(bounds)</code></td>
   <td>Moves the circle so that it fits <code>bounds</code>.</td></tr>
-<tr><td><code>.rndpt()</code></td>
-  <td>Creates a random point within the circle.</td></tr>
 <tr><td><code>.contactCircle(v, circle)</code></td>
   <td>Trims a vector so that <code>circle</code> doesn't collide with this.</td></tr>
-</table>
-
-<a name="Shape"><h3>Shape (<code>geom.ts</code>)</h3></a>
-<p>
-A <code>Shape</code> is an abstract class that represents a collider.
-<table border>
-<tr><td><code>.copy()</code></td>
-  <td>Duplicates the shape.</td></tr>
-<tr><td><code>.move(dx, dy)</code></td>
-  <td>Creates a shape moved by (<code>dx</code>, <code>dy</code>).</td></tr>
-<tr><td><code>.add(v)</code></td>
-  <td>Creates a shape moved by <code>v</code>.</td></tr>
-<tr><td><code>.equals(shape)</code></td>
-  <td><code>true</code> if <code>shape</code> is identical.</td></tr>
-<tr><td><code>.overlaps(shape)</code></td>
-  <td><code>true</code> if the shape overlaps <code>shape</code>.</td></tr>
-<tr><td><code>.contactShape(v, shape)</code></td>
-  <td>Trims a vector so that <code>shape</code> doesn't collide with this.</td></tr>
-<tr><td><code>.getAABB()</code></td>
-  <td>Returns the AABB of the shape.</td></tr>
 </table>
 
 <a name="Box"><h3>Box (<code>geom.ts</code>)</h3></a>

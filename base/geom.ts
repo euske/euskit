@@ -174,10 +174,17 @@ class Vec3 {
 }
 
 
+//  Collider
+//
+interface Collider {
+    contact(v: Vec2, shape: Shape): Vec2;
+}    
+
+
 //  AALine
 //  Axis-aligned line
 //
-class AALine {
+class AALine implements Collider {
 
     x0: number;
     y0: number;
@@ -195,6 +202,16 @@ class AALine {
 	return new Vec2((this.x0+this.x1)/2, (this.y0+this.y1)/2);
     }
     
+    contact(v: Vec2, shape: Shape): Vec2 {
+	if (shape instanceof Rect) {
+	    return this.contactRect(v, shape);
+	} else if (shape instanceof Circle) {
+	    return this.contactCircle(v, shape);
+	} else {
+	    return null;
+	}
+    }
+
     contactRect(v: Vec2, rect: Rect) {
 	if (this.y0 == this.y1) {
 	    return this.contactRectH(v, rect, this.y0);
@@ -293,17 +310,19 @@ interface Shape {
     copy<T extends Shape>(): T;
     move<T extends Shape>(dx: number, dy: number): T;
     add<T extends Shape>(v: Vec2): T;
+    sub<T extends Shape>(v: Vec2): T;
+    isZero(): boolean;
     equals<T extends Shape>(shape: T): boolean;
     overlaps(shape: Shape): boolean;
-    contactShape(v: Vec2, shape: Shape): Vec2;
     containsPt(p: Vec2): boolean;
+    rndpt(): Vec2;
     getAABB(): Rect;
 }
 
 
 //  Rect
 //
-class Rect implements Shape {
+class Rect implements Shape, Collider {
 
     x: number;
     y: number;
@@ -587,7 +606,7 @@ class Rect implements Shape {
 	}
     }
 
-    contactShape(v: Vec2, shape: Shape): Vec2 {
+    contact(v: Vec2, shape: Shape): Vec2 {
 	if (shape instanceof Rect) {
 	    return this.contactRect(v, shape);
 	} else if (shape instanceof Circle) {
@@ -726,7 +745,7 @@ class Circle implements Shape {
 	}
     }    
 
-    contactShape(v: Vec2, shape: Shape): Vec2 {
+    contact(v: Vec2, shape: Shape): Vec2 {
 	if (shape instanceof Circle) {
 	    return this.contactCircle(v, shape);
 	} else if (shape instanceof Rect) {
@@ -1055,16 +1074,16 @@ class Box {
 
 
 // getContact: returns a motion vector that satisfies the given constraints.
-function getContact(collider: Shape, v: Vec2, obstacles: Shape[], fences: Rect[]=null)
+function getContact(shape: Shape, v: Vec2, obstacles: Collider[], fences: Rect[]=null)
 {
     if (obstacles !== null) {
-	for (let collider1 of obstacles) {
-	    v = collider1.contactShape(v, collider);
+	for (let collider of obstacles) {
+	    v = collider.contact(v, shape);
 	}
     }
     if (fences !== null) {
 	for (let rect of fences) {
-	    v = rect.boundRect(v, collider.getAABB());
+	    v = rect.boundRect(v, shape.getAABB());
 	}
     }
     return v;

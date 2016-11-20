@@ -198,7 +198,7 @@ class Entity extends Task {
 	return v;
     }
     
-    getObstaclesFor(range: Rect, v: Vec2, context: string): Shape[] {
+    getObstaclesFor(range: Rect, v: Vec2, context: string): Collider[] {
 	// [OVERRIDE]
 	return null;
     }
