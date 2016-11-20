@@ -464,7 +464,24 @@ class Rect implements Shape {
     }
 
     overlapsCircle(circle: Circle) {
-	return circle.overlapsRect(this);
+	let x0 = this.x;
+	let x1 = this.right();
+	let y0 = this.y;
+	let y1 = this.bottom();
+	let cx = circle.center.x;
+	let cy = circle.center.y;
+	let r = circle.radius;
+	return (circle.containsPt(new Vec2(x0, y0)) ||
+		circle.containsPt(new Vec2(x1, y0)) ||
+		circle.containsPt(new Vec2(x0, y1)) ||
+		circle.containsPt(new Vec2(x1, y1)) ||
+		((x0 < cx && cx < x1) &&
+		 (Math.abs(y0-cy) < r ||
+		  Math.abs(y1-cy) < r)) ||
+		((y0 < cy && cy < y1) &&
+		 (Math.abs(x0-cx) < r ||
+		  Math.abs(x1-cx) < r))
+	       );
     }
 
     union(rect: Rect) {
@@ -506,14 +523,45 @@ class Rect implements Shape {
 	    return new Vec2();
 	}
 	if (0 < v.x) {
-	    v = rect.edge(-1, 0).contactRect(v, this);
+	    v = this.edge(-1, 0).contactRect(v, rect);
 	} else if (v.x < 0) {
-	    v = rect.edge(+1, 0).contactRect(v, this);
+	    v = this.edge(+1, 0).contactRect(v, rect);
 	}
 	if (0 < v.y) {
-	    v = rect.edge(0, -1).contactRect(v, this);
+	    v = this.edge(0, -1).contactRect(v, rect);
 	} else if (v.y < 0) {
-	    v = rect.edge(0, +1).contactRect(v, this);
+	    v = this.edge(0, +1).contactRect(v, rect);
+	}
+	return v;
+    }
+
+    contactCircle(v: Vec2, circle: Circle) {
+	if (this.overlapsCircle(circle)) {
+	    return new Vec2();
+	}
+
+	if (0 < v.x) {
+	    v = this.edge(-1, 0).contactCircle(v, circle);
+	} else if (v.x < 0) {
+	    v = this.edge(+1, 0).contactCircle(v, circle);
+	}
+	if (0 < v.y) {
+	    v = this.edge(0, -1).contactCircle(v, circle);
+	} else if (v.y < 0) {
+	    v = this.edge(0, +1).contactCircle(v, circle);
+	}
+
+	if (circle.center.x < this.x || circle.center.y < this.y) {
+	    v = circle.contactCircle(v, new Circle(new Vec2(this.x, this.y)));
+	}
+	if (this.right() < circle.center.x || circle.center.y < this.y) {
+	    v = circle.contactCircle(v, new Circle(new Vec2(this.right(), this.y)));
+	}
+	if (circle.center.x < this.x || this.bottom() < circle.center.y) {
+	    v = circle.contactCircle(v, new Circle(new Vec2(this.x, this.bottom())));
+	}
+	if (this.right() < circle.center.x || this.bottom() < circle.center.y) {
+	    v = circle.contactCircle(v, new Circle(new Vec2(this.right(), this.bottom())));
 	}
 	return v;
     }
@@ -543,7 +591,7 @@ class Rect implements Shape {
 	if (shape instanceof Rect) {
 	    return this.contactRect(v, shape);
 	} else if (shape instanceof Circle) {
-	    return shape.contactRect(v.scale(-1), this).scale(-1);
+	    return this.contactCircle(v, shape);
 	} else {
 	    return null;
 	}
@@ -624,24 +672,7 @@ class Circle implements Shape {
     }
     
     overlapsRect(rect: Rect) {
-	let x0 = rect.x;
-	let x1 = rect.right();
-	let y0 = rect.y;
-	let y1 = rect.bottom();
-	let cx = this.center.x;
-	let cy = this.center.y;
-	let r = this.radius;
-	return (this.containsPt(new Vec2(x0, y0)) ||
-		this.containsPt(new Vec2(x1, y0)) ||
-		this.containsPt(new Vec2(x0, y1)) ||
-		this.containsPt(new Vec2(x1, y1)) ||
-		((x0 < cx && cx < x1) &&
-		 (Math.abs(y0-cy) < r ||
-		  Math.abs(y1-cy) < r)) ||
-		((y0 < cy && cy < y1) &&
-		 (Math.abs(x0-cx) < r ||
-		  Math.abs(x1-cx) < r))
-	       );
+	return rect.overlapsCircle(this);
     }
 
     clamp(bounds: Rect) {
@@ -685,37 +716,6 @@ class Circle implements Shape {
 	return v;
     }
 
-    contactRect(v: Vec2, rect: Rect) {
-	if (this.overlapsRect(rect)) {
-	    return new Vec2();
-	}
-
-	if (0 < v.x) {
-	    v = rect.edge(-1, 0).contactCircle(v, this);
-	} else if (v.x < 0) {
-	    v = rect.edge(+1, 0).contactCircle(v, this);
-	}
-	if (0 < v.y) {
-	    v = rect.edge(0, -1).contactCircle(v, this);
-	} else if (v.y < 0) {
-	    v = rect.edge(0, +1).contactCircle(v, this);
-	}
-
-	if (this.center.x < rect.x || this.center.y < rect.y) {
-	    v = this.contactCircle(v, new Circle(new Vec2(rect.x, rect.y)));
-	}
-	if (rect.right() < this.center.x || this.center.y < rect.y) {
-	    v = this.contactCircle(v, new Circle(new Vec2(rect.right(), rect.y)));
-	}
-	if (this.center.x < rect.x || rect.bottom() < this.center.y) {
-	    v = this.contactCircle(v, new Circle(new Vec2(rect.x, rect.bottom())));
-	}
-	if (rect.right() < this.center.x || rect.bottom() < this.center.y) {
-	    v = this.contactCircle(v, new Circle(new Vec2(rect.right(), rect.bottom())));
-	}
-	return v;
-    }
-
     overlaps(shape: Shape): boolean {
 	if (shape instanceof Circle) {
 	    return this.overlapsCircle(shape);
@@ -730,7 +730,7 @@ class Circle implements Shape {
 	if (shape instanceof Circle) {
 	    return this.contactCircle(v, shape);
 	} else if (shape instanceof Rect) {
-	    return this.contactRect(v, shape);
+	    return shape.contactCircle(v.scale(-1), this).scale(-1);
 	} else {
 	    return null;
 	}
@@ -1035,19 +1035,19 @@ class Box {
 	    return new Vec3();
 	}
 	if (0 < v.x) {
-	    v = box.surface(-1, 0, 0).contactBox(v, this);
+	    v = this.surface(-1, 0, 0).contactBox(v, box);
 	} else if (v.x < 0) {
-	    v = box.surface(+1, 0, 0).contactBox(v, this);
+	    v = this.surface(+1, 0, 0).contactBox(v, box);
 	}
 	if (0 < v.y) {
-	    v = box.surface(0, -1, 0).contactBox(v, this);
+	    v = this.surface(0, -1, 0).contactBox(v, box);
 	} else if (v.y < 0) {
-	    v = box.surface(0, +1, 0).contactBox(v, this);
+	    v = this.surface(0, +1, 0).contactBox(v, box);
 	}
 	if (0 < v.z) {
-	    v = box.surface(0, 0, -1).contactBox(v, this);
+	    v = this.surface(0, 0, -1).contactBox(v, box);
 	} else if (v.z < 0) {
-	    v = box.surface(0, 0, +1).contactBox(v, this);
+	    v = this.surface(0, 0, +1).contactBox(v, box);
 	}
 	return v;
     }
@@ -1055,16 +1055,16 @@ class Box {
 
 
 // getContact: returns a motion vector that satisfies the given constraints.
-function getContact(collider0: Shape, v: Vec2, colliders: Shape[], bounds: Rect[])
+function getContact(collider: Shape, v: Vec2, obstacles: Shape[], fences: Rect[]=null)
 {
-    if (colliders !== null) {
-	for (let collider1 of colliders) {
-	    v = collider0.contactShape(v, collider1);
+    if (obstacles !== null) {
+	for (let collider1 of obstacles) {
+	    v = collider1.contactShape(v, collider);
 	}
     }
-    if (bounds !== null) {
-	for (let rect of bounds) {
-	    v = rect.boundRect(v, collider0.getAABB());
+    if (fences !== null) {
+	for (let rect of fences) {
+	    v = rect.boundRect(v, collider.getAABB());
 	}
     }
     return v;

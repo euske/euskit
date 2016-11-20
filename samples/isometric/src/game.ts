@@ -15,10 +15,10 @@
 const GROUND = new AAPlane(
     new Vec3(-Infinity, -Infinity, 0),
     new Vec3(+Infinity, +Infinity, 0));
-function getContact3(hitbox: Box, v: Vec3, boxes: Box[])
+function getContact3(hitbox: Box, v: Vec3, obstacles: Box[])
 {
-    for (let box of boxes) {
-	v = hitbox.contactBox(v, box);
+    for (let box of obstacles) {
+	v = box.contactBox(v, hitbox);
     }
     return GROUND.contactBox(v, hitbox);
 }

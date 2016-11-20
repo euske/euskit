@@ -529,9 +529,9 @@ has its position (x, y) and size (width, height).
 <tr><td><code>.modpt(p)</code></td>
   <td>Creates a modulo point with the rectangle.</td></tr>
 <tr><td><code>.contactRect(v, rect)</code></td>
-  <td>Trims a vector so that it doesn't collide <code>rect</code>.</td></tr>
-<tr><td><code>.contactBounds(v, bounds)</code></td>
-  <td>Trims a vector so that it doesn't collide <code>bounds</code>.</td></tr>
+  <td>Trims a vector so that <code>rect</code> doesn't collide with this.</td></tr>
+<tr><td><code>.boundRect(v, rect)</code></td>
+  <td>Trims a vector so that <code>rect</code> is restricted inside this.</td></tr>
 </table>
 
 <a name="Circle"><h3>Circle (<code>geom.ts</code>)</h3></a>
@@ -573,9 +573,7 @@ A <code>Circle</code> represents a circle that has its center and radius.
 <tr><td><code>.rndpt()</code></td>
   <td>Creates a random point within the circle.</td></tr>
 <tr><td><code>.contactCircle(v, circle)</code></td>
-  <td>Trims a vector so that it doesn't collide <code>circle</code>.</td></tr>
-<tr><td><code>.contactBounds(v, bounds)</code></td>
-  <td>Trims a vector so that it doesn't collide <code>bounds</code>.</td></tr>
+  <td>Trims a vector so that <code>circle</code> doesn't collide with this.</td></tr>
 </table>
 
 <a name="Shape"><h3>Shape (<code>geom.ts</code>)</h3></a>
@@ -593,9 +591,7 @@ A <code>Shape</code> is an abstract class that represents a collider.
 <tr><td><code>.overlaps(shape)</code></td>
   <td><code>true</code> if the shape overlaps <code>shape</code>.</td></tr>
 <tr><td><code>.contactShape(v, shape)</code></td>
-  <td>Trims a vector so that it doesn't collide <code>shape</code>.</td></tr>
-<tr><td><code>.contactBounds(v, shape)</code></td>
-  <td>Trims a vector so that it doesn't collide <code>bounds</code>.</td></tr>
+  <td>Trims a vector so that <code>shape</code> doesn't collide with this.</td></tr>
 <tr><td><code>.getAABB()</code></td>
   <td>Returns the AABB of the shape.</td></tr>
 </table>
@@ -648,7 +644,7 @@ both as <code>Vec3</code>.
 <tr><td><code>.overlapsBox(box)</code></td>
   <td><code>true</code> if the box overlaps <code>box</code>.</td></tr>
 <tr><td><code>.contactBox(v, box)</code></td>
-  <td>Trims a vector so that it doesn't collide <code>box</code>.</td></tr>
+  <td>Trims a vector so that <code>box</code> doesn't collide with this.</td></tr>
 <tr><td><code>.union(box)</code></td>
   <td>Combines two boxes (union).</td></tr>
 <tr><td><code>.intersection(box)</code></td>
