@@ -105,7 +105,7 @@ class SimpleSpriteSheet extends SpriteSheet {
 
 
 //  Sprite
-//  A moving object that doesn't interact.
+//  An object that's rendered on a screen.
 //
 class Sprite {
 
@@ -123,14 +123,52 @@ class Sprite {
     toString() {
 	return '<Sprite: '+this.imgsrc+'>';
     }
-  
+
     getBounds() {
 	// [OVERRIDE]
 	return null as Rect;
     }
-
+  
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
 	// [OVERRIDE]
+    }
+}
+
+
+//  SimpleSprite
+//
+class SimpleSprite extends Sprite {
+    
+    getPos() {
+	// [OVERRIDE]
+	return null as Vec2;
+    }
+
+    getBounds() {
+	if (this.imgsrc !== null) {
+	    let pos = this.getPos();
+	    if (pos !== null) {
+		return this.imgsrc.dstRect.add(pos);
+	    }
+	}
+	return null;
+    }
+
+    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
+	if (this.imgsrc !== null) {
+	    let pos = this.getPos();
+	    if (pos !== null) {
+		ctx.save();
+		ctx.translate(bx+int(pos.x), by+int(pos.y));
+		if (this.rotation) {
+		    ctx.rotate(this.rotation);
+		}
+		ctx.scale((0 < this.scale.x)? 1 : -1,
+			  (0 < this.scale.y)? 1 : -1);
+		this.imgsrc.render(ctx, this.imgsrc.dstRect);
+		ctx.restore();
+	    }
+	}
     }
 }
 
@@ -138,7 +176,7 @@ class Sprite {
 //  EntitySprite
 //  A Sprite that belongs to an Entity
 //
-class EntitySprite extends Sprite {
+class EntitySprite extends SimpleSprite {
 
     entity: Entity;
     
@@ -147,28 +185,12 @@ class EntitySprite extends Sprite {
 	this.entity = entity;
     }
 
-    getBounds() {
-	if (this.entity !== null && this.imgsrc !== null) {
-	    return this.imgsrc.dstRect.add(this.entity.pos);
+    getPos() {
+	if (this.entity !== null) {
+	    return this.entity.pos;
 	}
 	return null;
     }
-
-    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
-	if (this.entity !== null && this.imgsrc !== null) {
-	    let pos = this.entity.pos;
-	    ctx.save();
-	    ctx.translate(bx+int(pos.x), by+int(pos.y));
-	    if (this.rotation) {
-		ctx.rotate(this.rotation);
-	    }
-	    ctx.scale((0 < this.scale.x)? 1 : -1,
-		      (0 < this.scale.y)? 1 : -1);
-	    this.imgsrc.render(ctx, this.imgsrc.dstRect);
-	    ctx.restore();
-	}
-    }
-
 }
 
 
