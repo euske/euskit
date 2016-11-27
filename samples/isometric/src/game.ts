@@ -51,8 +51,8 @@ class Sprite3d extends Sprite {
     render3(ctx: CanvasRenderingContext2D, bx: number, by: number) {
 	let pos = this.entity.pos;
 	let z = this.entity.z;
-	bx += pos.x;
-	by += pos.y;
+	ctx.save();
+	ctx.translate(bx+int(pos.x), by+int(pos.y));
 	let shadow = this.shadow;
 	if (shadow !== null) {
 	    // Render the shadow first.
@@ -63,20 +63,20 @@ class Sprite3d extends Sprite {
 		ctx.drawImage(
 		    shadow.image,
 		    srcRect.x, srcRect.y, srcRect.width, srcRect.height,
-		    bx+dstRect.x+d, by+dstRect.y+d-this.shadowz/2,
+		    dstRect.x+d, dstRect.y+d-this.shadowz/2,
 		    dstRect.width-d*2, dstRect.height-d*2);
 	    }
 	}
-	let imgsrc = this.imgsrc;
-	if (imgsrc instanceof HTMLImageSource) {
-	    let srcRect = imgsrc.srcRect;
-	    let dstRect = imgsrc.getBounds();
-	    ctx.drawImage(
-		imgsrc.image,
-		srcRect.x, srcRect.y, srcRect.width, srcRect.height,
-		bx+dstRect.x, by+dstRect.y-z/2,
-		dstRect.width, dstRect.height);
+	if (this.imgsrc !== null) {
+	    ctx.translate(0, -z/2);
+	    if (this.rotation) {
+		ctx.rotate(this.rotation);
+	    }
+	    ctx.scale((0 < this.scale.x)? 1 : -1,
+		      (0 < this.scale.y)? 1 : -1);
+	    this.imgsrc.render(ctx);
 	}
+	ctx.restore();
     }
 }
 

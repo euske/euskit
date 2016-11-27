@@ -196,18 +196,10 @@ class TileMap {
 		c = ft(x, y, c);
 		if (0 <= c) {
 		    let imgsrc = tileset.get(c);
-		    let dstRect = imgsrc.getBounds();
-		    if (imgsrc instanceof FillImageSource) {
-			ctx.fillStyle = imgsrc.color;
-			ctx.fillRect(bx+ts*dx, by+ts*dy, ts, ts);
-		    } else if (imgsrc instanceof HTMLImageSource) {
-			let srcRect = imgsrc.srcRect;
-			ctx.drawImage(
-			    imgsrc.image,
-			    srcRect.x, srcRect.y, srcRect.width, srcRect.height,
-			    bx+ts*dx+dstRect.x, by+ts*dy+dstRect.y,
-			    dstRect.width, dstRect.height);
-		    }
+		    ctx.save();
+		    ctx.translate(bx+ts*dx, by+ts*dy);
+		    imgsrc.render(ctx);
+		    ctx.restore();
 		}
 	    }
 	}
