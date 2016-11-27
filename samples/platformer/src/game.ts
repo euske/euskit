@@ -120,7 +120,7 @@ class Player extends PlatformerEntity implements WorldObject {
 	super(scene.tilemap, pos);
 	this.sprite = new ShadowSprite(this);
 	this.sprite.imgsrc = SPRITES.get(S.PLAYER);
-	this.collider = this.sprite.imgsrc.dstRect;
+	this.collider = this.sprite.getBounds(new Vec2());
 	this.scene = scene;
 	this.jumpfunc = JUMPFUNC;
 	this.maxspeed = MAXSPEED;
@@ -203,10 +203,10 @@ class Monster extends PlanningEntity implements WorldObject {
 	this.scene = scene;
 	this.sprite = new ShadowSprite(this);
 	this.sprite.imgsrc = SPRITES.get(S.MONSTER);
-	this.collider = this.sprite.imgsrc.dstRect;
+	this.collider = this.sprite.getBounds(new Vec2());
 	this.jumpfunc = JUMPFUNC;
 	this.maxspeed = MAXSPEED;
-	this.setHitbox(this.sprite.imgsrc.dstRect);
+	this.setHitbox(this.collider as Rect);
     }
 
     update() {
@@ -232,7 +232,7 @@ class Thingy extends Entity {
     constructor(pos: Vec2) {
 	super(pos);
 	this.sprite.imgsrc = SPRITES.get(S.THINGY);
-	this.collider = this.sprite.imgsrc.dstRect.inflate(-4, -4);
+	this.collider = this.sprite.getBounds(new Vec2()).inflate(-4, -4);
     }
 }
 

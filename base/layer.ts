@@ -91,7 +91,7 @@ class Layer {
 	    });
     }
 
-    checkEntityPairs(f: (e0:Entity, e1:Entity)=>any) {
+    checkEntityPairs(f: (e0:Entity, e1:Entity)=>void) {
 	for (let i = 0; i < this.entities.length; i++) {
 	    let entity0 = this.entities[i];
 	    if (entity0.running) {

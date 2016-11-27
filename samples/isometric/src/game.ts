@@ -38,9 +38,12 @@ class Sprite3d extends Sprite {
 	this.entity = entity;
     }
 
-    getBounds() {
+    getBounds(pos: Vec2=null) {
 	if (this.entity !== null && this.imgsrc !== null) {
-	    return this.imgsrc.dstRect.add(this.entity.pos);
+	    if (pos === null) {
+		pos = this.entity.pos;
+	    }
+	    return this.imgsrc.getBounds().add(pos);
 	}
 	return null;
     }
@@ -54,7 +57,7 @@ class Sprite3d extends Sprite {
 	if (shadow !== null) {
 	    // Render the shadow first.
 	    let srcRect = shadow.srcRect;
-	    let dstRect = shadow.dstRect;
+	    let dstRect = shadow.getBounds();
 	    let d = (z-this.shadowz)/4;
 	    if (d*2 <= dstRect.width && d*2 <= dstRect.height) {
 		ctx.drawImage(
@@ -67,7 +70,7 @@ class Sprite3d extends Sprite {
 	let imgsrc = this.imgsrc;
 	if (imgsrc instanceof HTMLImageSource) {
 	    let srcRect = imgsrc.srcRect;
-	    let dstRect = imgsrc.dstRect;
+	    let dstRect = imgsrc.getBounds();
 	    ctx.drawImage(
 		imgsrc.image,
 		srcRect.x, srcRect.y, srcRect.width, srcRect.height,
@@ -107,7 +110,7 @@ class Entity3d extends Entity {
     getCollider3(pos3: Vec3=null) {
 	let pos = (pos3 !== null)? new Vec2(pos3.x, pos3.y) : this.pos;
 	let z = (pos3 !== null)? pos3.z : this.z;
-	let bounds = this.sprite3.imgsrc.dstRect.add(pos);
+	let bounds = this.sprite3.getBounds(pos);
 	return new Box(
 	    new Vec3(bounds.x, bounds.y, z),
 	    new Vec3(bounds.width, bounds.height, this.depth));
@@ -272,7 +275,7 @@ class Thingy extends Entity3d {
 	this.sprite3.imgsrc = SPRITES.get(S.THINGY);
 	this.sprite3.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
 	this.sprite3.zOrder = 0;
-	this.collider = this.sprite3.imgsrc.dstRect.inflate(-4, -4);
+	this.collider = this.sprite3.getBounds(new Vec2()).inflate(-4, -4);
 	this.z = 4;
     }
 }
@@ -298,7 +301,7 @@ class Player extends Entity3d {
 	this.sprite3.imgsrc = SPRITES.get(S.PLAYER)
 	this.sprite3.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
 	this.sprite3.zOrder = 1;
-	this.collider = this.sprite3.imgsrc.dstRect.inflate(-4, -4);
+	this.collider = this.sprite3.getBounds(new Vec2()).inflate(-4, -4);
 	this.depth = scene.tilemap.tilesize;
 	this.maxspeed3 = new Vec3(16, 16, 16);
 	this.jumpfunc3 = (vz:number,t:number) => {

@@ -4,51 +4,54 @@
 
 //  ImageSource
 //
-class ImageSource {
+interface ImageSource {
+    getBounds(): Rect;
+    render(ctx: CanvasRenderingContext2D): void;
+}
+
+class HTMLImageSource implements ImageSource {
+    image: HTMLImageElement;
+    srcRect: Rect;
     dstRect: Rect;
     
-    constructor(dstRect: Rect) {
+    constructor(image: HTMLImageElement, srcRect: Rect, dstRect: Rect) {
+	this.image = image;
+	this.srcRect = srcRect;
 	this.dstRect = dstRect;
     }
 
-    render(ctx: CanvasRenderingContext2D, dstRect: Rect) {
-	// [OVERRIDE]
-    }
-}
-
-class HTMLImageSource extends ImageSource {
-    image: HTMLImageElement;
-    srcRect: Rect;
-    
-    constructor(image: HTMLImageElement, srcRect: Rect, dstRect: Rect) {
-	super(dstRect);
-	this.image = image;
-	this.srcRect = srcRect;
+    getBounds() {
+	return this.dstRect;
     }
 
-    render(ctx: CanvasRenderingContext2D, dstRect: Rect) {
+    render(ctx: CanvasRenderingContext2D) {
 	ctx.drawImage(
 	    this.image,
 	    this.srcRect.x, this.srcRect.y,
 	    this.srcRect.width, this.srcRect.height,
-	    dstRect.x, dstRect.y,
-	    dstRect.width, dstRect.height);
+	    this.dstRect.x, this.dstRect.y,
+	    this.dstRect.width, this.dstRect.height);
     }
 }
 
-class FillImageSource extends ImageSource {
+class FillImageSource implements ImageSource {
     color: string;
+    dstRect: Rect;
     
     constructor(color: string, dstRect: Rect) {
-	super(dstRect);
 	this.color = color;
+	this.dstRect = dstRect;
     }
 
-    render(ctx: CanvasRenderingContext2D, dstRect: Rect) {
+    getBounds() {
+	return this.dstRect;
+    }
+
+    render(ctx: CanvasRenderingContext2D) {
 	ctx.fillStyle = this.color;
 	ctx.fillRect(
-	    dstRect.x, dstRect.y,
-	    dstRect.width, dstRect.height);
+	    this.dstRect.x, this.dstRect.y,
+	    this.dstRect.width, this.dstRect.height);
     }
 }
 
@@ -124,7 +127,7 @@ class Sprite {
 	return '<Sprite: '+this.imgsrc+'>';
     }
 
-    getBounds() {
+    getBounds(pos: Vec2=null) {
 	// [OVERRIDE]
 	return null as Rect;
     }
@@ -144,11 +147,13 @@ class SimpleSprite extends Sprite {
 	return null as Vec2;
     }
 
-    getBounds() {
+    getBounds(pos: Vec2=null) {
 	if (this.imgsrc !== null) {
-	    let pos = this.getPos();
+	    if (pos === null) {
+		pos = this.getPos();
+	    }
 	    if (pos !== null) {
-		return this.imgsrc.dstRect.add(pos);
+		return this.imgsrc.getBounds().add(pos);
 	    }
 	}
 	return null;
@@ -165,7 +170,7 @@ class SimpleSprite extends Sprite {
 		}
 		ctx.scale((0 < this.scale.x)? 1 : -1,
 			  (0 < this.scale.y)? 1 : -1);
-		this.imgsrc.render(ctx, this.imgsrc.dstRect);
+		this.imgsrc.render(ctx);
 		ctx.restore();
 	    }
 	}
@@ -219,13 +224,17 @@ class TiledSprite extends Sprite {
 	    ctx.beginPath();
 	    ctx.rect(0, 0, this.bounds.width, this.bounds.height);
 	    ctx.clip();
-	    let w = imgsrc.dstRect.width;
-	    let h = imgsrc.dstRect.height;
+	    let dstRect = imgsrc.getBounds();
+	    let w = dstRect.width;
+	    let h = dstRect.height;
 	    let dx0 = int(Math.floor(this.offset.x/w)*w - this.offset.x);
 	    let dy0 = int(Math.floor(this.offset.y/h)*h - this.offset.y);
 	    for (let dy = dy0; dy < this.bounds.height; dy += h) {
 		for (let dx = dx0; dx < this.bounds.width; dx += w) {
-		    imgsrc.render(ctx, new Rect(dx, dy, w, h));
+		    ctx.save();
+		    ctx.translate(dx, dy);
+		    imgsrc.render(ctx);
+		    ctx.restore();
 		}
 	    }
 	    ctx.restore();
@@ -287,8 +296,11 @@ class StarSprite extends Sprite {
 	    ctx.save();
 	    ctx.translate(bx+int(this.bounds.x), by+int(this.bounds.y));
 	    for (let star of this._stars) {
-		let dstRect = star.p.expand(star.s, star.s);
-		this.imgsrc.render(ctx, dstRect);
+		ctx.save();
+		ctx.translate(star.p.x, star.p.y);
+		ctx.scale(star.s, star.s);
+		this.imgsrc.render(ctx);
+		ctx.restore();
 	    }
 	    ctx.restore();
 	}

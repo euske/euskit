@@ -281,7 +281,7 @@ function getKeySym(keyCode: number): KeySym
 
 
 interface Action {
-    (...params:any[]): any;
+    (...params:any[]): void;
 }
 
 /** Subscribable event object.

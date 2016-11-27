@@ -30,7 +30,7 @@ class Player extends Entity {
 	super(pos);
 	this.scene = scene;
 	this.sprite.imgsrc = SPRITES.get(0);
-	this.collider = this.sprite.imgsrc.dstRect;
+	this.collider = this.sprite.getBounds(new Vec2());
 	this.usermove = new Vec2();
     }
 

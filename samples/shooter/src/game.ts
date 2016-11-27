@@ -57,7 +57,7 @@ class Player extends Entity {
 	super(pos);
 	this.scene = scene;
 	this.sprite.imgsrc = SPRITES.get(0);
-	this.collider = this.sprite.imgsrc.dstRect;
+	this.collider = this.sprite.getBounds(new Vec2());
     }
 
     update() {
@@ -136,7 +136,7 @@ class Enemy1 extends EnemyBase {
     constructor(scene: Shooter, pos: Vec2) {
 	super(scene, pos);
 	this.sprite.imgsrc = SPRITES.get(1);
-	this.collider = this.sprite.imgsrc.dstRect;
+	this.collider = this.sprite.getBounds(new Vec2());
 	this.movement = new Vec2(-rnd(1,8), rnd(3)-1);
     }
 }
@@ -149,7 +149,7 @@ class Enemy2 extends EnemyBase {
     constructor(scene: Shooter, pos: Vec2) {
 	super(scene, pos);
 	this.sprite.imgsrc = SPRITES.get(2);
-	this.collider = this.sprite.imgsrc.dstRect;
+	this.collider = this.sprite.getBounds(new Vec2());
 	this.movement = new Vec2(-rnd(1,4), 0);
     }
 

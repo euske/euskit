@@ -72,7 +72,7 @@ class Task {
 //
 class DelayTask extends Task {
     
-    constructor(lifetime: number=Infinity, proc: ()=>any=null) {
+    constructor(lifetime: number=Infinity, proc: ()=>void=null) {
 	super();
 	this.lifetime = lifetime;
 	if (proc !== null) {

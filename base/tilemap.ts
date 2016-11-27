@@ -196,7 +196,7 @@ class TileMap {
 		c = ft(x, y, c);
 		if (0 <= c) {
 		    let imgsrc = tileset.get(c);
-		    let dstRect = imgsrc.dstRect;
+		    let dstRect = imgsrc.getBounds();
 		    if (imgsrc instanceof FillImageSource) {
 			ctx.fillStyle = imgsrc.color;
 			ctx.fillRect(bx+ts*dx, by+ts*dy, ts, ts);
@@ -232,7 +232,7 @@ class TileMap {
 		c = ft(x, y, c);
 		if (0 <= c) {
 		    let imgsrc = tileset.get(c);
-		    let dstRect = imgsrc.dstRect;
+		    let dstRect = imgsrc.getBounds();
 		    if (imgsrc instanceof FillImageSource) {
 			ctx.fillStyle = imgsrc.color;
 			ctx.fillRect(bx+ts*dx, by+ts*dy, ts, ts);
