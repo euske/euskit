@@ -103,8 +103,8 @@ class Layer {
 			    return (entity0 !== e &&
 				    collider1 !== null &&
 				    collider0.overlaps(collider1));
-		    },
-		    this.entities.slice(i+1));
+			},
+			this.entities.slice(i+1));
 		    for (let e of a) {
 			f(entity0, e);
 		    }
@@ -114,13 +114,16 @@ class Layer {
     }
 
     findEntities(f: (e:Entity)=>boolean,
-		 entities: Entity[]=null) {
+		 entities: Entity[]=null,
+		 range: Rect=null) {
 	if (entities === null) {
 	    entities = this.entities;
 	}
 	let a:Entity[] = [];
 	for (let entity1 of entities) {
-	    if (entity1.running && f(entity1)) {
+	    if (entity1.running &&
+		(range === null || entity1.getCollider().overlaps(range)) &&
+		f(entity1)) {
 		a.push(entity1);
 	    }
 	}

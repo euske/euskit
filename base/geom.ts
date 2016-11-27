@@ -311,7 +311,7 @@ class AALine implements Collider {
 
 //  Shape
 //
-interface Shape {
+interface Shape extends Collider {
     copy<T extends Shape>(): T;
     move<T extends Shape>(dx: number, dy: number): T;
     add<T extends Shape>(v: Vec2): T;
@@ -327,7 +327,7 @@ interface Shape {
 
 //  Rect
 //
-class Rect implements Shape, Collider {
+class Rect implements Shape {
 
     x: number;
     y: number;
