@@ -79,11 +79,16 @@ class Vec2 {
     }
     
     rot90(d: number) {
-	if (d < 0) {
-	    return new Vec2(this.y, -this.x);
-	} else if (0 < d) {
+	d = d % 4;
+	d = (0 <= d)? d : d+4;
+	switch (d) {
+	case 1:
 	    return new Vec2(-this.y, this.x);
-	} else {
+	case 2:
+	    return new Vec2(-this.x, -this.y);
+	case 3:
+	    return new Vec2(this.y, -this.x);
+	default:
 	    return this.copy();
 	}
     }
@@ -530,6 +535,23 @@ class Rect implements Shape, Collider {
     rndpt() {
 	return new Vec2(this.x+frnd(this.width),
 			this.y+frnd(this.height));
+    }
+
+    rndptEdge() {
+	let v = frnd(this.width*2 + this.height*2);
+	if (v < this.width) {
+	    return new Vec2(v, this.y);
+	}
+	v -= this.width;
+	if (v < this.width) {
+	    return new Vec2(v, this.y+this.height);
+	}
+	v -= this.width;
+	if (v < this.height) {
+	    return new Vec2(this.x, v);
+	}
+	// assert(v <= this.height);
+	return new Vec2(this.x+this.width, v);
     }
     
     modpt(p: Vec2) {
