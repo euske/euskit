@@ -286,7 +286,7 @@ class Thingy extends Entity3d {
 class Player extends Entity3d {
     
     scene: Game;
-    scored: Signal;
+    picked: Signal;
     
     jumpfunc3: (vz:number, t:number) => number;
     usermove3: Vec3;
@@ -297,7 +297,7 @@ class Player extends Entity3d {
     constructor(scene: Game, pos: Vec2) {
 	super(pos);
 	this.scene = scene;
-	this.scored = new Signal(this);
+	this.picked = new Signal(this);
 	this.sprite3.imgsrc = SPRITES.get(S.PLAYER)
 	this.sprite3.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
 	this.sprite3.zOrder = 1;
@@ -348,6 +348,7 @@ class Player extends Entity3d {
 	if (0 < jumpend) {
 	    if (this.canJump3()) {
 		this._jumpt = 0;
+		playSound(SOUNDS['jump']);
 	    }
 	}
 	this._jumpend = jumpend;
@@ -386,14 +387,9 @@ class Player extends Entity3d {
 
     collidedWith(entity: Entity) {
 	if (entity instanceof Thingy) {
+	    playSound(SOUNDS['pick']);
 	    entity.stop();
-	    let yay = new Projectile(this.pos.move(0,-16));
-	    yay.sprite.imgsrc = SPRITES.get(S.YAY);
-	    yay.sprite.zOrder = 2;
-	    yay.movement = new Vec2(0,-4);
-	    yay.lifetime = 0.5;
-	    this.scene.add(yay);
-	    this.scored.fire();
+	    this.picked.fire();
 	}
     }
 }
@@ -423,16 +419,15 @@ class Game extends Scene {
 	this.score = 0;
 	this.speed = new Vec2(2, 0);
 	this.player = new Player(this, this.screen.center());
-	this.player.scored.subscribe(() => {
-	    this.score += 1;
-	    this.speed.x += 1;
+	this.player.picked.subscribe((entity:Entity) => {
+	    this.onPicked(entity);
 	});
 	this.player.stopped.subscribe(() => {
 	    APP.lockKeys();
+	    playSound(SOUNDS['bomb']);
 	    this.changeScene(new GameOver(this.score));
 	});
 	this.add(this.player);
-	this.tilemap.set(8, 2, T.BLOCK);
 	
 	// show a banner.
 	let banner = new BannerBox(
@@ -462,6 +457,17 @@ class Game extends Scene {
     }
     onButtonReleased(keysym: KeySym) {
 	this.player.setJump(0);
+    }
+    
+    onPicked(entity: Entity) {
+	let yay = new Projectile(entity.pos.move(0,-16));
+	yay.sprite.imgsrc = SPRITES.get(S.YAY);
+	yay.sprite.zOrder = 2;
+	yay.movement = new Vec2(0,-4);
+	yay.lifetime = 0.5;
+	this.add(yay);
+	this.score += 1;
+	this.speed.x += 1;
     }
     
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
