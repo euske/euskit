@@ -5,6 +5,9 @@
 /** Alias of window.console.log() */
 const log = window.console.log.bind(window.console);
 
+/** Alias of HTMLAudioElement */
+const Sound = HTMLAudioElement;
+
 /** Raises an exception if the condition is not met. */
 function assert(x: boolean, msg="assertion error")
 {
@@ -22,20 +25,20 @@ function applyMixins(derivedCtor: any, baseCtors: any[]) {
     });
 }
 
-// fmod(x, y):
+/** Simulates the C fmod() function. */
 function fmod(x: number, y: number)
 {
     const v = x % y;
     return (0 <= v)? v : v+y;
 }
 
-// int(x):
+/** Alias of Math.floor */
 const int = Math.floor;
 
-// upperbound(x, y):
+/** Alias of Math.min */
 const upperbound = Math.min;
 
-// lowerbound(x, y):
+/** Alias of Math.max */
 const lowerbound = Math.max;
 
 /** Limits the value so that v0 <= v <= v1. */
@@ -113,6 +116,13 @@ function removeElement<T>(a: T[], obj: T)
 	a.splice(i, 1);
     }
     return a;
+}
+
+/** Returns an array filled with a sequence. */
+function range(n: number)
+{
+    let a = Array.apply(null, new Array(n));
+    return a.map((_:any,i:number) => { return i });
 }
 
 /** Creates an array from a string.
