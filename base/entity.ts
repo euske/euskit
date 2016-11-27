@@ -225,9 +225,11 @@ class Projectile extends Entity {
 	super.update();
 	if (this.movement !== null) {
 	    this.movePos(this.movement);
-	    if (this.frame !== null &&
-		!this.getCollider().overlaps(this.frame)) {
-		this.stop();
+	    if (this.frame !== null) {
+		let collider = this.getCollider();
+		if (collider !== null && !collider.overlaps(this.frame)) {
+		    this.stop();
+		}
 	    }
 	}
     }
