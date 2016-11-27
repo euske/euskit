@@ -66,7 +66,7 @@ class Game extends GameScene {
 	super.update();
     }
 
-    setDir(v: Vec2) {
+    onDirChanged(v: Vec2) {
 	this.player.setMove(v);
     }
 

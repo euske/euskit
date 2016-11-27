@@ -170,7 +170,6 @@ class Racing extends GameScene {
     update() {
 	super.update();
 	if (this.player.alive) {
-	    this.player.setMove(APP.keyDir);
 	    let b = this.player.getCollider().move(0, this.track.offset) as Rect;
 	    if (this.track.isFloor(b)) {
 		let speed = int((1.0-this.player.pos.y/this.screen.height)*16);
@@ -188,6 +187,10 @@ class Racing extends GameScene {
 		playSound(SOUNDS['plunge']);
 	    }
 	}
+    }
+
+    onDirChanged(v: Vec2) {
+	this.player.setMove(v);
     }
 
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {

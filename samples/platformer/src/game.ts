@@ -301,13 +301,18 @@ class Game extends GameScene {
 
     update() {
 	super.update();
-	this.player.setMove(APP.keyDir);
 	this.layer.setCenter(this.tilemap.bounds,
 			     this.player.pos.expand(80,80));
     }
 
-    setAction(action: boolean) {
-	this.player.setJump(action? Infinity : 0);
+    onDirChanged(v: Vec2) {
+	this.player.setMove(v);
+    }
+    onButtonPressed(keysym: KeySym) {
+	this.player.setJump(Infinity);
+    }
+    onButtonReleased(keysym: KeySym) {
+	this.player.setJump(0);
     }
 
     onPicked(entity: Entity) {

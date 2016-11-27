@@ -454,12 +454,14 @@ class Game extends Scene {
 	this.moveAll(this.speed);
     }
 
-    setDir(v: Vec2) {
+    onDirChanged(v: Vec2) {
 	this.player.setMove(v);
     }
-
-    setAction(action: boolean) {
-	this.player.setJump(action? Infinity : 0);
+    onButtonPressed(keysym: KeySym) {
+	this.player.setJump(Infinity);
+    }
+    onButtonReleased(keysym: KeySym) {
+	this.player.setJump(0);
     }
     
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {

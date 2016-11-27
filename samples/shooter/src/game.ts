@@ -209,11 +209,13 @@ class Shooter extends GameScene {
 	this.nextenemy--;
     }
 
-    setAction(action: boolean) {
-	this.player.setFire(action);
+    onButtonPressed(keysym: KeySym) {
+	this.player.setFire(true);
     }
-    
-    setDir(v: Vec2) {
+    onButtonReleased(keysym: KeySym) {
+	this.player.setFire(false);
+    }
+    onDirChanged(v: Vec2) {
 	this.player.setMove(v);
     }
 

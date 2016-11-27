@@ -79,33 +79,33 @@ class App {
 	case KeySym.Left:
 	    this._key_left = true;
 	    this.keyDir.x = -1;
-	    this.scene.setDir(this.keyDir);
+	    this.scene.onDirChanged(this.keyDir);
 	    break;
 	case KeySym.Right:
 	    this._key_right = true;
 	    this.keyDir.x = +1;
-	    this.scene.setDir(this.keyDir);
+	    this.scene.onDirChanged(this.keyDir);
 	    break;
 	case KeySym.Up:
 	    this._key_up = true;
 	    this.keyDir.y = -1;
-	    this.scene.setDir(this.keyDir);
+	    this.scene.onDirChanged(this.keyDir);
 	    break;
 	case KeySym.Down:
 	    this._key_down = true;
 	    this.keyDir.y = +1;
-	    this.scene.setDir(this.keyDir);
+	    this.scene.onDirChanged(this.keyDir);
 	    break;
 	case KeySym.Action:
 	    if (!this.keyAction) {
 		this.keyAction = true;
-		this.scene.setAction(this.keyAction);
+		this.scene.onButtonPressed(keysym);
 	    }
 	    break;
 	case KeySym.Cancel:
 	    if (!this.keyCancel) {
 		this.keyCancel = true;
-		this.scene.setCancel(this.keyCancel);
+		this.scene.onButtonPressed(keysym);
 	    }
 	    break;
 	default:
@@ -133,33 +133,33 @@ class App {
 	case KeySym.Left:
 	    this._key_left = false;
 	    this.keyDir.x = (this._key_right) ? +1 : 0;
-	    this.scene.setDir(this.keyDir);
+	    this.scene.onDirChanged(this.keyDir);
 	    break;
 	case KeySym.Right:
 	    this._key_right = false;
 	    this.keyDir.x = (this._key_left) ? -1 : 0;
-	    this.scene.setDir(this.keyDir);
+	    this.scene.onDirChanged(this.keyDir);
 	    break;
 	case KeySym.Up:
 	    this._key_up = false;
 	    this.keyDir.y = (this._key_down) ? +1 : 0;
-	    this.scene.setDir(this.keyDir);
+	    this.scene.onDirChanged(this.keyDir);
 	    break;
 	case KeySym.Down:
 	    this._key_down = false;
 	    this.keyDir.y = (this._key_up) ? -1 : 0;
-	    this.scene.setDir(this.keyDir);
+	    this.scene.onDirChanged(this.keyDir);
 	    break;
 	case KeySym.Action:
 	    if (this.keyAction) {
 		this.keyAction = false;
-		this.scene.setAction(this.keyAction);
+		this.scene.onButtonReleased(keysym);
 	    }
 	    break;
 	case KeySym.Cancel:
 	    if (this.keyCancel) {
 		this.keyCancel = false;
-		this.scene.setCancel(this.keyCancel);
+		this.scene.onButtonReleased(keysym);
 	    }
 	    break;
 	}

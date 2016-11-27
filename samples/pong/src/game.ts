@@ -105,7 +105,7 @@ class Pong extends GameScene {
 	}
     }
 
-    setDir(v: Vec2) {
+    onDirChanged(v: Vec2) {
 	// Changes the paddle direction.
 	this.paddle.vx = v.x;
     }

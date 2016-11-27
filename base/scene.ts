@@ -34,15 +34,15 @@ class Scene {
 	// [OVERRIDE]
     }
 
-    setDir(v: Vec2) {
+    onDirChanged(v: Vec2) {
 	// [OVERRIDE]
     }
 
-    setAction(action: boolean) {
+    onButtonPressed(keysym: KeySym) {
 	// [OVERRIDE]
     }
     
-    setCancel(cancel: boolean) {
+    onButtonReleased(keysym: KeySym) {
 	// [OVERRIDE]
     }
 
