@@ -20,9 +20,8 @@ class App {
     ticks: number = 0;
     scene: Scene = null;
     active: boolean = false;
+    keys: { [index: number]: boolean } = {};
     keyDir: Vec2 = new Vec2();
-    keyAction: boolean = false;
-    keyCancel: boolean = false;
     mousePos: Vec2 = new Vec2();
     mouseButton: boolean = false;
     
@@ -32,11 +31,6 @@ class App {
     private _loop_start: number = 0;
     private _loop_end: number = 0;
     private _touch_id: any = null;
-
-    private _key_left: boolean = false;
-    private _key_right: boolean = false;
-    private _key_up: boolean = false;
-    private _key_down: boolean = false;
     
     constructor(size: Vec2,
 		framerate: number,
@@ -77,34 +71,24 @@ class App {
 	let keysym = getKeySym(ev.keyCode);
 	switch (keysym) {
 	case KeySym.Left:
-	    this._key_left = true;
 	    this.keyDir.x = -1;
 	    this.scene.onDirChanged(this.keyDir);
 	    break;
 	case KeySym.Right:
-	    this._key_right = true;
 	    this.keyDir.x = +1;
 	    this.scene.onDirChanged(this.keyDir);
 	    break;
 	case KeySym.Up:
-	    this._key_up = true;
 	    this.keyDir.y = -1;
 	    this.scene.onDirChanged(this.keyDir);
 	    break;
 	case KeySym.Down:
-	    this._key_down = true;
 	    this.keyDir.y = +1;
 	    this.scene.onDirChanged(this.keyDir);
 	    break;
 	case KeySym.Action:
-	    if (!this.keyAction) {
-		this.keyAction = true;
-		this.scene.onButtonPressed(keysym);
-	    }
-	    break;
 	case KeySym.Cancel:
-	    if (!this.keyCancel) {
-		this.keyCancel = true;
+	    if (!this.keys[keysym]) {
 		this.scene.onButtonPressed(keysym);
 	    }
 	    break;
@@ -122,6 +106,7 @@ class App {
 	    }
 	    break;
 	}
+	this.keys[keysym] = true;
 	this.scene.onKeyDown(ev.keyCode);
     }
 
@@ -131,38 +116,29 @@ class App {
 	let keysym = getKeySym(ev.keyCode);
 	switch (keysym) {
 	case KeySym.Left:
-	    this._key_left = false;
-	    this.keyDir.x = (this._key_right) ? +1 : 0;
+	    this.keyDir.x = (this.keys[KeySym.Right]) ? +1 : 0;
 	    this.scene.onDirChanged(this.keyDir);
 	    break;
 	case KeySym.Right:
-	    this._key_right = false;
-	    this.keyDir.x = (this._key_left) ? -1 : 0;
+	    this.keyDir.x = (this.keys[KeySym.Left]) ? -1 : 0;
 	    this.scene.onDirChanged(this.keyDir);
 	    break;
 	case KeySym.Up:
-	    this._key_up = false;
-	    this.keyDir.y = (this._key_down) ? +1 : 0;
+	    this.keyDir.y = (this.keys[KeySym.Down]) ? +1 : 0;
 	    this.scene.onDirChanged(this.keyDir);
 	    break;
 	case KeySym.Down:
-	    this._key_down = false;
-	    this.keyDir.y = (this._key_up) ? -1 : 0;
+	    this.keyDir.y = (this.keys[KeySym.Up]) ? -1 : 0;
 	    this.scene.onDirChanged(this.keyDir);
 	    break;
 	case KeySym.Action:
-	    if (this.keyAction) {
-		this.keyAction = false;
-		this.scene.onButtonReleased(keysym);
-	    }
-	    break;
 	case KeySym.Cancel:
-	    if (this.keyCancel) {
-		this.keyCancel = false;
+	    if (this.keys[keysym]) {
 		this.scene.onButtonReleased(keysym);
 	    }
 	    break;
 	}
+	this.keys[keysym] = false;
 	this.scene.onKeyUp(ev.keyCode);
     }
 
