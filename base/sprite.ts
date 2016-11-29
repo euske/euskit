@@ -34,7 +34,7 @@ class HTMLImageSource implements ImageSource {
     }
 }
 
-class FillImageSource implements ImageSource {
+class RectImageSource implements ImageSource {
     color: string;
     dstRect: Rect;
     
@@ -52,6 +52,31 @@ class FillImageSource implements ImageSource {
 	ctx.fillRect(
 	    this.dstRect.x, this.dstRect.y,
 	    this.dstRect.width, this.dstRect.height);
+    }
+}
+
+class OvalImageSource implements ImageSource {
+    color: string;
+    dstRect: Rect;
+    
+    constructor(color: string, dstRect: Rect) {
+	this.color = color;
+	this.dstRect = dstRect;
+    }
+
+    getBounds() {
+	return this.dstRect;
+    }
+
+    render(ctx: CanvasRenderingContext2D) {
+	ctx.save();
+	ctx.fillStyle = this.color;
+	ctx.translate(this.dstRect.centerx(), this.dstRect.centery());
+	ctx.scale(this.dstRect.width/2, this.dstRect.height/2);
+	ctx.beginPath();
+	ctx.arc(0, 0, 1, 0, Math.PI*2);
+	ctx.fill();
+	ctx.restore();
     }
 }
 
@@ -94,9 +119,9 @@ class ImageSpriteSheet extends SpriteSheet {
 }
 
 class SimpleSpriteSheet extends SpriteSheet {
-    imgsrcs: FillImageSource[];
+    imgsrcs: ImageSource[];
 
-    constructor(imgsrcs: FillImageSource[]) {
+    constructor(imgsrcs: ImageSource[]) {
 	super();
 	this.imgsrcs = imgsrcs;
     }
@@ -266,7 +291,7 @@ class StarSprite extends Sprite {
 	super();
 	this.bounds = bounds
 	this.maxdepth = maxdepth;
-	this.imgsrc = new FillImageSource('white', new Rect(0,0,1,1));
+	this.imgsrc = new RectImageSource('white', new Rect(0,0,1,1));
 	for (let i = 0; i < nstars; i++) {
 	    let star = new Star();
 	    star.init(this.maxdepth);

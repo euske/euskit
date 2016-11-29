@@ -27,7 +27,7 @@ class Bullet extends Projectile {
     constructor(pos: Vec2) {
 	super(pos);
 	let bounds = new Rect(-4, -1, 8, 2);
-	this.sprite.imgsrc = new FillImageSource('white', bounds)
+	this.sprite.imgsrc = new RectImageSource('white', bounds)
 	this.collider = bounds;
     }
 }
