@@ -133,20 +133,17 @@ class GameScene extends Scene {
     }
 
     init() {
-	// [OVERRIDE]
 	super.init();
 	this.layer.init();
 	this.entities = this.layer.entities;
     }
 
     tick(t: number) {
-	// [OVERRIDE]
 	super.tick(t);
 	this.layer.tick(t);
     }
 
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
-	// [OVERRIDE]
 	super.render(ctx, bx, by);
 	this.layer.render(ctx, bx, by);
     }

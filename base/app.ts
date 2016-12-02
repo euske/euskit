@@ -66,8 +66,6 @@ class App {
 
     keydown(ev: KeyboardEvent) {
 	if (0 < this._keylock) return;
-	// [OVERRIDE]
-	// [GAME SPECIFIC CODE]
 	let keysym = getKeySym(ev.keyCode);
 	switch (keysym) {
 	case KeySym.Left:
@@ -111,8 +109,6 @@ class App {
     }
 
     keyup(ev: KeyboardEvent) {
-	// [OVERRIDE]
-	// [GAME SPECIFIC CODE]
 	let keysym = getKeySym(ev.keyCode);
 	switch (keysym) {
 	case KeySym.Left:
