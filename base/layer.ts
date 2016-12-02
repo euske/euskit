@@ -113,17 +113,13 @@ class Layer {
 	}
     }
 
-    findEntities(f: (e:Entity)=>boolean,
-		 entities: Entity[]=null,
-		 range: Rect=null) {
+    findEntities(f: (e:Entity)=>boolean, entities: Entity[]=null) {
 	if (entities === null) {
 	    entities = this.entities;
 	}
 	let a:Entity[] = [];
 	for (let entity1 of entities) {
-	    if (entity1.running &&
-		(range === null || entity1.getCollider().overlaps(range)) &&
-		f(entity1)) {
+	    if (entity1.running && f(entity1)) {
 		a.push(entity1);
 	    }
 	}
