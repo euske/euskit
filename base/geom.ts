@@ -1,8 +1,16 @@
 /// <reference path="utils.ts" />
 
+/** 
+ * Geometric objects and functions.
+ */
 
-//  Vec2
-//
+
+/** Sufficiently small number that can be considered as zero. */
+const EPSILON = 0.0001;
+
+
+/**  2-element vector that can be used for a position or size.
+ */
 class Vec2 {
 
     x: number;
@@ -17,67 +25,86 @@ class Vec2 {
 	return '('+this.x+', '+this.y+')';
     }
 
+    /** Returns a copy of the object. */
     copy() {
 	return new Vec2(this.x, this.y);
     }
     
+    /** Returns true if p is equivalent to the object. */
     equals(p: Vec2) {
 	return (this.x == p.x && this.y == p.y);
     }
     
+    /** Returns true if p.x == 0 and p.y == 0. */
     isZero() {
 	return (this.x == 0 && this.y == 0);
     }
     
+    /** Returns the squared length of the vector. */
     len2() {
 	return (this.x*this.x + this.y*this.y);
     }
     
+    /** Returns the length of the vector. */
     len() {
 	return Math.sqrt(this.x*this.x + this.y*this.y);
     }
     
+    /** Returns a new vector consisting of the sign of each element. */
     sign() {
 	return new Vec2(sign(this.x), sign(this.y));
     }
     
+    /** Returns a new vector (this + v). */
     add(v: Vec2) {
 	return new Vec2(this.x+v.x, this.y+v.y);
     }
     
+    /** Returns a new vector (this - v). */
     sub(v: Vec2) {
 	return new Vec2(this.x-v.x, this.y-v.y);
     }
     
+    /** Returns a new scaled vector by n. */
     scale(n: number) {
 	return new Vec2(this.x*n, this.y*n);
     }
     
-    distance(v: Vec2) {
-	return this.sub(v).len();
+    /** Returns |this - p|. */
+    distance(p: Vec2) {
+	return this.sub(p).len();
     }
 
+    /** Clamp the position within a given rectangle. */
     clamp(bounds: Vec2) {
 	return new Vec2(
 	    clamp(-bounds.x, this.x, +bounds.x),
 	    clamp(-bounds.y, this.y, +bounds.y));
     }
     
+    /** Returns a new point that is moved by (dx, dy). */
     move(dx: number, dy: number) {
 	return new Vec2(this.x+dx, this.y+dy);
     }
 
-    interpolate(v: Vec2, t: number) {
-	return new Vec2((1.0-t)*this.x+t*v.x, (1.0-t)*this.y+t*v.y);
+    /** Returns a new interpolated vector between this and p. 
+     * @param p The other point.
+     * @param t Interpolation value. 
+     *          When t=0.0 the new vector would be the same as this.
+     *          When t=1.0 the new vector would be the same as p.
+     */
+    interpolate(p: Vec2, t: number) {
+	return new Vec2((1.0-t)*this.x+t*p.x, (1.0-t)*this.y+t*p.y);
     }
     
-    // rotate: rotates a vector clockwise by d radian.
+    /** Returns a new vector rotated clockwise by d radian. */
     rotate(d: number) {
 	let s = Math.sin(d);
 	let c = Math.cos(d);
 	return new Vec2(this.x*c-this.y*s, this.x*s+this.y*c);
     }
     
+    /** Returns a new vector rotated clockwise by d*90 degree. */
     rot90(d: number) {
 	d = d % 4;
 	d = (0 <= d)? d : d+4;
@@ -93,6 +120,12 @@ class Vec2 {
 	}
     }
     
+    /** Create a new rectangle based on this point. 
+     * @param dw Width.
+     * @param dh Height.
+     * @param vx Anchor point X.
+     * @param vy Anchor point Y.
+     */
     expand(dw: number, dh: number, vx=0, vy=0) {
 	return new Rect(this.x, this.y).expand(dw, dh, vx, vy);
     }
@@ -100,8 +133,8 @@ class Vec2 {
 }
 
 
-//  Vec3
-//
+/**  3-element vector that can be used for a position or size.
+ */
 class Vec3 {
 
     x: number;
@@ -118,46 +151,57 @@ class Vec3 {
 	return '('+this.x+', '+this.y+', '+this.z+')';
     }
     
+    /** Returns a copy of the object. */
     copy() {
 	return new Vec3(this.x, this.y, this.z);
     }
     
+    /** Returns true if p is equivalent to the object. */
     equals(p: Vec3) {
 	return (this.x == p.x && this.y == p.y && this.z == p.z);
     }
     
+    /** Returns true if p.x == 0, p.y == 0 and p.z == 0. */
     isZero() {
 	return (this.x == 0 && this.y == 0 && this.z == 0);
     }
     
+    /** Returns the squared length of the vector. */
     len2() {
 	return (this.x*this.x + this.y*this.y + this.z*this.z);
     }
     
+    /** Returns the length of the vector. */
     len() {
 	return Math.sqrt(this.x*this.x + this.y*this.y + this.z*this.z);
     }
     
+    /** Returns a new vector consisting of the sign of each element. */
     sign() {
 	return new Vec3(sign(this.x), sign(this.y), sign(this.z));
     }
     
+    /** Returns a new vector (this + v). */
     add(v: Vec3) {
 	return new Vec3(this.x+v.x, this.y+v.y, this.z+v.z);
     }
     
+    /** Returns a new vector (this - v). */
     sub(v: Vec3) {
 	return new Vec3(this.x-v.x, this.y-v.y, this.z-v.z);
     }
     
+    /** Returns a new scaled vector by n. */
     scale(v: number) {
 	return new Vec3(this.x*v, this.y*v, this.z*v);
     }
     
-    distance(v: Vec3) {
-	return this.sub(v).len();
+    /** Returns |this - p|. */
+    distance(p: Vec3) {
+	return this.sub(p).len();
     }
     
+    /** Clamp the position within a given rectangle. */
     clamp(bounds: Vec3) {
 	return new Vec3(
 	    clamp(-bounds.x, this.x, +bounds.x),
@@ -165,15 +209,22 @@ class Vec3 {
 	    clamp(-bounds.z, this.z, +bounds.z));
     }
     
+    /** Returns a new point that is moved by (dx, dy, dz). */
     move(dx: number, dy: number, dz: number) {
 	return new Vec3(this.x+dx, this.y+dy, this.z+dz);
     }
 
-    interpolate(v: Vec3, t: number) {
+    /** Returns a new interpolated vector between this and p. 
+     * @param p The other point.
+     * @param t Interpolation value. 
+     *          When t=0.0 the new vector would be the same as this.
+     *          When t=1.0 the new vector would be the same as p.
+     */
+    interpolate(p: Vec3, t: number) {
 	return new Vec3(
-	    (1.0-t)*this.x+t*v.x,
-	    (1.0-t)*this.y+t*v.y,
-	    (1.0-t)*this.z+t*v.z);
+	    (1.0-t)*this.x+t*p.x,
+	    (1.0-t)*this.y+t*p.y,
+	    (1.0-t)*this.z+t*p.z);
     }
     
 }
@@ -646,7 +697,6 @@ class Rect implements Shape {
 
 //  Circle
 //
-const EPSILON = 0.0001;
 class Circle implements Shape {
 
     center: Vec2;

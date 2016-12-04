@@ -41,7 +41,11 @@ const upperbound = Math.min;
 /** Alias of Math.max */
 const lowerbound = Math.max;
 
-/** Limits the value so that v0 <= v <= v1. */
+/** Limits the value so that v0 <= v <= v1.
+ * @param v0 Minimum value.
+ * @param v Number to limit.
+ * @param v1 Maximum value.
+ */
 function clamp(v0: number, v: number, v1: number)
 {
     return Math.min(Math.max(v, v0), v1);
@@ -59,7 +63,11 @@ function sign(v: number)
     }
 }
 
-/** Returns the phase for t with the given interval. */
+/** Returns the phase for t with the given interval.
+ * @param t Current time.
+ * @param interval Interval.
+ * @param n Number of phrases.
+ */
 function phase(t: number, interval: number, n=2)
 {
     if (interval === 0) return 0;
@@ -217,6 +225,16 @@ function image2array(img: HTMLImageElement)
 /** Draw a scaled image. 
  *  When the destination width/height is negative, 
  *  the image is flipped.
+ * @param ctx Context to draw.
+ * @param src Source image.
+ * @param sx Source rectangle X.
+ * @param sy Source rectangle Y.
+ * @param sw Source rectangle width.
+ * @param sh Source rectangle height.
+ * @param dx Destination rectangle X.
+ * @param dy Destination rectangle Y.
+ * @param dw Destination rectangle width.
+ * @param dh Destination rectangle height.
  */
 function drawImageScaled(
     ctx: CanvasRenderingContext2D,
@@ -234,7 +252,10 @@ function drawImageScaled(
     ctx.restore();
 }
 
-/** Play a sound resource. */
+/** Play a sound resource. 
+ * @param sound Audio element.
+ * @param start Start position.
+ */
 function playSound(sound: HTMLAudioElement, start=0)
 {
     sound.currentTime = start;

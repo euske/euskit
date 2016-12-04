@@ -23,5 +23,5 @@ all: $(OUTDIR)
 clean:
 	-$(RM) -r $(OUTDIR)
 
-$(OUTDIR):
+$(OUTDIR): $(BASES)
 	$(TYPEDOC) --out $(OUTDIR) $(BASES)
