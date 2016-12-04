@@ -20,4 +20,5 @@ Samples
 Prerequisites
 -------------
  * TypeScript compiler
- * Unix system (GNU Make) to build.
+ * GNU Make
+ * (Optional) TypeDoc http://typedoc.org/

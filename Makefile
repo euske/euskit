@@ -1,10 +1,11 @@
 # Makefile
 
 all:
-	cd samples; $(MAKE) $@
 	cd skel; $(MAKE) $@
+	cd samples; $(MAKE) $@
+	-cd docs; $(MAKE) $@
 
 clean:
-	-cd samples; $(MAKE) $@
 	-cd skel; $(MAKE) $@
-
+	-cd samples; $(MAKE) $@
+	-cd docs; $(MAKE) $@
