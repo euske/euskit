@@ -8,6 +8,9 @@ const log = window.console.log.bind(window.console);
 /** Alias of HTMLAudioElement */
 const Sound = HTMLAudioElement;
 
+/** Initial gap of lame-encded MP3 files */
+const MP3_GAP = 0.025;
+
 /** Raises an exception if the condition is not met. */
 function assert(x: boolean, msg="assertion error")
 {
@@ -256,7 +259,7 @@ function drawImageScaled(
  * @param sound Audio element.
  * @param start Start position.
  */
-function playSound(sound: HTMLAudioElement, start=0)
+function playSound(sound: HTMLAudioElement, start=MP3_GAP)
 {
     sound.currentTime = start;
     sound.play();
