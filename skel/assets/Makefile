@@ -2,7 +2,7 @@
 
 PYTHON=python
 SOX=sox
-LAME=lame
+LAME=lame -t --cbr
 
 AUDIOS=beep.mp3
 

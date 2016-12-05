@@ -2,9 +2,9 @@
 
 PYTHON=python
 SOX=sox
-LAME=lame
+LAME=lame -t --cbr
 
-AUDIOS=
+AUDIOS=music.mp3 plunge.mp3
 
 all: $(AUDIOS)
 

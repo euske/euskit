@@ -2,7 +2,7 @@
 
 PYTHON=python
 SOX=sox
-LAME=lame
+LAME=lame -t --cbr
 
 AUDIOS=jump.mp3 pick.mp3 bomb.mp3
 
