@@ -225,6 +225,7 @@ class TileMap {
 		c = ft(x, y, c);
 		if (0 <= c) {
 		    let imgsrc = tileset.get(c);
+		    ctx.save();
 		    ctx.translate(bx+ts*dx, by+ts*dy);
 		    imgsrc.render(ctx);
 		    ctx.restore();
