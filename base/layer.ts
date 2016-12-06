@@ -126,6 +126,18 @@ class Layer {
 	return a;
     }
     
+    hasEntity(f: (e:Entity)=>boolean, collider0: Shape) {
+	for (let entity1 of this.entities) {
+	    if (entity1.running && f(entity1)) {
+		let collider1 = entity1.getCollider();
+		if (collider1 !== null && collider0.overlaps(collider1)) {
+		    return true;
+		}
+	    }
+	}
+	return false;
+    }
+    
     findSpriteAt(p: Vec2) {
 	for (let i = this.sprites.length-1; 0 <= i; i--) {
 	    let sprite = this.sprites[i]; // from reversed order.
