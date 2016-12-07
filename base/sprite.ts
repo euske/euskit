@@ -295,7 +295,7 @@ class StarSprite extends Sprite {
 	for (let i = 0; i < nstars; i++) {
 	    let star = new Star();
 	    star.init(this.maxdepth);
-	    star.p = this.bounds.rndpt();
+	    star.p = this.bounds.rndPt();
 	    this._stars.push(star);
 	}
     }

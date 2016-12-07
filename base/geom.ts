@@ -249,7 +249,7 @@ interface Collider {
 interface Shape extends Collider {
     isZero(): boolean;
     containsPt(p: Vec2): boolean;
-    rndpt(): Vec2;
+    rndPt(): Vec2;
 }
 
 
@@ -634,12 +634,12 @@ class Rect implements Shape {
 	return new Rect(x, y, this.width, this.height);
     }
     
-    rndpt(): Vec2 {
+    rndPt(): Vec2 {
 	return new Vec2(this.x+frnd(this.width),
 			this.y+frnd(this.height));
     }
 
-    rndptEdge(): Vec2 {
+    rndPtEdge(): Vec2 {
 	let v = frnd(this.width*2 + this.height*2);
 	if (v < this.width) {
 	    return new Vec2(v, this.y);
@@ -825,11 +825,17 @@ class Circle implements Shape {
 	return new Circle(new Vec2(x, y), this.radius);
     }
     
-    rndpt(): Vec2 {
+    rndPt(): Vec2 {
 	let r = frnd(this.radius);
 	let t = frnd(Math.PI*2);
 	return new Vec2(this.center.x+r*Math.cos(t),
 			this.center.y+r*Math.sin(t));
+    }
+    
+    rndPtEdge(): Vec2 {
+	let t = frnd(Math.PI*2);
+	return new Vec2(this.center.x+this.radius*Math.cos(t),
+			this.center.y+this.radius*Math.sin(t));
     }
     
     contactCircle(v: Vec2, circle: Circle): Vec2 {
@@ -1166,7 +1172,7 @@ class Box {
 	return new Box(new Vec3(x, y, z), this.size);
     }
     
-    rndpt(): Vec3 {
+    rndPt(): Vec3 {
 	return new Vec3(this.origin.x+frnd(this.size.x),
 			this.origin.y+frnd(this.size.y),
 			this.origin.z+frnd(this.size.z));
