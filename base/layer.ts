@@ -126,7 +126,7 @@ class Layer {
 	return a;
     }
     
-    hasEntity(f: (e:Entity)=>boolean, collider0: Shape) {
+    hasEntity(f: (e:Entity)=>boolean, collider0: Collider) {
 	for (let entity1 of this.entities) {
 	    if (entity1.running && f(entity1)) {
 		let collider1 = entity1.getCollider();

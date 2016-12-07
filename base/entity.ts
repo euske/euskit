@@ -121,7 +121,7 @@ class Entity extends Task {
 
     pos: Vec2;
     sprite: Sprite;
-    collider: Shape = null;
+    collider: Collider = null;
 
     constructor(pos: Vec2) {
 	super();
