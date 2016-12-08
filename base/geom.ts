@@ -230,39 +230,51 @@ class Vec3 {
 }
 
 
-//  Collider
-//
+/**  Geometric object that can be used for hit detection.
+ */
 interface Collider {
+    /** Returns a copy of the object. */
     copy<T extends Collider>(): T;
+    /** Returns a new object that is moved by (dx, dy). */
     move<T extends Collider>(dx: number, dy: number): T;
+    /** Returns a new object that is moved by v. */
     add<T extends Collider>(v: Vec2): T;
+    /** Returns a new object that is moved by -v. */
     sub<T extends Collider>(v: Vec2): T;
+    /** Returns true if the given object is equivalent to this object. */
     equals<T extends Collider>(collider: T): boolean;
+    /** Returns true if the given object is overlapping with this object. */
     overlaps(collider: Collider): boolean;
+    /** Trims a vector so that the given object does not collide with this object. */
     contact(v: Vec2, collider: Collider): Vec2;
+    /** Returns an AABB (Axis-Aligned Boundary Box) of this object. */
     getAABB(): Rect;
-}    
-
-
-//  Shape
-//
-interface Shape extends Collider {
-    isZero(): boolean;
-    containsPt(p: Vec2): boolean;
-    rndPt(): Vec2;
 }
 
 
-//  AALine
-//  Axis-aligned line
-//
+/**  Enclosed shape.
+ */
+interface Shape extends Collider {
+    /** Returns true if the object is empty. */
+    isZero(): boolean;
+    /** Returns true if the point is contained within this object. */
+    containsPt(p: Vec2): boolean;
+    /** Returns a random point inside the object. */
+    rndPt(): Vec2;
+    /** Returns a random point on the edge of the object. */
+    rndPtEdge(): Vec2;
+}
+
+
+/**  Axis-aligned line
+ */
 class AALine implements Collider {
 
     x0: number;
     y0: number;
     x1: number;
     y1: number;
-
+    
     constructor(x0: number, y0: number, x1: number, y1: number) {
 	this.x0 = x0;	
 	this.y0 = y0;	
@@ -270,27 +282,33 @@ class AALine implements Collider {
 	this.y1 = y1;	
     }
     
+    /** Returns a copy of the object. */
     copy(): AALine {
 	return new AALine(this.x0, this.y0, this.x1, this.y1);
     }
     
+    /** Returns true if line is equivalent to the object. */
     equals(line: AALine): boolean {
 	return (this.x0 == line.x0 && this.y0 == line.y0 &&
 		this.x1 == line.x1 && this.y1 == line.y1);
     }
     
+    /** Returns a new AALine that is moved by (dx, dy). */
     move(dx: number, dy: number): AALine {
 	return new AALine(this.x0+dx, this.y0+dy, this.x1+dx, this.y1+dy);
     }
     
+    /** Returns a new AALine that is moved by v. */
     add(v: Vec2): AALine {
 	return new AALine(this.x0+v.x, this.y0+v.y, this.x1+v.x, this.y1+v.y);
     }
     
+    /** Returns a new AALine that is moved by -v. */
     sub(v: Vec2): AALine {
 	return new AALine(this.x0-v.x, this.y0-v.y, this.x1-v.x, this.y1-v.y);
     }
     
+    /** Returns true if the given object is overlapping with this line. */
     overlaps(collider: Collider): boolean {
 	if (collider instanceof Rect) {
 	    return this.overlapsRect(collider);
@@ -301,11 +319,13 @@ class AALine implements Collider {
 	}
     }
 
+    /** Returns true if the rect is overlapping with this line. */
     overlapsRect(rect: Rect): boolean {
 	return !(this.x1 < rect.x || this.y1 < rect.y ||
 		 rect.right() < this.x0 || rect.bottom() < this.y0);
     }
     
+    /** Returns true if the circle is overlapping with this line. */
     overlapsCircle(circle: Circle): boolean {
 	if (this.x1 <= circle.center.x-circle.radius ||
 	    this.y1 <= circle.center.y-circle.radius ||
@@ -319,27 +339,30 @@ class AALine implements Collider {
 		circle.containsPt(new Vec2(this.x1, this.y1)));
     }
     
+    /** Trims a vector so that the given object does not collide with this line. */
     contact(v: Vec2, collider: Collider): Vec2 {
 	if (collider instanceof Rect) {
 	    return this.contactRect(v, collider);
 	} else if (collider instanceof Circle) {
 	    return this.contactCircle(v, collider);
 	} else {
-	    return null;
+	    return v;
 	}
     }
 
+    /** Trims a vector so that the rect does not collide with this line. */
     contactRect(v: Vec2, rect: Rect): Vec2 {
 	if (this.y0 == this.y1) {
 	    return this.contactRectH(v, rect, this.y0);
 	} else if (this.x0 == this.x1) {
 	    return this.contactRectV(v, rect, this.x0);
 	} else {
-	    return null;
+	    return v;
 	}
     }
 	
-    contactRectH(v: Vec2, rect: Rect, y: number): Vec2 {
+    /** Calculate a contact point when this line is horizontal. */
+    private contactRectH(v: Vec2, rect: Rect, y: number): Vec2 {
 	let y0 = rect.y;
 	let y1 = y0+rect.height;
 	let dy: number;
@@ -361,7 +384,8 @@ class AALine implements Collider {
 	return new Vec2(dx, dy);
     }
     
-    contactRectV(v: Vec2, rect: Rect, x: number): Vec2 {
+    /** Calculate a contact point when this line is vertical. */
+    private contactRectV(v: Vec2, rect: Rect, x: number): Vec2 {
 	let x0 = rect.x;
 	let x1 = x0+rect.width;
 	let dx: number;
@@ -383,30 +407,19 @@ class AALine implements Collider {
 	return new Vec2(dx, dy);
     }
 
+    /** Trims a vector so that the circle does not collide with this line. */
     contactCircle(v: Vec2, circle: Circle): Vec2 {
 	if (this.y0 == this.y1) {
 	    return this.contactCircleH(v, circle, this.y0);
 	} else if (this.x0 == this.x1) {
 	    return this.contactCircleV(v, circle, this.x0);
 	} else {
-	    return null;
+	    return v;
 	}
     }
 	
-    contactCircleV(v: Vec2, circle: Circle, x: number): Vec2 {
-	let y = circle.center.y + v.y;
-	if (this.y0 < y && y < this.y1) {
-	    x += (v.x < 0)? circle.radius : -circle.radius;
-	    let dx = x - circle.center.x;
-	    let dt = dx / v.x;
-	    if (0 <= dt && dt <= 1) {
-		return new Vec2(dx, v.y*dt);
-	    }
-	}
-	return v;
-    }
-    
-    contactCircleH(v: Vec2, circle: Circle, y: number): Vec2 {
+    /** Calculate a contact point when this line is horizontal. */
+    private contactCircleH(v: Vec2, circle: Circle, y: number): Vec2 {
 	let x = circle.center.x + v.x;
 	if (this.x0 < x && x < this.x1) {
 	    y += (v.y < 0)? circle.radius : -circle.radius;
@@ -419,14 +432,29 @@ class AALine implements Collider {
 	return v;
     }
 
+    /** Calculate a contact point when this line is vertical. */
+    private contactCircleV(v: Vec2, circle: Circle, x: number): Vec2 {
+	let y = circle.center.y + v.y;
+	if (this.y0 < y && y < this.y1) {
+	    x += (v.x < 0)? circle.radius : -circle.radius;
+	    let dx = x - circle.center.x;
+	    let dt = dx / v.x;
+	    if (0 <= dt && dt <= 1) {
+		return new Vec2(dx, v.y*dt);
+	    }
+	}
+	return v;
+    }
+
+    /** Returns the boundary box of this line. */
     getAABB(): Rect {
 	return new Rect(this.x0, this.y0, this.x1-this.x0, this.y1-this.y0);
     }
 }
 
 
-//  Rect
-//
+/**  Rectangle
+ */
 class Rect implements Shape {
 
     x: number;
@@ -736,7 +764,7 @@ class Rect implements Shape {
 	} else if (collider instanceof Circle) {
 	    return this.contactCircle(v, collider);
 	} else {
-	    return null;
+	    return v;
 	}
     }
 
@@ -746,8 +774,8 @@ class Rect implements Shape {
 }
 
 
-//  Circle
-//
+/**  Circle
+ */
 class Circle implements Shape {
 
     center: Vec2;
@@ -880,7 +908,7 @@ class Circle implements Shape {
 	} else if (collider instanceof Rect) {
 	    return collider.contactCircle(v.scale(-1), this).scale(-1);
 	} else {
-	    return null;
+	    return v;
 	}
     }    
 
@@ -914,11 +942,11 @@ class AAPlane {
 	} else if (this.p0.z == this.p1.z) {
 	    return this.contactBoxXY(v, box, this.p0.z);
 	} else {
-	    return null;
+	    return v;
 	}
     }
     
-    contactBoxYZ(v: Vec3, box: Box, x: number): Vec3 {
+    private contactBoxYZ(v: Vec3, box: Box, x: number): Vec3 {
 	let x0 = box.origin.x;
 	let x1 = x0+box.size.x;
 	let dx: number;
@@ -944,7 +972,7 @@ class AAPlane {
 	return new Vec3(dx, dy, dz);
     }
     
-    contactBoxZX(v: Vec3, box: Box, y: number): Vec3 {
+    private contactBoxZX(v: Vec3, box: Box, y: number): Vec3 {
 	let y0 = box.origin.y;
 	let y1 = y0+box.size.y;
 	let dy: number;
@@ -970,7 +998,7 @@ class AAPlane {
 	return new Vec3(dx, dy, dz);
     }
     
-    contactBoxXY(v: Vec3, box: Box, z: number): Vec3 {
+    private contactBoxXY(v: Vec3, box: Box, z: number): Vec3 {
 	let z0 = box.origin.z;
 	let z1 = z0+box.size.z;
 	let dz: number;

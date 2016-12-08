@@ -29,7 +29,7 @@ function applyMixins(derivedCtor: any, baseCtors: any[]) {
 }
 
 /** Simulates the C fmod() function. */
-function fmod(x: number, y: number)
+function fmod(x: number, y: number): number
 {
     const v = x % y;
     return (0 <= v)? v : v+y;
@@ -49,13 +49,13 @@ const lowerbound = Math.max;
  * @param v Number to limit.
  * @param v1 Maximum value.
  */
-function clamp(v0: number, v: number, v1: number)
+function clamp(v0: number, v: number, v1: number): number
 {
     return Math.min(Math.max(v, v0), v1);
 }
 
 /** Returns -1, 0, or +1 depending on the sign. */
-function sign(v: number)
+function sign(v: number): number
 {
     if (v < 0) {
 	return -1;
@@ -71,14 +71,14 @@ function sign(v: number)
  * @param interval Interval.
  * @param n Number of phrases.
  */
-function phase(t: number, interval: number, n=2)
+function phase(t: number, interval: number, n=2): number
 {
     if (interval === 0) return 0;
     return int(n*t/interval) % n;
 }
 
 /** Generates a random number in [0,a) or [a,b). */
-function frnd(a: number, b=0)
+function frnd(a: number, b=0): number
 {
     if (b < a) {
 	const c = a;
@@ -89,7 +89,7 @@ function frnd(a: number, b=0)
 }
 
 /** Generates an integer random number in [0,a) or [a,b). */
-function rnd(a: number, b=0)
+function rnd(a: number, b=0): number
 {
     return int(frnd(a, b));
 }
@@ -99,7 +99,7 @@ function rnd(a: number, b=0)
  * @param n Number of digits to fill.
  * @param c Filler character.
  */
-function format(v: number, n=3, c=' ')
+function format(v: number, n=3, c=' '): string
 {
     let s = '';
     while (s.length < n) {
@@ -114,13 +114,13 @@ function format(v: number, n=3, c=' ')
 }
 
 /** Picks a random element. */
-function choice<T>(a: T[])
+function choice<T>(a: T[]): T
 {
     return a[rnd(a.length)];
 }
 
 /** Removes an element. */
-function removeElement<T>(a: T[], obj: T)
+function removeElement<T>(a: T[], obj: T): T[]
 {
     const i = a.indexOf(obj);
     if (0 <= i) {
@@ -130,7 +130,7 @@ function removeElement<T>(a: T[], obj: T)
 }
 
 /** Returns an array filled with a sequence. */
-function range(n: number)
+function range(n: number): number[]
 {
     let a = Array.apply(null, new Array(n));
     return a.map((_:any,i:number) => { return i });
@@ -140,7 +140,7 @@ function range(n: number)
  * @param s Source string.
  * @param f Conversion function.
  */
-function str2array(s: string, f: (c:string)=>number=parseInt)
+function str2array(s: string, f: (c:string)=>number=parseInt): Int32Array
 {
     const a = new Int32Array(s.length);
     for (let i = 0; i < s.length; i++) {
@@ -191,7 +191,7 @@ function getEdgeyContext(canvas: HTMLCanvasElement): CanvasRenderingContext2D
 }
 
 /** Creates a 2D array from an image. */
-function image2array(img: HTMLImageElement)
+function image2array(img: HTMLImageElement): Int32Array[]
 {
     interface ColorMap {
 	[index:number]: number;
@@ -420,12 +420,12 @@ class Color {
     }
 
     /** Multiplies the brightness. */
-    multiply(t: number) {
+    multiply(t: number): Color {
 	return new Color(this.r*t, this.g*t, this.b*t, this.a);
     }
 
     /** Changes the alpha value. */
-    setAlpha(a: number) {
+    setAlpha(a: number): Color {
 	return new Color(this.r, this.g, this.b, a);
     }
 
@@ -433,7 +433,7 @@ class Color {
      * @param color Color to bland.
      * @param t Blending ratio.
      */
-    blend(color: Color, t: number) {
+    blend(color: Color, t: number): Color {
 	return new Color(
 	    this.r*(1-t) + color.r*t,
 	    this.g*(1-t) + color.g*t,
