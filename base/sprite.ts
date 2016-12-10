@@ -20,7 +20,7 @@ class HTMLImageSource implements ImageSource {
 	this.dstRect = dstRect;
     }
 
-    getBounds() {
+    getBounds(): Rect {
 	return this.dstRect;
     }
 
@@ -43,15 +43,17 @@ class RectImageSource implements ImageSource {
 	this.dstRect = dstRect;
     }
 
-    getBounds() {
+    getBounds(): Rect {
 	return this.dstRect;
     }
 
     render(ctx: CanvasRenderingContext2D) {
-	ctx.fillStyle = this.color;
-	ctx.fillRect(
-	    this.dstRect.x, this.dstRect.y,
-	    this.dstRect.width, this.dstRect.height);
+	if (this.color !== null) {
+	    ctx.fillStyle = this.color;
+	    ctx.fillRect(
+		this.dstRect.x, this.dstRect.y,
+		this.dstRect.width, this.dstRect.height);
+	}
     }
 }
 
@@ -64,19 +66,21 @@ class OvalImageSource implements ImageSource {
 	this.dstRect = dstRect;
     }
 
-    getBounds() {
+    getBounds(): Rect {
 	return this.dstRect;
     }
 
     render(ctx: CanvasRenderingContext2D) {
-	ctx.save();
-	ctx.fillStyle = this.color;
-	ctx.translate(this.dstRect.centerx(), this.dstRect.centery());
-	ctx.scale(this.dstRect.width/2, this.dstRect.height/2);
-	ctx.beginPath();
-	ctx.arc(0, 0, 1, 0, Math.PI*2);
-	ctx.fill();
-	ctx.restore();
+	if (this.color !== null) {
+	    ctx.save();
+	    ctx.fillStyle = this.color;
+	    ctx.translate(this.dstRect.centerx(), this.dstRect.centery());
+	    ctx.scale(this.dstRect.width/2, this.dstRect.height/2);
+	    ctx.beginPath();
+	    ctx.arc(0, 0, 1, 0, Math.PI*2);
+	    ctx.fill();
+	    ctx.restore();
+	}
     }
 }
 
@@ -87,7 +91,7 @@ class SpriteSheet {
     constructor() {
     }
     
-    get(x:number, y=0, w=1, h=1, origin: Vec2=null) {
+    get(x:number, y=0, w=1, h=1, origin: Vec2=null): ImageSource {
 	return null as ImageSource;
     }
 }
@@ -104,7 +108,7 @@ class ImageSpriteSheet extends SpriteSheet {
 	this.origin = origin;
     }
 
-    get(x:number, y=0, w=1, h=1, origin: Vec2=null) {
+    get(x:number, y=0, w=1, h=1, origin: Vec2=null): ImageSource {
 	if (origin === null) {
 	    if (this.origin === null) {
 		origin = new Vec2(w*this.size.x/2, h*this.size.y/2);
@@ -126,7 +130,7 @@ class SimpleSpriteSheet extends SpriteSheet {
 	this.imgsrcs = imgsrcs;
     }
 
-    get(x:number, y=0, w=1, h=1, origin: Vec2=null) {
+    get(x:number, y=0, w=1, h=1, origin: Vec2=null): ImageSource {
 	return this.imgsrcs[x];
     }
 }
@@ -152,7 +156,7 @@ class Sprite {
 	return '<Sprite: '+this.imgsrc+'>';
     }
 
-    getBounds(pos: Vec2=null) {
+    getBounds(pos: Vec2=null): Rect {
 	// [OVERRIDE]
 	return null as Rect;
     }
@@ -167,12 +171,12 @@ class Sprite {
 //
 class SimpleSprite extends Sprite {
     
-    getPos() {
+    getPos(): Vec2 {
 	// [OVERRIDE]
 	return null as Vec2;
     }
 
-    getBounds(pos: Vec2=null) {
+    getBounds(pos: Vec2=null): Rect {
 	if (this.imgsrc !== null) {
 	    if (pos === null) {
 		pos = this.getPos();
@@ -215,7 +219,7 @@ class EntitySprite extends SimpleSprite {
 	this.entity = entity;
     }
 
-    getPos() {
+    getPos(): Vec2 {
 	if (this.entity !== null) {
 	    return this.entity.pos;
 	}
@@ -237,7 +241,7 @@ class TiledSprite extends Sprite {
 	this.bounds = bounds;
     }
 
-    getBounds() {
+    getBounds(): Rect {
 	return this.bounds;
     }
 
@@ -300,7 +304,7 @@ class StarSprite extends Sprite {
 	}
     }
 
-    getBounds() {
+    getBounds(): Rect {
 	return this.bounds;
     }
 

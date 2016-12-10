@@ -25,9 +25,9 @@ class TileMap {
     height: number;
     bounds: Rect;
     
-    isObstacle: TileFunc;
-    isGrabbable: TileFunc;
-    isStoppable: TileFunc;
+    isObstacle: TileFunc = ((c:number) => { return false; });
+    isGrabbable: TileFunc = ((c:number) => { return false; });
+    isStoppable: TileFunc = ((c:number) => { return false; });
 
     private _rangemap: RangeMapMap = {};
 
@@ -45,7 +45,7 @@ class TileMap {
 	return '<TileMap: '+this.width+','+this.height+'>';
     }
   
-    get(x: number, y: number) {
+    get(x: number, y: number): number {
 	if (0 <= x && 0 <= y && x < this.width && y < this.height) {
 	    return this.map[y][x];
 	} else {
@@ -74,7 +74,7 @@ class TileMap {
 	this._rangemap = {};
     }
 
-    copy() {
+    copy(): TileMap {
 	let map:Int32Array[] = [];
 	for (let a of this.map) {
 	    map.push(a.slice());
@@ -82,7 +82,7 @@ class TileMap {
 	return new TileMap(this.tilesize, map);
     }
 
-    coord2map(rect: Vec2|Rect) {
+    coord2map(rect: Vec2|Rect): Rect {
 	const ts = this.tilesize;
 	if (rect instanceof Rect) {
 	    const x0 = Math.floor(rect.x/ts);
@@ -97,7 +97,7 @@ class TileMap {
 	}
     }
 
-    map2coord(rect: Vec2|Rect) {
+    map2coord(rect: Vec2|Rect): Rect {
 	const ts = this.tilesize;
 	if (rect instanceof Vec2) {
 	    return new Rect(rect.x*ts, rect.y*ts, ts, ts);
@@ -109,7 +109,7 @@ class TileMap {
 	}
     }
 
-    apply(f: TilePosFunc, rect: Rect=null) {
+    apply(f: TilePosFunc, rect: Rect=null): Vec2 {
 	if (rect === null) {
 	    rect = new Rect(0, 0, this.width, this.height);
 	}
@@ -147,11 +147,11 @@ class TileMap {
 	}
     }
 
-    findTile(f0: TileFunc, rect: Rect=null) {
+    findTile(f0: TileFunc, rect: Rect=null): Vec2 {
 	return this.apply((x,y,c)=>{return f0(c);}, rect);
     }
 
-    findTileByCoord(f0: TileFunc, range: Rect) {
+    findTileByCoord(f0: TileFunc, range: Rect): Rect {
 	let p = this.apply((x,y,c)=>{return f0(c);}, this.coord2map(range));
 	return (p === null)? null : this.map2coord(p);
     }
@@ -169,7 +169,7 @@ class TileMap {
 	return rects;
     }
 
-    getRangeMap(key:string, f: TileFunc) {
+    getRangeMap(key:string, f: TileFunc): RangeMap {
 	let map = this._rangemap[key];
 	if (map === undefined) {
 	    map = new RangeMap(this, f);
@@ -197,10 +197,12 @@ class TileMap {
 		c = ft(x, y, c);
 		if (0 <= c) {
 		    let imgsrc = tileset.get(c);
-		    ctx.save();
-		    ctx.translate(bx+ts*dx, by+ts*dy);
-		    imgsrc.render(ctx);
-		    ctx.restore();
+		    if (imgsrc !== null) {
+			ctx.save();
+			ctx.translate(bx+ts*dx, by+ts*dy);
+			imgsrc.render(ctx);
+			ctx.restore();
+		    }
 		}
 	    }
 	}
@@ -225,10 +227,12 @@ class TileMap {
 		c = ft(x, y, c);
 		if (0 <= c) {
 		    let imgsrc = tileset.get(c);
-		    ctx.save();
-		    ctx.translate(bx+ts*dx, by+ts*dy);
-		    imgsrc.render(ctx);
-		    ctx.restore();
+		    if (imgsrc !== null) {
+			ctx.save();
+			ctx.translate(bx+ts*dx, by+ts*dy);
+			imgsrc.render(ctx);
+			ctx.restore();
+		    }
 		}
 	    }
 	}
@@ -306,7 +310,7 @@ class RangeMap {
 	this._data = data;
     }
 
-    get(x0: number, y0: number, x1: number, y1: number) {
+    get(x0: number, y0: number, x1: number, y1: number): number {
 	let t: number;
 	if (x1 < x0) {
 	    t = x0; x0 = x1; x1 = t;
@@ -324,7 +328,7 @@ class RangeMap {
 		this._data[y0][x1] + this._data[y0][x0]);
     }
 
-    exists(rect: Rect) {
+    exists(rect: Rect): boolean {
 	return (this.get(rect.x, rect.y,
 			 rect.x+rect.width,
 			 rect.y+rect.height) !== 0);

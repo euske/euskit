@@ -1232,18 +1232,18 @@ class Box {
 
 // getContact: returns a motion vector that satisfies the given constraints.
 function getContact(
-    collider: Collider, v: Vec2,
+    collider0: Collider, v: Vec2,
     obstacles: Collider[],
     fences: Rect[]=null): Vec2
 {
     if (obstacles !== null) {
-	for (let collider of obstacles) {
-	    v = collider.contact(v, collider);
+	for (let collider1 of obstacles) {
+	    v = collider1.contact(v, collider0);
 	}
     }
     if (fences !== null) {
 	for (let rect of fences) {
-	    v = rect.boundRect(v, collider.getAABB());
+	    v = rect.boundRect(v, collider0.getAABB());
 	}
     }
     return v;

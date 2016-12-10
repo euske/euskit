@@ -274,7 +274,7 @@ class PhysicalEntity extends Entity {
 
     update() {
 	super.update();
-	this.fall();
+	this.fall(this._jumpt);
 	if (this.isJumping()) {
 	    this._jumpt++;
 	} else {
@@ -282,9 +282,9 @@ class PhysicalEntity extends Entity {
 	}
     }
   
-    fall() {
+    fall(t: number) {
 	if (this.canFall()) {
-	    let vy = this.jumpfunc(this.velocity.y, this._jumpt);
+	    let vy = this.jumpfunc(this.velocity.y, t);
 	    let v = new Vec2(this.velocity.x, vy);
 	    v = this.moveIfPossible(v, 'fall');
 	    this.velocity = v.clamp(this.maxspeed);
