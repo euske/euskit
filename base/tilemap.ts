@@ -65,9 +65,9 @@ class TileMap {
 	    rect = new Rect(0, 0, this.width, this.height);
 	}
 	for (let dy = 0; dy < rect.height; dy++) {
-	    const y = rect.y+dy;
+	    let y = rect.y+dy;
 	    for (let dx = 0; dx < rect.width; dx++) {
-		const x = rect.x+dx;
+		let x = rect.x+dx;
 		this.map[y][x] = c;
 	    }
 	}
@@ -83,22 +83,22 @@ class TileMap {
     }
 
     coord2map(rect: Vec2|Rect): Rect {
-	const ts = this.tilesize;
+	let ts = this.tilesize;
 	if (rect instanceof Rect) {
-	    const x0 = Math.floor(rect.x/ts);
-	    const y0 = Math.floor(rect.y/ts);
-	    const x1 = Math.ceil((rect.x+rect.width)/ts);
-	    const y1 = Math.ceil((rect.y+rect.height)/ts);
+	    let x0 = Math.floor(rect.x/ts);
+	    let y0 = Math.floor(rect.y/ts);
+	    let x1 = Math.ceil((rect.x+rect.width)/ts);
+	    let y1 = Math.ceil((rect.y+rect.height)/ts);
 	    return new Rect(x0, y0, x1-x0, y1-y0);
 	} else {
-	    const x = int(rect.x/ts);
-	    const y = int(rect.y/ts);
+	    let x = int(rect.x/ts);
+	    let y = int(rect.y/ts);
 	    return new Rect(x, y, 1, 1);
 	}
     }
 
     map2coord(rect: Vec2|Rect): Rect {
-	const ts = this.tilesize;
+	let ts = this.tilesize;
 	if (rect instanceof Vec2) {
 	    return new Rect(rect.x*ts, rect.y*ts, ts, ts);
 	} else if (rect instanceof Rect) {
@@ -114,10 +114,10 @@ class TileMap {
 	    rect = new Rect(0, 0, this.width, this.height);
 	}
 	for (let dy = 0; dy < rect.height; dy++) {
-	    const y = rect.y+dy;
+	    let y = rect.y+dy;
 	    for (let dx = 0; dx < rect.width; dx++) {
-		const x = rect.x+dx;
-		const c = this.get(x, y);
+		let x = rect.x+dx;
+		let c = this.get(x, y);
 		if (f(x, y, c)) {
 		    return new Vec2(x,y);
 		}

@@ -431,7 +431,7 @@ function main<T extends Scene>(
 	    app.blur();
 	}
 	let size = Math.min(canvas.width, canvas.height)/8;
-	const ctx = canvas.getContext('2d');
+	let ctx = canvas.getContext('2d');
 	ctx.save();
 	ctx.fillStyle = 'rgba(0,0,64, 0.5)'; // gray out.
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
