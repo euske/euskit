@@ -31,7 +31,7 @@ function applyMixins(derivedCtor: any, baseCtors: any[]) {
 /** Simulates the C fmod() function. */
 function fmod(x: number, y: number): number
 {
-    const v = x % y;
+    let v = x % y;
     return (0 <= v)? v : v+y;
 }
 
@@ -81,7 +81,7 @@ function phase(t: number, interval: number, n=2): number
 function frnd(a: number, b=0): number
 {
     if (b < a) {
-	const c = a;
+	let c = a;
 	a = b;
 	b = c;
     }
@@ -122,7 +122,7 @@ function choice<T>(a: T[]): T
 /** Removes an element. */
 function removeElement<T>(a: T[], obj: T): T[]
 {
-    const i = a.indexOf(obj);
+    let i = a.indexOf(obj);
     if (0 <= i) {
 	a.splice(i, 1);
     }
@@ -142,7 +142,7 @@ function range(n: number): number[]
  */
 function str2array(s: string, f: (c:string)=>number=parseInt): Int32Array
 {
-    const a = new Int32Array(s.length);
+    let a = new Int32Array(s.length);
     for (let i = 0; i < s.length; i++) {
 	a[i] = f(s[i]);
     }
@@ -158,7 +158,7 @@ function removeChildren(node: Node, name: string)
     name = name.toLowerCase();
     // Iterate backwards to simplify array removal. (thanks to @the31)
     for (let i = node.childNodes.length-1; 0 <= i; i--) {
-	const c = node.childNodes[i];
+	let c = node.childNodes[i];
 	if (c.nodeName.toLowerCase() === name) {
 	    node.removeChild(c);
 	}
@@ -171,7 +171,7 @@ function removeChildren(node: Node, name: string)
  */
 function createCanvas(width: number, height: number): HTMLCanvasElement
 {
-    const canvas = document.createElement('canvas');
+    let canvas = document.createElement('canvas');
     canvas.width = width;
     canvas.height = height;
     return canvas;
@@ -182,7 +182,7 @@ function createCanvas(width: number, height: number): HTMLCanvasElement
  */
 function getEdgeyContext(canvas: HTMLCanvasElement): CanvasRenderingContext2D
 {
-    const ctx = canvas.getContext('2d');
+    let ctx = canvas.getContext('2d');
     (ctx as any).imageSmoothingEnabled = false;
     (ctx as any).webkitImageSmoothingEnabled = false;
     (ctx as any).mozImageSmoothingEnabled = false;
@@ -196,28 +196,28 @@ function image2array(img: HTMLImageElement): Int32Array[]
     interface ColorMap {
 	[index:number]: number;
     }
-    const header = 1;
-    const width = img.width;
-    const height = img.height;
-    const canvas = createCanvas(width, height);
-    const ctx = getEdgeyContext(canvas);
+    let header = 1;
+    let width = img.width;
+    let height = img.height;
+    let canvas = createCanvas(width, height);
+    let ctx = getEdgeyContext(canvas);
     ctx.drawImage(img, 0, 0);
-    const data = ctx.getImageData(0, 0, width, height).data;
+    let data = ctx.getImageData(0, 0, width, height).data;
     let i = 0;
     let c2v:ColorMap = {};
     for (let y = 0; y < header; y++) {
 	for (let x = 0; x < width; x++, i+=4) {
-	    const c = ((data[i] << 16) | (data[i+1] << 8) | data[i+2]); // RGBA
+	    let c = ((data[i] << 16) | (data[i+1] << 8) | data[i+2]); // RGBA
 	    if (!c2v.hasOwnProperty(c.toString())) {
 		c2v[c] = y*width + x;
 	    }
 	}
     }
-    const map = new Array(height-header);
+    let map = new Array(height-header);
     for (let y = 0; y < height-header; y++) {
-	const a = new Int32Array(width);
+	let a = new Int32Array(width);
 	for (let x = 0; x < width; x++, i+=4) {
-	    const c = ((data[i] << 16) | (data[i+1] << 8) | data[i+2]); // RGBA
+	    let c = ((data[i] << 16) | (data[i+1] << 8) | data[i+2]); // RGBA
 	    a[x] = c2v[c];
 	}
 	map[y] = a;
@@ -323,20 +323,20 @@ interface Action {
  */
 class Signal {
 
-    /** Sender object. */
-    sender: any;
+    /** Base arguments. */
+    baseargs: any;
     /** List of receivers. */
     receivers: Action[] = [];
 
     /** Creates a new Signal.
-     * @param sender Sender object.
+     * @param params Base arguments.
      */
-    constructor(sender: any) {
-	this.sender = sender;
+    constructor(...params: any[]) {
+	this.baseargs = Array.prototype.slice.call(arguments);
     }
 	
     toString() {
-	return ('<Signal('+this.sender+') '+this.receivers+'>');
+	return ('<Signal('+this.baseargs+') '+this.receivers+'>');
     }
   
     /** Adds a receiver function for the signal.
@@ -353,12 +353,13 @@ class Signal {
 	removeElement(this.receivers, recv);
     }
 
-    /** Notifies all the receivers with the given arguments. */
+    /** Notifies all the receivers with the given arguments.
+     * @param params Extra arguments.
+     */
     fire(...params: any[]) {
 	for (let receiver of this.receivers) {
-	    const args = Array.prototype.slice.call(arguments);
-	    args.unshift(this.sender);
-	    receiver.apply(null, args);
+	    let args = Array.prototype.slice.call(arguments);
+	    receiver.apply(null, this.baseargs.concat(args));
 	}
     }
 }
