@@ -145,6 +145,8 @@ class TextBox extends Sprite {
     lineSpace: number = 0;
     padding: number = 0;
     background: string = null;
+    borderColor: string = null;
+    borderWidth: number = 2;
     segments: TextSegment[] = [];
     
     constructor(frame: Rect, font: Font=null) {
@@ -182,6 +184,12 @@ class TextBox extends Sprite {
 	if (this.background !== null) {
 	    ctx.fillStyle = this.background;
 	    ctx.fillRect(0, 0, this.frame.width, this.frame.height);
+	}
+	if (this.borderColor !== null) {
+	    let b = this.borderWidth;
+	    ctx.strokeStyle = 'white';
+	    ctx.lineWidth = b;
+	    ctx.strokeRect(-b, -b, this.frame.width+b*2, this.frame.height+b*2);
 	}
 	for (let seg of this.segments) {
 	    seg.font.renderString(ctx, seg.text,
