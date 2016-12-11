@@ -3,28 +3,49 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <style>
-h1 { border-bottom: 4pt solid; }
-h2 { border-bottom: 2pt solid; }
-h3 { border-bottom: 1pt solid; }
+h1 { border-bottom: 4px solid; margin: 0; }
+h2 { color: white; background: #880000; border-bottom: 2px solid black; }
+h3 { background: #ffccff; border-bottom: 1px solid; }
 table { border-collapse: collapse; }
 td { padding: 2px; }
 a { font-weight: bold; }
+body { margin: 0; padding: 0; }
+.code { border: 1px solid; padding: 0.2em; background: #eeeeee; }
+.ctor { background: #ffffcc; }
 .inherited { background: #cccccc; }
 .overridable { background: #ccffcc; }
+.nav { position: fixed; top: 0; left: 0; width: 20%; }
+.main { position: absolute; top: 0; left: 20%; width: 80%; }
+.list { margin-top: 1em; }
+.list > .head { font-weight: bold; background: #88ffff; }
+.navhead { font-size: 150%; font-weight: bold; }
 </style>
 <title>Euskit Quick Reference</title>
 </head>
 <body>
-<h1><a href="https://github.com/euske/euskit">Euskit</a> Quick Reference</h1>
 
-<div>
-Functions:
+<div class=nav>
+<div style="padding: 0.5em;">
+
+<div class=navhead><a href="https://github.com/euske/euskit">Euskit</a></div>
+
+<p>
+Legend:
+<span class=ctor><code>constructor</code></span>,
+<span class=inherited><code>inherited method</code></span>,
+<span class=overridable><code>overridable method</code></span>
+
+<div class=list>
+<div class=head>Functions:</div>
 <a href="#main">Main</a>,
 <a href="#misc">Misc.</a>,
 <a href="#numeric">Numeric</a>,
 <a href="#array">Array</a>,
 <a href="#html5">HTML5</a>
-<br>Utility Classes:
+</div>
+
+<div class=list>
+<div class=head>Utility Classes:</div>
 <a href="#Signal"><code>Signal</code></a>,
 <a href="#Color"><code>Color</code></a>,
 <a href="#Vec2"><code>Vec2</code></a>,
@@ -39,13 +60,19 @@ Functions:
 <a href="#ImageSource"><code>ImageSource</code></a>,
 <a href="#SpriteSheet"><code>SpriteSheet</code></a>,
 <a href="#Sprite"><code>Sprite</code></a>
-<br>Basic Classes:
+</div>
+
+<div class=list>
+<div class=head>Basic Classes:</div>
 <a href="#Task"><code>Task</code></a>,
 <a href="#Entity"><code>Entity</code></a>,
 <a href="#Layer"><code>Layer</code></a>,
 <a href="#Scene"><code>Scene</code></a>,
 <a href="#App"><code>App</code></a>
-<br>Specialized Classes:
+</div>
+
+<div class=list>
+<div class=head>Specialized Classes:</div>
 <a href="#Projectile"><code>Projectile</code></a>,
 <a href="#TiledSprite"><code>TiledSprite</code></a>,
 <a href="#FlowSprite"><code>FlowSprite</code></a>,
@@ -54,14 +81,23 @@ Functions:
 <a href="#ScrollLayer"><code>ScrollLayer</code></a>,
 <a href="#GameScene"><code>GameScene</code></a>,
 <a href="#HTMLScene"><code>HTMLScene</code></a>
-<br>Text Library:
+</div>
+
+<div class=list>
+<div class=head>Text Library:</div>
 <a href="#Font"><code>Font</code></a>,
 <a href="#ShadowFont"><code>ShadowFont</code></a>,
 <a href="#TextBox"><code>TextBox</code></a>,
 <a href="#DialogBox"><code>DialogBox</code></a>
-<br>Animation Library:
-<a href="#Queue"><code>Queue</code></a>,
-<br>Pathfinding Library:
+</div>
+
+<div class=list>
+<div class=head>Animation Library:</div>
+<a href="#Queue"><code>Queue</code></a>
+</div>
+
+<div class=list>
+<div class=head>Pathfinding Library:</div>
 <a href="#PlanActor"><code>PlanActor</code></a>,
 <a href="#PlanAction"><code>PlanAction</code></a>,
 <a href="#PlanProfile"><code>PlanProfile</code></a>,
@@ -69,10 +105,14 @@ Functions:
 <a href="#PlanActionRunner"><code>PlanActionRunner</code></a>,
 <a href="#PlanningEntity"><code>PlanningEntity</code></a>
 </div>
-<p>
-Legend:
-<span class=inherited><code>inherited</code></span>,
-<span class=overridable><code>overridable</code></span>
+
+</div>
+</div>
+
+<div class=main>
+<div style="padding: 0.5em;">
+
+<h1>API Quick Reference</h1>
 
 <a name="concepts"><h2>Concepts</h2></a>
 <div style="position: relative;">
@@ -83,21 +123,22 @@ Legend:
       <g fill="none" stroke="black" stroke-width="1">
 	<line x1="140" y1="12" x2="55" y2="100" />
 	<line x1="140" y1="12" x2="175" y2="100" />
-	<rect x="0" y="55" width="110" height="90" fill="white" />
-	<rect x="120" y="55" width="110" height="90" fill="white" />
+	<rect x="0" y="55" width="110" height="92" fill="white" />
+	<rect x="120" y="55" width="110" height="92" fill="white" />
 	<ellipse cx="140" cy="12" rx="20" ry="12" fill="white" />
 	<rect x="18" y="60" width="80" height="60" fill="white" />
 	<rect x="14" y="64" width="80" height="60" fill="white" />
 	<rect x="10" y="68" width="80" height="60" fill="white" />
 	<circle cx="20" cy="80" r="5" />
-	<rect x="70" y="90" width="16" height="16" />
-	<rect x="20" y="110" width="15" height="15" />
+	<rect x="30" y="110" width="16" height="16" />
+	<rect x="33" y="113" width="10" height="10" />
+	<line x1="45" y1="102" x2="38" y2="118" />
       </g>
       <g style="font-size: 75%;">
 	<text x="140" y="15" text-anchor="middle">App</text>
 	<text x="28" y="85" text-anchor="begin">Task</text>
-	<text x="68" y="102" text-anchor="end">Sprite</text>
-	<text x="38" y="122" text-anchor="begin">Entity</text>
+	<text x="45" y="102" text-anchor="begin">Sprite</text>
+	<text x="48" y="122" text-anchor="begin">Entity</text>
 	<text x="70" y="140" text-anchor="begin">Layer</text>
 	<text x="55" y="52" text-anchor="middle">Scene</text>
 	<text x="175" y="52" text-anchor="middle">Scene</text>
@@ -108,17 +149,17 @@ Legend:
   </svg>
   <div style="position: absolute; left: 270px; top: 0px;">
     <a href="#App"><code>App</code></a>: 
-    Manages global states and shared resources (e.g. images).<br>
+    Manages global states and shared resources (images and sounds).<br>
     <a href="#Scene"><code>Scene</code></a>: 
     Handles input events and character movements.<br>
     <a href="#Layer"><code>Layer</code></a>: 
     Contains a set of <code>Task</code>/<code>Sprite</code>/<code>Entity</code>.<br>
     <a href="#Task"><code>Task</code></a>: 
     A process that gets called for every frame.<br>
-    <a href="#Sprite"><code>Sprite</code></a>: 
-    A visible object on a layer.<br>
     <a href="#Entity"><code>Entity</code></a>: 
     A <code>Task</code> that can collide another <code>Entity</code>.<br>
+    <a href="#Sprite"><code>Sprite</code></a>: 
+    A visible object that belongs to a layer.<br>
   </div>
 </div>
 
@@ -134,12 +175,14 @@ Legend:
   <td>The global sound reources.</td></tr>
 <tr><td><code>TEXTS</td>
   <td>The global text reources.</td></tr>
+<tr><td><code>addInitHook(hook)</td>
+  <td>Add a hook that is executed after the page load is complete.</td></tr>
 <tr><td><code>main(ctor, <em>[width, [height,<br>&nbsp; [canvasId, [framerate]]]]</em>)</code></td>
   <td>Starts an app from the specified Scene.</td></tr>
 </table>
 
 <h4>How to Use</h4>
-<blockquote><pre>
+<blockquote><pre class=code>
 &lt;script&gt;
   class Scene1 extends Scene { ... }
 &lt;/script&gt;
@@ -150,34 +193,34 @@ Legend:
 <a name="misc"><h3>Misc. functions (<code>utils.ts</code>)</h3></a>
 <table border>
 <tr><td><code>log(...)</code></td>
-  <td>logging</td></tr>
-<tr><td><code>assert(x, <em>[msg]</em>)</code></td>
-  <td>assert</td></tr>
+  <td>Log the messages to the console.</td></tr>
+<tr><td><code>assert(x, <em>msg="assertion error"</em>)</code></td>
+  <td>Throws an exception when the condition is not met.</td></tr>
 <tr><td><code>applyMixins(ctor, bases)</code></td>
-  <td>Configure a new class.</td></tr>
+  <td>Configures a new class.</td></tr>
 </table>
 
 <a name="numeric"><h3>Numeric functions (<code>utils.ts</code>)</h3></a>
 <table border>
 <tr><td><code>fmod(x, y)</code></td>
-  <td>= fmod</td></tr>
+  <td>Equivalent to <code>fmod</code> C function.</td></tr>
 <tr><td><code>int(x)</code></td>
-  <td>= Math.floor</td></tr>
+  <td>Equivalent to <code>Math.floor</code>.</td></tr>
 <tr><td><code>upperbound(x, y)</code></td>
   <td>Limits a value to min(<code>x</code>, <code>y</code>).</td></tr>
 <tr><td><code>lowerbound(x, y)</code></td>
   <td>Limits a value to max(<code>x</code>, <code>y</code>).</td></tr>
 <tr><td><code>clamp(v0, v, v1)</code></td>
-  <td>Limits a value to [<code>v0</code>, <code>v1</code>].</td></tr>
+  <td>Limits a value within [<code>v0</code>, <code>v1</code>].</td></tr>
 <tr><td><code>sign(v)</code></td>
-  <td>-1, 0 or +1 based on the sign of <code>v</code>.</td></tr>
-<tr><td><code>phase(t, interval, n)</code></td>
+  <td>Returns -1, 0 or +1 based on the sign of <code>v</code>.</td></tr>
+<tr><td><code>phase(t, interval, <em>n=2</em>)</code></td>
   <td>Returns the phase for time <code>t</code>.</td></tr>
-<tr><td><code>frnd(a, <em>[b]</em>)</code></td>
+<tr><td><code>frnd(a, <em>b=0</em>)</code></td>
   <td>Generates a value [0,<code>a</code>) or [<code>a</code>,<code>b</code>)</td></tr>
-<tr><td><code>rnd(a, <em>[b]</em>)</code></td>
+<tr><td><code>rnd(a, <em>b=0</em>)</code></td>
   <td>Generates an integer value [0,<code>a</code>) or [<code>a</code>,<code>b</code>)</td></tr>
-<tr><td><code>format(v, <em>[n, [c]]</em>)</code></td>
+<tr><td><code>format(v, <em>n=3, c=' '</em>)</code></td>
   <td>Formats a number as a string.</td></tr>
 </table>
 
@@ -187,6 +230,8 @@ Legend:
   <td>A random element of <code>a</code>.</td></tr>
 <tr><td><code>removeElement(a, obj)</code></td>
   <td>Removes an element from <code>a</code>.</td></tr>
+<tr><td><code>range(n)</code></td>
+  <td>Returns an array filled with a sequence [0, <code>n</code>-1].</td></tr>
 <tr><td><code>str2array(img)</code></td>
   <td>Converts a string to a number array.</td></tr>
 </table>
@@ -203,7 +248,7 @@ Legend:
   <td>Converts an image to an 2D array.</td></tr>
 <tr><td><code>drawImageScaled(<br>&nbsp; ctx, imgsrc,<br>&nbsp; sx, sy, sw, sh,<br>&nbsp; dx, dy, dw, dh)</code></td>
   <td>Draws a flipped image.</td></tr>
-<tr><td><code>playSound(sound, <em>[start]</em>)</code></td>
+<tr><td><code>playSound(sound, <em>start=0.025</em>)</code></td>
   <td>Plays a sound.</td></tr>
 <tr><td><code>getKeySym(keyCode)</code></td>
   <td>Returns the <code>KeySym</code> for <code>keyCode</code>.</td></tr>
@@ -215,7 +260,7 @@ Legend:
 <p>
 A <code>Signal</code> represents a simple event that can be subscribed to.
 <table border>
-<tr><td><code>new Signal(sender)</code></td>
+<tr class=ctor><td><code>new Signal(sender)</code></td>
   <td>Creates a <code>Signal</code> for a <code>sender</code>.</td></tr>
 <tr><td><code>.receivers</code></td>
   <td>A list of the receiver functions.</td></tr>
@@ -231,7 +276,7 @@ A <code>Signal</code> represents a simple event that can be subscribed to.
 <p>
 A <code>Color</code> represents an RGBA value.
 <table border>
-<tr><td><code>new Color(r, g, b, <em>[a]</em>)</code></td>
+<tr class=ctor><td><code>new Color(r, g, b, <em>[a]</em>)</code></td>
   <td>Creates a <code>Color</code> for RGBA values.</td></tr>
 <tr><td><code>.r</code></td>
   <td>The red value.</td></tr>
@@ -251,7 +296,7 @@ A <code>Color</code> represents an RGBA value.
 <p>
 A <code>Vec2</code> represents two-dimensional vector that has (x, y) elements.
 <table border>
-<tr><td><code>new Vec2(<em>[x, [y]]</em>)</code></td>
+<tr class=ctor><td><code>new Vec2(<em>[x, [y]]</em>)</code></td>
   <td>Creates a vector (<code>x</code>, <code>y</code>).</td></tr>
 <tr><td><code>.x</code></td>
   <td>The x value.</td></tr>
@@ -295,7 +340,7 @@ A <code>Vec2</code> represents two-dimensional vector that has (x, y) elements.
 <p>
 A <code>Vec3</code> represents three-dimensional vector that has (x, y, z) elements.
 <table border>
-<tr><td><code>new Vec3(<em>[x, [y, [z]]]</em>)</code></td>
+<tr class=ctor><td><code>new Vec3(<em>[x, [y, [z]]]</em>)</code></td>
   <td>Creates a vector (<code>x</code>, <code>y</code>, <code>z</code>).</td></tr>
 <tr><td><code>.x</code></td>
   <td>The x value.</td></tr>
@@ -370,7 +415,7 @@ A <code>Collider</code> is an abstract class that represents a collider.
 A <code>Rect</code> object is a 2D rectangle that 
 has its position (x, y) and size (width, height).
 <table border>
-<tr><td><code>new Rect(<em>x, y, [w, [h]]</em>)</code></td>
+<tr class=ctor><td><code>new Rect(<em>x, y, [w, [h]]</em>)</code></td>
   <td>Creates a rectangle (<code>x</code>, <code>y</code>, <code>w</code>, <code>h</code>).</td></tr>
 <tr><td><code>.x</code></td>
   <td>The x value of the top-left corner.</td></tr>
@@ -557,7 +602,7 @@ has its position (x, y) and size (width, height).
 <p>
 A <code>Circle</code> represents a circle that has its center and radius.
 <table border>
-<tr><td><code>new Circle(<em>center, [radius]</em>)</code></td>
+<tr class=ctor><td><code>new Circle(<em>center, [radius]</em>)</code></td>
   <td>Creates a circle.</td></tr>
 <tr><td><code>.center</code></td>
   <td>The center of the circle.</td></tr>
@@ -586,7 +631,7 @@ A <code>Circle</code> represents a circle that has its center and radius.
 A <code>Box</code> is a 3D cuboid that has its position and size
 both as <code>Vec3</code>.
 <table border>
-<tr><td><code>new Box(<em>origin, [size]</em>)</code></td>
+<tr class=ctor><td><code>new Box(<em>origin, [size]</em>)</code></td>
   <td>Creates a box (<code>origin</code>, <code>size</code>).</td></tr>
 <tr><td><code>.origin</code></td>
   <td>The origin of the box.</td></tr>
@@ -644,7 +689,7 @@ both as <code>Vec3</code>.
 <p>
 A <code>TileMap</code> represents a two-dimensional array that holds map tiles.
 <table border>
-<tr><td><code>new TileMap(tilesize, map)</code></td>
+<tr class=ctor><td><code>new TileMap(tilesize, map)</code></td>
   <td>Creates a new tilemap for a given array.</td></tr>
 <tr><td><code>.tilesize</code></td>
   <td>The tile size.</td></tr>
@@ -701,7 +746,7 @@ A <code>TileMap</code> represents a two-dimensional array that holds map tiles.
 A <code>RangeMap</code> is a partial copy of <code>TileMap</code> 
 that allows range queries for specific tiles.
 <table border>
-<tr><td><code>new RangeMap(tilemap, f)</code></td>
+<tr class=ctor><td><code>new RangeMap(tilemap, f)</code></td>
   <td>Creates a new rangemap for certain tiles in a tilemap.</td></tr>
 <tr><td><code>.width</code></td>
   <td>The number of tiles that fit horizontally in the map.</td></tr>
@@ -718,9 +763,9 @@ that allows range queries for specific tiles.
 An <code>ImageSource</code> is a portion of a <code>&lt;img&gt;</code> 
 that is used for rendering Sprites.
 <table border>
-<tr><td><code>new HTMLImageSource(image, srcRect, dstRect)</code></td>
+<tr class=ctor><td><code>new HTMLImageSource(image, srcRect, dstRect)</code></td>
   <td>Creates a <code>ImageSource</code> from <code>&lt;img&gt;</code>.</td></tr>
-<tr><td><code>new FillImageSource(color, dstRect)</code></td>
+<tr class=ctor><td><code>new FillImageSource(color, dstRect)</code></td>
   <td>Creates a <code>ImageSource</code> with a solid color.</td></tr>
 </table>
 
@@ -728,9 +773,9 @@ that is used for rendering Sprites.
 <p>
 A set of <code>ImageSource</code> objects indexed by a number.
 <table border>
-<tr><td><code>new ImageSpriteSheet(image, size, <em>[origin]</em>)</code></td>
+<tr class=ctor><td><code>new ImageSpriteSheet(image, size, <em>[origin]</em>)</code></td>
   <td>Creates a <code>SpriteSheet</code> from <code>&lt;img&gt;</code>.</td></tr>
-<tr><td><code>new SimpleSpriteSheet(imgsrcs)</code></td>
+<tr class=ctor><td><code>new SimpleSpriteSheet(imgsrcs)</code></td>
   <td>Creates a <code>SpriteSheet</code> with solid colors.</td></tr>
 <tr><td><code>.get(i, <em>[j, [w, [h, [origin]]]]</em>)</code></td>
   <td>Returns the <code>i,j</code>-th <code>ImageSource</code>.</td></tr>
@@ -740,7 +785,7 @@ A set of <code>ImageSource</code> objects indexed by a number.
 <p>
 A <code>Sprite</code> represents something that's shown on the screen.
 <table border>
-<tr><td><code>new Sprite(<em>[imgsrc]</em>)</code></td>
+<tr class=ctor><td><code>new Sprite(<em>[imgsrc]</em>)</code></td>
   <td>Creates a new sprite.</td></tr>
 <tr><td><code>.imgsrc</code></td>
   <td>A <code>ImageSource</code> for the sprite's content.</td></tr>
@@ -763,7 +808,7 @@ A <code>Sprite</code> represents something that's shown on the screen.
 A <code>Task</code> is a process that belongs to a <code>Layer</code>
 and its method is executed periodically.
 <table border>
-<tr><td><code>new Task()</code></td>
+<tr class=ctor><td><code>new Task()</code></td>
   <td>Creates a new task.</td></tr>
 <tr><td><code>.alive</code></td>
   <td><code>true</code> if the task is running.</td></tr>
@@ -787,7 +832,7 @@ and its method is executed periodically.
 <p>
 An <code>Entity</code> is a physical object that's visible and has a physical boundary.
 <table border>
-<tr><td><code>new Entity(pos)</code></td>
+<tr class=ctor><td><code>new Entity(pos)</code></td>
   <td>Creates a new entity.</td></tr>
 <tr><td><code>.sprite</code></td>
   <td>A <code>Sprite</code> that belongs to this entity.</td></tr>
@@ -816,7 +861,7 @@ An <code>Entity</code> is a physical object that's visible and has a physical bo
 A <code>Layer</code> contains a set of objects that can be rendered 
 at once and interact each other.
 <table border>
-<tr><td><code>new Layer()</code></td>
+<tr class=ctor><td><code>new Layer()</code></td>
   <td>Creates a new layer.</td></tr>
 <tr><td><code>.time</code></td>
   <td>The current time of the layer (in seconds).</td></tr>
@@ -861,7 +906,7 @@ at once and interact each other.
 A <code>Scene</code> represents one state of a game that can have its own
 event handling (such as title screen or cut scene).
 <table border>
-<tr><td><code>new Scene()</code></td>
+<tr class=ctor><td><code>new Scene()</code></td>
   <td>Creates a new scene.</td></tr>
 <tr><td><code>.screen</code></td>
   <td>The canvas rectangle.</td></tr>
@@ -896,7 +941,7 @@ event handling (such as title screen or cut scene).
 An <code>App</code> holds all the shared resources and is
 responsible for switching Scenes.
 <table border>
-<tr><td><code>new App(size, framerate, elem)</code></td>
+<tr class=ctor><td><code>new App(size, framerate, elem)</code></td>
   <td>Creates a new app with given HTML5 resources.</td></tr>
 <tr><td><code>.size</code></td>
   <td>The canvas size.</td></tr>
@@ -936,7 +981,7 @@ responsible for switching Scenes.
 A <code>Sprite</code> shows an image repeatedly within the bounds.
 Suitable for backgrounds.
 <table border>
-<tr><td><code>new TiledSprite(bounds)</code></td>
+<tr class=ctor><td><code>new TiledSprite(bounds)</code></td>
   <td>Creates a new sprite.</td></tr>
 <tr class=inherited><td><code>.imgsrc</code></td>
   <td>A <code>ImageSource</code> for the sprite's content.</td></tr>
@@ -949,7 +994,7 @@ Suitable for backgrounds.
 A <code>Sprite</code> that shows multiple parallaxed stars. 
 Suitable for space-y backgrounds.
 <table border>
-<tr><td><code>new StarSprite(<br>&nbsp; bounds, nstars,<br>&nbsp; <em>[maxdepth]</em>)</code></td>
+<tr class=ctor><td><code>new StarSprite(<br>&nbsp; bounds, nstars,<br>&nbsp; <em>[maxdepth]</em>)</code></td>
   <td>Creates a new sprite.</td></tr>
 <tr class=inherited><td><code>.imgsrc</code></td>
   <td>A <code>ImageSource</code> for each star's content.</td></tr>
@@ -967,7 +1012,7 @@ A <code>Projectile</code> is an <code>Entity</code> that
 keeps moving towards a specific direction.
 Suitable for bullets or obstacles.
 <table border>
-<tr><td><code>new Projectile(pos)</code></td>
+<tr class=ctor><td><code>new Projectile(pos)</code></td>
   <td>Creates a new projectile.</td></tr>
 <tr class=inherited><td><code>.imgsrc</code></td>
   <td>A <code>ImageSource</code> for the entity's content.</td></tr>
@@ -977,12 +1022,12 @@ Suitable for bullets or obstacles.
   <td>The rectangle where the object is kept alive within.</td></tr>
 </table>
 
-<a name="PhysicalEntity"><h3>PhysicalEntity (<code>entity.ts</code>)</h3></a>
+<a name="PhysicalEntity"><h3>PhysicalEntity : <a href="#Entity">Entity</a> (<code>entity.ts</code>)</h3></a>
 <p>
 An <code>Entity</code> that is affected by gravity.
 Suitable for charcters or objects that can jump or fall.
 <table border>
-<tr><td><code>new PhysicalEntity(pos)</code></td>
+<tr class=ctor><td><code>new PhysicalEntity(pos)</code></td>
   <td>Creates a new entity.</td></tr>
 <tr class=inherited><td><code>.alive</code></td>
   <td><code>true</code> if the entity is alive.</td></tr>
@@ -1046,12 +1091,12 @@ Suitable for charcters or objects that can jump or fall.
   <td><code>true</code> if the entity is in a state that stops falling.</td></tr>
 </table>
 
-<a name="PlatformerEntity"><h3>PlatformerEntity (<code>entity.ts</code>)</h3></a>
+<a name="PlatformerEntity"><h3>PlatformerEntity : <a href="#PhysicalEntity">PhysicalEntity</a> (<code>entity.ts</code>)</h3></a>
 <p>
 A <code>PhysicalEntity</code> that interacts with a <code>TileMap</code>.
 Suitable for tile-based platformer games.
 <table border>
-<tr><td><code>new PlatformerEntity(tilemap, pos)</code></td>
+<tr class=ctor><td><code>new PlatformerEntity(tilemap, pos)</code></td>
   <td>Creates a new entity.</td></tr>
 <tr class=inherited><td><code>.alive</code></td>
   <td><code>true</code> if the entity is alive.</td></tr>
@@ -1113,12 +1158,12 @@ Suitable for tile-based platformer games.
   <td>Invoked when the entity is landed on a platform.</td></tr>
 </table>
 
-<a name="ScrollLayer"><h3>ScrollLayer (<code>layer.ts</code>)</h3></a>
+<a name="ScrollLayer"><h3>ScrollLayer : <a href="#Layer">Layer</a> (<code>layer.ts</code>)</h3></a>
 <p>
 A <code>Layer</code> that can scroll the displayed area. 
 Only shows the objects within the window.
 <table border>
-<tr><td><code>new ScrollLayer(window)</code></td>
+<tr class=ctor><td><code>new ScrollLayer(window)</code></td>
   <td>Creates a new layer.</td></tr>
 <tr class=inherited><td><code>.tasks</code></td>
   <td>A list of <code>Task</code>s that belong to the layer.</td></tr>
@@ -1146,12 +1191,12 @@ Only shows the objects within the window.
   <td>Returns a list of entities that overlap <code>rect</code>.</td></tr>
 </table>
 
-<a name="GameScene"><h3>GameScene (<code>scene.ts</code>)</h3></a>
+<a name="GameScene"><h3>GameScene : <a href="#Scene">Scene</a> (<code>scene.ts</code>)</h3></a>
 <p>
 A <code>Scene</code> that has one <code>Layer</code> with
 a few convenient methods.
 <table border>
-<tr><td><code>new GameScene(app)</code></td>
+<tr class=ctor><td><code>new GameScene(app)</code></td>
   <td>Creates a new scene.</td></tr>
 <tr class=inherited><td><code>.app</code></td>
   <td>The <code>App</code> object that the scene belongs to.</td></tr>
@@ -1189,12 +1234,12 @@ a few convenient methods.
   <td>Invoked when a mouse pointer is moved.</td></tr>
 </table>
 
-<a name="HTMLScene"><h3>HTMLScene (<code>scene.ts</code>)</h3></a>
+<a name="HTMLScene"><h3>HTMLScene : <a href="#Scene">Scene</a> (<code>scene.ts</code>)</h3></a>
 <p>
 A <code>Scene</code> for a static HTML text. 
 Suitable for game title or help screen, etc.
 <table border>
-<tr><td><code>new HTMLScene(app, text)</code></td>
+<tr class=ctor><td><code>new HTMLScene(app, text)</code></td>
   <td>Creates a new HTML scene.</td></tr>
 <tr><td><code>.text</code></td>
   <td>A string to display.</td></tr>
@@ -1209,7 +1254,7 @@ Suitable for game title or help screen, etc.
 <p>
 A <code>Font</code> represents a monospace bitmap font.
 <table border>
-<tr><td><code>new Font(glyphs, <em>[color, [scale]]</em>)</code></td>
+<tr class=ctor><td><code>new Font(glyphs, <em>[color, [scale]]</em>)</code></td>
   <td>Creates a <code>Font</code> with a given <code>glyphs</code>.</td></tr>
 <tr><td><code>.width</code></td>
   <td>The width of individual character.</td></tr>
@@ -1225,7 +1270,7 @@ A <code>Font</code> represents a monospace bitmap font.
 <p>
 A <code>Font</code> with shadow.
 <table border>
-<tr><td><code>new ShadowFont(glyphs,<br>&nbsp; <em>[color, [scale,<br>&nbsp; [shadowcolor,<br>&nbsp; [shadowdist]]]]</em>)</code></td>
+<tr class=ctor><td><code>new ShadowFont(glyphs,<br>&nbsp; <em>[color, [scale,<br>&nbsp; [shadowcolor,<br>&nbsp; [shadowdist]]]]</em>)</code></td>
   <td>Creates a <code>ShadowFont</code> with a given <code>glyphs</code>.</td></tr>
 <tr class=inherited><td><code>.width</code></td>
   <td>The width of individual character.</td></tr>
@@ -1248,7 +1293,7 @@ A <code>Font</code> with shadow.
 <p>
 A <code>Queue</code> is a list of <code>Task</code>s that are executed sequentially.
 <table border>
-<tr><td><code>new Queue(tasks)</code></td>
+<tr class=ctor><td><code>new Queue(tasks)</code></td>
   <td>Creates a new queue that runs multiple <code>Task</code>s sequentially.</td></tr>
 <tr class=inherited><td><code>.alive</code></td>
   <td><code>true</code> if the queue is running.</td></tr>
@@ -1280,3 +1325,6 @@ A <code>Queue</code> is a list of <code>Task</code>s that are executed sequentia
 <a name="PlanMap"><h3>PlanMap (<code>planmap.ts</code>)</h3></a>
 <a name="PlanActionRunner"><h3>PlanActionRunner (<code>planrunner.ts</code>)</h3></a>
 <a name="PlanningEntity"><h3>PlanningEntity (<code>planrunner.ts</code>)</h3></a>
+
+</div>
+</div> <!-- main -->
