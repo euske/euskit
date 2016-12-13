@@ -67,6 +67,20 @@ class Blinker extends Task {
 	this.sprite = sprite;
     }
     
+    start() {
+	super.start();
+	if (this.sprite !== null) {
+	    this.layer.addSprite(this.sprite);
+	}
+    }
+
+    stop() {
+	if (this.sprite !== null) {
+	    this.layer.removeSprite(this.sprite);
+	}
+	super.stop();
+    }
+    
     update() {
 	super.update();
 	this.sprite.visible = (phase(this.getTime(), this.interval) == 0);

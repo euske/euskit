@@ -89,7 +89,7 @@ class SoundTask extends Task {
     sound: HTMLAudioElement;
     startTime: number;
     
-    constructor(sound: HTMLAudioElement=null, startTime: number=0) {
+    constructor(sound: HTMLAudioElement=null, startTime: number=MP3_GAP) {
 	super();
 	this.sound = sound;
 	this.startTime = startTime;
