@@ -53,8 +53,8 @@ class Game extends GameScene {
     scoreBox: TextBox;
     score: number;
     
-    init() {
-	super.init();
+    start() {
+	super.start();
 	this.scoreBox = new TextBox(this.screen.inflate(-8,-8), FONT);
 	this.player = new Player(this, this.screen.center());
 	this.add(this.player);

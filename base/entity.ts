@@ -27,14 +27,16 @@ class Task {
 	return (this.layer.time - this.started);
     }
   
-    start() {
-	this.started = this.layer.time;
+    init(t: number) {
+	this.started = t;
+	this.start();
     }
-
-    stop() {
-	if (this.running) {
-	    this.running = false;
-	    this.stopped.fire();
+  
+    tick(t: number) {
+	this.update();
+	let dt = t - this.started;
+	if (this.lifetime <= dt) {
+	    this.stop();
 	}
     }
 
@@ -53,14 +55,18 @@ class Task {
 	return task;
     }
   
-    tick(t: number) {
-	this.update();
-	let dt = t - this.started;
-	if (this.lifetime <= dt) {
-	    this.stop();
+    start() {
+	// [OVERRIDE]
+    }
+
+    stop() {
+	// [OVERRIDE]
+	if (this.running) {
+	    this.running = false;
+	    this.stopped.fire();
 	}
     }
-  
+
     update() {
 	// [OVERRIDE]
     }
@@ -100,16 +106,16 @@ class SoundTask extends Task {
 	playSound(this.sound, this.startTime);
     }
 
+    stop() {
+	this.sound.pause();
+	super.stop();
+    }
+
     update() {
 	super.update();
 	if (this.sound.ended) {
 	    this.stop();
 	}
-    }
-
-    stop() {
-	this.sound.pause();
-	super.stop();
     }
 }
 

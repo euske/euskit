@@ -153,8 +153,8 @@ class Racing extends GameScene {
 	this.highScore = -1;
     }
     
-    init() {
-	super.init();
+    start() {
+	super.start();
 	
 	this.player = new Player(this, this.screen.center());
 	this.add(this.player);
@@ -181,7 +181,7 @@ class Racing extends GameScene {
 		let blinker = new Blinker(this.player.sprite);
 		blinker.interval = 0.2;
 		blinker.lifetime = 1.0;
-		blinker.stopped.subscribe(() => { this.init(); });
+		blinker.stopped.subscribe(() => { this.start(); });
 		this.add(blinker);
 		APP.setMusic();
 		playSound(SOUNDS['plunge']);

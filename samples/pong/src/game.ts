@@ -88,8 +88,8 @@ class Pong extends GameScene {
     paddle: Paddle;
     ball: Ball;
 
-    init() {
-	super.init();
+    start() {
+	super.start();
 	// Places the objects.
 	this.paddle = new Paddle(this.screen);
 	this.add(this.paddle);
@@ -101,7 +101,7 @@ class Pong extends GameScene {
 	super.update();
 	// Restarts when the ball goes out of screen.
 	if (this.screen.height < this.ball.pos.y) {
-	    this.init();
+	    this.start();
 	}
     }
 
