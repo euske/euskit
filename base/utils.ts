@@ -261,6 +261,27 @@ function drawImageScaled(
     ctx.restore();
 }
 
+/** Draw an ellipse.
+ * @param ctx Context to draw.
+ * @param cx Center X.
+ * @param cy Center Y.
+ * @param rx Radius X.
+ * @param ry Radius Y.
+ */
+function ellipse(
+    ctx: CanvasRenderingContext2D,
+    cx: number, cy: number, rx: number, ry: number) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    if (ry < rx) {
+	ctx.scale(1, ry/rx);
+    } else {
+	ctx.scale(rx/ry, 1);
+    }
+    ctx.arc(0, 0, Math.max(rx, ry), 0, Math.PI*2);
+    ctx.restore();
+}
+
 /** Play a sound resource. 
  * @param sound Audio element.
  * @param start Start position.
