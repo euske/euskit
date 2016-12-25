@@ -35,6 +35,10 @@ class Layer {
   
     tick() {
 	for (let task of this.tasks) {
+	    if (task.layer === null) {
+		task.layer = this;
+		task.init();
+	    }
 	    if (task.running) {
 		task.tick();
 	    }
@@ -44,9 +48,7 @@ class Layer {
     }
 
     addTask(task: Task) {
-	task.layer = this;
 	this.tasks.push(task);
-	task.start();
     }
 
     addSprite(sprite: Sprite) {

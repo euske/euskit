@@ -355,8 +355,8 @@ class BannerBox extends Task {
 	this.textbox.putText(lines, 'center', 'center');
     }
 
-    start() {
-	super.start();
+    init() {
+	super.init();
 	this.layer.addSprite(this.textbox);
     }
 
@@ -436,8 +436,8 @@ class DisplayTask extends TextTask {
 	this.font = dialog.textbox.font;
     }
 
-    start() {
-	super.start();
+    init() {
+	super.init();
 	this.text = this.dialog.textbox.wrapLines(this.text, this.font)
     }
 
@@ -516,8 +516,8 @@ class MenuTask extends TextTask {
 	return item;
     }
 
-    start() {
-	super.start();
+    init() {
+	super.init();
 	for (let item of this.items) {
 	    item.seg = this.dialog.textbox.addSegment(item.pos, item.text);
 	}
@@ -638,8 +638,8 @@ class DialogBox extends Task {
 	this.queue = [];
     }
 
-    start() {
-	super.start();
+    init() {
+	super.init();
 	if (this.textbox !== null) {
 	    this.layer.addSprite(this.textbox);
 	}
@@ -660,10 +660,12 @@ class DialogBox extends Task {
 	    if (task === null) break;
 	    if (task.layer === null) {
 		task.layer = this.layer;
-		task.start();
+		task.init();
 	    }
-	    task.tick();
-	    if (task.running) break;
+	    if (task.running) {
+		task.tick();
+		break;
+	    }
 	    this.removeTask(task);
 	}
 	if (this.autoHide && task === null) {
@@ -711,7 +713,7 @@ class DialogBox extends Task {
 	    if (task === null) break;
 	    if (task.layer === null) {
 		task.layer = this.layer;
-		task.start();
+		task.init();
 	    }
 	    task.ff();
 	    if (task.running) break;

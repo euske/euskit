@@ -279,8 +279,8 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 	}
     }
 
-    start() {
-	super.start();
+    init() {
+	super.init();
 	if (this.mapSprite !== null) {
 	    this.layer.addSprite(this.mapSprite);
 	}

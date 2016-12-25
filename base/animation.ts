@@ -42,10 +42,12 @@ class Queue extends Task {
 	    if (task === null) break;
 	    if (task.layer === null) {
 		task.layer = this.layer;
-		task.start();
+		task.init();
 	    }
-	    task.tick();
-	    if (task.running) break;
+	    if (task.running) {
+		task.tick();
+		break;
+	    }
 	    this.remove(task);
 	}
 	if (this.stopWhenEmpty && task === null) {
@@ -67,8 +69,8 @@ class Blinker extends Task {
 	this.sprite = sprite;
     }
     
-    start() {
-	super.start();
+    init() {
+	super.init();
 	if (this.sprite !== null) {
 	    this.layer.addSprite(this.sprite);
 	}
@@ -109,8 +111,8 @@ class Tweener extends Animator {
     srcpos: Vec2 = null;
     dstpos: Vec2 = null;
     
-    start() {
-	super.start();
+    init() {
+	super.init();
 	this.srcpos = this.entity.pos.copy();
     }
     
