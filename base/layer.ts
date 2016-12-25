@@ -26,8 +26,7 @@ class Layer {
 		this.sprites+', entities='+this.entities+'>');
     }
   
-    init(t: number) {
-	this.time = t;
+    init() {
 	this.tasks = [];
 	this.sprites = [];
 	this.entities = [];
@@ -49,7 +48,7 @@ class Layer {
     addTask(task: Task) {
 	task.layer = this;
 	this.tasks.push(task);
-	task.init(this.time);
+	task.start();
     }
 
     addSprite(sprite: Sprite) {

@@ -660,7 +660,7 @@ class DialogBox extends Task {
 	    if (task === null) break;
 	    if (task.layer === null) {
 		task.layer = this.layer;
-		task.init(t);
+		task.start();
 	    }
 	    task.tick(t);
 	    if (task.running) break;
@@ -711,7 +711,7 @@ class DialogBox extends Task {
 	    if (task === null) break;
 	    if (task.layer === null) {
 		task.layer = this.layer;
-		task.init(this.getTime());
+		task.start();
 	    }
 	    task.ff();
 	    if (task.running) break;

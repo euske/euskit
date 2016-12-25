@@ -406,8 +406,8 @@ class Game extends Scene {
     score: number;
     speed: Vec2;
     
-    start() {
-	super.start();
+    init() {
+	super.init();
 	let ROWS = [T.WALL,0,0,0,0,0,T.WALL];
 	this.tilemap = new TileMap(32, ROWS.map((c:number) => {
 	    return new Int32Array(12).fill(c);

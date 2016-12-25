@@ -229,7 +229,7 @@ class App {
 	removeChildren(this.elem, 'div');
 	this.setMusic();
 	this.scene = scene;
-	this.scene.init(this.ticks/this.framerate);
+	this.scene.init();
     }
 
     setMusic(music: HTMLAudioElement=null, start=0, end=0) {

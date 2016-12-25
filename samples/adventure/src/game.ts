@@ -43,8 +43,8 @@ class PictureScene extends GameScene {
 	this.dialogBox = new DialogBox(textbox, HIFONT);
     }
     
-    start() {
-	super.start();
+    init() {
+	super.init();
 	this.add(this.dialogBox);
     }
 
@@ -114,8 +114,8 @@ class Scene1 extends PictureScene {
 	super();
 	this.image1 = IMAGES['scene1'];
     }
-    start() {
-	super.start();
+    init() {
+	super.init();
 	this.dialogBox.addDisplay(
 	    'It was a perfect sunny day. '+
 	    'I was driving a sleepy countryside.', 10);
@@ -136,8 +136,8 @@ class Scene2 extends PictureScene {
 	super();
 	this.image1 = IMAGES['scene2'];
     }
-    start() {
-	super.start();
+    init() {
+	super.init();
 	this.dialogBox.addDisplay(
 	    'I was fed up with cities. The beauty of '+
 	    'a city makes everyone anonymous.', 10);
@@ -158,8 +158,8 @@ class Scene3 extends PictureScene {
 	super();
 	this.image1 = IMAGES['scene3'];
     }
-    start() {
-	super.start();
+    init() {
+	super.init();
 	this.dialogBox.addDisplay(
 	    'But eventually, people can\'t really '+
 	    'forget about their loved ones.', 10);
@@ -178,8 +178,8 @@ class Scene3 extends PictureScene {
 // 
 class Adventure extends Scene {
     
-    start() {
-	super.start();
+    init() {
+	super.init();
 	this.changeScene(new Scene1());
     }
 }

@@ -178,10 +178,10 @@ class Shooter extends GameScene {
 	this.scoreBox = new TextBox(this.screen.inflate(-8,-8), FONT);
     }
     
-    start() {
-	super.start();
+    init() {
+	super.init();
 	this.player = new Player(this, this.screen.center());
-	this.player.chain(new DelayTask(2, () => { this.start(); }));
+	this.player.chain(new DelayTask(2, () => { this.init(); }));
 	this.add(this.player);
 	this.stars = new StarSprite(this.screen, 100);
 	this.nextenemy = 0;

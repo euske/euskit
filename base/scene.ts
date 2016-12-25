@@ -18,16 +18,12 @@ class Scene {
 	APP.post(function () { APP.init(scene); });
     }
   
-    init(t: number) {
-	this.start();
+    init() {
+	// [OVERRIDE]
     }
 
     tick(t: number) {
-	this.update();
-    }
-
-    start() {
-	// [OVERRIDE]
+	this.update()
     }
 
     update() {
@@ -88,8 +84,8 @@ class HTMLScene extends Scene {
 	this.text = text;
     }
 
-    start() {
-	super.start();
+    init() {
+	super.init();
 	let scene = this;
 	let bounds = APP.elem.getBoundingClientRect();
 	let e = APP.addElement(
@@ -136,9 +132,9 @@ class GameScene extends Scene {
 	this.layer = new ScrollLayer(this.screen);
     }
 
-    init(t: number) {
-	super.init(t);
-	this.layer.init(t);
+    init() {
+	super.init();
+	this.layer.init();
 	this.entities = this.layer.entities;
     }
 

@@ -246,8 +246,8 @@ class Game extends GameScene {
     profile: GridProfile;
     thingies: number;
     
-    start() {
-	super.start();
+    init() {
+	super.init();
 	const MAP = [
 	    "00000000000000300000",
 	    "00002111210001121100",
