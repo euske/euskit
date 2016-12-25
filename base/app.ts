@@ -17,7 +17,6 @@ class App {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
 
-    ticks: number = 0;
     scene: Scene = null;
     active: boolean = false;
     keys: { [index: number]: boolean } = {};
@@ -60,8 +59,8 @@ class App {
 	e.parentNode.removeChild(e);
     }
 
-    lockKeys() {
-	this._keylock = this.framerate;
+    lockKeys(t: number=1) {
+	this._keylock = getTime()+t;
     }
 
     keydown(ev: KeyboardEvent) {
@@ -252,10 +251,9 @@ class App {
     }
 
     tick() {
-	this.scene.tick(this.ticks/this.framerate);
-	this.ticks++;
-	if (0 < this._keylock) {
-	    this._keylock--;
+	this.scene.tick();
+	if (0 < this._keylock && this._keylock < getTime()) {
+	    this._keylock = 0;
 	}
 
 	if (this._music !== null &&

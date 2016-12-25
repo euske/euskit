@@ -8,7 +8,6 @@
 // 
 class Layer {
 
-    time: number = 0;
     tasks: Task[] = [];
     sprites: Sprite[] = [];
     entities: Entity[] = [];
@@ -34,11 +33,10 @@ class Layer {
 	this.mouseActive = null;
     }
   
-    tick(t: number) {
-	this.time = t;
+    tick() {
 	for (let task of this.tasks) {
 	    if (task.running) {
-		task.tick(t);
+		task.tick();
 	    }
 	}
 	this.checkEntityCollisions();

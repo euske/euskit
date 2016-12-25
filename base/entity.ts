@@ -24,11 +24,11 @@ class Task {
     }
 
     getTime() {
-	return (this.layer.time - this.started);
+	return (getTime() - this.started);
     }
   
     start() {
-	this.started = this.layer.time;
+	this.started = getTime();
     }
 
     stop() {
@@ -53,10 +53,9 @@ class Task {
 	return task;
     }
   
-    tick(t: number) {
+    tick() {
 	this.update();
-	let dt = t - this.started;
-	if (this.lifetime <= dt) {
+	if (this.lifetime <= this.getTime()) {
 	    this.stop();
 	}
     }

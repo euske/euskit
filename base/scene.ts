@@ -22,7 +22,7 @@ class Scene {
 	// [OVERRIDE]
     }
 
-    tick(t: number) {
+    tick() {
 	this.update()
     }
 
@@ -138,9 +138,9 @@ class GameScene extends Scene {
 	this.entities = this.layer.entities;
     }
 
-    tick(t: number) {
-	super.tick(t);
-	this.layer.tick(t);
+    tick() {
+	super.tick();
+	this.layer.tick();
     }
 
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {

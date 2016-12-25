@@ -94,6 +94,12 @@ function rnd(a: number, b=0): number
     return int(frnd(a, b));
 }
 
+/** Return the current time in seconds. */
+function getTime(): number
+{
+    return Date.now()*0.001;
+}
+
 /** Returns a pretty printed string. 
  * @param v Number to format.
  * @param n Number of digits to fill.

@@ -35,7 +35,7 @@ class Queue extends Task {
 	return (0 < this.tasks.length)? this.tasks[0] : null;
     }
 
-    tick(t: number) {
+    tick() {
 	let task:Task = null;
 	while (true) {
 	    task = this.getCurrentTask();
@@ -44,7 +44,7 @@ class Queue extends Task {
 		task.layer = this.layer;
 		task.start();
 	    }
-	    task.tick(t);
+	    task.tick();
 	    if (task.running) break;
 	    this.remove(task);
 	}

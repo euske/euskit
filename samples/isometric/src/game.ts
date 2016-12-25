@@ -442,10 +442,10 @@ class Game extends Scene {
     	this.layer3.addTask(task);
     }
 
-    tick(t: number) {
-	super.tick(t);
-	this.layer.tick(t);
-	this.layer3.tick(t);
+    tick() {
+	super.tick();
+	this.layer.tick();
+	this.layer3.tick();
 	this.moveAll(this.speed);
     }
 

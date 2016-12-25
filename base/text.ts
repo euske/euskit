@@ -652,8 +652,8 @@ class DialogBox extends Task {
 	super.stop();
     }
     
-    tick(t: number) {
-	super.tick(t);
+    tick() {
+	super.tick();
 	let task:TextTask = null;
 	while (true) {
 	    task = this.getCurrentTask();
@@ -662,7 +662,7 @@ class DialogBox extends Task {
 		task.layer = this.layer;
 		task.start();
 	    }
-	    task.tick(t);
+	    task.tick();
 	    if (task.running) break;
 	    this.removeTask(task);
 	}
