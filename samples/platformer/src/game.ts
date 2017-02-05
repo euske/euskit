@@ -66,7 +66,8 @@ function findShadowPos(tilemap: TileMap, pos: Vec2) {
 	if (c == T.BLOCK || c == -1) break;
 	p.y++;
     }
-    return tilemap.map2coord(p).center();
+    let y = tilemap.map2coord(p).center().y;
+    return new Vec2(pos.x, y);
 }
 
 
@@ -160,8 +161,8 @@ class Player extends PlatformerEntity implements WorldObject {
 	} else if (!this.hasLadder()) {
 	    v = new Vec2(v.x, lowerbound(0, v.y));
 	}
-	(this.sprite as ShadowSprite).shadowPos = findShadowPos(this.tilemap, this.pos);
 	this.moveIfPossible(v);
+	(this.sprite as ShadowSprite).shadowPos = findShadowPos(this.tilemap, this.pos);
     }
     
     setJump(jumpend: number) {
