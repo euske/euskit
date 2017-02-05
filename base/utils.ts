@@ -5,12 +5,6 @@
 /** Alias of window.console.log() */
 const log = window.console.log.bind(window.console);
 
-/** Alias of HTMLAudioElement */
-const Sound = HTMLAudioElement;
-
-/** Initial gap of lame-encded MP3 files */
-const MP3_GAP = 0.025;
-
 /** Raises an exception if the condition is not met. */
 function assert(x: boolean, msg="assertion error")
 {
@@ -281,6 +275,12 @@ function ellipse(
     ctx.arc(0, 0, Math.max(rx, ry), 0, Math.PI*2);
     ctx.restore();
 }
+
+/** Alias of HTMLAudioElement */
+const Sound = HTMLAudioElement;
+
+/** Initial gap of lame-encded MP3 files */
+const MP3_GAP = 0.025;
 
 /** Play a sound resource. 
  * @param sound Audio element.

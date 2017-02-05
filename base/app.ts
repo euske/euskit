@@ -43,6 +43,17 @@ class App {
 	this.ctx = getEdgeyContext(this.canvas);
     }
 
+    init(scene: Scene) {
+	removeChildren(this.elem, 'div');
+	this.setMusic();
+	this.scene = scene;
+	this.scene.init();
+    }
+
+    post(msg: Action) {
+	this._msgs.push(msg);
+    }
+
     addElement(bounds: Rect) {
 	let e = document.createElement('div');
 	e.style.position = 'absolute';
@@ -63,7 +74,22 @@ class App {
 	this._keylock = getTime()+t;
     }
 
-    keydown(ev: KeyboardEvent) {
+    setMusic(music: HTMLAudioElement=null, start=0, end=0) {
+	if (this._music !== null) {
+	    this._music.pause();
+	}
+	this._music = music;
+	this._loop_start = start;
+	this._loop_end = end;
+	if (this._music !== null) {
+	    if (0 < this._music.readyState) { // for IE bug
+		this._music.currentTime = start;
+	    }
+	    this._music.play();
+	}
+    }
+  
+    keyDown(ev: KeyboardEvent) {
 	if (0 < this._keylock) return;
 	let keysym = getKeySym(ev.keyCode);
 	switch (keysym) {
@@ -107,7 +133,7 @@ class App {
 	this.scene.onKeyDown(ev.keyCode);
     }
 
-    keyup(ev: KeyboardEvent) {
+    keyUp(ev: KeyboardEvent) {
 	let keysym = getKeySym(ev.keyCode);
 	switch (keysym) {
 	case KeySym.Left:
@@ -137,7 +163,7 @@ class App {
 	this.scene.onKeyUp(ev.keyCode);
     }
 
-    keypress(ev: KeyboardEvent) {
+    keyPress(ev: KeyboardEvent) {
 	this.scene.onKeyPress(ev.charCode);
     }
 
@@ -148,7 +174,7 @@ class App {
 	    (ev.clientY-bounds.top)*this.canvas.height/bounds.height);
     }
 
-    mousedown(ev: MouseEvent) {
+    mouseDown(ev: MouseEvent) {
 	this.updateMousePos(ev);
 	switch (ev.button) {
 	case 0:
@@ -158,7 +184,7 @@ class App {
 	this.scene.onMouseDown(this.mousePos, ev.button);
     }
 
-    mouseup(ev: MouseEvent) {
+    mouseUp(ev: MouseEvent) {
 	this.updateMousePos(ev);
 	switch (ev.button) {
 	case 0:
@@ -168,12 +194,12 @@ class App {
 	this.scene.onMouseUp(this.mousePos, ev.button);
     }
 
-    mousemove(ev: MouseEvent) {
+    mouseMove(ev: MouseEvent) {
 	this.updateMousePos(ev);
 	this.scene.onMouseMove(this.mousePos);
     }
 
-    touchstart(ev: TouchEvent) {
+    touchStart(ev: TouchEvent) {
 	let touches = ev.changedTouches;
 	for (let i = 0; i < touches.length; i++) {
 	    let t = touches[i];
@@ -186,7 +212,7 @@ class App {
 	}
     }
 
-    touchend(ev: TouchEvent) {
+    touchEnd(ev: TouchEvent) {
 	let touches = ev.changedTouches;
 	for (let i = 0; i < touches.length; i++) {
 	    let t = touches[i];
@@ -199,7 +225,7 @@ class App {
 	}
     }
 
-    touchmove(ev: TouchEvent) {
+    touchMove(ev: TouchEvent) {
 	let touches = ev.changedTouches;
 	for (let i = 0; i < touches.length; i++) {
 	    let t = touches[i];
@@ -222,32 +248,6 @@ class App {
 	    this._music.pause();
 	}
 	this.active = false;
-    }
-
-    init(scene: Scene) {
-	removeChildren(this.elem, 'div');
-	this.setMusic();
-	this.scene = scene;
-	this.scene.init();
-    }
-
-    setMusic(music: HTMLAudioElement=null, start=0, end=0) {
-	if (this._music !== null) {
-	    this._music.pause();
-	}
-	this._music = music;
-	this._loop_start = start;
-	this._loop_end = end;
-	if (this._music !== null) {
-	    if (0 < this._music.readyState) { // for IE bug
-		this._music.currentTime = start;
-	    }
-	    this._music.play();
-	}
-    }
-  
-    post(msg: Action) {
-	this._msgs.push(msg);
     }
 
     tick() {
@@ -274,7 +274,6 @@ class App {
 	this.scene.render(this.ctx, 0, 0);
 	this.ctx.restore();
     }
-
 }
 
 
@@ -335,7 +334,7 @@ function main<T extends Scene>(
 	    case 18:			// Meta
 		break;
 	    default:
-		app.keydown(e);
+		app.keyDown(e);
 		break;
 	    }
 	    switch (e.keyCode) {
@@ -365,7 +364,7 @@ function main<T extends Scene>(
 	    case 18:			// Meta
 		break;
 	    default:
-		app.keyup(e);
+		app.keyUp(e);
 		break;
 	    }
 	}
@@ -373,45 +372,45 @@ function main<T extends Scene>(
 
     function keypress(e: KeyboardEvent) {
 	if (app.active) {
-	    app.keypress(e);
+	    app.keyPress(e);
 	}
     }
     
     function mousedown(e: MouseEvent) {
 	if (app.active) {
-	    app.mousedown(e);
+	    app.mouseDown(e);
 	}
     }
     
     function mouseup(e: MouseEvent) {
 	if (app.active) {
-	    app.mouseup(e);
+	    app.mouseUp(e);
 	}
     }
     
     function mousemove(e: MouseEvent) {
 	if (app.active) {
-	    app.mousemove(e);
+	    app.mouseMove(e);
 	}
     }
     
     function touchstart(e: TouchEvent) {
 	if (app.active) {
-	    app.touchstart(e);
+	    app.touchStart(e);
 	    e.preventDefault();
 	}
     }
     
     function touchend(e: TouchEvent) {
 	if (app.active) {
-	    app.touchend(e);
+	    app.touchEnd(e);
 	    e.preventDefault();
 	}
     }
     
     function touchmove(e: TouchEvent) {
 	if (app.active) {
-	    app.touchmove(e);
+	    app.touchMove(e);
 	    e.preventDefault();
 	}
     }
