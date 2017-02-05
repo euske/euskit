@@ -16,6 +16,7 @@ BASES= \
 	$(BASEDIR)/planrunner.ts \
 	$(BASEDIR)/scene.ts \
 	$(BASEDIR)/sprite.ts \
+	$(BASEDIR)/task.ts \
 	$(BASEDIR)/text.ts \
 	$(BASEDIR)/tilemap.ts \
 	$(BASEDIR)/utils.ts
