@@ -4,93 +4,6 @@
 /// <reference path="entity.ts" />
 
 
-//  Queue
-//  A list of Tasks that runs sequentially.
-//
-class Queue extends Task {
-
-    tasks: Task[];
-    stopWhenEmpty: boolean = true;
-
-    constructor(tasks: Task[]=null) {
-	super();
-	this.tasks = (tasks !== null)? tasks : [];
-    }
-  
-    add(task: Task) {
-	this.tasks.push(task);
-	return this;
-    }
-  
-    remove(task: Task) {
-	removeElement(this.tasks, task);
-	return this;
-    }
-
-    clear() {
-	this.tasks = [];
-	return this;
-    }
-
-    getCurrentTask() {
-	return (0 < this.tasks.length)? this.tasks[0] : null;
-    }
-
-    tick() {
-	let task:Task = null;
-	while (true) {
-	    task = this.getCurrentTask();
-	    if (task === null) break;
-	    if (task.tasklist === null) {
-		task.tasklist = this.tasklist;
-		task.init();
-	    }
-	    if (task.running) {
-		task.tick();
-		break;
-	    }
-	    this.remove(task);
-	}
-	if (this.stopWhenEmpty && task === null) {
-	    this.stop();
-	}
-    }
-}
-
-
-//  Blinker
-//
-class Blinker extends Widget {
-
-    sprite: Sprite;
-    interval: number = 1.0;
-    
-    constructor(sprite: Sprite) {
-	super();
-	this.sprite = sprite;
-    }
-    
-    init() {
-	super.init();
-	if (this.sprite !== null) {
-	    this.layer.addSprite(this.sprite);
-	}
-    }
-
-    stop() {
-	if (this.sprite !== null) {
-	    this.layer.removeSprite(this.sprite);
-	}
-	super.stop();
-    }
-    
-    update() {
-	super.update();
-	this.sprite.visible = (phase(this.getTime(), this.interval) == 0);
-    }
-}
-
-
 //  Animator
 //  Base class for all animator.
 //
@@ -177,5 +90,38 @@ class PolyTweenerInOut extends PolyTweener {
 	    t = 0.5*(2.0 - Math.pow(2.0-2*t, this.n)); // out
 	}
 	return this.srcpos.interpolate(this.dstpos, t);
+    }
+}
+
+
+//  Blinker
+//
+class Blinker extends Widget {
+
+    sprite: Sprite;
+    interval: number = 1.0;
+    
+    constructor(sprite: Sprite) {
+	super();
+	this.sprite = sprite;
+    }
+    
+    init() {
+	super.init();
+	if (this.sprite !== null) {
+	    this.layer.addSprite(this.sprite);
+	}
+    }
+
+    stop() {
+	if (this.sprite !== null) {
+	    this.layer.removeSprite(this.sprite);
+	}
+	super.stop();
+    }
+    
+    update() {
+	super.update();
+	this.sprite.visible = (phase(this.getTime(), this.interval) == 0);
     }
 }

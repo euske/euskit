@@ -141,3 +141,57 @@ class TaskList {
 	this.tasks.push(task);
     }
 }
+
+
+//  TaskQueue
+//  A list of Tasks that runs sequentially.
+//
+class TaskQueue extends Task {
+
+    tasks: Task[];
+    stopWhenEmpty: boolean = true;
+
+    constructor(tasks: Task[]=null) {
+	super();
+	this.tasks = (tasks !== null)? tasks : [];
+    }
+  
+    add(task: Task) {
+	this.tasks.push(task);
+	return this;
+    }
+  
+    remove(task: Task) {
+	removeElement(this.tasks, task);
+	return this;
+    }
+
+    clear() {
+	this.tasks = [];
+	return this;
+    }
+
+    getCurrentTask() {
+	return (0 < this.tasks.length)? this.tasks[0] : null;
+    }
+
+    tick() {
+	let task:Task = null;
+	while (true) {
+	    task = this.getCurrentTask();
+	    if (task === null) break;
+	    if (task.tasklist === null) {
+		task.tasklist = this.tasklist;
+		task.init();
+	    }
+	    if (task.running) {
+		task.tick();
+		break;
+	    }
+	    this.remove(task);
+	}
+	if (this.stopWhenEmpty && task === null) {
+	    this.stop();
+	}
+    }
+}
