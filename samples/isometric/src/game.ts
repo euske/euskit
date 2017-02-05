@@ -442,7 +442,7 @@ class Game extends Scene {
 
     add(task: Task) {
     	this.tasklist.add(task);
-	if (task instanceof Entity3d) {
+	if (task instanceof Entity) {
 	    task.layer = this.layer3;
 	} else if (task instanceof Widget) {
 	    task.layer = this.layer;
