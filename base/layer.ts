@@ -8,7 +8,6 @@
 // 
 class Layer {
 
-    tasks: Task[] = [];
     sprites: Sprite[] = [];
     entities: Entity[] = [];
     
@@ -21,12 +20,11 @@ class Layer {
     }
 
     toString() {
-	return ('<Layer: tasks='+this.tasks+', sprites='+
-		this.sprites+', entities='+this.entities+'>');
+	return ('<Layer: sprites='+this.sprites+
+		', entities='+this.entities+'>');
     }
   
     init() {
-	this.tasks = [];
 	this.sprites = [];
 	this.entities = [];
 	this.mouseFocus = null;
@@ -34,21 +32,7 @@ class Layer {
     }
   
     tick() {
-	for (let task of this.tasks) {
-	    if (task.layer === null) {
-		task.layer = this;
-		task.init();
-	    }
-	    if (task.running) {
-		task.tick();
-	    }
-	}
 	this.checkEntityCollisions();
-	this.tasks = this.tasks.filter((task: Task) => { return task.running; });
-    }
-
-    addTask(task: Task) {
-	this.tasks.push(task);
     }
 
     addSprite(sprite: Sprite) {

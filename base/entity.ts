@@ -10,7 +10,7 @@
 class Task {
 
     running: boolean = true;
-    layer: Layer = null;
+    tasklist: TaskList = null;
     lifetime: number = Infinity;
     started: number = 0;
     stopped: Signal;
@@ -38,16 +38,16 @@ class Task {
 	}
     }
 
-    chain(task: Task) {
+    chain(task: Task): Task {
 	if (this.running) {
 	    this.stopped.subscribe(() => {
-		if (this.layer !== null) {
-		    this.layer.addTask(task)
+		if (this.tasklist !== null) {
+		    this.tasklist.add(task)
 		}
 	    });
 	} else {
-	    if (this.layer !== null) {
-		this.layer.addTask(task)
+	    if (this.tasklist !== null) {
+		this.tasklist.add(task)
 	    }
 	}
 	return task;
@@ -113,10 +113,58 @@ class SoundTask extends Task {
 }
 
 
+//  TaskList
+// 
+class TaskList {
+
+    tasks: Task[] = [];
+
+    toString() {
+	return ('<TaskList: tasks='+this.tasks+'>');
+    }
+  
+    init() {
+	this.tasks = [];
+    }
+  
+    tick() {
+	for (let task of this.tasks) {
+	    if (task.tasklist === null) {
+		task.tasklist = this;
+		task.init();
+	    }
+	    if (task.running) {
+		task.tick();
+	    }
+	}
+	this.tasks = this.tasks.filter((task: Task) => { return task.running; });
+    }
+
+    add(task: Task) {
+	this.tasks.push(task);
+    }
+}
+
+
+//  Widget
+//
+class Widget extends Task {
+
+    layer: Layer = null;
+    
+    chain(task: Task): Task {
+	if (task instanceof Widget) {
+	    task.layer = this.layer;
+	}
+	return super.chain(task);
+    }
+}
+
+
 //  Entity
 //  A character that can interact with other characters.
 //
-class Entity extends Task {
+class Entity extends Widget {
 
     pos: Vec2;
     sprite: Sprite;

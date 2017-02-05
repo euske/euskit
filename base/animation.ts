@@ -40,8 +40,8 @@ class Queue extends Task {
 	while (true) {
 	    task = this.getCurrentTask();
 	    if (task === null) break;
-	    if (task.layer === null) {
-		task.layer = this.layer;
+	    if (task.tasklist === null) {
+		task.tasklist = this.tasklist;
 		task.init();
 	    }
 	    if (task.running) {
@@ -59,7 +59,7 @@ class Queue extends Task {
 
 //  Blinker
 //
-class Blinker extends Task {
+class Blinker extends Widget {
 
     sprite: Sprite;
     interval: number = 1.0;

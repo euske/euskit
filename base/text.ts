@@ -343,7 +343,7 @@ class TextBox extends Sprite {
 
 //  BannerBox
 //
-class BannerBox extends Task {
+class BannerBox extends Widget {
 
     textbox: TextBox;
     interval: number = 0;
@@ -618,7 +618,7 @@ class MenuTask extends TextTask {
 
 //  DialogBox
 //
-class DialogBox extends Task {
+class DialogBox extends Widget {
 
     textbox: TextBox;
     hiFont: Font;
@@ -658,8 +658,8 @@ class DialogBox extends Task {
 	while (true) {
 	    task = this.getCurrentTask();
 	    if (task === null) break;
-	    if (task.layer === null) {
-		task.layer = this.layer;
+	    if (task.tasklist === null) {
+		task.tasklist = this.tasklist;
 		task.init();
 	    }
 	    if (task.running) {
@@ -711,8 +711,8 @@ class DialogBox extends Task {
 	while (true) {
 	    let task = this.getCurrentTask();
 	    if (task === null) break;
-	    if (task.layer === null) {
-		task.layer = this.layer;
+	    if (task.tasklist === null) {
+		task.tasklist = this.tasklist;
 		task.init();
 	    }
 	    task.ff();

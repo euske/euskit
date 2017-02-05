@@ -124,22 +124,24 @@ class HTMLScene extends Scene {
 // 
 class GameScene extends Scene {
 
+    tasklist: TaskList;
     layer: ScrollLayer;
-    entities: Entity[];
 
     constructor() {
 	super();
+	this.tasklist = new TaskList();
 	this.layer = new ScrollLayer(this.screen);
     }
 
     init() {
 	super.init();
+	this.tasklist.init();
 	this.layer.init();
-	this.entities = this.layer.entities;
     }
 
     tick() {
 	super.tick();
+	this.tasklist.tick();
 	this.layer.tick();
     }
 
@@ -149,7 +151,10 @@ class GameScene extends Scene {
     }
 
     add(task: Task) {
-	this.layer.addTask(task);
+	this.tasklist.add(task);
+	if (task instanceof Widget) {
+	    task.layer = this.layer;
+	}
     }
 
     onMouseDown(p: Vec2, button: number) {

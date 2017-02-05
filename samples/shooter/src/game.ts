@@ -69,7 +69,7 @@ class Player extends Entity {
 		var bullet = new Bullet(this.pos);
 		bullet.movement = new Vec2(8, 0);
 		bullet.frame = this.scene.screen;
-		this.layer.addTask(bullet);
+		this.scene.add(bullet);
 		playSound(SOUNDS['pew']);
 		this.nextfire = 4;
 	    }

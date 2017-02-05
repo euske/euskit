@@ -400,6 +400,7 @@ class Player extends Entity3d {
 class Game extends Scene {
     
     tilemap: TileMap;
+    tasklist: TaskList;
     layer: Layer;
     layer3: ScrollLayer3;
     player: Player;
@@ -412,6 +413,7 @@ class Game extends Scene {
 	this.tilemap = new TileMap(32, ROWS.map((c:number) => {
 	    return new Int32Array(12).fill(c);
 	}));
+	this.tasklist = new TaskList();
 	this.layer = new Layer();
 	this.layer3 = new ScrollLayer3(this.tilemap.bounds);
 	this.layer3.tilemap = this.tilemap;
@@ -435,15 +437,21 @@ class Game extends Scene {
 	    ['GET ALL TEH DAMN THINGIES!']);
 	banner.lifetime = 2.0;
 	banner.interval = 0.5;
-	this.layer.addTask(banner);
+	this.add(banner);
     }
 
     add(task: Task) {
-    	this.layer3.addTask(task);
+    	this.tasklist.add(task);
+	if (task instanceof Entity3d) {
+	    task.layer = this.layer3;
+	} else if (task instanceof Widget) {
+	    task.layer = this.layer;
+	}
     }
 
     tick() {
 	super.tick();
+	this.tasklist.tick();
 	this.layer.tick();
 	this.layer3.tick();
 	this.moveAll(this.speed);
