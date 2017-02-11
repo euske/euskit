@@ -133,6 +133,10 @@ class SimpleSpriteSheet extends SpriteSheet {
     get(x:number, y=0, w=1, h=1, origin: Vec2=null): ImageSource {
 	return this.imgsrcs[x];
     }
+
+    set(i:number, imgsrc:ImageSource) {
+	this.imgsrcs[i] = imgsrc;
+    }
 }
 
 

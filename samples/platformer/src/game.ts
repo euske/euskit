@@ -266,7 +266,9 @@ class Game extends GameScene {
 	    "31020100092000002000",
 	    "11111111111111111111",
 	];
-	this.tilemap = new TileMap(32, MAP.map((v:string) => { return str2array(v); }));
+	this.tilemap = new TileMap(32, 20, 15, MAP.map(
+	    (v:string) => { return str2array(v); }
+	));
 	this.tilemap.isObstacle = ((c:number) => { return c == T.BLOCK; });
 	this.tilemap.isGrabbable = ((c:number) => { return c == T.LADDER; });
 	this.tilemap.isStoppable = ((c:number) => { return c == T.BLOCK || c == T.LADDER; });
@@ -336,12 +338,12 @@ class Game extends GameScene {
 	ctx.fillRect(bx, by, this.screen.width, this.screen.height);
 	// Render the background tiles.
 	this.tilemap.renderWindowFromBottomLeft(
-	    ctx, bx, by, this.layer.window, TILES,
-	    (x,y,c) => { return (c != T.BLOCK)? T.BACKGROUND : -1; });
+	    ctx, bx, by, this.layer.window, 
+	    (x,y,c) => { return (c != T.BLOCK)? TILES.get(T.BACKGROUND) : null; });
 	// Render the map tiles.
 	this.tilemap.renderWindowFromBottomLeft(
-	    ctx, bx, by, this.layer.window, TILES,
-	    (x,y,c) => { return (c == T.BLOCK || c == T.LADDER)? c : -1; });
+	    ctx, bx, by, this.layer.window, 
+	    (x,y,c) => { return (c == T.BLOCK || c == T.LADDER)? TILES.get(c) : null; });
 	super.render(ctx, bx, by);
     }
 }

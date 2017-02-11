@@ -195,26 +195,26 @@ class ScrollLayer3 extends ScrollLayer {
 	}
 
 	// Draw the tilemap.
-	function f(x:number, y:number, c:number) {
-	    let k = x+','+y;
-	    if (sprites.hasOwnProperty(k)) {
-		for (let sprite of sprites[k]) {
-		    if (sprite instanceof Sprite3d) {
-			if (!sprite.floating) {
-			    sprite.render3(ctx, tx, ty);
+	this.tilemap.renderWindowFromTopRight(
+	    ctx, bx+dx, by+dy, window, 
+	    (x,y,c) => { return (c == 0)? this.tiles.get(c) : null; });
+	this.tilemap.renderWindowFromTopRight(
+	    ctx, bx+dx, by+dy, window,
+	    (x,y,c) => {
+		let k = x+','+y;
+		if (sprites.hasOwnProperty(k)) {
+		    for (let sprite of sprites[k]) {
+			if (sprite instanceof Sprite3d) {
+			    if (!sprite.floating) {
+				sprite.render3(ctx, tx, ty);
+			    }
+			} else {
+			    sprite.render(ctx, tx, ty);
 			}
-		    } else {
-			sprite.render(ctx, tx, ty);
 		    }
 		}
-	    }
-	    return (c == 0)? -1 : c;
-	}
-	this.tilemap.renderWindowFromTopRight(
-	    ctx, bx+dx, by+dy, window, this.tiles,
-	    (x,y,c) => { return (c == 0)? 0 : -1; });
-	this.tilemap.renderWindowFromTopRight(
-	    ctx, bx+dx, by+dy, window, this.tiles, f);
+		return (c == 0)? null : this.tiles.get(c);
+	    });
 	
 	// Draw floating objects.
 	for (let sprite of this.sprites) {
@@ -410,9 +410,9 @@ class Game extends Scene {
     init() {
 	super.init();
 	let ROWS = [T.WALL,0,0,0,0,0,T.WALL];
-	this.tilemap = new TileMap(32, ROWS.map((c:number) => {
-	    return new Int32Array(12).fill(c);
-	}));
+	this.tilemap = new TileMap(32, 12, 7, ROWS.map(
+	    (c:number) => { return new Int32Array(12).fill(c); }
+	));
 	this.tasklist = new TaskList();
 	this.layer = new Layer();
 	this.layer3 = new ScrollLayer3(this.tilemap.bounds);

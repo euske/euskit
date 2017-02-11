@@ -75,7 +75,7 @@ class Track extends TileMap {
 	for (let y = 0; y < height; y++) {
 	    map.push(new Int32Array(width).fill(FLOOR));
 	}
-	super(16, map);
+	super(16, width, height, map);
 	this.offset = 0;
 	this.brx = 1;
 	this.brw = width-2;
@@ -124,12 +124,12 @@ class Track extends TileMap {
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
 	// Render the background.
 	this.renderFromTopRight(
-	    ctx, bx, by-32+this.offset, SPRITES,
-	    (x,y,c) => { return (c == FLOOR)? -1 : c; });
+	    ctx, bx, by-32+this.offset, 
+	    (x,y,c) => { return (c == FLOOR)? null : SPRITES.get(c); });
 	// Render the bridge.
 	this.renderFromTopRight(
-	    ctx, bx, by-32+this.offset, SPRITES,
-	    (x,y,c) => { return (c != FLOOR)? -1 : c; });
+	    ctx, bx, by-32+this.offset, 
+	    (x,y,c) => { return (c != FLOOR)? null : SPRITES.get(c); });
     }
 }
 

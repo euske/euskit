@@ -3,6 +3,13 @@
 /// <reference path="sprite.ts" />
 
 
+function makeMatrix(rows: number, cols: number, value=0): Int32Array[] {
+    return range(rows).map(() => {
+	return new Int32Array(cols).fill(value);
+    });
+}
+
+
 //  TileMap
 //
 interface TileFunc {
@@ -12,7 +19,7 @@ interface TilePosFunc {
     (x: number, y: number, c: number): boolean;
 }
 interface TilePosTileFunc {
-    (x: number, y: number, c: number): number;
+    (x: number, y: number, c: number): ImageSource;
 }
 interface RangeMapMap {
     [index: string]: RangeMap;
@@ -31,11 +38,15 @@ class TileMap {
 
     private _rangemap: RangeMapMap = {};
 
-    constructor(tilesize: number, map: Int32Array[]) {
+    constructor(tilesize: number, width: number, height: number,
+		map: Int32Array[]=null) {
 	this.tilesize = tilesize;
+	this.width = width;
+	this.height = height;
+	if (map === null) {
+	    map = range(height).map(() => { return new Int32Array(width); });
+	}
 	this.map = map;
-	this.width = map[0].length;
-	this.height = map.length;
 	this.bounds = new Rect(0, 0,
 			       this.width*this.tilesize,
 			       this.height*this.tilesize);
@@ -79,7 +90,7 @@ class TileMap {
 	for (let a of this.map) {
 	    map.push(a.slice());
 	}
-	return new TileMap(this.tilesize, map);
+	return new TileMap(this.tilesize, this.width, this.height, map);
     }
 
     coord2map(rect: Vec2|Rect): Rect {
@@ -181,7 +192,6 @@ class TileMap {
     renderFromBottomLeft(
 	ctx: CanvasRenderingContext2D,
 	bx: number, by: number,
-	tileset: SpriteSheet,
 	ft: TilePosTileFunc,
 	x0=0, y0=0, w=0, h=0) {
 	// Align the pos to the bottom left corner.
@@ -194,24 +204,22 @@ class TileMap {
 	    for (let dx = 0; dx < w; dx++) {
 		let x = x0+dx;
 		let c = this.get(x, y);
-		c = ft(x, y, c);
-		if (0 <= c) {
-		    let imgsrc = tileset.get(c);
-		    if (imgsrc !== null) {
-			ctx.save();
-			ctx.translate(bx+ts*dx, by+ts*dy);
-			imgsrc.render(ctx);
-			ctx.restore();
-		    }
+		let imgsrc = ft(x, y, c);
+		if (imgsrc !== null) {
+		    ctx.save();
+		    ctx.translate(bx+ts*dx, by+ts*dy);
+		    imgsrc.render(ctx);
+		    ctx.restore();
 		}
 	    }
 	}
     }
 
+    render = this.renderFromBottomLeft;
+
     renderFromTopRight(
 	ctx: CanvasRenderingContext2D,
 	bx: number, by: number,
-	tileset: SpriteSheet,
 	ft: TilePosTileFunc,
 	x0=0, y0=0, w=0, h=0) {
 	// Align the pos to the bottom left corner.
@@ -224,15 +232,12 @@ class TileMap {
 	    for (let dx = w-1; 0 <= dx; dx--) {
 		let x = x0+dx;
 		let c = this.get(x, y);
-		c = ft(x, y, c);
-		if (0 <= c) {
-		    let imgsrc = tileset.get(c);
-		    if (imgsrc !== null) {
-			ctx.save();
-			ctx.translate(bx+ts*dx, by+ts*dy);
-			imgsrc.render(ctx);
-			ctx.restore();
-		    }
+		let imgsrc = ft(x, y, c);
+		if (imgsrc !== null) {
+		    ctx.save();
+		    ctx.translate(bx+ts*dx, by+ts*dy);
+		    imgsrc.render(ctx);
+		    ctx.restore();
 		}
 	    }
 	}
@@ -243,7 +248,6 @@ class TileMap {
 	ctx: CanvasRenderingContext2D,
 	bx: number, by: number,
 	window: Rect,
-	tileset: SpriteSheet,
 	ft: TilePosTileFunc) {
 	let ts = this.tilesize;
 	let x0 = Math.floor(window.x/ts);
@@ -253,7 +257,7 @@ class TileMap {
 	let fx = x0*ts-window.x;
 	let fy = y0*ts-window.y;
 	this.renderFromBottomLeft(
-	    ctx, bx+fx, by+fy, tileset, ft, 
+	    ctx, bx+fx, by+fy, ft, 
 	    x0, y0, x1-x0+1, y1-y0+1);
     }
 
@@ -261,7 +265,6 @@ class TileMap {
 	ctx: CanvasRenderingContext2D,
 	bx: number, by: number,
 	window: Rect,
-	tileset: SpriteSheet,
 	ft: TilePosTileFunc) {
 	let ts = this.tilesize;
 	let x0 = Math.floor(window.x/ts);
@@ -271,9 +274,11 @@ class TileMap {
 	let fx = x0*ts-window.x;
 	let fy = y0*ts-window.y;
 	this.renderFromTopRight(
-	    ctx, bx+fx, by+fy, tileset, ft, 
+	    ctx, bx+fx, by+fy, ft, 
 	    x0, y0, x1-x0+1, y1-y0+1);
     }
+
+    renderWidnow = this.renderWindowFromBottomLeft;
 }
 
 
