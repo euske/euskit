@@ -215,8 +215,6 @@ class TileMap {
 	}
     }
 
-    render = this.renderFromBottomLeft;
-
     renderFromTopRight(
 	ctx: CanvasRenderingContext2D,
 	bx: number, by: number,
@@ -277,8 +275,6 @@ class TileMap {
 	    ctx, bx+fx, by+fy, ft, 
 	    x0, y0, x1-x0+1, y1-y0+1);
     }
-
-    renderWidnow = this.renderWindowFromBottomLeft;
 }
 
 
