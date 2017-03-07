@@ -2,40 +2,27 @@
 /// <reference path="geom.ts" />
 
 
-//  ImageSource
-//
+/** Abstract image obejct that is placed at (0, 0).
+ *  render() is responsible to draw the image.
+ */
 interface ImageSource {
+    
+    /** Returns the bounds of the image at (0, 0). */
     getBounds(): Rect;
+
+    /** Renders this image in the given context. */
     render(ctx: CanvasRenderingContext2D): void;
 }
 
-class HTMLImageSource implements ImageSource {
-    image: HTMLImageElement;
-    srcRect: Rect;
-    dstRect: Rect;
-    
-    constructor(image: HTMLImageElement, srcRect: Rect, dstRect: Rect) {
-	this.image = image;
-	this.srcRect = srcRect;
-	this.dstRect = dstRect;
-    }
 
-    getBounds(): Rect {
-	return this.dstRect;
-    }
-
-    render(ctx: CanvasRenderingContext2D) {
-	ctx.drawImage(
-	    this.image,
-	    this.srcRect.x, this.srcRect.y,
-	    this.srcRect.width, this.srcRect.height,
-	    this.dstRect.x, this.dstRect.y,
-	    this.dstRect.width, this.dstRect.height);
-    }
-}
-
+/** ImageSource that is a solid filled rectangle.
+ *  Typically used as placeholders.
+ */
 class RectImageSource implements ImageSource {
+
+    /** Fill color. */
     color: string;
+    /** Destination rectangle. */
     dstRect: Rect;
     
     constructor(color: string, dstRect: Rect) {
@@ -43,10 +30,12 @@ class RectImageSource implements ImageSource {
 	this.dstRect = dstRect;
     }
 
+    /** Returns the bounds of the image at (0, 0). */
     getBounds(): Rect {
 	return this.dstRect;
     }
 
+    /** Renders this image in the given context. */
     render(ctx: CanvasRenderingContext2D) {
 	if (this.color !== null) {
 	    ctx.fillStyle = this.color;
@@ -57,8 +46,14 @@ class RectImageSource implements ImageSource {
     }
 }
 
+
+/** ImageSource that is a solid filled oval.
+ */
 class OvalImageSource implements ImageSource {
+    
+    /** Fill color. */
     color: string;
+    /** Destination rectangle. */
     dstRect: Rect;
     
     constructor(color: string, dstRect: Rect) {
@@ -66,10 +61,12 @@ class OvalImageSource implements ImageSource {
 	this.dstRect = dstRect;
     }
 
+    /** Returns the bounds of the image at (0, 0). */
     getBounds(): Rect {
 	return this.dstRect;
     }
 
+    /** Renders this image in the given context. */
     render(ctx: CanvasRenderingContext2D) {
 	if (this.color !== null) {
 	    ctx.save();
@@ -85,20 +82,88 @@ class OvalImageSource implements ImageSource {
 }
 
 
-//  SpriteSheet
-// 
+/** ImageSource that uses a (part of) HTML <img> element.
+ */
+class HTMLImageSource implements ImageSource {
+
+    /** Source image. */
+    image: HTMLImageElement;
+    /** Source rectangle. */
+    srcRect: Rect;
+    /** Destination rectangle. */
+    dstRect: Rect;
+    
+    constructor(image: HTMLImageElement, srcRect: Rect, dstRect: Rect) {
+	this.image = image;
+	this.srcRect = srcRect;
+	this.dstRect = dstRect;
+    }
+
+    /** Returns the bounds of the image at (0, 0). */
+    getBounds(): Rect {
+	return this.dstRect;
+    }
+
+    /** Renders this image in the given context. */
+    render(ctx: CanvasRenderingContext2D) {
+	ctx.drawImage(
+	    this.image,
+	    this.srcRect.x, this.srcRect.y,
+	    this.srcRect.width, this.srcRect.height,
+	    this.dstRect.x, this.dstRect.y,
+	    this.dstRect.width, this.dstRect.height);
+    }
+}
+
+
+/** Object that stores multiple ImageSource objects.
+ *  Each cell on the grid represents an individual ImageSource.
+ */
 class SpriteSheet {
+    
     constructor() {
     }
-    
+
+    /** Returns an ImageSource at the given cell. */
     get(x:number, y=0, w=1, h=1, origin: Vec2=null): ImageSource {
 	return null as ImageSource;
     }
 }
 
+
+/** Simple list of ImageSources.
+ *  Used as placeholders for ImageSpriteSheet.
+ */
+class SimpleSpriteSheet extends SpriteSheet {
+    
+    imgsrcs: ImageSource[];
+
+    constructor(imgsrcs: ImageSource[]) {
+	super();
+	this.imgsrcs = imgsrcs;
+    }
+
+    /** Returns an ImageSource at the given cell. */
+    get(x:number, y=0, w=1, h=1, origin: Vec2=null): ImageSource {
+	return this.imgsrcs[x];
+    }
+
+    /** Sets an ImageSource at the given cell. */
+    set(i:number, imgsrc:ImageSource) {
+	this.imgsrcs[i] = imgsrc;
+    }
+}
+
+
+/** SpriteSheet that is based on a single HTML image.
+ */
 class ImageSpriteSheet extends SpriteSheet {
+    
+    /** Source image. */
     image: HTMLImageElement;
+    /** Size of each cell. */
     size: Vec2;
+    /** Origin of each ImageSource. */
     origin: Vec2;
 
     constructor(image: HTMLImageElement, size: Vec2, origin: Vec2=null) {
@@ -108,6 +173,7 @@ class ImageSpriteSheet extends SpriteSheet {
 	this.origin = origin;
     }
 
+    /** Returns an ImageSource at the given cell. */
     get(x:number, y=0, w=1, h=1, origin: Vec2=null): ImageSource {
 	if (origin === null) {
 	    if (this.origin === null) {
@@ -116,26 +182,13 @@ class ImageSpriteSheet extends SpriteSheet {
 		origin = this.origin;
 	    }
 	}
-	let srcRect = new Rect(x*this.size.x, y*this.size.y, w*this.size.x, h*this.size.y);
-	let dstRect = new Rect(-origin.x, -origin.y, w*this.size.x, h*this.size.y);
+	let srcRect = new Rect(
+            x*this.size.x, y*this.size.y,
+            w*this.size.x, h*this.size.y);
+	let dstRect = new Rect(
+            -origin.x, -origin.y,
+            w*this.size.x, h*this.size.y);
 	return new HTMLImageSource(this.image, srcRect, dstRect);
-    }
-}
-
-class SimpleSpriteSheet extends SpriteSheet {
-    imgsrcs: ImageSource[];
-
-    constructor(imgsrcs: ImageSource[]) {
-	super();
-	this.imgsrcs = imgsrcs;
-    }
-
-    get(x:number, y=0, w=1, h=1, origin: Vec2=null): ImageSource {
-	return this.imgsrcs[x];
-    }
-
-    set(i:number, imgsrc:ImageSource) {
-	this.imgsrcs[i] = imgsrc;
     }
 }
 
