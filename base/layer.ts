@@ -125,8 +125,7 @@ class Layer {
     findSpriteAt(p: Vec2) {
 	for (let i = this.sprites.length-1; 0 <= i; i--) {
 	    let sprite = this.sprites[i]; // from reversed order.
-	    if (sprite.mouseSelectable &&
-		sprite.getBounds().containsPt(p)) {
+	    if (sprite.mouseSelectable(p)) {
 		return sprite;
 	    }
 	}

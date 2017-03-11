@@ -168,7 +168,7 @@ class Enemy2 extends EnemyBase {
 class Shooter extends GameScene {
 
     player: Player;
-    stars: StarSprite;
+    stars: SimpleSprite;
     nextenemy: number;		// Enemy spawning counter.
     score: number;
     scoreBox: TextBox;
@@ -183,7 +183,7 @@ class Shooter extends GameScene {
 	this.player = new Player(this, this.screen.center());
 	this.player.chain(new DelayTask(2, () => { this.init(); }));
 	this.add(this.player);
-	this.stars = new StarSprite(this.screen, 100);
+	this.stars = new FixedSprite(new Vec2(), new StarImageSource(this.screen, 100));
 	this.nextenemy = 0;
 	this.score = 0;
 	this.updateScore();
@@ -191,7 +191,7 @@ class Shooter extends GameScene {
 
     update() {
 	super.update();
-	this.stars.move(new Vec2(-4, 0));
+	(this.stars.imgsrc as StarImageSource).move(new Vec2(-4, 0));
 	// Spawn an enemy at a random interval.
 	if (this.nextenemy == 0) {
 	    let pos = new Vec2(this.screen.width, rnd(this.screen.height));

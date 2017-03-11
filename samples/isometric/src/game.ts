@@ -26,7 +26,7 @@ function getContact3(hitbox: Box, v: Vec3, obstacles: Box[])
 
 //  Sprite3d
 //
-class Sprite3d extends Sprite {
+class Sprite3d extends SimpleSprite {
 
     entity: Entity3d;
     shadow: HTMLImageSource = null;

@@ -116,6 +116,134 @@ class HTMLImageSource implements ImageSource {
 }
 
 
+/** ImageSource that consists of tiled images.
+ *  A image is displayed repeatedly to fill up the specified bounds.
+ */
+class TiledImageSource implements ImageSource {
+
+    /** Bounds to fill. */
+    bounds: Rect;
+    /** Image source to be tiled. */
+    imgsrc: ImageSource;
+    /** Image offset. */
+    offset: Vec2 = new Vec2();
+    
+    constructor(bounds: Rect, imgsrc: ImageSource=null) {
+	this.bounds = bounds;
+	this.imgsrc = imgsrc;
+    }
+
+    /** Returns the bounds of the sprite at a given pos. */
+    getBounds(): Rect {
+	return this.bounds;
+    }
+
+    /** Renders this image in the given context. */
+    render(ctx: CanvasRenderingContext2D) {
+	let imgsrc = this.imgsrc;
+	if (imgsrc !== null) {
+	    ctx.save();
+	    ctx.translate(int(this.bounds.x), int(this.bounds.y));
+	    ctx.beginPath();
+	    ctx.rect(0, 0, this.bounds.width, this.bounds.height);
+	    ctx.clip();
+	    let dstRect = imgsrc.getBounds();
+	    let w = dstRect.width;
+	    let h = dstRect.height;
+	    let dx0 = int(Math.floor(this.offset.x/w)*w - this.offset.x);
+	    let dy0 = int(Math.floor(this.offset.y/h)*h - this.offset.y);
+	    for (let dy = dy0; dy < this.bounds.height; dy += h) {
+		for (let dx = dx0; dx < this.bounds.width; dx += w) {
+		    ctx.save();
+		    ctx.translate(dx, dy);
+		    imgsrc.render(ctx);
+		    ctx.restore();
+		}
+	    }
+	    ctx.restore();
+	}
+    }
+}
+
+
+/** Internal object that represents a star. */
+class Star {
+    z: number;
+    s: number;
+    p: Vec2;
+    init(maxdepth: number) {
+	this.z = Math.random()*maxdepth+1;
+	this.s = (Math.random()*2+1) / this.z;
+    }
+}
+
+
+/** ImageSource for "star flowing" effects.
+ *  A image is scattered across the area with a varied depth.
+ */
+class StarImageSource implements ImageSource {
+    
+    /** Bounds to fill. */
+    bounds: Rect;
+    /** Maximum depth of stars. */
+    maxdepth: number;
+    /** Image source to be used as a single star. */
+    imgsrc: ImageSource;
+    
+    private _stars: Star[] = [];
+
+    constructor(bounds: Rect, nstars: number,
+		maxdepth=3, imgsrc: ImageSource=null) {
+	this.bounds = bounds
+	this.maxdepth = maxdepth;
+	if (imgsrc === null) {
+	    imgsrc = new RectImageSource('white', new Rect(0,0,1,1));
+	}
+	this.imgsrc = imgsrc;
+	for (let i = 0; i < nstars; i++) {
+	    let star = new Star();
+	    star.init(this.maxdepth);
+	    star.p = this.bounds.rndPt();
+	    this._stars.push(star);
+	}
+    }
+
+    /** Returns the bounds of the sprite at a given pos. */
+    getBounds(): Rect {
+	return this.bounds;
+    }
+
+    /** Renders this image in the given context. */
+    render(ctx: CanvasRenderingContext2D) {
+	if (this.imgsrc !== null) {
+	    ctx.save();
+	    ctx.translate(int(this.bounds.x), int(this.bounds.y));
+	    for (let star of this._stars) {
+		ctx.save();
+		ctx.translate(star.p.x, star.p.y);
+		ctx.scale(star.s, star.s);
+		this.imgsrc.render(ctx);
+		ctx.restore();
+	    }
+	    ctx.restore();
+	}
+    }
+    
+    /** Moves the stars by the given offset. */
+    move(offset: Vec2) {
+	for (let star of this._stars) {
+	    star.p.x += offset.x/star.z;
+	    star.p.y += offset.y/star.z;
+	    let rect = star.p.expand(star.s, star.s);
+	    if (!this.bounds.overlapsRect(rect)) {
+		star.init(this.maxdepth);
+		star.p = this.bounds.modpt(star.p);
+	    }
+	}
+    }
+}
+
+
 /** Object that stores multiple ImageSource objects.
  *  Each cell on the grid represents an individual ImageSource.
  */
@@ -193,46 +321,62 @@ class ImageSpriteSheet extends SpriteSheet {
 }
 
 
-//  Sprite
-//  An object that's rendered on a screen.
-//
+/** Object that has a size and z-order and draws itself on screen.
+ *  It can also interact with mouse/touch.
+ */
 class Sprite {
 
-    imgsrc: ImageSource;
+    /** True if this sprite is rendered. */
     visible: boolean = true;
+    /** Z-Order of the sprite. */
     zOrder: number = 0;
-    scale: Vec2 = new Vec2(1, 1);
-    rotation: number = 0;
-    mouseSelectable: boolean = false;
-
-    constructor(imgsrc: ImageSource=null) {
-	this.imgsrc = imgsrc;
-    }
-
-    toString() {
-	return '<Sprite: '+this.imgsrc+'>';
-    }
-
+    
+    /** Returns the bounds of the sprite at a given pos. */
     getBounds(pos: Vec2=null): Rect {
 	// [OVERRIDE]
 	return null as Rect;
     }
   
+    /** Returns true if the sprite can respond to mouse event. */
+    mouseSelectable(p: Vec2): boolean {
+	// return this.getBounds.containsPt(p);
+	return false;
+    }
+
+    /** Renders itself in the given context, offset by (bx, by). */
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
 	// [OVERRIDE]
     }
 }
 
 
-//  SimpleSprite
-//
+/** Sprite that consists of a single image.
+ */
 class SimpleSprite extends Sprite {
     
+    /** Image source to display. */
+    imgsrc: ImageSource;
+    /** Image scaling. Negative values can be used for flipped images. */
+    scale: Vec2 = new Vec2(1, 1);
+    /** Image rotation (in radian). */
+    rotation: number = 0;
+    
+    constructor(imgsrc: ImageSource=null) {
+	super();
+	this.imgsrc = imgsrc;
+    }
+
+    toString() {
+	return '<SimpleSprite: '+this.imgsrc+'>';
+    }
+
+    /** Returns its focal position. */
     getPos(): Vec2 {
 	// [OVERRIDE]
 	return null as Vec2;
     }
 
+    /** Returns the bounds of the sprite at a given pos. */
     getBounds(pos: Vec2=null): Rect {
 	if (this.imgsrc !== null) {
 	    if (pos === null) {
@@ -245,6 +389,7 @@ class SimpleSprite extends Sprite {
 	return null;
     }
 
+    /** Renders itself in the given context, offset by (bx, by). */
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
 	if (this.imgsrc !== null) {
 	    let pos = this.getPos();
@@ -264,11 +409,30 @@ class SimpleSprite extends Sprite {
 }
 
 
-//  EntitySprite
-//  A Sprite that belongs to an Entity
-//
+/** Sprite that is fixed to a certain location.
+ */
+class FixedSprite extends SimpleSprite {
+
+    /** Sprite position. */
+    pos: Vec2;
+    
+    constructor(pos: Vec2=null, imgsrc: ImageSource=null) {
+	super(imgsrc);
+	this.pos = pos;
+    }
+
+    /** Returns its focal position. */
+    getPos(): Vec2 {
+	return this.pos;
+    }
+}
+
+
+/** Sprite that is atteched to an Entity.
+ */
 class EntitySprite extends SimpleSprite {
 
+    /** Entity that this sprite belongs to. */
     entity: Entity;
     
     constructor(entity: Entity=null, imgsrc: ImageSource=null) {
@@ -276,119 +440,11 @@ class EntitySprite extends SimpleSprite {
 	this.entity = entity;
     }
 
+    /** Returns its focal position. */
     getPos(): Vec2 {
 	if (this.entity !== null) {
 	    return this.entity.pos;
 	}
 	return null;
-    }
-}
-
-
-//  TiledSprite
-//  Displays a tiled image repeatedly.
-//
-class TiledSprite extends Sprite {
-
-    bounds: Rect;
-    offset: Vec2 = new Vec2();
-    
-    constructor(bounds: Rect, imgsrc: ImageSource=null) {
-	super(imgsrc);
-	this.bounds = bounds;
-    }
-
-    getBounds(): Rect {
-	return this.bounds;
-    }
-
-    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
-	let imgsrc = this.imgsrc;
-	if (imgsrc !== null) {
-	    ctx.save();
-	    ctx.translate(bx+int(this.bounds.x), by+int(this.bounds.y));
-	    ctx.beginPath();
-	    ctx.rect(0, 0, this.bounds.width, this.bounds.height);
-	    ctx.clip();
-	    let dstRect = imgsrc.getBounds();
-	    let w = dstRect.width;
-	    let h = dstRect.height;
-	    let dx0 = int(Math.floor(this.offset.x/w)*w - this.offset.x);
-	    let dy0 = int(Math.floor(this.offset.y/h)*h - this.offset.y);
-	    for (let dy = dy0; dy < this.bounds.height; dy += h) {
-		for (let dx = dx0; dx < this.bounds.width; dx += w) {
-		    ctx.save();
-		    ctx.translate(dx, dy);
-		    imgsrc.render(ctx);
-		    ctx.restore();
-		}
-	    }
-	    ctx.restore();
-	}
-    }
-
-}
-
-
-//  StarSprite
-//
-class Star {
-    z: number;
-    s: number;
-    p: Vec2;
-    init(maxdepth: number) {
-	this.z = Math.random()*maxdepth+1;
-	this.s = (Math.random()*2+1) / this.z;
-    }
-}
-class StarSprite extends Sprite {
-    
-    bounds: Rect;
-    maxdepth: number;
-    
-    private _stars: Star[] = [];
-
-    constructor(bounds: Rect, nstars: number, maxdepth=3) {
-	super();
-	this.bounds = bounds
-	this.maxdepth = maxdepth;
-	this.imgsrc = new RectImageSource('white', new Rect(0,0,1,1));
-	for (let i = 0; i < nstars; i++) {
-	    let star = new Star();
-	    star.init(this.maxdepth);
-	    star.p = this.bounds.rndPt();
-	    this._stars.push(star);
-	}
-    }
-
-    getBounds(): Rect {
-	return this.bounds;
-    }
-
-    move(v: Vec2) {
-	for (let star of this._stars) {
-	    star.p.x += v.x/star.z;
-	    star.p.y += v.y/star.z;
-	    let rect = star.p.expand(star.s, star.s);
-	    if (!this.bounds.overlapsRect(rect)) {
-		star.init(this.maxdepth);
-		star.p = this.bounds.modpt(star.p);
-	    }
-	}
-    }
-
-    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
-	if (this.imgsrc !== null) {
-	    ctx.save();
-	    ctx.translate(bx+int(this.bounds.x), by+int(this.bounds.y));
-	    for (let star of this._stars) {
-		ctx.save();
-		ctx.translate(star.p.x, star.p.y);
-		ctx.scale(star.s, star.s);
-		this.imgsrc.render(ctx);
-		ctx.restore();
-	    }
-	    ctx.restore();
-	}
     }
 }

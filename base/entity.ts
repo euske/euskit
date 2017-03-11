@@ -26,7 +26,7 @@ class Widget extends Task {
 class Entity extends Widget {
 
     pos: Vec2;
-    sprite: Sprite;
+    sprite: SimpleSprite;
     collider: Collider = null;
 
     constructor(pos: Vec2) {
