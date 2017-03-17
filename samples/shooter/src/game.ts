@@ -230,6 +230,6 @@ class Shooter extends GameScene {
 	ctx.fillRect(bx, by, this.screen.width, this.screen.height);
 	super.render(ctx, bx, by);
 	this.stars.render(ctx, bx, by);
-	this.scoreBox.render(ctx, bx, by);
+	this.scoreBox.render(ctx);
     }
 }

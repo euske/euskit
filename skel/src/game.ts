@@ -74,7 +74,7 @@ class Game extends GameScene {
 	ctx.fillStyle = 'rgb(0,0,0)';
 	ctx.fillRect(bx, by, this.screen.width, this.screen.height);
 	super.render(ctx, bx, by);
-	this.scoreBox.render(ctx, bx, by);
+	this.scoreBox.render(ctx);
     }
 
     updateScore() {

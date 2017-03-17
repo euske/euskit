@@ -532,6 +532,10 @@ class Rect implements Shape {
 	return new Rect(this.x-dw, this.y-dh, this.width+dw*2, this.height+dh*2);
     }
     
+    scale(n: number): Rect {
+	return new Rect(this.x, this.y, this.width*n, this.height*n);
+    }
+    
     anchor(vx=0, vy=0): Vec2 {
 	let x: number, y: number;
 	if (vx < 0) {

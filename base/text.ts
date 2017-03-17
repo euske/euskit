@@ -138,7 +138,7 @@ class TextSegment {
 
 //  TextBox
 //
-class TextBox extends Sprite {
+class TextBox implements ImageSource {
 
     frame: Rect;
     font: Font;
@@ -151,7 +151,6 @@ class TextBox extends Sprite {
     segments: TextSegment[] = [];
     
     constructor(frame: Rect, font: Font=null) {
-	super();
 	this.frame = frame;
 	this.font = font;
     }
@@ -179,9 +178,9 @@ class TextBox extends Sprite {
 	return this.frame.inflate(-this.padding, -this.padding);
     }
   
-    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
+    render(ctx: CanvasRenderingContext2D) {
 	ctx.save();
-	ctx.translate(bx+int(this.frame.x), by+int(this.frame.y));
+	ctx.translate(int(this.frame.x), int(this.frame.y));
 	if (this.background !== null) {
 	    ctx.fillStyle = this.background;
 	    ctx.fillRect(0, 0, this.frame.width, this.frame.height);
@@ -346,30 +345,31 @@ class TextBox extends Sprite {
 //
 class BannerBox extends Widget {
 
-    textbox: TextBox;
+    sprite: FixedSprite;
     interval: number = 0;
     
     constructor(frame: Rect, font: Font, lines: string[], lineSpace=4) {
 	super();
-	this.textbox = new TextBox(frame, font);
-	this.textbox.lineSpace = lineSpace;
-	this.textbox.putText(lines, 'center', 'center');
+        let textbox = new TextBox(frame, font);
+        textbox.lineSpace = lineSpace;
+	textbox.putText(lines, 'center', 'center');
+        this.sprite = new FixedSprite(new Vec2(), textbox);
     }
 
     init() {
 	super.init();
-	this.layer.addSprite(this.textbox);
+	this.layer.addSprite(this.sprite);
     }
 
     stop() {
-	this.layer.removeSprite(this.textbox);
+	this.layer.removeSprite(this.sprite);
 	super.stop();
     }
     
     update() {
 	super.update();
 	if (0 < this.interval) {
-	    this.textbox.visible = (phase(this.getTime(), this.interval) != 0);
+	    this.sprite.visible = (phase(this.getTime(), this.interval) != 0);
 	}
     }
 }
@@ -622,6 +622,7 @@ class MenuTask extends TextTask {
 class DialogBox extends Widget {
 
     textbox: TextBox;
+    sprite: FixedSprite;
     hiFont: Font;
     speed: number = 0;
     autoHide: boolean = false;
@@ -630,6 +631,7 @@ class DialogBox extends Widget {
     
     constructor(textbox: TextBox, hiFont: Font=null) {
 	super();
+        this.sprite = new FixedSprite(new Vec2(), textbox);
 	this.textbox = textbox;
 	this.hiFont = hiFont;
     }
@@ -642,13 +644,13 @@ class DialogBox extends Widget {
     init() {
 	super.init();
 	if (this.textbox !== null) {
-	    this.layer.addSprite(this.textbox);
+	    this.layer.addSprite(this.sprite);
 	}
     }
 
     stop() {
 	if (this.textbox !== null) {
-	    this.layer.removeSprite(this.textbox);
+	    this.layer.removeSprite(this.sprite);
 	}
 	super.stop();
     }
@@ -670,7 +672,7 @@ class DialogBox extends Widget {
 	    this.removeTask(task);
 	}
 	if (this.autoHide && task === null) {
-	    this.textbox.visible = false;
+	    this.sprite.visible = false;
 	}
     }
 
@@ -729,14 +731,14 @@ class DialogBox extends Widget {
     addTask(task: TextTask) {
 	this.queue.push(task);
 	if (this.autoHide) {
-	    this.textbox.visible = true;
+	    this.sprite.visible = true;
 	}
     }
     
     removeTask(task: TextTask) {
 	removeElement(this.queue, task);
 	if (this.autoHide && this.queue.length == 0) {
-	    this.textbox.visible = false;
+	    this.sprite.visible = false;
 	}
     }
 

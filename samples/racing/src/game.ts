@@ -198,8 +198,8 @@ class Racing extends GameScene {
 	ctx.fillRect(bx, by, this.screen.width, this.screen.height);
 	this.track.render(ctx, bx, by);
 	super.render(ctx, bx, by);
-	this.scoreBox.render(ctx, bx, by);
-	this.highScoreBox.render(ctx, bx, by);
+	this.scoreBox.render(ctx);
+	this.highScoreBox.render(ctx);
     }
 
     updateScore() {
