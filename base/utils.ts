@@ -191,12 +191,11 @@ function getEdgeyContext(canvas: HTMLCanvasElement): CanvasRenderingContext2D
 }
 
 /** Creates a 2D array from an image. */
-function image2array(img: HTMLImageElement): Int32Array[]
+function image2array(img: HTMLImageElement, header=0): Int32Array[]
 {
     interface ColorMap {
 	[index:number]: number;
     }
-    let header = 1;
     let width = img.width;
     let height = img.height;
     let canvas = createCanvas(width, height);
@@ -204,12 +203,15 @@ function image2array(img: HTMLImageElement): Int32Array[]
     ctx.drawImage(img, 0, 0);
     let data = ctx.getImageData(0, 0, width, height).data;
     let i = 0;
-    let c2v:ColorMap = {};
-    for (let y = 0; y < header; y++) {
-	for (let x = 0; x < width; x++, i+=4) {
-	    let c = ((data[i] << 16) | (data[i+1] << 8) | data[i+2]); // RGBA
-	    if (!c2v.hasOwnProperty(c.toString())) {
-		c2v[c] = y*width + x;
+    let c2v:ColorMap = null;
+    if (0 < header) {
+	c2v = {}
+	for (let y = 0; y < header; y++) {
+	    for (let x = 0; x < width; x++, i+=4) {
+		let c = ((data[i] << 16) | (data[i+1] << 8) | data[i+2]); // RGBA
+		if (!c2v.hasOwnProperty(c.toString())) {
+		    c2v[c] = y*width + x;
+		}
 	    }
 	}
     }
@@ -218,7 +220,7 @@ function image2array(img: HTMLImageElement): Int32Array[]
 	let a = new Int32Array(width);
 	for (let x = 0; x < width; x++, i+=4) {
 	    let c = ((data[i] << 16) | (data[i+1] << 8) | data[i+2]); // RGBA
-	    a[x] = c2v[c];
+	    a[x] = (c2v !== null)? c2v[c] : c;
 	}
 	map[y] = a;
     }
