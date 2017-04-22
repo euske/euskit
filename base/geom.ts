@@ -450,6 +450,11 @@ class AALine implements Collider {
     getAABB(): Rect {
 	return new Rect(this.x0, this.y0, this.x1-this.x0, this.y1-this.y0);
     }
+
+    /** Returns a random point on the line. */
+    rndPt(): Vec2 {
+	return new Vec2(rnd(this.x0, this.x1), rnd(this.y0, this.y1));
+    }
 }
 
 

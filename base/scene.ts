@@ -71,6 +71,13 @@ class Scene {
 	// [OVERRIDE]
     }
 
+    onFocus() {
+	// [OVERRIDE]
+    }
+    
+    onBlur() {
+	// [OVERRIDE]
+    }
 }
 
 

@@ -241,9 +241,11 @@ class App {
 	if (this._music !== null && 0 < this._music.currentTime) {
 	    this._music.play();
 	}
+	this.scene.onFocus();
     }
 
     blur() {
+	this.scene.onBlur();
 	if (this._music !== null) {
 	    this._music.pause();
 	}
