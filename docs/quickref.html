@@ -59,13 +59,13 @@ Legend:
 <a href="#RangeMap"><code>RangeMap</code></a>,
 <a href="#ImageSource"><code>ImageSource</code></a>,
 <a href="#SpriteSheet"><code>SpriteSheet</code></a>,
-<a href="#Sprite"><code>Sprite</code></a>
 </div>
 
 <div class=list>
 <div class=head>Basic Classes:</div>
 <a href="#Task"><code>Task</code></a>,
 <a href="#Entity"><code>Entity</code></a>,
+<a href="#Sprite"><code>Sprite</code></a>
 <a href="#Layer"><code>Layer</code></a>,
 <a href="#Scene"><code>Scene</code></a>,
 <a href="#App"><code>App</code></a>
@@ -293,6 +293,10 @@ A <code>Color</code> represents an RGBA value.
   <td>The blue value.</td></tr>
 <tr><td><code>.a</code></td>
   <td>The alpha value.</td></tr>
+<tr><td><code>.multiply(t)</code></td>
+  <td>Multiplies each component by <code>t</code>.</tr>
+<tr><td><code>.blend(color, t)</code></td>
+  <td>Blends with another <code>Color</code> with ratio <code>t</code>.</tr>
 <tr><td><code>.setAlpha(a)</code></td>
   <td>Creates a <code>Color</code> with a given alpha.</td></tr>
 <tr><td><code>Color.generate(h, <em>v=1.0</em>)</code></td>
@@ -408,7 +412,8 @@ that can be used for hit detection.
 
 <a name="Shape"><h3>Shape : <a href="#Collider">Collider</a> (<code>geom.ts</code>)</h3></a>
 <p>
-A <code>Shape</code> is an abstract class that represents an enclosed shape.
+A <code>Shape</code> is an abstract class that has a clear boundary and
+represents an enclosed shape.
 <table border>
 <tr><td><code>.isZero()</code></td>
   <td><code>true</code> if the shape is empty.</td></tr>
@@ -462,6 +467,8 @@ has its position (x, y) and size (width, height).
   <td>The center-y of the rectangle.</td></tr>
 <tr><td><code>.center()</code></td>
   <td>The center of the rectangle.</td></tr>
+<tr><td><code>.edge(vx, vy)</code></td>
+  <td>Returns an edge of the rectangle.</td></tr>
 <tr><td><code>.inflate(dw, dh)</code></td>
   <td>Creates a inflated/deflated rectangle by (<code>dw</code>, <code>dh</code>):
     <div style="margin-left:1em;">
@@ -716,16 +723,16 @@ both as <code>Vec3</code>.
 <p>
 A <code>TileMap</code> represents a two-dimensional array that holds map tiles.
 <table border>
-<tr class=ctor><td><code>new TileMap(tilesize, map)</code></td>
-  <td>Creates a new tilemap for a given array.</td></tr>
+<tr class=ctor><td><code>new TileMap(tilesize, width, height, <em>[map]</em>)</code></td>
+  <td>Creates a new tilemap for a given size.</td></tr>
 <tr><td><code>.tilesize</code></td>
   <td>The tile size.</td></tr>
-<tr><td><code>.map</code></td>
-  <td>Int32Array[] for the map data.</td></tr>
 <tr><td><code>.width</code></td>
   <td>The number of tiles that fit horizontally in the map.</td></tr>
 <tr><td><code>.height</code></td>
   <td>The number of tiles that fit vertically in the map.</td></tr>
+<tr><td><code>.map</code></td>
+  <td>Int32Array[] for the map data. Optionally given at construction.</td></tr>
 <tr><td><code>.bounds</code></td>
   <td>The bounds of the map in the actual size.</td></tr>
 <tr><td><code>.isObstacle</code></td>
@@ -787,13 +794,19 @@ that allows range queries for specific tiles.
 
 <a name="ImageSource"><h3>ImageSource (<code>sprite.ts</code>)</h3></a>
 <p>
-An <code>ImageSource</code> is a portion of a <code>&lt;img&gt;</code> 
-that is used for rendering Sprites.
+An <code>ImageSource</code> is an abstract object to render something on screen.
 <table border>
+<tr class=ctor><td><code>new RectImageSource(color, dstRect)</code></td>
+  <td>Creates a <code>ImageSource</code> with a solid rectangle.</td></tr>
+<tr class=ctor><td><code>new OvalImageSource(color, dstRect)</code></td>
+  <td>Creates a <code>ImageSource</code> with a solid oval.</td></tr>
 <tr class=ctor><td><code>new HTMLImageSource(image, srcRect, dstRect)</code></td>
-  <td>Creates a <code>ImageSource</code> from <code>&lt;img&gt;</code>.</td></tr>
-<tr class=ctor><td><code>new FillImageSource(color, dstRect)</code></td>
-  <td>Creates a <code>ImageSource</code> with a solid color.</td></tr>
+  <td>Creates a <code>ImageSource</code> that refers to a potion of
+    <code>&lt;img&gt;</code>.</td></tr>
+<tr><td><code>.getBounds()</code></td>
+  <td>Returns the bounds rectangle of the ImageSource.</td></tr>
+<tr><td><code>.render(ctx)</code></td>
+  <td>Renders the image at (0, 0) in the given Context.</td></tr>
 </table>
 
 <a name="SpriteSheet"><h3>SpriteSheet (<code>sprite.ts</code>)</h3></a>
@@ -808,56 +821,87 @@ A set of <code>ImageSource</code> objects indexed by a number.
   <td>Returns the <code>i,j</code>-th <code>ImageSource</code>.</td></tr>
 </table>
 
-<a name="Sprite"><h3>Sprite (<code>sprite.ts</code>)</h3></a>
-<p>
-A <code>Sprite</code> represents something that's shown on the screen.
-<table border>
-<tr class=ctor><td><code>new Sprite(<em>[imgsrc]</em>)</code></td>
-  <td>Creates a new sprite.</td></tr>
-<tr><td><code>.imgsrc</code></td>
-  <td>A <code>ImageSource</code> for the sprite's content.</td></tr>
-<tr><td><code>.visible</code></td>
-  <td><code>true</code> if the sprite is visible.</td></tr>
-<tr><td><code>.zOrder</code></td>
-  <td>The order that the sprite is drawn to the screen.</td></tr>
-<tr><td><code>.scale</code></td>
-  <td>A vector for the polarity of the sprite image.</td></tr>
-<tr><td><code>.getBounds([pos])</code></td>
-  <td>Returns the bounds for the given <code>pos</code>.</td></tr>
-<tr class=overridable><td><code>.render(ctx, bx, by)</code></td>
-  <td>Draws the sprite at the location (<code>bx</code>, <code>by</code>).</td></tr>
-</table>
-
 <a name="basic-classes"><h2>Basic Classes</h2></a>
 
-<a name="Task"><h3>Task (<code>entity.ts</code>)</h3></a>
+<a name="Task"><h3>Task (<code>task.ts</code>)</h3></a>
 <p>
-A <code>Task</code> is a process that belongs to a <code>Layer</code>
+A <code>Task</code> is a process that belongs to a <code>TaskList</code>
 and its method is executed periodically.
 <table border>
 <tr class=ctor><td><code>new Task()</code></td>
   <td>Creates a new task.</td></tr>
-<tr><td><code>.alive</code></td>
+<tr><td><code>.running</code></td>
   <td><code>true</code> if the task is running.</td></tr>
-<tr><td><code>.layer</code></td>
-  <td>The <code>Layer</code> that the task belongs to.</td></tr>
+<tr><td><code>.tasklist</code></td>
+  <td><code>TaskList</code> that the task belongs to.</td></tr>
 <tr><td><code>.lifetime</code></td>
-  <td>The duration that the task can run.</td></tr>
-<tr><td><code>.started</code></td>
-  <td>The time the task started.</td></tr>
+  <td>Duration that the task can run.</td></tr>
+<tr><td><code>.startTime</code></td>
+  <td>Time the task started.</td></tr>
 <tr><td><code>.stopped</code></td>
-  <td>A <code>Signal</code> that is signaled when the task stops.</td></tr>
+  <td>Fired when the task stops.</td></tr>
+<tr><td><code>.getTime()</code></td>
+  <td>Elapsed time since the task has started (in seconds).</td></tr>
+<tr><td><code>.init()</code></td>
+  <td>Invoked when the task is started.</td></tr>
+<tr><td><code>.tick()</code></td>
+  <td>Invoked at every frame while the task is running.</td></tr>
 <tr><td><code>.stop()</code></td>
   <td>Terminates the task.</td></tr>
-<tr><td><code>.getTime()</code></td>
-  <td>The elapsed time since the task has started (in seconds).</td></tr>
+<tr><td><code>.chain(next)</code></td>
+  <td>Schedules another task.</td></tr>
 <tr class=overridable><td><code>.update()</code></td>
   <td>Updates for the current frame.</td></tr>
 </table>
 
-<a name="Entity"><h3>Entity : <a href="#Task">Task</a> (<code>entity.ts</code>)</h3></a>
+<a name="TaskList"><h3>TaskList (<code>task.ts</code>)</h3></a>
 <p>
-An <code>Entity</code> is a physical object that's visible and has a physical boundary.
+Manages a list of <code>Task</code>s.
+<table border>
+<tr class=ctor><td><code>new TaskList()</code></td>
+  <td>Creates an empty task list.</td></tr>
+<tr><td><code>.init()</code></td>
+  <td>Initializes the task list.</td></tr>
+<tr><td><code>.tick()</code></td>
+  <td>Invoked at every frame. Update the current tasks.</td></tr>
+<tr><td><code>.add(task)</code></td>
+  <td>Add a task to the list.</td></tr>
+<tr><td><code>.remove(task)</code></td>
+  <td>Remove a task from the list.</td></tr>
+</table>
+
+<a name="TaskQueue"><h3>TaskQueue (<code>task.ts</code>)</h3></a>
+<p>
+Manages a list of <code>Task</code>s that run sequentially.
+<table border>
+<tr class=ctor><td><code>new TaskQueue()</code></td>
+  <td>Creates an empty task queue.</td></tr>
+<tr><td><code>.stopWhenEmpty</code></td>
+  <td>Set <code>true</code> to automatically kill the queue when there's no <code>Task</code>.</td></tr>
+<tr><td><code>.getCurrentTask()</code></td>
+  <td>Return a task that is currently running.</td></tr>
+<tr><td><code>.add(task)</code></td>
+  <td>Add a task to the list.</td></tr>
+<tr><td><code>.remove(task)</code></td>
+  <td>Remove a task from the list.</td></tr>
+<tr><td><code>.clear()</code></td>
+  <td>Empty the task list.</td></tr>
+<tr><td><code>.tick()</code></td>
+  <td>Invoked at every frame. Update the current tasks.</td></tr>
+</table>
+
+<a name="Widget"><h3>Widget : <a href="#Task">Task</a> (<code>entity.ts</code>)</h3></a>
+<p>
+A <code>Widget</code> is a task that belongs to a <code>Layer</code> and
+has some visual aspect.
+<table border>
+<tr class=ctor><td><code>new Widget()</code></td>
+  <td>Creates a new widget.</td></tr>
+</table>
+
+<a name="Entity"><h3>Entity : <a href="#Widget">Widget</a> (<code>entity.ts</code>)</h3></a>
+<p>
+An <code>Entity</code> is an object that is placed at a certain location.
 <table border>
 <tr class=ctor><td><code>new Entity(pos)</code></td>
   <td>Creates a new entity.</td></tr>
@@ -881,6 +925,26 @@ An <code>Entity</code> is a physical object that's visible and has a physical bo
   <td>Returns a list of bounding rectangles that limits the entity within.</td></tr>
 <tr class=overridable><td><code>.collidedWith(entity)</code></td>
   <td>Invoked when the entity collides another entity.</td></tr>
+</table>
+
+<a name="Sprite"><h3>Sprite (<code>sprite.ts</code>)</h3></a>
+<p>
+A <code>Sprite</code> represents something that's shown on the screen.
+<table border>
+<tr class=ctor><td><code>new Sprite(<em>[imgsrc]</em>)</code></td>
+  <td>Creates a new sprite.</td></tr>
+<tr><td><code>.imgsrc</code></td>
+  <td>A <code>ImageSource</code> for the sprite's content.</td></tr>
+<tr><td><code>.visible</code></td>
+  <td><code>true</code> if the sprite is visible.</td></tr>
+<tr><td><code>.zOrder</code></td>
+  <td>The order that the sprite is drawn to the screen.</td></tr>
+<tr><td><code>.scale</code></td>
+  <td>A vector for the polarity of the sprite image.</td></tr>
+<tr><td><code>.getBounds([pos])</code></td>
+  <td>Returns the bounds for the given <code>pos</code>.</td></tr>
+<tr class=overridable><td><code>.render(ctx, bx, by)</code></td>
+  <td>Draws the sprite at the location (<code>bx</code>, <code>by</code>).</td></tr>
 </table>
 
 <a name="Layer"><h3>Layer (<code>layer.ts</code>)</h3></a>
@@ -945,16 +1009,18 @@ event handling (such as title screen or cut scene).
   <td>Invoked for every frame.</td></tr>
 <tr class=overridable><td><code>.render(ctx, bx, by)</code></td>
   <td>Draws the scene at the location (<code>bx</code>, <code>by</code>).</td></tr>
-<tr class=overridable><td><code>.setDir(v)</code></td>
+<tr class=overridable><td><code>.onDirChanged(v)</code></td>
   <td>Invoked when a directional input is changed.</td></tr>
-<tr class=overridable><td><code>.setAction(action)</code></td>
-  <td>Invoked when the action key state is changed.</td></tr>
-<tr class=overridable><td><code>.setCancel(cancel)</code></td>
-  <td>Invoked when the cancel key state is changed.</td></tr>
+<tr class=overridable><td><code>.onButtonPressed(keySym)</code></td>
+  <td>Invoked when the button state is pressed.</td></tr>
+<tr class=overridable><td><code>.onButtonReleased(keySym)</code></td>
+  <td>Invoked when the button state is released.</td></tr>
 <tr class=overridable><td><code>.onKeyDown(keyCode)</code></td>
   <td>Invoked when a key is pressed.</td></tr>
 <tr class=overridable><td><code>.onKeyUp(keyCode)</code></td>
   <td>Invoked when a key is released.</td></tr>
+<tr class=overridable><td><code>.onKeyPress(charCode)</code></td>
+  <td>Invoked when a character is typed.</td></tr>
 <tr class=overridable><td><code>.onMouseDown(p, button)</code></td>
   <td>Invoked when a mouse button is pressed.</td></tr>
 <tr class=overridable><td><code>.onMouseUp(p, button)</code></td>
@@ -986,6 +1052,10 @@ responsible for switching Scenes.
   <td>The states of the current keys.</td></tr>
 <tr><td><code>.keyDir</code></td>
   <td>The state of the current directional input.</td></tr>
+<tr><td><code>.mousePos</code></td>
+  <td>The current position of the mouse pointer.</td></tr>
+<tr><td><code>.mouseButton</code></td>
+  <td>The current state of the mouse button.</td></tr>
 <tr><td><code>.addElement(bounds)</code></td>
   <td>Adds a new <code>&lt;div&gt;</code> element to the canvas.</td></tr>
 <tr><td><code>.removeElement(elem)</code></td>
@@ -1316,33 +1386,13 @@ A <code>Font</code> with shadow.
 
 <a name="animation"><h2>Animation Library</h2></a>
 
-<a name="Queue"><h3>Queue : <a href="#Task">Task</a> (<code>animation.ts</code>)</h3></a>
-<p>
-A <code>Queue</code> is a list of <code>Task</code>s that are executed sequentially.
-<table border>
-<tr class=ctor><td><code>new Queue(tasks)</code></td>
-  <td>Creates a new queue that runs multiple <code>Task</code>s sequentially.</td></tr>
-<tr class=inherited><td><code>.alive</code></td>
-  <td><code>true</code> if the queue is running.</td></tr>
-<tr class=inherited><td><code>.layer</code></td>
-  <td>The <code>Layer</code> that the queue belongs to.</td></tr>
-<tr class=inherited><td><code>.time</code></td>
-  <td>The elapsed time since the queue started.</td></tr>
-<tr class=inherited><td><code>.stopped</code></td>
-  <td>A <code>Signal</code> that is signaled when the queue finishes.</td></tr>
-<tr><td><code>.tasks</code></td>
-  <td>A list of <code>Task</code>s to be executed.</td></tr>
-<tr><td><code>.stopWhenEmpty</code></td>
-  <td>Set <code>true</code> to automatically kill the queue when there's no <code>Task</code>.</td></tr>
-<tr><td><code>.getCurrent()</code></td>
-  <td>Returns the current <code>Task</code> or <code>null</code>.</td></tr>
-<tr><td><code>.add(task)</code></td>
-  <td>Adds a <code>Task</code> to the queue.</td></tr>
-<tr><td><code>.remove(task)</code></td>
-  <td>Removes a <code>Task</code> from the queue.</td></tr>
-<tr><td><code>.clear()</code></td>
-  <td>Removes all the <code>Task</code>s from the queue.</td></tr>
-</table>
+<a name="Animator"><h3>Animator (<code>animation.ts</code>)</h3></a>
+<a name="Tweener"><h3>Tweener : <a href="#Animator">Animator</a> (<code>animation.ts</code>)</h3></a>
+<a name="PolyTweener"><h3>PolyTweener : <a href="#Tweener">Tweener</a> (<code>animation.ts</code>)</h3></a>
+<a name="PolyTweenerIn"><h3>PolyTweenerIn : <a href="#PolyTweener">PolyTweener</a> (<code>animation.ts</code>)</h3></a>
+<a name="PolyTweenerOut"><h3>PolyTweenerOut : <a href="#PolyTweener">PolyTweener</a> (<code>animation.ts</code>)</h3></a>
+<a name="PolyTweenerInOut"><h3>PolyTweenerInOut : <a href="#PolyTweener">PolyTweener</a> (<code>animation.ts</code>)</h3></a>
+<a name="Blinker"><h3>Blinker : <a href="#Widget">Widget</a> (<code>animation.ts</code>)</h3></a>
 
 <a name="pathfinding"><h2>Pathfinding Library</h2></a>
 

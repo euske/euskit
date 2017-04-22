@@ -15,7 +15,7 @@ class Task {
      * the time specified here passes. */
     lifetime: number = Infinity;
     /** Start time. */
-    started: number = 0;
+    startTime: number = 0;
     /** Signal object which is fired when this task stops. */
     stopped: Signal;
 
@@ -30,12 +30,12 @@ class Task {
     /** Returns the number of seconds elapsed since 
      * this task has started. */
     getTime() {
-	return (getTime() - this.started);
+	return (getTime() - this.startTime);
     }
 
     /** Invoked when the task is started. */
     init() {
-	this.started = getTime();
+	this.startTime = getTime();
     }
 
     /** Terminates the task. */
