@@ -54,7 +54,7 @@ class PlanAction {
 		next: PlanAction=null,
 		cost=0,
 		context: string=null) {
-	this.p = p;
+	this.p = p.copy();
 	this.next = next;
 	this.cost = cost;
 	this.context = context;
@@ -166,7 +166,7 @@ class PlanMap {
     }
 
     initPlan(goal: Vec2) {
-	this.goal = goal;
+	this.goal = goal.copy();
 	this._map = {};
 	this._queue = [];
 	this.addAction(null, new PlanAction(goal));

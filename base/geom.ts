@@ -679,18 +679,18 @@ class Rect implements Shape {
     rndPtEdge(): Vec2 {
 	let v = frnd(this.width*2 + this.height*2);
 	if (v < this.width) {
-	    return new Vec2(v, this.y);
+	    return new Vec2(this.x+v, this.y);
 	}
 	v -= this.width;
 	if (v < this.width) {
-	    return new Vec2(v, this.y+this.height);
+	    return new Vec2(this.x+v, this.y+this.height);
 	}
 	v -= this.width;
 	if (v < this.height) {
-	    return new Vec2(this.x, v);
+	    return new Vec2(this.x, this.y+v);
 	}
 	// assert(v <= this.height);
-	return new Vec2(this.x+this.width, v);
+	return new Vec2(this.x+this.width, this.y+v);
     }
     
     modpt(p: Vec2): Vec2 {

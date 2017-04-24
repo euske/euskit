@@ -83,7 +83,7 @@ class App {
 	this._loop_end = end;
 	if (this._music !== null) {
 	    if (0 < this._music.readyState) { // for IE bug
-		this._music.currentTime = start;
+		this._music.currentTime = MP3_GAP;
 	    }
 	    this._music.play();
 	}

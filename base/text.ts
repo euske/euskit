@@ -151,7 +151,7 @@ class TextBox implements ImageSource {
     segments: TextSegment[] = [];
     
     constructor(frame: Rect, font: Font=null) {
-	this.frame = frame;
+	this.frame = frame.copy();
 	this.font = font;
     }
 
@@ -345,15 +345,16 @@ class TextBox implements ImageSource {
 //
 class BannerBox extends Widget {
 
+    textbox: TextBox;
     sprite: FixedSprite;
     interval: number = 0;
     
     constructor(frame: Rect, font: Font, lines: string[], lineSpace=4) {
 	super();
-        let textbox = new TextBox(frame, font);
-        textbox.lineSpace = lineSpace;
-	textbox.putText(lines, 'center', 'center');
-        this.sprite = new FixedSprite(new Vec2(), textbox);
+	this.textbox = new TextBox(frame, font);
+	this.textbox.lineSpace = lineSpace;
+	this.textbox.putText(lines, 'center', 'center');
+	this.sprite = new FixedSprite(null, this.textbox);
     }
 
     init() {
@@ -484,7 +485,7 @@ class MenuItem {
     seg: TextSegment = null;
 
     constructor(pos: Vec2, text: string, value: any) {
-	this.pos = pos;
+	this.pos = pos.copy();
 	this.text = text;
 	this.value = value;
     }
@@ -523,9 +524,6 @@ class MenuTask extends TextTask {
 	    item.seg = this.dialog.textbox.addSegment(item.pos, item.text);
 	}
 	this.updateSelection();
-    }
-
-    ff() {
     }
 
     onKeyDown(key: number) {
@@ -617,6 +615,35 @@ class MenuTask extends TextTask {
 }
 
 
+class WaitTask extends TextTask {
+
+    ended: Signal;
+    
+    constructor(dialog: DialogBox) {
+	super(dialog);
+	this.ended = new Signal(this);
+    }
+
+    onKeyDown(key: number) {
+	let keysym = getKeySym(key);
+	switch (keysym) {
+	case KeySym.Action:
+	case KeySym.Cancel:
+	    this.stop();
+	    this.ended.fire();
+	    return;
+	}
+    }
+
+    onMouseUp(p: Vec2, button: number) {
+	if (button == 0) {
+	    this.stop();
+	    this.ended.fire();
+	}
+    }
+}
+
+
 //  DialogBox
 //
 class DialogBox extends Widget {
@@ -631,7 +658,7 @@ class DialogBox extends Widget {
     
     constructor(textbox: TextBox, hiFont: Font=null) {
 	super();
-        this.sprite = new FixedSprite(new Vec2(), textbox);
+        this.sprite = new FixedSprite(null, textbox);
 	this.textbox = textbox;
 	this.hiFont = hiFont;
     }
@@ -643,13 +670,13 @@ class DialogBox extends Widget {
 
     init() {
 	super.init();
-	if (this.textbox !== null) {
+	if (this.layer !== null) {
 	    this.layer.addSprite(this.sprite);
 	}
     }
 
     stop() {
-	if (this.textbox !== null) {
+	if (this.layer !== null) {
 	    this.layer.removeSprite(this.sprite);
 	}
 	super.stop();
@@ -748,7 +775,7 @@ class DialogBox extends Widget {
 	return task;
     }
 
-    addDisplay(text: string, speed=-1,
+    addDisplay(text: string, speed=16,
 	       sound: HTMLAudioElement=null, font: Font=null) {
 	let task = new DisplayTask(this, text);
 	task.speed = (0 <= speed)? speed : this.speed;
@@ -764,4 +791,9 @@ class DialogBox extends Widget {
 	return task;
     }
 
+    addWait() {
+	let task = new WaitTask(this);
+	this.addTask(task);
+	return task;
+    }
 }

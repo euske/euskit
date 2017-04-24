@@ -182,7 +182,7 @@ class PlatformerActionRunner {
 	    d: number;
 	    next: PathEntry;
 	    constructor(p: Vec2, d: number, next:PathEntry) {
-		this.p = p;
+		this.p = p.copy();
 		this.d = d;
 		this.next = next;
 	    }

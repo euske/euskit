@@ -31,7 +31,7 @@ class Entity extends Widget {
 
     constructor(pos: Vec2) {
 	super();
-	this.pos = pos;
+	this.pos = (pos !== null)? pos.copy() : pos;
 	this.sprite = new EntitySprite(this);
     }
 

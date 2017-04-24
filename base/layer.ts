@@ -166,7 +166,7 @@ class ScrollLayer extends Layer {
 
     constructor(window: Rect) {
 	super();
-	this.window = window;
+	this.window = window.copy();
     }
 
     toString() {
@@ -197,13 +197,15 @@ class ScrollLayer extends Layer {
     }
 
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
-	bx -= this.window.x;
-	by -= this.window.y;
+	let x0 = bx - this.window.x;
+	let y0 = by - this.window.y;
 	for (let sprite of this.sprites) {
 	    if (sprite.visible) {
 		let bounds = sprite.getBounds()
-		if (bounds === null || bounds.overlaps(this.window)) {
+		if (bounds === null) {
 		    sprite.render(ctx, bx, by);
+		} else if (bounds.overlaps(this.window)) {
+		    sprite.render(ctx, x0, y0);
 		}
 	    }
 	}
