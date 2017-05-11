@@ -542,7 +542,8 @@ class MenuTask extends TextTask {
 	case KeySym.Down:
 	    d = (this.vertical)? +1 : +Infinity;
 	    break;
-	case KeySym.Action:
+	case KeySym.Action1:
+	case KeySym.Action2:
 	    if (this.current !== null) {
 		this.stop();
 		this.selected.fire(this.current.value);
@@ -627,7 +628,8 @@ class WaitTask extends TextTask {
     onKeyDown(key: number) {
 	let keysym = getKeySym(key);
 	switch (keysym) {
-	case KeySym.Action:
+	case KeySym.Action1:
+	case KeySym.Action2:
 	case KeySym.Cancel:
 	    this.stop();
 	    this.ended.fire();

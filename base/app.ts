@@ -109,7 +109,8 @@ class App {
 	    this.keyDir.y = +1;
 	    this.scene.onDirChanged(this.keyDir);
 	    break;
-	case KeySym.Action:
+	case KeySym.Action1:
+	case KeySym.Action2:
 	case KeySym.Cancel:
 	    if (!this.keys[keysym]) {
 		this.scene.onButtonPressed(keysym);
@@ -152,7 +153,8 @@ class App {
 	    this.keyDir.y = (this.keys[KeySym.Up]) ? -1 : 0;
 	    this.scene.onDirChanged(this.keyDir);
 	    break;
-	case KeySym.Action:
+	case KeySym.Action1:
+	case KeySym.Action2:
 	case KeySym.Cancel:
 	    if (this.keys[keysym]) {
 		this.scene.onButtonReleased(keysym);

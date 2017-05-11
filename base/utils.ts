@@ -301,7 +301,8 @@ enum KeySym {
     Right,
     Up,
     Down,
-    Action,
+    Action1,
+    Action2,
     Cancel,
 }
 
@@ -314,6 +315,7 @@ function getKeySym(keyCode: number): KeySym
     case 37:			// LEFT
     case 65:			// A
     case 72:			// H
+    case 81:			// Q (AZERTY)
 	return KeySym.Left;
     case 39:			// RIGHT
     case 68:			// D
@@ -322,20 +324,22 @@ function getKeySym(keyCode: number): KeySym
     case 38:			// UP
     case 87:			// W
     case 75:			// K
+    case 90:			// Z (AZERTY)
 	return KeySym.Up;
     case 40:			// DOWN
     case 83:			// S
     case 74:			// J
 	return KeySym.Down;
-    case 13:			// ENTER
     case 16:			// SHIFT
     case 32:			// SPACE
-    case 90:			// Z
-    case 89:			// Y (QWERTZ)
-	return KeySym.Action;
+    case 88:			// X
+	return KeySym.Action1;
+    case 13:			// ENTER
+    case 69:			// E
+    case 67:			// C
+	return KeySym.Action2;
     case 8:			// BACKSPACE
     case 27:			// ESCAPE
-    case 88:			// X
 	return KeySym.Cancel;
     default:
 	return KeySym.Unknown;
