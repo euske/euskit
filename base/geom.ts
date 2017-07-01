@@ -234,15 +234,15 @@ class Vec3 {
  */
 interface Collider {
     /** Returns a copy of the object. */
-    copy<T extends Collider>(): T;
+    copy(): Collider;
     /** Returns a new object that is moved by (dx, dy). */
-    move<T extends Collider>(dx: number, dy: number): T;
+    move(dx: number, dy: number): Collider;
     /** Returns a new object that is moved by v. */
-    add<T extends Collider>(v: Vec2): T;
+    add(v: Vec2): Collider;
     /** Returns a new object that is moved by -v. */
-    sub<T extends Collider>(v: Vec2): T;
+    sub(v: Vec2): Collider;
     /** Returns true if the given object is equivalent to this object. */
-    equals<T extends Collider>(collider: T): boolean;
+    equals(collider: Collider): boolean;
     /** Returns true if the given object is overlapping with this object. */
     overlaps(collider: Collider): boolean;
     /** Trims a vector so that the given object does not collide with this object. */
