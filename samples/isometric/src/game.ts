@@ -348,7 +348,7 @@ class Player extends Entity3d {
 	if (0 < jumpend) {
 	    if (this.canJump3()) {
 		this._jumpt = 0;
-		playSound(SOUNDS['jump']);
+		APP.playSound('jump');
 	    }
 	}
 	this._jumpend = jumpend;
@@ -387,7 +387,7 @@ class Player extends Entity3d {
 
     collidedWith(entity: Entity) {
 	if (entity instanceof Thingy) {
-	    playSound(SOUNDS['pick']);
+	    APP.playSound('pick');
 	    entity.stop();
 	    this.picked.fire();
 	}
@@ -426,7 +426,7 @@ class Game extends Scene {
 	});
 	this.player.stopped.subscribe(() => {
 	    APP.lockKeys();
-	    playSound(SOUNDS['bomb']);
+	    APP.playSound('bomb');
 	    this.changeScene(new GameOver(this.score));
 	});
 	this.add(this.player);

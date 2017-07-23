@@ -70,7 +70,7 @@ class Player extends Entity {
 		bullet.movement = new Vec2(8, 0);
 		bullet.frame = this.scene.screen;
 		this.scene.add(bullet);
-		playSound(SOUNDS['pew']);
+		APP.playSound('pew');
 		this.nextfire = 4;
 	    }
 	    this.nextfire--;
@@ -96,7 +96,7 @@ class Player extends Entity {
 
     collidedWith(entity: Entity) {
 	if (entity instanceof EnemyBase) {
-	    playSound(SOUNDS['explosion']);
+	    APP.playSound('explosion');
 	    this.stop();
 	    this.chain(new Explosion(this.pos));
 	}
@@ -120,7 +120,7 @@ class EnemyBase extends Projectile {
     
     collidedWith(entity: Entity) {
 	if (entity instanceof Bullet) {
-	    playSound(SOUNDS['explosion']);
+	    APP.playSound('explosion');
 	    this.stop();
 	    this.killed.fire();
 	    this.chain(new Explosion(this.pos));

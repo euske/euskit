@@ -121,7 +121,8 @@ class SoundTask extends Task {
 
     init() {
 	super.init();
-	playSound(this.sound, this.startTime);
+	this.sound.currentTime = this.startTime;
+	this.sound.play();
     }
 
     update() {

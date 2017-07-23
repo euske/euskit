@@ -164,7 +164,7 @@ class Racing extends GameScene {
 
 	this.score = 0;
 	this.updateScore();
-	APP.setMusic(SOUNDS['music'], 0, 19.1);
+	APP.setMusic(AUDIOS['music'], 0, 19.1);
     }
 
     update() {
@@ -184,7 +184,7 @@ class Racing extends GameScene {
 		blinker.stopped.subscribe(() => { this.init(); });
 		this.add(blinker);
 		APP.setMusic();
-		playSound(SOUNDS['plunge']);
+		APP.playSound('plunge');
 	    }
 	}
     }

@@ -4,6 +4,10 @@
 /// <reference path="scene.ts" />
 
 
+/** Initial gap of lame-encded MP3 files */
+const MP3_GAP = 0.025;
+
+
 //  App
 //  handles the event loop and global state management.
 //  It also has shared resources (images, audios, etc.)
@@ -16,6 +20,7 @@ class App {
 
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
+    audio: AudioContext;
 
     scene: Scene = null;
     active: boolean = false;
@@ -41,6 +46,13 @@ class App {
 	// Initialize the off-screen bitmap.
 	this.canvas = createCanvas(this.size.x, this.size.y);
 	this.ctx = getEdgeyContext(this.canvas);
+
+	// WebAudio!
+	try {
+	    this.audio = new AudioContext();
+	} catch (e) {
+	    this.audio = null;
+	}
     }
 
     init(scene: Scene) {
@@ -278,6 +290,16 @@ class App {
 	this.scene.render(this.ctx, 0, 0);
 	this.ctx.restore();
     }
+
+    /** Play a sound resource. 
+     * @param sound Sound name.
+     * @param start Start position.
+     */
+    playSound(name: string, start=MP3_GAP) {
+	let elem = AUDIOS[name];
+	elem.currentTime = start;
+	elem.play();
+    }
 }
 
 
@@ -285,7 +307,7 @@ class App {
 interface ImageAsset {
     [index: string]: HTMLImageElement;
 }
-interface SoundAsset {
+interface AudioAsset {
     [index: string]: HTMLAudioElement;
 }
 interface TextAsset {
@@ -296,7 +318,7 @@ interface InitHook {
 }
 
 var IMAGES: ImageAsset = {};
-var SOUNDS: SoundAsset = {};
+var AUDIOS: AudioAsset = {};
 var TEXTS: TextAsset = {};
 var HOOKS: InitHook[] = [];
 var APP: App = null;
@@ -465,8 +487,14 @@ function main<T extends Scene>(
 
     APP = app;
     IMAGES = getprops(document.getElementsByTagName('img')) as ImageAsset;
-    SOUNDS = getprops(document.getElementsByTagName('audio')) as SoundAsset;
+    AUDIOS = getprops(document.getElementsByTagName('audio')) as AudioAsset;
     TEXTS = getprops(document.getElementsByClassName('label')) as TextAsset;
+    if (APP.audio !== null) {
+	for (let id in AUDIOS) {
+	    let source = APP.audio.createMediaElementSource(AUDIOS[id]);
+	    source.connect(APP.audio.destination);
+	}
+    }
     for (let hook of HOOKS) {
 	hook();
     }

@@ -172,7 +172,7 @@ class Player extends PlatformerEntity implements WorldObject {
 	}
 	super.setJump(jumpend);
 	if (0 < jumpend && this.isJumping()) {
-	    playSound(SOUNDS['jump']);
+	    APP.playSound('jump');
 	}
     }
     
@@ -183,7 +183,7 @@ class Player extends PlatformerEntity implements WorldObject {
     collidedWith(entity: Entity) {
 	super.collidedWith(entity);
 	if (entity instanceof Thingy) {
-	    playSound(SOUNDS['pick']);
+	    APP.playSound('pick');
 	    entity.stop();
 	    this.picked.fire(entity);
 	}

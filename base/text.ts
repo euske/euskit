@@ -429,7 +429,7 @@ class DisplayTask extends TextTask {
     text: string;
     font: Font;
     speed: number = 0;
-    sound: HTMLAudioElement = null;
+    sound: string = null;
     private _index: number = 0;
 
     constructor(dialog: DialogBox, text: string) {
@@ -459,7 +459,7 @@ class DisplayTask extends TextTask {
 		sound = sound || (/\w/.test(c));
 	    }
 	    if (sound && this.sound !== null) {
-		playSound(this.sound);
+		APP.playSound(this.sound);
 	    }
 	}
     }
@@ -498,7 +498,7 @@ class MenuTask extends TextTask {
     items: MenuItem[] = [];
     current: MenuItem = null;
     focus: MenuItem = null;
-    sound: HTMLAudioElement = null;
+    sound: string = null;
     
     constructor(dialog: DialogBox) {
 	super(dialog);
@@ -563,7 +563,7 @@ class MenuTask extends TextTask {
 	this.current = this.items[i];
 	this.updateSelection();
 	if (this.sound !== null) {
-	    playSound(this.sound);
+	    APP.playSound(this.sound);
 	}
     }
 
@@ -655,7 +655,7 @@ class DialogBox extends Widget {
     hiFont: Font;
     speed: number = 0;
     autoHide: boolean = false;
-    sound: HTMLAudioElement = null;
+    sound: string = null;
     queue: TextTask[] = [];
     
     constructor(textbox: TextBox, hiFont: Font=null) {
@@ -778,7 +778,7 @@ class DialogBox extends Widget {
     }
 
     addDisplay(text: string, speed=16,
-	       sound: HTMLAudioElement=null, font: Font=null) {
+	       sound: string=null, font: Font=null) {
 	let task = new DisplayTask(this, text);
 	task.speed = (0 <= speed)? speed : this.speed;
 	task.sound = (sound !== null)? sound : this.sound;

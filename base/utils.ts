@@ -278,22 +278,6 @@ function ellipse(
     ctx.restore();
 }
 
-/** Alias of HTMLAudioElement */
-const Sound = HTMLAudioElement;
-
-/** Initial gap of lame-encded MP3 files */
-const MP3_GAP = 0.025;
-
-/** Play a sound resource. 
- * @param sound Audio element.
- * @param start Start position.
- */
-function playSound(sound: HTMLAudioElement, start=MP3_GAP)
-{
-    sound.currentTime = start;
-    sound.play();
-}
-
 /** Key Symbol */
 enum KeySym {
     Unknown = 0,
