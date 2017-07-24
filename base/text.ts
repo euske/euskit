@@ -354,7 +354,7 @@ class BannerBox extends Widget {
 	this.textbox = new TextBox(frame, font);
 	this.textbox.lineSpace = lineSpace;
 	this.textbox.putText(lines, 'center', 'center');
-	this.sprite = new FixedSprite(null, this.textbox);
+	this.sprite = new FixedSprite(this.textbox);
     }
 
     init() {
@@ -660,7 +660,7 @@ class DialogBox extends Widget {
     
     constructor(textbox: TextBox, hiFont: Font=null) {
 	super();
-        this.sprite = new FixedSprite(null, textbox);
+        this.sprite = new FixedSprite(textbox);
 	this.textbox = textbox;
 	this.hiFont = hiFont;
     }

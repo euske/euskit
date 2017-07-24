@@ -370,6 +370,10 @@ class Sprite {
     visible: boolean = true;
     /** Z-Order of the sprite. */
     zOrder: number = 0;
+    /** Image scaling. Negative values can be used for flipped images. */
+    scale: Vec2 = new Vec2(1, 1);
+    /** Image rotation (in radian). */
+    rotation: number = 0;
     
     /** Returns the bounds of the sprite at a given pos. */
     getBounds(pos: Vec2=null): Rect {
@@ -385,6 +389,22 @@ class Sprite {
 
     /** Renders itself in the given context, offset by (bx, by). */
     render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
+	ctx.save();
+	ctx.translate(bx, by);
+	let bounds = this.getBounds();
+	if (bounds !== null) {
+	    ctx.translate(bounds.centerx(), bounds.centery());
+	}
+	if (this.rotation) {
+	    ctx.rotate(this.rotation);
+	}
+	ctx.scale(this.scale.x, this.scale.y);
+	this.renderImage(ctx);
+	ctx.restore();
+    }
+
+    /** Renders its image. */
+    renderImage(ctx: CanvasRenderingContext2D) {
 	// [OVERRIDE]
     }
 }
@@ -396,12 +416,8 @@ class SimpleSprite extends Sprite {
     
     /** Image source to display. */
     imgsrc: ImageSource;
-    /** Image scaling. Negative values can be used for flipped images. */
-    scale: Vec2 = new Vec2(1, 1);
-    /** Image rotation (in radian). */
-    rotation: number = 0;
     
-    constructor(imgsrc: ImageSource=null) {
+    constructor(imgsrc: ImageSource) {
 	super();
 	this.imgsrc = imgsrc;
     }
@@ -410,41 +426,9 @@ class SimpleSprite extends Sprite {
 	return '<SimpleSprite: '+this.imgsrc+'>';
     }
 
-    /** Returns its focal position. */
-    getPos(): Vec2 {
-	// [OVERRIDE]
-	return null as Vec2;
-    }
-
-    /** Returns the bounds of the sprite at a given pos. */
-    getBounds(pos: Vec2=null): Rect {
-	if (this.imgsrc !== null) {
-	    if (pos === null) {
-		pos = this.getPos();
-	    }
-	    if (pos !== null) {
-		return this.imgsrc.getBounds().add(pos);
-	    }
-	}
-	return null;
-    }
-
-    /** Renders itself in the given context, offset by (bx, by). */
-    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
-	if (this.imgsrc !== null) {
-	    let pos = this.getPos();
-	    if (pos !== null) {
-		ctx.save();
-		ctx.translate(bx+int(pos.x), by+int(pos.y));
-		if (this.rotation) {
-		    ctx.rotate(this.rotation);
-		}
-		ctx.scale((0 < this.scale.x)? 1 : -1,
-			  (0 < this.scale.y)? 1 : -1);
-		this.imgsrc.render(ctx);
-		ctx.restore();
-	    }
-	}
+    /** Renders its image. */
+    renderImage(ctx: CanvasRenderingContext2D) {
+    	this.imgsrc.render(ctx);
     }
 }
 
@@ -454,50 +438,52 @@ class SimpleSprite extends Sprite {
 class FixedSprite extends SimpleSprite {
 
     /** Sprite position. */
-    pos: Vec2;
+    bounds: Rect;
     
-    constructor(pos: Vec2=null, imgsrc: ImageSource=null) {
+    constructor(imgsrc: ImageSource, bounds: Rect=null) {
 	super(imgsrc);
-	this.pos = pos;
+	this.bounds = bounds;
     }
 
     /** Returns the bounds of the sprite at a given pos. */
-    getBounds(): Rect {
-	if (this.pos === null) {
-	    return null;
-	} else {
-	    return super.getBounds();
-	}
-    }
-    
-    /** Returns its focal position. */
-    getPos(): Vec2 {
-	if (this.pos === null) {
-	    return new Vec2();
-	} else {
-	    return this.pos;
-	}
+    getBounds(pos: Vec2=null): Rect {
+	return this.bounds;
     }
 }
 
 
 /** Sprite that is atteched to an Entity.
  */
-class EntitySprite extends SimpleSprite {
+class EntitySprite extends Sprite {
 
     /** Entity that this sprite belongs to. */
     entity: Entity;
     
-    constructor(entity: Entity=null, imgsrc: ImageSource=null) {
-	super(imgsrc);
+    constructor(entity: Entity) {
+	super();
 	this.entity = entity;
     }
 
-    /** Returns its focal position. */
-    getPos(): Vec2 {
-	if (this.entity !== null) {
-	    return this.entity.pos;
+    /** Returns the bounds of the sprite at a given pos. */
+    getBounds(pos: Vec2=null): Rect {
+	let imgsrc = this.entity.imgsrc;
+	if (imgsrc !== null) {
+	    if (pos === null) {
+		pos = this.entity.pos;
+	    }
+	    if (pos !== null) {
+		return imgsrc.getBounds().add(pos);
+	    }
 	}
 	return null;
+    }
+
+    /** Renders its image. */
+    renderImage(ctx: CanvasRenderingContext2D) {
+	let imgsrc = this.entity.imgsrc;
+	if (imgsrc !== null) {
+	    imgsrc.render(ctx);
+	}
+	this.entity.renderExtra(ctx);
     }
 }

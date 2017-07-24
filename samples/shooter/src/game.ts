@@ -27,7 +27,7 @@ class Bullet extends Projectile {
     constructor(pos: Vec2) {
 	super(pos);
 	let bounds = new Rect(-4, -1, 8, 2);
-	this.sprite.imgsrc = new RectImageSource('white', bounds)
+	this.imgsrc = new RectImageSource('white', bounds)
 	this.collider = bounds;
     }
 }
@@ -38,7 +38,7 @@ class Bullet extends Projectile {
 class Explosion extends Entity {
     constructor(pos: Vec2) {
 	super(pos);
-	this.sprite.imgsrc = SPRITES.get(4);
+	this.imgsrc = SPRITES.get(4);
 	this.lifetime = 0.2;
     }
 }
@@ -56,8 +56,8 @@ class Player extends Entity {
     constructor(scene: Shooter, pos: Vec2) {
 	super(pos);
 	this.scene = scene;
-	this.sprite.imgsrc = SPRITES.get(0);
-	this.collider = this.sprite.getBounds(new Vec2());
+	this.imgsrc = SPRITES.get(0);
+	this.collider = this.imgsrc.getBounds();
     }
 
     update() {
@@ -135,8 +135,8 @@ class Enemy1 extends EnemyBase {
 
     constructor(scene: Shooter, pos: Vec2) {
 	super(scene, pos);
-	this.sprite.imgsrc = SPRITES.get(1);
-	this.collider = this.sprite.getBounds(new Vec2());
+	this.imgsrc = SPRITES.get(1);
+	this.collider = this.imgsrc.getBounds();
 	this.movement = new Vec2(-rnd(1,8), rnd(3)-1);
     }
 }
@@ -148,8 +148,8 @@ class Enemy2 extends EnemyBase {
 
     constructor(scene: Shooter, pos: Vec2) {
 	super(scene, pos);
-	this.sprite.imgsrc = SPRITES.get(2);
-	this.collider = this.sprite.getBounds(new Vec2());
+	this.imgsrc = SPRITES.get(2);
+	this.collider = this.imgsrc.getBounds();
 	this.movement = new Vec2(-rnd(1,4), 0);
     }
 
@@ -183,7 +183,7 @@ class Shooter extends GameScene {
 	this.player = new Player(this, this.screen.center());
 	this.player.chain(new DelayTask(2, () => { this.init(); }));
 	this.add(this.player);
-	this.stars = new FixedSprite(new Vec2(), new StarImageSource(this.screen, 100));
+	this.stars = new FixedSprite(new StarImageSource(this.screen, 100));
 	this.nextenemy = 0;
 	this.score = 0;
 	this.updateScore();

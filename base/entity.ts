@@ -26,7 +26,8 @@ class Widget extends Task {
 class Entity extends Widget {
 
     pos: Vec2;
-    sprite: SimpleSprite;
+    sprite: Sprite;
+    imgsrc: ImageSource = null;
     collider: Collider = null;
 
     constructor(pos: Vec2) {
@@ -102,6 +103,9 @@ class Entity extends Widget {
 	v = this.getMove(this.pos, v, context);
 	this.movePos(v);
 	return v;
+    }
+
+    renderExtra(ctx: CanvasRenderingContext2D) {
     }
     
     getObstaclesFor(range: Rect, v: Vec2, context: string): Collider[] {

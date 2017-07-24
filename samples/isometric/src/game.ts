@@ -33,13 +33,13 @@ class Sprite3d extends SimpleSprite {
     shadowz: number = 0;
     floating: boolean = false;
     
-    constructor(entity: Entity3d=null, imgsrc: ImageSource=null) {
+    constructor(entity: Entity3d, imgsrc: ImageSource=null) {
 	super(imgsrc);
 	this.entity = entity;
     }
 
     getBounds(pos: Vec2=null) {
-	if (this.entity !== null && this.imgsrc !== null) {
+	if (this.imgsrc !== null) {
 	    if (pos === null) {
 		pos = this.entity.pos;
 	    }
@@ -469,7 +469,7 @@ class Game extends Scene {
     
     onPicked(entity: Entity) {
 	let yay = new Projectile(entity.pos.move(0,-16));
-	yay.sprite.imgsrc = SPRITES.get(S.YAY);
+	yay.imgsrc = SPRITES.get(S.YAY);
 	yay.sprite.zOrder = 2;
 	yay.movement = new Vec2(0,-4);
 	yay.lifetime = 0.5;

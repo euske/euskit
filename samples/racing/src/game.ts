@@ -34,8 +34,8 @@ class Player extends Entity {
     constructor(scene: Racing, pos: Vec2) {
 	super(pos);
 	this.scene = scene;
-	this.sprite.imgsrc = SPRITES.get(0, 0, 1, 1, new Vec2(8,8));
-	this.collider = this.sprite.getBounds(new Vec2());
+	this.imgsrc = SPRITES.get(0, 0, 1, 1, new Vec2(8,8));
+	this.collider = this.imgsrc.getBounds();
     }
 
     update() {

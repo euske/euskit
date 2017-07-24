@@ -76,20 +76,20 @@ function findShadowPos(tilemap: TileMap, pos: Vec2) {
 //
 class ShadowSprite extends EntitySprite {
 
-    shadow: HTMLImageSource = null;
+    shadow: HTMLImageSource;
     shadowPos: Vec2 = null;
     
-    constructor(entity: Entity=null) {
+    constructor(entity: Entity) {
 	super(entity);
 	this.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
     }
 
-    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
+    renderImage(ctx: CanvasRenderingContext2D) {
 	let imgsrc = this.shadow;
 	let pos = this.shadowPos;
-	if (this.entity !== null && imgsrc !== null && pos !== null) {
+	if (pos !== null) {
 	    ctx.save();
-	    ctx.translate(bx+int(pos.x), by+int(pos.y));
+	    ctx.translate(pos.x, pos.y);
 	    let srcRect = imgsrc.srcRect;
 	    let dstRect = imgsrc.dstRect;
 	    // Shadow gets smaller based on its ground distance.
@@ -103,7 +103,7 @@ class ShadowSprite extends EntitySprite {
 	    }
 	    ctx.restore();
 	}
-	super.render(ctx, bx, by);
+	super.renderImage(ctx);
     }
 }
 
@@ -120,8 +120,8 @@ class Player extends PlatformerEntity implements WorldObject {
     constructor(scene: Game, pos: Vec2) {
 	super(scene.tilemap, pos);
 	this.sprite = new ShadowSprite(this);
-	this.sprite.imgsrc = SPRITES.get(S.PLAYER);
-	this.collider = this.sprite.getBounds(new Vec2());
+	this.imgsrc = SPRITES.get(S.PLAYER);
+	this.collider = this.imgsrc.getBounds();
 	this.scene = scene;
 	this.jumpfunc = JUMPFUNC;
 	this.maxspeed = MAXSPEED;
@@ -203,8 +203,8 @@ class Monster extends PlanningEntity implements WorldObject {
 	super(scene.profile, scene.tilemap, pos);
 	this.scene = scene;
 	this.sprite = new ShadowSprite(this);
-	this.sprite.imgsrc = SPRITES.get(S.MONSTER);
-	this.collider = this.sprite.getBounds(new Vec2());
+	this.imgsrc = SPRITES.get(S.MONSTER);
+	this.collider = this.imgsrc.getBounds();
 	this.jumpfunc = JUMPFUNC;
 	this.maxspeed = MAXSPEED;
 	this.setHitbox(this.collider as Rect);
@@ -232,8 +232,8 @@ class Thingy extends Entity {
     
     constructor(pos: Vec2) {
 	super(pos);
-	this.sprite.imgsrc = SPRITES.get(S.THINGY);
-	this.collider = this.sprite.getBounds(new Vec2()).inflate(-4, -4);
+	this.imgsrc = SPRITES.get(S.THINGY);
+	this.collider = this.imgsrc.getBounds().inflate(-4, -4);
     }
 }
 
@@ -320,7 +320,7 @@ class Game extends GameScene {
 
     onPicked(entity: Entity) {
 	let yay = new Projectile(entity.pos.move(0,-16));
-	yay.sprite.imgsrc = SPRITES.get(S.YAY);
+	yay.imgsrc = SPRITES.get(S.YAY);
 	yay.movement = new Vec2(0,-4);
 	yay.lifetime = 0.5;
 	this.add(yay);
