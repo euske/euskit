@@ -118,11 +118,11 @@ class Entity extends Widget {
 	return '<Entity: '+this.pos+'>';
     }
 
-    chain(task: Task): Task {
+    chain(task: Task, signal: Signal=null): Task {
 	if (task instanceof Entity) {
 	    task.world = this.world;
 	}
-	return super.chain(task);
+	return super.chain(task, signal);
     }
 
     init() {

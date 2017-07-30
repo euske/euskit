@@ -10,11 +10,11 @@ class Widget extends Task {
 
     layer: Layer = null;
     
-    chain(task: Task): Task {
+    chain(task: Task, signal: Signal=null): Task {
 	if (task instanceof Widget) {
 	    task.layer = this.layer;
 	}
-	return super.chain(task);
+	return super.chain(task, signal);
     }
 
     init() {

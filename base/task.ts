@@ -49,9 +49,10 @@ class Task {
     /** Schedules another task right after this task. 
      * @param next Next Task.
      */
-    chain(next: Task): Task {
+    chain(next: Task, signal: Signal=null): Task {
 	if (this.running) {
-	    this.stopped.subscribe(() => {
+	    signal = (signal !== null)? signal : this.stopped;
+	    signal.subscribe(() => {
 		if (this.tasklist !== null) {
 		    this.tasklist.add(next)
 		}
