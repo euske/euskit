@@ -110,11 +110,12 @@ class Pong extends GameScene {
 	this.paddle.vx = v.x;
     }
 
-    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
+    render(ctx: CanvasRenderingContext2D) {
 	// Paints the background.
 	ctx.fillStyle = 'rgb(0,0,64)';
-	ctx.fillRect(bx, by, this.screen.width, this.screen.height);
+	ctx.fillRect(this.screen.x, this.screen.y,
+		     this.screen.width, this.screen.height);
 	// Paints everything else.
-	super.render(ctx, bx, by);
+	super.render(ctx);
     }
 }

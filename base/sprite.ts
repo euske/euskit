@@ -385,10 +385,9 @@ class Sprite {
 	return false;
     }
 
-    /** Renders itself in the given context, offset by (bx, by). */
-    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
+    /** Renders itself in the given context. */
+    render(ctx: CanvasRenderingContext2D) {
 	ctx.save();
-	ctx.translate(bx, by);
 	let bounds = this.getBounds();
 	if (bounds !== null) {
 	    ctx.translate(bounds.centerx(), bounds.centery());

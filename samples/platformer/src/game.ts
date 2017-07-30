@@ -333,18 +333,19 @@ class Game extends GameScene {
 	}
     }
 
-    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
+    render(ctx: CanvasRenderingContext2D) {
 	ctx.fillStyle = 'rgb(0,0,0)';
-	ctx.fillRect(bx, by, this.screen.width, this.screen.height);
+	ctx.fillRect(this.screen.x, this.screen.y,
+		     this.screen.width, this.screen.height);
 	// Render the background tiles.
 	this.tilemap.renderWindowFromBottomLeft(
-	    ctx, bx, by, this.layer.window, 
+	    ctx, this.layer.window, 
 	    (x,y,c) => { return (c != T.BLOCK)? TILES.get(T.BACKGROUND) : null; });
 	// Render the map tiles.
 	this.tilemap.renderWindowFromBottomLeft(
-	    ctx, bx, by, this.layer.window, 
+	    ctx, this.layer.window, 
 	    (x,y,c) => { return (c == T.BLOCK || c == T.LADDER)? TILES.get(c) : null; });
-	super.render(ctx, bx, by);
+	super.render(ctx);
     }
 }
 

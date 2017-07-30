@@ -299,7 +299,7 @@ class App {
     repaint() {
 	this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	this.ctx.save();
-	this.scene.render(this.ctx, 0, 0);
+	this.scene.render(this.ctx);
 	this.ctx.restore();
     }
 

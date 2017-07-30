@@ -125,8 +125,7 @@ class PlanMap {
 	}
     }
 
-    render(ctx:CanvasRenderingContext2D, bx:number, by:number,
-	   start:Vec2=null) {
+    render(ctx:CanvasRenderingContext2D, start:Vec2=null) {
 	let profile = this.profile;
 	let gs = profile.gridsize;
 	let rs = gs/2;
@@ -137,14 +136,14 @@ class PlanMap {
 	    if (color !== null) {
 		let p0 = profile.grid2coord(action.p);
 		ctx.strokeStyle = color;
-		ctx.strokeRect(bx+p0.x-rs/2+.5,
-			       by+p0.y-rs/2+.5,
+		ctx.strokeRect(p0.x-rs/2+.5,
+			       p0.y-rs/2+.5,
 			       rs, rs);
 		if (action.next !== null) {
 		    let p1 = profile.grid2coord(action.next.p);
 		    ctx.beginPath();
-		    ctx.moveTo(bx+p0.x+.5, by+p0.y+.5);
-		    ctx.lineTo(bx+p1.x+.5, by+p1.y+.5);
+		    ctx.moveTo(p0.x+.5, p0.y+.5);
+		    ctx.lineTo(p1.x+.5, p1.y+.5);
 		    ctx.stroke();
 		}
 	    }
@@ -152,15 +151,15 @@ class PlanMap {
 	if (this.goal !== null) {
 	    let p = profile.grid2coord(this.goal);
 	    ctx.strokeStyle = '#00ff00';
-	    ctx.strokeRect(bx+p.x-gs/2+.5,
-			   by+p.y-gs/2+.5,
+	    ctx.strokeRect(p.x-gs/2+.5,
+			   p.y-gs/2+.5,
 			   gs, gs);
 	}
 	if (start !== null) {
 	    let p = profile.grid2coord(start);
 	    ctx.strokeStyle = '#ff0000';
-	    ctx.strokeRect(bx+p.x-gs/2+.5,
-			   by+p.y-gs/2+.5,
+	    ctx.strokeRect(p.x-gs/2+.5,
+			   p.y-gs/2+.5,
 			   gs, gs);
 	}
     }

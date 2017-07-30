@@ -242,9 +242,9 @@ class PlanMapSprite extends Sprite {
     start: Vec2 = null;
     plan: PlanMap = null;
     
-    render(ctx:CanvasRenderingContext2D, bx:number, by:number) {
+    render(ctx:CanvasRenderingContext2D) {
 	if (this.plan !== null) {
-	    this.plan.render(ctx, bx, by, this.start);
+	    this.plan.render(ctx, this.start);
 	}
     }
 }

@@ -75,27 +75,28 @@ class PictureScene extends GameScene {
 	this.dialogBox.onMouseMove(p);
     }    
 
-    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
+    render(ctx: CanvasRenderingContext2D) {
 	ctx.fillStyle = 'rgb(0,0,0)';
-	ctx.fillRect(bx, by, this.screen.width, this.screen.height);
+	ctx.fillRect(this.screen.x, this.screen.y,
+		     this.screen.width, this.screen.height);
 	ctx.save();
 	if (this.image0 !== null) {
 	    ctx.globalAlpha = 1.0-this.alpha;
-	    ctx.drawImage(this.image0, bx, by,
+	    ctx.drawImage(this.image0, this.screen.x, this.screen.y,
 			  this.screen.width, this.screen.height);
 	}
 	if (this.image1 !== null) {
 	    ctx.globalAlpha = this.alpha;
-	    ctx.drawImage(this.image1, bx, by,
+	    ctx.drawImage(this.image1, this.screen.x, this.screen.y,
 			  this.screen.width, this.screen.height);
 	}
 	ctx.restore();
-	super.render(ctx, bx, by);
+	super.render(ctx);
 	// draw a textbox border.
 	let rect = this.dialogBox.textbox.frame.inflate(-2,-2);
 	ctx.strokeStyle = 'white';
 	ctx.lineWidth = 2;
-	ctx.strokeRect(bx+rect.x, by+rect.y, rect.width, rect.height);
+	ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
     }
     
     changeScene(scene: Scene) {

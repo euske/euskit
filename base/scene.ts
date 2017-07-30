@@ -31,7 +31,7 @@ class Scene {
 	// [OVERRIDE]
     }
 
-    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
+    render(ctx: CanvasRenderingContext2D) {
 	// [OVERRIDE]
     }
 
@@ -108,9 +108,10 @@ class HTMLScene extends Scene {
 	e.onmousedown = (function (e) { scene.change(); });
     }
   
-    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
+    render(ctx: CanvasRenderingContext2D) {
 	ctx.fillStyle = 'rgb(0,0,0)';
-	ctx.fillRect(bx, by, this.screen.width, this.screen.height);
+	ctx.fillRect(this.screen.x, this.screen.y,
+		     this.screen.width, this.screen.height);
     }
 
     change() {
@@ -153,9 +154,9 @@ class GameScene extends Scene {
 	this.layer.tick();
     }
 
-    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
-	super.render(ctx, bx, by);
-	this.layer.render(ctx, bx, by);
+    render(ctx: CanvasRenderingContext2D) {
+	super.render(ctx);
+	this.layer.render(ctx);
     }
 
     add(task: Task) {

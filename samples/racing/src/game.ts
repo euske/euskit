@@ -121,15 +121,16 @@ class Track extends TileMap {
 	}
     }
 
-    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
+    render(ctx: CanvasRenderingContext2D) {
 	// Render the background.
+	ctx.save();
+	ctx.translate(0, -32+this.offset);
 	this.renderFromTopRight(
-	    ctx, bx, by-32+this.offset, 
-	    (x,y,c) => { return (c == FLOOR)? null : SPRITES.get(c); });
+	    ctx, (x,y,c) => { return (c == FLOOR)? null : SPRITES.get(c); });
 	// Render the bridge.
 	this.renderFromTopRight(
-	    ctx, bx, by-32+this.offset, 
-	    (x,y,c) => { return (c != FLOOR)? null : SPRITES.get(c); });
+	    ctx, (x,y,c) => { return (c != FLOOR)? null : SPRITES.get(c); });
+	ctx.restore();
     }
 }
 
@@ -193,11 +194,12 @@ class Racing extends GameScene {
 	this.player.setMove(v);
     }
 
-    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
+    render(ctx: CanvasRenderingContext2D) {
 	ctx.fillStyle = 'rgb(0,0,0)';
-	ctx.fillRect(bx, by, this.screen.width, this.screen.height);
-	this.track.render(ctx, bx, by);
-	super.render(ctx, bx, by);
+	ctx.fillRect(this.screen.x, this.screen.y,
+		     this.screen.width, this.screen.height);
+	this.track.render(ctx);
+	super.render(ctx);
 	this.scoreBox.render(ctx);
 	this.highScoreBox.render(ctx);
     }

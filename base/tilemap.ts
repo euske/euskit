@@ -191,7 +191,6 @@ class TileMap {
 
     renderFromBottomLeft(
 	ctx: CanvasRenderingContext2D,
-	bx: number, by: number,
 	ft: TilePosTileFunc,
 	x0=0, y0=0, w=0, h=0) {
 	// Align the pos to the bottom left corner.
@@ -207,7 +206,7 @@ class TileMap {
 		let imgsrc = ft(x, y, c);
 		if (imgsrc !== null) {
 		    ctx.save();
-		    ctx.translate(bx+ts*dx, by+ts*dy);
+		    ctx.translate(ts*dx, ts*dy);
 		    imgsrc.render(ctx);
 		    ctx.restore();
 		}
@@ -217,7 +216,6 @@ class TileMap {
 
     renderFromTopRight(
 	ctx: CanvasRenderingContext2D,
-	bx: number, by: number,
 	ft: TilePosTileFunc,
 	x0=0, y0=0, w=0, h=0) {
 	// Align the pos to the bottom left corner.
@@ -233,7 +231,7 @@ class TileMap {
 		let imgsrc = ft(x, y, c);
 		if (imgsrc !== null) {
 		    ctx.save();
-		    ctx.translate(bx+ts*dx, by+ts*dy);
+		    ctx.translate(ts*dx, ts*dy);
 		    imgsrc.render(ctx);
 		    ctx.restore();
 		}
@@ -244,7 +242,6 @@ class TileMap {
 
     renderWindowFromBottomLeft(
 	ctx: CanvasRenderingContext2D,
-	bx: number, by: number,
 	window: Rect,
 	ft: TilePosTileFunc) {
 	let ts = this.tilesize;
@@ -252,16 +249,16 @@ class TileMap {
 	let y0 = Math.floor(window.y/ts);
 	let x1 = Math.ceil((window.x+window.width)/ts);
 	let y1 = Math.ceil((window.y+window.height)/ts);
-	let fx = x0*ts-window.x;
-	let fy = y0*ts-window.y;
+	ctx.save();
+	ctx.translate(x0*ts-window.x, y0*ts-window.y);
 	this.renderFromBottomLeft(
-	    ctx, bx+fx, by+fy, ft, 
+	    ctx, ft, 
 	    x0, y0, x1-x0+1, y1-y0+1);
+	ctx.restore();
     }
 
     renderWindowFromTopRight(
 	ctx: CanvasRenderingContext2D,
-	bx: number, by: number,
 	window: Rect,
 	ft: TilePosTileFunc) {
 	let ts = this.tilesize;
@@ -269,11 +266,12 @@ class TileMap {
 	let y0 = Math.floor(window.y/ts);
 	let x1 = Math.ceil((window.x+window.width)/ts);
 	let y1 = Math.ceil((window.y+window.height)/ts);
-	let fx = x0*ts-window.x;
-	let fy = y0*ts-window.y;
+	ctx.save();
+	ctx.translate(x0*ts-window.x, y0*ts-window.y);
 	this.renderFromTopRight(
-	    ctx, bx+fx, by+fy, ft, 
+	    ctx, ft, 
 	    x0, y0, x1-x0+1, y1-y0+1);
+	ctx.restore();
     }
 }
 

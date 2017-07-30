@@ -70,10 +70,11 @@ class Game extends GameScene {
 	this.player.setMove(v);
     }
 
-    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
+    render(ctx: CanvasRenderingContext2D) {
 	ctx.fillStyle = 'rgb(0,0,0)';
-	ctx.fillRect(bx, by, this.screen.width, this.screen.height);
-	super.render(ctx, bx, by);
+	ctx.fillRect(this.screen.x, this.screen.y,
+		     this.screen.width, this.screen.height);
+	super.render(ctx);
 	this.scoreBox.render(ctx);
     }
 

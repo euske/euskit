@@ -48,11 +48,11 @@ class Sprite3d extends SimpleSprite {
 	return null;
     }
 
-    render3(ctx: CanvasRenderingContext2D, bx: number, by: number) {
+    render3(ctx: CanvasRenderingContext2D) {
 	let pos = this.entity.pos;
 	let z = this.entity.z;
 	ctx.save();
-	ctx.translate(bx+int(pos.x), by+int(pos.y));
+	ctx.translate(int(pos.x), int(pos.y));
 	let shadow = this.shadow;
 	if (shadow !== null) {
 	    // Render the shadow first.
@@ -169,13 +169,9 @@ class ScrollLayer3 extends ScrollLayer {
     tilemap: TileMap = null;
     tiles: SpriteSheet = null;
 
-    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
+    render(ctx: CanvasRenderingContext2D) {
 	let ts = this.tilemap.tilesize;
 	let window = this.window;
-	let dx = -ts;
-	let dy = 0;
-	let tx = bx+dx-window.x;
-	let ty = by+dy-window.y;
 
 	// Set the drawing order.
 	let sprites = {} as SpriteDictionary;
@@ -195,41 +191,50 @@ class ScrollLayer3 extends ScrollLayer {
 	}
 
 	// Draw the tilemap.
+	ctx.save();
+	ctx.translate(-ts, 0);
 	this.tilemap.renderWindowFromTopRight(
-	    ctx, bx+dx, by+dy, window, 
+	    ctx, window, 
 	    (x,y,c) => { return (c == 0)? this.tiles.get(c) : null; });
 	this.tilemap.renderWindowFromTopRight(
-	    ctx, bx+dx, by+dy, window,
+	    ctx, window,
 	    (x,y,c) => {
+		ctx.save();
+		ctx.translate(-window.x, -window.y);
 		let k = x+','+y;
 		if (sprites.hasOwnProperty(k)) {
 		    for (let sprite of sprites[k]) {
 			if (sprite instanceof Sprite3d) {
 			    if (!sprite.floating) {
-				sprite.render3(ctx, tx, ty);
+				sprite.render3(ctx);
 			    }
 			} else {
-			    sprite.render(ctx, tx, ty);
+			    sprite.render(ctx);
 			}
 		    }
 		}
+		ctx.restore();
 		return (c == 0)? null : this.tiles.get(c);
 	    });
+	ctx.restore();
 	
 	// Draw floating objects.
 	for (let sprite of this.sprites) {
 	    if (sprite.visible) {
 		let bounds = sprite.getBounds();
 		if (bounds === null) {
-		    sprite.render(ctx, bx, by);
+		    sprite.render(ctx);
 		} else if (bounds.overlaps(window)) {
+		    ctx.save();
+		    ctx.translate(-ts-window.x, -window.y);
 		    if (sprite instanceof Sprite3d) {
 			if (sprite.floating) {
-			    sprite.render3(ctx, tx, ty);
+			    sprite.render3(ctx);
 			}
 		    } else {
-			sprite.render(ctx, tx, ty);
+			sprite.render(ctx);
 		    }
+		    ctx.restore();
 		}
 	    }
 	}
@@ -475,13 +480,16 @@ class Game extends Scene {
 	this.speed.x += 1;
     }
     
-    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
+    render(ctx: CanvasRenderingContext2D) {
 	ctx.fillStyle = 'rgb(0,128,224)';
-	ctx.fillRect(bx, by, this.screen.width, this.screen.height);
-	super.render(ctx, bx, by);
-	let dy = (this.screen.height-this.layer3.window.height)/2
-	this.layer3.render(ctx, bx, by+dy);
-	this.layer.render(ctx, bx, by);
+	ctx.fillRect(this.screen.x, this.screen.y,
+		     this.screen.width, this.screen.height);
+	super.render(ctx);
+	ctx.save();
+	ctx.translate(0, (this.screen.height-this.layer3.window.height)/2);
+	this.layer3.render(ctx);
+	ctx.restore();
+	this.layer.render(ctx);
     }
 
     moveAll(v: Vec2) {

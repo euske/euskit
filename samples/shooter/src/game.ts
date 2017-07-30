@@ -225,11 +225,12 @@ class Shooter extends GameScene {
 	this.scoreBox.putText(['SCORE:'+format(this.score)]);
     }
 
-    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
+    render(ctx: CanvasRenderingContext2D) {
 	ctx.fillStyle = 'rgb(0,0,32)';
-	ctx.fillRect(bx, by, this.screen.width, this.screen.height);
-	super.render(ctx, bx, by);
-	this.stars.render(ctx, bx, by);
+	ctx.fillRect(this.screen.x, this.screen.y,
+		     this.screen.width, this.screen.height);
+	super.render(ctx);
+	this.stars.render(ctx);
 	this.scoreBox.render(ctx);
     }
 }

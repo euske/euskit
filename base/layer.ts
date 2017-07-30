@@ -51,10 +51,10 @@ class Layer {
 	removeElement(this.entities, entity);
     }
 
-    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
+    render(ctx: CanvasRenderingContext2D) {
 	for (let sprite of this.sprites) {
 	    if (sprite.visible) {
-		sprite.render(ctx, bx, by);
+		sprite.render(ctx);
 	    }
 	}
     }
@@ -195,16 +195,17 @@ class ScrollLayer extends Layer {
 	this.window.y = clamp(0, this.window.y, bounds.height-this.window.height);
     }
 
-    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
-	let x0 = bx - this.window.x;
-	let y0 = by - this.window.y;
+    render(ctx: CanvasRenderingContext2D) {
+	ctx.save();
+	ctx.translate(-this.window.x, -this.window.y);
 	for (let sprite of this.sprites) {
 	    if (sprite.visible) {
 		let bounds = sprite.getBounds()
 		if (bounds === null || bounds.overlaps(this.window)) {
-		    sprite.render(ctx, x0, y0);
+		    sprite.render(ctx);
 		}
 	    }
 	}
+	ctx.restore();
     }
 }
