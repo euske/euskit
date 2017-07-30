@@ -404,6 +404,7 @@ class Game extends Scene {
     
     tilemap: TileMap;
     tasklist: TaskList;
+    world: EntityWorld;
     layer: Layer;
     layer3: ScrollLayer3;
     player: Player;
@@ -417,6 +418,7 @@ class Game extends Scene {
 	    (c:number) => { return new Int32Array(12).fill(c); }
 	));
 	this.tasklist = new TaskList();
+	this.world = new EntityWorld();
 	this.layer = new Layer();
 	this.layer3 = new ScrollLayer3(this.tilemap.bounds);
 	this.layer3.tilemap = this.tilemap;
@@ -447,6 +449,7 @@ class Game extends Scene {
     	this.tasklist.add(task);
 	if (task instanceof Entity) {
 	    task.layer = this.layer3;
+	    task.world = this.world;
 	} else if (task instanceof Widget) {
 	    task.layer = this.layer;
 	}
@@ -455,8 +458,7 @@ class Game extends Scene {
     tick() {
 	super.tick();
 	this.tasklist.tick();
-	this.layer.tick();
-	this.layer3.tick();
+	this.world.tick();
 	this.moveAll(this.speed);
     }
 
@@ -503,7 +505,7 @@ class Game extends Scene {
 	    this.shiftTiles(x0, y0);
 	    let vw = new Vec2(-x0*ts, -y0*ts);
 	    this.layer3.moveCenter(vw);
-	    this.layer3.moveAll(vw);
+	    this.world.moveAll(vw);
 	}
 	if (this.player.running) {
 	    this.player.moveIfPossible3(new Vec3(v.x, v.y, 0), 'fall');

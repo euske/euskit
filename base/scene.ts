@@ -134,24 +134,27 @@ class HTMLScene extends Scene {
 class GameScene extends Scene {
 
     tasklist: TaskList;
+    world: EntityWorld;
     layer: ScrollLayer;
 
     constructor() {
 	super();
 	this.tasklist = new TaskList();
+	this.world = new EntityWorld();
 	this.layer = new ScrollLayer(this.screen);
     }
 
     init() {
 	super.init();
 	this.tasklist.init();
+	this.world.init();
 	this.layer.init();
     }
 
     tick() {
 	super.tick();
 	this.tasklist.tick();
-	this.layer.tick();
+	this.world.tick();
     }
 
     render(ctx: CanvasRenderingContext2D) {
@@ -163,6 +166,9 @@ class GameScene extends Scene {
 	this.tasklist.add(task);
 	if (task instanceof Widget) {
 	    task.layer = this.layer;
+	}
+	if (task instanceof Entity) {
+	    task.world = this.world;
 	}
     }
 
