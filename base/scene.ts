@@ -1,8 +1,8 @@
 /// <reference path="utils.ts" />
 /// <reference path="geom.ts" />
 /// <reference path="task.ts" />
-/// <reference path="entity.ts" />
 /// <reference path="layer.ts" />
+/// <reference path="entity.ts" />
 
 
 //  Scene

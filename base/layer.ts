@@ -1,6 +1,36 @@
 /// <reference path="utils.ts" />
 /// <reference path="geom.ts" />
 /// <reference path="sprite.ts" />
+/// <reference path="task.ts" />
+
+
+//  Widget
+//
+class Widget extends Task {
+
+    layer: Layer = null;
+    
+    chain(task: Task): Task {
+	if (task instanceof Widget) {
+	    task.layer = this.layer;
+	}
+	return super.chain(task);
+    }
+
+    init() {
+	super.init();
+	this.layer.addWidget(this);
+    }
+
+    stop() {
+	this.layer.removeWidget(this);
+	super.stop();
+    }
+
+    getSprites(): Sprite[] {
+	return [];
+    }
+}
 
 
 //  Layer
