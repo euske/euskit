@@ -208,6 +208,7 @@ class TiledImageSource implements ImageSource {
 
 /** Internal object that represents a star. */
 class Star {
+    imgsrc: ImageSource;
     z: number;
     s: number;
     p: Vec2;
@@ -228,20 +229,21 @@ class StarImageSource implements ImageSource {
     /** Maximum depth of stars. */
     maxdepth: number;
     /** Image source to be used as a single star. */
-    imgsrc: ImageSource;
+    imgsrcs: ImageSource[];
     
     private _stars: Star[] = [];
 
     constructor(bounds: Rect, nstars: number,
-		maxdepth=3, imgsrc: ImageSource=null) {
+		maxdepth=3, imgsrcs: ImageSource[]=null) {
 	this.bounds = bounds
 	this.maxdepth = maxdepth;
-	if (imgsrc === null) {
-	    imgsrc = new RectImageSource('white', new Rect(0,0,1,1));
+	if (imgsrcs === null) {
+	    imgsrcs = [new RectImageSource('white', new Rect(0,0,1,1))];
 	}
-	this.imgsrc = imgsrc;
+	this.imgsrcs = imgsrcs;
 	for (let i = 0; i < nstars; i++) {
 	    let star = new Star();
+	    star.imgsrc = choice(imgsrcs);
 	    star.init(this.maxdepth);
 	    star.p = this.bounds.rndPt();
 	    this._stars.push(star);
@@ -255,18 +257,16 @@ class StarImageSource implements ImageSource {
 
     /** Renders this image in the given context. */
     render(ctx: CanvasRenderingContext2D) {
-	if (this.imgsrc !== null) {
+	ctx.save();
+	ctx.translate(int(this.bounds.x), int(this.bounds.y));
+	for (let star of this._stars) {
 	    ctx.save();
-	    ctx.translate(int(this.bounds.x), int(this.bounds.y));
-	    for (let star of this._stars) {
-		ctx.save();
-		ctx.translate(star.p.x, star.p.y);
-		ctx.scale(star.s, star.s);
-		this.imgsrc.render(ctx);
-		ctx.restore();
-	    }
+	    ctx.translate(star.p.x, star.p.y);
+	    ctx.scale(star.s, star.s);
+	    star.imgsrc.render(ctx);
 	    ctx.restore();
 	}
+	ctx.restore();
     }
     
     /** Moves the stars by the given offset. */
@@ -277,7 +277,7 @@ class StarImageSource implements ImageSource {
 	    let rect = star.p.expand(star.s, star.s);
 	    if (!this.bounds.overlapsRect(rect)) {
 		star.init(this.maxdepth);
-		star.p = this.bounds.modpt(star.p);
+		star.p = this.bounds.modPt(star.p);
 	    }
 	}
     }
@@ -361,15 +361,13 @@ class ImageSpriteSheet extends SpriteSheet {
 }
 
 
-/** Object that has a size and z-order and draws itself on screen.
+/** Object that has a size and rotation and draws itself on screen.
  *  It can also interact with mouse/touch.
  */
 class Sprite {
 
     /** True if this sprite is rendered. */
     visible: boolean = true;
-    /** Z-Order of the sprite. */
-    zOrder: number = 0;
     /** Image scaling. Negative values can be used for flipped images. */
     scale: Vec2 = new Vec2(1, 1);
     /** Image rotation (in radian). */

@@ -36,9 +36,9 @@ enum T {
 addInitHook(() => {
     //PlanningEntity.debug = true;
     SPRITES = new ImageSpriteSheet(
-	IMAGES['sprites'], new Vec2(32,32), new Vec2(16,16));
+	APP.images['sprites'], new Vec2(32,32), new Vec2(16,16));
     TILES = new ImageSpriteSheet(
-	IMAGES['tiles'], new Vec2(48,48), new Vec2(0,16));
+	APP.images['tiles'], new Vec2(48,48), new Vec2(0,16));
 });
 const JUMPFUNC = (vy:number, t:number) => {
     return (0 <= t && t <= 6)? -8 : vy+2;

@@ -37,7 +37,6 @@ class Layer {
 
     addSprite(sprite: Sprite) {
 	this.sprites.push(sprite);
-	this.sprites.sort((a:Sprite, b:Sprite) => { return a.zOrder-b.zOrder; });
     }
 
     removeSprite(sprite: Sprite) {

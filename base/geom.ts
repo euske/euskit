@@ -693,7 +693,7 @@ class Rect implements Shape {
 	return new Vec2(this.x+this.width, this.y+v);
     }
     
-    modpt(p: Vec2): Vec2 {
+    modPt(p: Vec2): Vec2 {
 	return new Vec2(this.x+fmod(p.x-this.x, this.width),
 			this.y+fmod(p.y-this.y, this.height));
     }

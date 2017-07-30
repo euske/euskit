@@ -17,9 +17,9 @@
 let FONT: Font;
 let SPRITES:ImageSpriteSheet;
 addInitHook(() => {
-    FONT = new Font(IMAGES['font'], 'white');
+    FONT = new Font(APP.images['font'], 'white');
     SPRITES = new ImageSpriteSheet(
-	IMAGES['sprites'], new Vec2(16,32), new Vec2(0,0));
+	APP.images['sprites'], new Vec2(16,32), new Vec2(0,0));
 });
 
 
@@ -164,7 +164,7 @@ class Racing extends GameScene {
 
 	this.score = 0;
 	this.updateScore();
-	APP.setMusic(AUDIOS['music'], 0, 19.1);
+	APP.setMusic('music', 0, 19.1);
     }
 
     update() {

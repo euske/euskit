@@ -256,11 +256,11 @@ let TILES: SpriteSheet;
 let isBlock = (c:number) => { return c == T.BLOCK; };
 let isWall = (c:number) => { return c == T.WALL; };
 addInitHook(() => {
-    FONT = new ShadowFont(IMAGES['font'], 'white'),
+    FONT = new ShadowFont(APP.images['font'], 'white'),
     SPRITES = new ImageSpriteSheet(
-	IMAGES['sprites'], new Vec2(32,32), new Vec2(16,16));
+	APP.images['sprites'], new Vec2(32,32), new Vec2(16,16));
     TILES = new ImageSpriteSheet(
-	IMAGES['tiles'], new Vec2(48,48), new Vec2(0,8));
+	APP.images['tiles'], new Vec2(48,48), new Vec2(0,8));
 });
 
 
@@ -274,7 +274,6 @@ class Thingy extends Entity3d {
 	super(pos);
 	this.sprite3.imgsrc = SPRITES.get(S.THINGY);
 	this.sprite3.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
-	this.sprite3.zOrder = 0;
 	this.collider = this.sprite3.getBounds(new Vec2()).inflate(-4, -4);
 	this.z = 4;
     }
@@ -300,7 +299,6 @@ class Player extends Entity3d {
 	this.picked = new Signal(this);
 	this.sprite3.imgsrc = SPRITES.get(S.PLAYER)
 	this.sprite3.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
-	this.sprite3.zOrder = 1;
 	this.collider = this.sprite3.getBounds(new Vec2()).inflate(-4, -4);
 	this.depth = scene.tilemap.tilesize;
 	this.maxspeed3 = new Vec3(16, 16, 16);
@@ -470,7 +468,6 @@ class Game extends Scene {
     onPicked(entity: Entity) {
 	let yay = new Projectile(entity.pos.move(0,-16));
 	yay.imgsrc = SPRITES.get(S.YAY);
-	yay.sprite.zOrder = 2;
 	yay.movement = new Vec2(0,-4);
 	yay.lifetime = 0.5;
 	this.add(yay);

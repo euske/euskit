@@ -7,10 +7,28 @@
 /** Initial gap of lame-encded MP3 files */
 const MP3_GAP = 0.025;
 
+interface ImageAsset {
+    [index: string]: HTMLImageElement;
+}
+interface AudioAsset {
+    [index: string]: HTMLAudioElement;
+}
+interface TextAsset {
+    [index: string]: HTMLDivElement;
+}
+
+function getprops(a: NodeListOf<Element>) {
+    let d:any = {};
+    for (let i = 0; i < a.length; i++) {
+	d[a[i].id] = a[i];
+    }
+    return d;
+}
+  
 
 //  App
 //  handles the event loop and global state management.
-//  It also has shared resources (images, audios, etc.)
+//  It also has shared resources (images, sounds, etc.)
 //
 class App {
 
@@ -22,6 +40,10 @@ class App {
     ctx: CanvasRenderingContext2D;
     audio: AudioContext;
 
+    images: ImageAsset;
+    sounds: AudioAsset;
+    labels: TextAsset;
+    
     scene: Scene = null;
     active: boolean = false;
     keys: { [index: number]: boolean } = {};
@@ -53,6 +75,11 @@ class App {
 	} catch (e) {
 	    this.audio = null;
 	}
+
+	// Resources;
+	this.images = getprops(document.getElementsByTagName('img')) as ImageAsset;
+	this.sounds = getprops(document.getElementsByTagName('audio')) as AudioAsset;
+	this.labels = getprops(document.getElementsByClassName('label')) as TextAsset;
     }
 
     init(scene: Scene) {
@@ -86,21 +113,6 @@ class App {
 	this._keylock = getTime()+t;
     }
 
-    setMusic(music: HTMLAudioElement=null, start=0, end=0) {
-	if (this._music !== null) {
-	    this._music.pause();
-	}
-	this._music = music;
-	this._loop_start = start;
-	this._loop_end = end;
-	if (this._music !== null) {
-	    if (0 < this._music.readyState) { // for IE bug
-		this._music.currentTime = MP3_GAP;
-	    }
-	    this._music.play();
-	}
-    }
-  
     keyDown(ev: KeyboardEvent) {
 	if (0 < this._keylock) return;
 	let keysym = getKeySym(ev.keyCode);
@@ -291,56 +303,53 @@ class App {
 	this.ctx.restore();
     }
 
+    setMusic(name: string=null, start=MP3_GAP, end=0) {
+	if (this._music !== null) {
+	    this._music.pause();
+	}
+	if (name === null) {
+	    this._music = null;
+	} else {
+	    let sound = this.sounds[name];
+	    this._loop_start = start;
+	    this._loop_end = (end < 0)? sound.duration : end;
+	    if (0 < sound.readyState) { // for IE bug
+		sound.currentTime = MP3_GAP;
+	    }
+	    this._music = sound;
+	    this._music.play();
+	}
+    }
+  
     /** Play a sound resource. 
      * @param sound Sound name.
      * @param start Start position.
      */
     playSound(name: string, start=MP3_GAP) {
-	let elem = AUDIOS[name];
+	let elem = this.sounds[name];
 	elem.currentTime = start;
 	elem.play();
     }
 }
 
 
-//  Global asset variables.
-interface ImageAsset {
-    [index: string]: HTMLImageElement;
-}
-interface AudioAsset {
-    [index: string]: HTMLAudioElement;
-}
-interface TextAsset {
-    [index: string]: HTMLDivElement;
-}
+//  Global hook.
 interface InitHook {
     (): any;
 }
-
-var IMAGES: ImageAsset = {};
-var AUDIOS: AudioAsset = {};
-var TEXTS: TextAsset = {};
 var HOOKS: InitHook[] = [];
-var APP: App = null;
-
 // addInitHook: adds an initialization hoook.
 function addInitHook(hook: InitHook) {
     HOOKS.push(hook);
 }
+
+var APP: App = null;
 
 // main: sets up the browser interaction.
 function main<T extends Scene>(
     scene0: { new():T; },
     width=320, height=240, elemId='game', framerate=30)
 {
-    function getprops(a: NodeListOf<Element>) {
-	let d:any = {};
-	for (let i = 0; i < a.length; i++) {
-	    d[a[i].id] = a[i];
-	}
-	return d;
-    }
-  
     let elem = document.getElementById(elemId);
     let size = new Vec2(width, height);
     let app = new App(size, framerate, elem);
@@ -486,12 +495,9 @@ function main<T extends Scene>(
     }
 
     APP = app;
-    IMAGES = getprops(document.getElementsByTagName('img')) as ImageAsset;
-    AUDIOS = getprops(document.getElementsByTagName('audio')) as AudioAsset;
-    TEXTS = getprops(document.getElementsByClassName('label')) as TextAsset;
     if (APP.audio !== null) {
-	for (let id in AUDIOS) {
-	    let source = APP.audio.createMediaElementSource(AUDIOS[id]);
+	for (let id in APP.sounds) {
+	    let source = APP.audio.createMediaElementSource(APP.sounds[id]);
 	    source.connect(APP.audio.destination);
 	}
     }

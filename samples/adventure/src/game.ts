@@ -14,8 +14,8 @@
 let FONT: Font;
 let HIFONT: Font;
 addInitHook(() => {
-    FONT = new Font(IMAGES['font'], 'white');
-    HIFONT = new InvertedFont(IMAGES['font'], 'white');
+    FONT = new Font(APP.images['font'], 'white');
+    HIFONT = new InvertedFont(APP.images['font'], 'white');
 });
 
 
@@ -112,7 +112,7 @@ class PictureScene extends GameScene {
 class Scene1 extends PictureScene {
     constructor() {
 	super();
-	this.image1 = IMAGES['scene1'];
+	this.image1 = APP.images['scene1'];
     }
     init() {
 	super.init();
@@ -134,7 +134,7 @@ class Scene1 extends PictureScene {
 class Scene2 extends PictureScene {
     constructor() {
 	super();
-	this.image1 = IMAGES['scene2'];
+	this.image1 = APP.images['scene2'];
     }
     init() {
 	super.init();
@@ -156,7 +156,7 @@ class Scene2 extends PictureScene {
 class Scene3 extends PictureScene {
     constructor() {
 	super();
-	this.image1 = IMAGES['scene3'];
+	this.image1 = APP.images['scene3'];
     }
     init() {
 	super.init();
