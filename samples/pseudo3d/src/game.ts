@@ -5,7 +5,7 @@
 /// <reference path="../../../base/scene.ts" />
 /// <reference path="../../../base/app.ts" />
 
-//  Isometric
+//  Pseudo3d
 //
 //  A advanced example that extends Entity class to handle
 //  pseudo-3d objects.
