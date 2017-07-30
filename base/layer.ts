@@ -9,6 +9,7 @@
 class Layer {
 
     sprites: Sprite[] = [];
+    widgets: Widget[] = [];
     entities: Entity[] = [];
     
     mouseFocus: Sprite = null;
@@ -26,6 +27,7 @@ class Layer {
   
     init() {
 	this.sprites = [];
+	this.widgets = [];
 	this.entities = [];
 	this.mouseFocus = null;
 	this.mouseActive = null;
@@ -43,6 +45,14 @@ class Layer {
 	removeElement(this.sprites, sprite);
     }
 
+    addWidget(widget: Widget) {
+	this.widgets.push(widget);
+    }
+
+    removeWidget(widget: Widget) {
+	removeElement(this.widgets, widget);
+    }
+
     addEntity(entity: Entity) {
 	this.entities.push(entity);
     }
@@ -51,8 +61,21 @@ class Layer {
 	removeElement(this.entities, entity);
     }
 
-    render(ctx: CanvasRenderingContext2D) {
+    getAllSprites(): Sprite[] {
+	let sprites = [];
+	for (let widget of this.widgets) {
+	    for (let sprite of widget.getSprites()) {
+		sprites.push(sprite);
+	    }
+	}
 	for (let sprite of this.sprites) {
+	    sprites.push(sprite);
+	}
+	return sprites;
+    }
+
+    render(ctx: CanvasRenderingContext2D) {
+	for (let sprite of this.getAllSprites()) {
 	    if (sprite.visible) {
 		sprite.render(ctx);
 	    }
@@ -198,7 +221,7 @@ class ScrollLayer extends Layer {
     render(ctx: CanvasRenderingContext2D) {
 	ctx.save();
 	ctx.translate(-this.window.x, -this.window.y);
-	for (let sprite of this.sprites) {
+	for (let sprite of this.getAllSprites()) {
 	    if (sprite.visible) {
 		let bounds = sprite.getBounds()
 		if (bounds === null || bounds.overlaps(this.window)) {

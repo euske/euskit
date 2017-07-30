@@ -175,7 +175,7 @@ class ScrollLayer3 extends ScrollLayer {
 
 	// Set the drawing order.
 	let sprites = {} as SpriteDictionary;
-	for (let sprite of this.sprites) {
+	for (let sprite of this.getAllSprites()) {
 	    if (sprite.visible) {
 		let bounds = sprite.getBounds();
 		if (bounds !== null && bounds.overlapsRect(window)) {
@@ -219,7 +219,7 @@ class ScrollLayer3 extends ScrollLayer {
 	ctx.restore();
 	
 	// Draw floating objects.
-	for (let sprite of this.sprites) {
+	for (let sprite of this.getAllSprites()) {
 	    if (sprite.visible) {
 		let bounds = sprite.getBounds();
 		if (bounds === null) {

@@ -105,21 +105,15 @@ class Blinker extends Widget {
 	super();
 	this.sprite = sprite;
     }
-    
-    init() {
-	super.init();
+
+    getSprites(): Sprite[] {
+	let sprites = super.getSprites();
 	if (this.sprite !== null) {
-	    this.layer.addSprite(this.sprite);
+	    sprites.push(this.sprite);
 	}
+	return sprites;
     }
 
-    stop() {
-	if (this.sprite !== null) {
-	    this.layer.removeSprite(this.sprite);
-	}
-	super.stop();
-    }
-    
     update() {
 	super.update();
 	this.sprite.visible = (phase(this.getTime(), this.interval) == 0);

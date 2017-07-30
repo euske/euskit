@@ -357,16 +357,14 @@ class BannerBox extends Widget {
 	this.sprite = new FixedSprite(this.textbox);
     }
 
-    init() {
-	super.init();
-	this.layer.addSprite(this.sprite);
+    getSprites(): Sprite[] {
+	let sprites = super.getSprites();
+	if (this.sprite !== null) {
+	    sprites.push(this.sprite);
+	}
+	return sprites;
     }
 
-    stop() {
-	this.layer.removeSprite(this.sprite);
-	super.stop();
-    }
-    
     update() {
 	super.update();
 	if (0 < this.interval) {

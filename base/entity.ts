@@ -17,6 +17,20 @@ class Widget extends Task {
 	}
 	return super.chain(task);
     }
+
+    init() {
+	super.init();
+	this.layer.addWidget(this);
+    }
+
+    stop() {
+	this.layer.removeWidget(this);
+	super.stop();
+    }
+
+    getSprites(): Sprite[] {
+	return [];
+    }
 }
 
 
@@ -43,15 +57,9 @@ class Entity extends Widget {
     init() {
 	super.init();
 	this.layer.addEntity(this);
-	if (this.sprite !== null) {
-	    this.layer.addSprite(this.sprite);
-	}
     }
 
     stop() {
-	if (this.sprite !== null) {
-	    this.layer.removeSprite(this.sprite);
-	}
 	this.layer.removeEntity(this);
 	super.stop();
     }
@@ -103,6 +111,14 @@ class Entity extends Widget {
 	v = this.getMove(this.pos, v, context);
 	this.movePos(v);
 	return v;
+    }
+
+    getSprites(): Sprite[] {
+	let sprites = super.getSprites();
+	if (this.sprite !== null) {
+	    sprites.push(this.sprite);
+	}
+	return sprites;
     }
 
     renderExtra(ctx: CanvasRenderingContext2D) {
