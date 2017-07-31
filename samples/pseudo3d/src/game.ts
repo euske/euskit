@@ -24,9 +24,9 @@ function getContact3(hitbox: Box, v: Vec3, obstacles: Box[])
 }
 
 
-//  Sprite3d
+//  EntitySprite3d
 //
-class Sprite3d extends SimpleSprite {
+class EntitySprite3d extends SimpleSprite {
 
     entity: Entity3d;
     shadow: HTMLImageSource = null;
@@ -67,15 +67,12 @@ class Sprite3d extends SimpleSprite {
 		    dstRect.width-d*2, dstRect.height-d*2);
 	    }
 	}
-	if (this.imgsrc !== null) {
-	    ctx.translate(0, -z/2);
-	    if (this.rotation) {
-		ctx.rotate(this.rotation);
-	    }
-	    ctx.scale((0 < this.scale.x)? 1 : -1,
-		      (0 < this.scale.y)? 1 : -1);
-	    this.imgsrc.render(ctx);
+	ctx.translate(0, -z/2);
+	if (this.rotation) {
+	    ctx.rotate(this.rotation);
 	}
+	ctx.scale(this.scale.x, this.scale.y);
+	this.renderImage(ctx);
 	ctx.restore();
     }
 }
@@ -85,7 +82,7 @@ class Sprite3d extends SimpleSprite {
 //
 class Entity3d extends Entity {
 
-    sprite3: Sprite3d;
+    sprite3: EntitySprite3d;
     depth: number = 0;
 
     z: number = 0;
@@ -94,7 +91,7 @@ class Entity3d extends Entity {
     
     constructor(pos: Vec2) {
 	super(pos);
-	this.sprite3 = new Sprite3d(this);
+	this.sprite3 = new EntitySprite3d(this);
 	this.sprite = this.sprite3;
     }
     
@@ -200,11 +197,10 @@ class ScrollLayer3 extends ScrollLayer {
 	    ctx, window,
 	    (x,y,c) => {
 		ctx.save();
-		ctx.translate(-window.x, -window.y);
 		let k = x+','+y;
 		if (sprites.hasOwnProperty(k)) {
 		    for (let sprite of sprites[k]) {
-			if (sprite instanceof Sprite3d) {
+			if (sprite instanceof EntitySprite3d) {
 			    if (!sprite.floating) {
 				sprite.render3(ctx);
 			    }
@@ -227,7 +223,7 @@ class ScrollLayer3 extends ScrollLayer {
 		} else if (bounds.overlaps(window)) {
 		    ctx.save();
 		    ctx.translate(-ts-window.x, -window.y);
-		    if (sprite instanceof Sprite3d) {
+		    if (sprite instanceof EntitySprite3d) {
 			if (sprite.floating) {
 			    sprite.render3(ctx);
 			}
