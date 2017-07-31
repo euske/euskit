@@ -388,7 +388,7 @@ class Game extends Scene {
     tilemap: TileMap;
     tasklist: TaskList;
     world: EntityWorld;
-    layer: Layer;
+    layer: SpriteLayer;
     layer3: ScrollLayer3;
     player: Player;
     score: number;
@@ -402,7 +402,7 @@ class Game extends Scene {
 	));
 	this.tasklist = new TaskList();
 	this.world = new EntityWorld();
-	this.layer = new Layer();
+	this.layer = new SpriteLayer();
 	this.layer3 = new ScrollLayer3(this.tilemap.bounds);
 	this.layer3.tilemap = this.tilemap;
 	this.layer3.tiles = TILES;

@@ -8,7 +8,7 @@
 //
 class Widget extends Task {
 
-    layer: Layer = null;
+    layer: SpriteLayer = null;
     
     chain(task: Task, signal: Signal=null): Task {
 	if (task instanceof Widget) {
@@ -33,9 +33,9 @@ class Widget extends Task {
 }
 
 
-//  Layer
+//  SpriteLayer
 // 
-class Layer {
+class SpriteLayer {
 
     sprites: Sprite[] = [];
     widgets: Widget[] = [];
@@ -49,7 +49,7 @@ class Layer {
     }
 
     toString() {
-	return ('<Layer: sprites='+this.sprites+'>');
+	return ('<SpriteLayer: sprites='+this.sprites+'>');
     }
   
     init() {
@@ -97,8 +97,10 @@ class Layer {
     }
 
     findSpriteAt(p: Vec2) {
-	for (let i = this.sprites.length-1; 0 <= i; i--) {
-	    let sprite = this.sprites[i]; // from reversed order.
+	let sprites = this.getAllSprites();
+	// check in the reversed order.
+	for (let i = sprites.length-1; 0 <= i; i--) {
+	    let sprite = sprites[i];
 	    if (sprite.mouseSelectable(p)) {
 		return sprite;
 	    }
@@ -134,7 +136,7 @@ class Layer {
 
 //  ScrollLayer
 // 
-class ScrollLayer extends Layer {
+class ScrollLayer extends SpriteLayer {
 
     window: Rect;
 
