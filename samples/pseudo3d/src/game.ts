@@ -26,34 +26,22 @@ function getContact3(hitbox: Box, v: Vec3, obstacles: Box[])
 
 //  EntitySprite3d
 //
-class EntitySprite3d extends SimpleSprite {
+class EntitySprite3d extends EntitySprite {
 
-    entity: Entity3d;
-    shadow: HTMLImageSource = null;
     shadowz: number = 0;
     floating: boolean = false;
     
-    constructor(entity: Entity3d, imgsrc: ImageSource=null) {
-	super(imgsrc);
-	this.entity = entity;
-    }
-
-    getBounds(pos: Vec2=null) {
-	if (this.imgsrc !== null) {
-	    if (pos === null) {
-		pos = this.entity.pos;
-	    }
-	    return this.imgsrc.getBounds().add(pos);
-	}
-	return null;
+    constructor(entity: Entity3d) {
+	super(entity);
     }
 
     render3(ctx: CanvasRenderingContext2D) {
+	let entity3 = this.entity as Entity3d;
 	let pos = this.entity.pos;
-	let z = this.entity.z;
+	let z = entity3.z;
 	ctx.save();
 	ctx.translate(int(pos.x), int(pos.y));
-	let shadow = this.shadow;
+	let shadow = entity3.shadow;
 	if (shadow !== null) {
 	    // Render the shadow first.
 	    let srcRect = shadow.srcRect;
@@ -83,6 +71,7 @@ class EntitySprite3d extends SimpleSprite {
 class Entity3d extends Entity {
 
     sprite3: EntitySprite3d;
+    shadow: HTMLImageSource = null;
     depth: number = 0;
 
     z: number = 0;
@@ -268,13 +257,11 @@ addInitHook(() => {
 //  Thingy
 //
 class Thingy extends Entity3d {
-    
-    shadow: HTMLImageSource;
 
     constructor(scene: Game, pos: Vec2) {
 	super(pos);
-	this.sprite3.imgsrc = SPRITES.get(S.THINGY);
-	this.sprite3.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
+	this.imgsrc = SPRITES.get(S.THINGY);
+	this.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
 	this.collider = this.sprite3.getBounds(new Vec2()).inflate(-4, -4);
 	this.z = 4;
     }
@@ -298,8 +285,8 @@ class Player extends Entity3d {
 	super(pos);
 	this.scene = scene;
 	this.picked = new Signal(this);
-	this.sprite3.imgsrc = SPRITES.get(S.PLAYER)
-	this.sprite3.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
+	this.imgsrc = SPRITES.get(S.PLAYER);
+	this.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
 	this.collider = this.sprite3.getBounds(new Vec2()).inflate(-4, -4);
 	this.depth = scene.tilemap.tilesize;
 	this.maxspeed3 = new Vec3(16, 16, 16);
