@@ -108,27 +108,32 @@ class SoundTask extends Task {
     /** Sound object to play. */
     sound: HTMLAudioElement;
     /** Start time of the sound. */
-    startTime: number;
+    soundStart: number;
+    /** End time of the sound. */
+    soundEnd: number;
     
     /** Constructor.
      * @param sound Sound object to play.
-     * @param startTime Start time of the sound.
+     * @param soundStart Start time of the sound.
      */
-    constructor(sound: HTMLAudioElement, startTime: number=MP3_GAP) {
+    constructor(sound: HTMLAudioElement, soundStart=MP3_GAP, soundEnd=0) {
 	super();
 	this.sound = sound;
-	this.startTime = startTime;
+	this.soundStart = soundStart;
+	this.soundEnd = soundEnd;
     }
 
     init() {
 	super.init();
-	this.sound.currentTime = this.startTime;
+	this.sound.currentTime = this.soundStart;
 	this.sound.play();
     }
 
     update() {
 	super.update();
-	if (this.sound.ended) {
+	if (0 < this.soundEnd && this.soundEnd <= this.sound.currentTime) {
+	    this.stop();
+	} else if (this.sound.ended) {
 	    this.stop();
 	}
     }
