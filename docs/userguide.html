@@ -9,6 +9,7 @@ h3 { border-bottom: 1pt solid; }
 table { border-collapse: collapse; }
 td { padding: 2px; }
 a { font-weight: bold; }
+.p { width: 40em; }
 .inherited { background: #cccccc; }
 .overridable { background: #ccffcc; }
 </style>
@@ -16,6 +17,64 @@ a { font-weight: bold; }
 </head>
 <body>
 <h1><a href="https://github.com/euske/euskit">Euskit</a> User Guide</h1>
+
+<h2>Introduction</h2>
+<p class=p>
+Euskit (you-skit) is a game engine for HTML5/Web games made by Yusuke
+Shinyama. It is specifically made for making retro-looking 2D games
+with pixel art. Growing up in 80s in Japan, those arcade games have
+always a special place in me. Euskit was my answer to headstart the
+initial development process at a game jam. The engine is licensed
+unser MIT License.
+
+<h2>Key Concepts</h2>
+<h3>App / Scene</h3>
+<p class=p>
+Every Euskit game has exactly one <code>App</code> object.
+It does the basic pluming and resource management; it has
+an event loop and connect all the external parts (i.e. a browser)
+to the game. Typically, you don't have to change this part.
+<p class=p>
+A <code>Scene</code> is a mini-app within the <code>App</code>.  It's
+pretty much an event handler that manages the in-game state. When
+you're making a game with Euskit, what you design is pretty much 
+a new <code>Scene</code>.  Euskit supports
+multiple <code>Scene</code>s. When there are several parts of a game
+whose interaction is drastically different from each other, having
+multiple <code>Scene</code>s and switching between them is more
+convenient. But you can also create an entire game with just
+one <code>Scene</code>.
+
+<h3>Task / Entity / Sprite</h3>
+<p class=p>
+An <code>Entity</code> is a bit like a GameObject in Unity. It has its
+own process, <code>Collider</code> and skin. Once you place an <code>Entity</code>
+in the game world, it moves on its own. Unlike Unity, however, Euskit 
+uses a traditional hierarchical class system instead of components.  
+Actually, an <code>Entity</code> is a subclass of <code>Task</code>, 
+which is registered at <code>TaskList</code>. Collision handling
+and rendering is handled by <code>Collider</code> and <code>Sprite</code>,
+both of which are contained by an <code>Entity</code>.
+<p class=p>
+<code>Sprite</code> is worth mentioning. As its name suggests,
+a <code>Sprite</code> has what's displayed on screen.
+Each <code>Sprite</code> has its locations, rotation and scaling as
+well as its contents. However <code>Sprite</code> is only concerned
+for painting some stuff on screen at a moment.  It doesn't know how to
+change them. Its job is taken care of by <code>Entity</code>.
+
+<ul>
+<li> <code>TaskList</code>
+<li> <code>EntityWorld</code>
+<li> <code>SpriteLayer</code>
+</ul>
+
+<h2>Basic Tasks</h2>
+<h3>Showing / Moving stuff</h3>
+<h3>Handling Collision</h3>
+<h3>Handling User Input</h3>
+<h3>State Management</h3>
+
 
 <h2><a name="howtocreate">1. Project Lifecycle</a></h2>
 <ol>
