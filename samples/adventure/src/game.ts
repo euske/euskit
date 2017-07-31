@@ -35,7 +35,7 @@ class PictureScene extends GameScene {
 	let padding = 8;
 	let width = this.screen.width-16;
 	let height = (lineHeight+lineSpace)*6-lineSpace+padding*2;
-	let rect = this.screen.resize(width, height, 0, -1).move(0,-8);
+	let rect = this.screen.resize(width, height, 's').move(0,-8);
 	let textbox = new TextBox(rect, FONT);
 	textbox.padding = padding;
 	textbox.lineSpace = lineSpace;

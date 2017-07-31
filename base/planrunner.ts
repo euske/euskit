@@ -440,15 +440,15 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 	    return false;
 	}
 	// Extra care is needed not to allow the following case:
-	//      .#
+	//      .# [rect1]
 	//    +--+
 	//    |  |  (this is impossiburu!)
 	//    +-X+
-	//       #
+	//       # [rect2]
 	let rect = this.tilemap.coord2map(hb1);
 	let dx = sign(p1.x - p0.x);
-	let rect1 = rect.anchor(dx, -1).expand(1, 1, -dx, -1);
-	let rect2 = rect.anchor(dx, +1).expand(1, 1, -dx, +1);
+	let rect1 = (0 < dx)? rect.resize(1, 1, 'ne') : rect.resize(1, 1, 'nw');
+	let rect2 = (0 < dx)? rect.resize(1, 1, 'se') : rect.resize(1, 1, 'sw');
 	if (this.obstacle.exists(rect1) &&
 	    !this.obstacle.exists(rect1.move(-dx,0)) &&
 	    this.obstacle.exists(rect2)) {

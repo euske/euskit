@@ -123,11 +123,10 @@ class Vec2 {
     /** Create a new rectangle based on this point. 
      * @param dw Width.
      * @param dh Height.
-     * @param vx Anchor point X.
-     * @param vy Anchor point Y.
+     * @param anchor Anchor point.
      */
-    expand(dw: number, dh: number, vx=0, vy=0): Rect {
-	return new Rect(this.x, this.y).expand(dw, dh, vx, vy);
+    expand(dw: number, dh: number, anchor='c'): Rect {
+	return new Rect(this.x, this.y).expand(dw, dh, anchor);
     }
     
 }
@@ -541,61 +540,74 @@ class Rect implements Shape {
 	return new Rect(this.x, this.y, this.width*n, this.height*n);
     }
     
-    anchor(vx=0, vy=0): Vec2 {
-	let x: number, y: number;
-	if (vx < 0) {
-	    x = this.x;
-	} else if (0 < vx) {
-	    x = this.x+this.width;
-	} else {
-	    x = this.x+this.width/2;
+    anchor(anchor: string): Vec2 {
+	switch (anchor) {
+	case 'nw':
+	    return new Vec2(this.x, this.y);
+	case 'ne':
+	    return new Vec2(this.x+this.width, this.y);
+	case 'sw':
+	    return new Vec2(this.x, this.y+this.height);
+	case 'se':
+	    return new Vec2(this.x+this.width, this.y+this.height);
+	case 'n':
+	    return new Vec2(this.x+this.width/2, this.y);
+	case 's':
+	    return new Vec2(this.x+this.width/2, this.y+this.height);
+	case 'e':
+	    return new Vec2(this.x, this.y+this.height/2);
+	case 'w':
+	    return new Vec2(this.x+this.width, this.y+this.height/2);
+	default:
+	    return new Vec2(this.x+this.width/2, this.y+this.height/2);
 	}
-	if (vy < 0) {
-	    y = this.y;
-	} else if (0 < vy) {
-	    y = this.y+this.height;
-	} else {
-	    y = this.y+this.height/2;
-	}
-	return new Vec2(x, y);
     }
     
-    expand(dw: number, dh: number, vx=0, vy=0): Rect {
-	let x: number, y: number;
-	if (0 < vx) {
-	    x = this.x;
-	} else if (vx < 0) {
-	    x = this.x-dw;
-	} else {
-	    x = this.x-dw/2;
+    expand(dw: number, dh: number, anchor='c'): Rect {
+	switch (anchor) {
+	case 'nw':
+	    return new Rect(this.x, this.y, this.width+dw, this.height+dh);
+	case 'ne':
+	    return new Rect(this.x-dw, this.y, this.width+dw, this.height+dh);
+	case 'sw':
+	    return new Rect(this.x, this.y-dh, this.width+dw, this.height+dh);
+	case 'se':
+	    return new Rect(this.x-dw, this.y-dh, this.width+dw, this.height+dh);
+	case 'n':
+	    return new Rect(this.x-dw/2, this.y, this.width+dw, this.height+dh);
+	case 's':
+	    return new Rect(this.x-dw/2, this.y-dh, this.width+dw, this.height+dh);
+	case 'e':
+	    return new Rect(this.x-dw, this.y-dh/2, this.width+dw, this.height+dh);
+	case 'w':
+	    return new Rect(this.x, this.y-dh/2, this.width+dw, this.height+dh);
+	default:
+	    return new Rect(this.x-dw/2, this.y-dh/2, this.width+dw, this.height+dh);
 	}
-	if (0 < vy) {
-	    y = this.y;
-	} else if (vy < 0) {
-	    y = this.y-dh;
-	} else {
-	    y = this.y-dh/2;
-	}
-	return new Rect(x, y, this.width+dw, this.height+dh);
     }
     
-    resize(w: number, h: number, vx=0, vy=0): Rect {
-	let x: number, y: number;
-	if (0 < vx) {
-	    x = this.x;
-	} else if (vx < 0) {
-	    x = this.x+this.width-w;
-	} else {
-	    x = this.x+(this.width-w)/2;
+    resize(w: number, h: number, anchor='c'): Rect {
+	switch (anchor) {
+	case 'nw':
+	    return new Rect(this.x, this.y, w, h);
+	case 'ne':
+	    return new Rect(this.x+this.width-w, this.y, w, h);
+	case 'sw':
+	    return new Rect(this.x, this.y+this.height-h, w, h);
+	case 'se':
+	    return new Rect(this.x+this.width-w, this.y+this.height-h, w, h);
+	case 'n':
+	    return new Rect(this.x+(this.width-w)/2, this.y, w, h);
+	case 's':
+	    return new Rect(this.x+(this.width-w)/2, this.y+this.height-h, w, h);
+	case 'e':
+	    return new Rect(this.x, this.y+(this.height-h)/2, w, h);
+	case 'w':
+	    return new Rect(this.x+this.width-w, this.y+(this.height-h)/2, w, h);
+	default:
+	    return new Rect(this.x+(this.width-w)/2,
+			    this.y+(this.height-h)/2, w, h);
 	}
-	if (0 < vy) {
-	    y = this.y;
-	} else if (vy < 0) {
-	    y = this.y+this.height-h;
-	} else {
-	    y = this.y+(this.height-h)/2;
-	}
-	return new Rect(x, y, w, h);
     }
     
     xdistance(rect: Rect): number {
