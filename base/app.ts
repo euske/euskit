@@ -38,7 +38,7 @@ class App {
 
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
-    audio: AudioContext;
+    audioContext: AudioContext;
 
     images: ImageAsset;
     sounds: AudioAsset;
@@ -71,9 +71,9 @@ class App {
 
 	// WebAudio!
 	try {
-	    this.audio = new AudioContext();
+	    this.audioContext = new AudioContext();
 	} catch (e) {
-	    this.audio = null;
+	    this.audioContext = null;
 	}
 
 	// Resources;
@@ -495,10 +495,10 @@ function main<T extends Scene>(
     }
 
     APP = app;
-    if (APP.audio !== null) {
+    if (APP.audioContext !== null) {
 	for (let id in APP.sounds) {
-	    let source = APP.audio.createMediaElementSource(APP.sounds[id]);
-	    source.connect(APP.audio.destination);
+	    let source = APP.audioContext.createMediaElementSource(APP.sounds[id]);
+	    source.connect(APP.audioContext.destination);
 	}
     }
     for (let hook of HOOKS) {
