@@ -227,6 +227,26 @@ function image2array(img: HTMLImageElement, header=0): Int32Array[]
     return map;
 }
 
+/** Fill a rectangle.
+ * @param ctx Context to draw.
+ * @param rect Rectangle.
+ */
+function fillRect(
+    ctx: CanvasRenderingContext2D,
+    rect: Rect) {
+    ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
+}
+
+/** Draw a rectangle.
+ * @param ctx Context to draw.
+ * @param rect Rectangle.
+ */
+function strokeRect(
+    ctx: CanvasRenderingContext2D,
+    rect: Rect) {
+    ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
+}
+
 /** Draw a scaled image. 
  *  When the destination width/height is negative, 
  *  the image is flipped.

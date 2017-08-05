@@ -191,8 +191,8 @@ class Vec3 {
     }
     
     /** Returns a new scaled vector by n. */
-    scale(v: number): Vec3 {
-	return new Vec3(this.x*v, this.y*v, this.z*v);
+    scale(n: number): Vec3 {
+	return new Vec3(this.x*n, this.y*n, this.z*n);
     }
     
     /** Returns |this - p|. */
@@ -505,7 +505,19 @@ class Rect implements Shape {
     center(): Vec2 {
 	return new Vec2(this.x+this.width/2, this.y+this.height/2);
     }
-
+    topLeft(): Vec2 {
+	return new Vec2(this.x, this.y);
+    }
+    topRight(): Vec2 {
+	return new Vec2(this.x+this.width, this.y);
+    }
+    bottomLeft(): Vec2 {
+	return new Vec2(this.x, this.y+this.height);
+    }
+    bottomRight(): Vec2 {
+	return new Vec2(this.x+this.width, this.y+this.height);
+    }
+    
     edge(vx: number, vy: number): AALine {
 	if (vx < 0) {
 	    return new AALine(this.x, this.y, this.x, this.y+this.height);
