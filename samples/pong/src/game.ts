@@ -64,9 +64,11 @@ class Ball extends Entity {
 	let pos = this.pos.add(this.v);
 	let bounds = this.getCollider(pos).getAABB();
 	if (bounds.x < 0 || this.screen.right() < bounds.right()) {
+	    APP.playSound('beep');
 	    this.v.x = -this.v.x;
 	}
 	if (bounds.y < 0) {
+	    APP.playSound('beep');
 	    this.v.y = -this.v.y;
 	}
 	this.pos = this.pos.add(this.v);
@@ -75,6 +77,7 @@ class Ball extends Entity {
     collidedWith(entity: Entity) {
 	// Bounces when hit the paddle.
 	if (entity instanceof Paddle) {
+	    APP.playSound('beep');
 	    this.v.y = -4;
 	}
     }
@@ -113,8 +116,7 @@ class Pong extends GameScene {
     render(ctx: CanvasRenderingContext2D) {
 	// Paints the background.
 	ctx.fillStyle = 'rgb(0,0,64)';
-	ctx.fillRect(this.screen.x, this.screen.y,
-		     this.screen.width, this.screen.height);
+	fillRect(ctx, this.screen);
 	// Paints everything else.
 	super.render(ctx);
     }
