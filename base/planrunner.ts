@@ -411,11 +411,11 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 	//      ######
 	let hb0 = this.getGridBoxAt(p0);
 	let hb1 = this.getGridBoxAt(p1);
-	let xc = (hb0.x < hb1.x)? hb0.right() : hb0.x;
+	let xc = (hb0.x < hb1.x)? hb0.x1() : hb0.x;
 	let x0 = Math.min(xc, hb1.x);
-	let x1 = Math.max(xc, hb1.right());
+	let x1 = Math.max(xc, hb1.x1());
 	let y0 = Math.min(hb0.y, hb1.y);
-	let y1 = Math.max(hb0.bottom(), hb1.bottom());
+	let y1 = Math.max(hb0.y1(), hb1.y1());
 	let rect = new Rect(x0, y0, x1-x0, y1-y0);
 	return !this.stoppable.exists(this.tilemap.coord2map(rect));
     }
@@ -430,11 +430,11 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 	// ######
 	let hb0 = this.getGridBoxAt(p0);
 	let hb1 = this.getGridBoxAt(p1);
-	let xc = (p0.x < p1.x)? hb1.x : hb1.right();
+	let xc = (p0.x < p1.x)? hb1.x : hb1.x1();
 	let x0 = Math.min(xc, hb0.x);
-	let x1 = Math.max(xc, hb0.right());
+	let x1 = Math.max(xc, hb0.x1());
 	let y0 = Math.min(hb0.y, hb1.y);
-	let y1 = Math.max(hb0.bottom(), hb1.bottom());
+	let y1 = Math.max(hb0.y1(), hb1.y1());
 	if (this.obstacle.exists(
 	    this.tilemap.coord2map(new Rect(x0, y0, x1-x0, y1-y0)))) {
 	    return false;
@@ -474,11 +474,11 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
     isClearedFor(p1: Vec2) {
 	let hb0 = this.getGridBox();
 	let hb1 = this.getGridBoxAt(p1);
-	let xc = (hb0.x < hb1.x)? hb1.x : hb1.right();
+	let xc = (hb0.x < hb1.x)? hb1.x : hb1.x1();
 	let x0 = Math.min(xc, hb0.x);
-	let x1 = Math.max(xc, hb0.right());
+	let x1 = Math.max(xc, hb0.x1());
 	let y0 = Math.min(hb0.y, hb1.y);
-	let y1 = Math.max(hb0.bottom(), hb1.bottom());
+	let y1 = Math.max(hb0.y1(), hb1.y1());
 	let rect = new Rect(x0, y0, x1-x0, y1-y0);
 	return !this.stoppable.exists(this.tilemap.coord2map(rect));
     }

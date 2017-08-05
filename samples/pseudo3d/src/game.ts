@@ -302,7 +302,7 @@ class Player extends Entity3d {
 	let ts = tilemap.tilesize;
 	let bs = new Vec3(ts, ts, ts);
 	let ws = new Vec3(ts, ts, Infinity);
-	let boxes = [new Box(new Vec3(window.right()-ts,0,0),
+	let boxes = [new Box(new Vec3(window.x1()-ts,0,0),
 			     new Vec3(ts, window.height, Infinity))];
 	function f(x:number, y:number, c:number) {
 	    if (isBlock(c)) {

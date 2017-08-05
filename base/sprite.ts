@@ -69,7 +69,7 @@ class OvalImageSource implements ImageSource {
 	if (this.color !== null) {
 	    ctx.save();
 	    ctx.fillStyle = this.color;
-	    ctx.translate(this.dstRect.centerx(), this.dstRect.centery());
+	    ctx.translate(this.dstRect.cx(), this.dstRect.cy());
 	    ctx.scale(this.dstRect.width/2, this.dstRect.height/2);
 	    ctx.beginPath();
 	    ctx.arc(0, 0, 1, 0, Math.PI*2);
@@ -388,7 +388,7 @@ class Sprite {
 	ctx.save();
 	let bounds = this.getBounds();
 	if (bounds !== null) {
-	    ctx.translate(bounds.centerx(), bounds.centery());
+	    ctx.translate(bounds.cx(), bounds.cy());
 	}
 	if (this.rotation) {
 	    ctx.rotate(this.rotation);

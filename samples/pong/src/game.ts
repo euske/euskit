@@ -35,7 +35,7 @@ class Paddle extends Entity {
 	// Updates the position.
 	let pos = this.pos.move(this.vx*4, 0);
 	let bounds = this.getCollider(pos).getAABB();
-	if (0 <= bounds.x && bounds.right() <= this.screen.right()) {
+	if (0 <= bounds.x && bounds.x1() <= this.screen.x1()) {
 	    this.pos = pos;
 	}
     }
@@ -63,7 +63,7 @@ class Ball extends Entity {
 	// Updates the position.
 	let pos = this.pos.add(this.v);
 	let bounds = this.getCollider(pos).getAABB();
-	if (bounds.x < 0 || this.screen.right() < bounds.right()) {
+	if (bounds.x < 0 || this.screen.x1() < bounds.x1()) {
 	    APP.playSound('beep');
 	    this.v.x = -this.v.x;
 	}

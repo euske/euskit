@@ -218,10 +218,10 @@ class TextBox implements ImageSource {
 	let height = this.frame.height-this.padding*2;
 	let y = 0;
 	if (this.segments.length !== 0) {
-	    y = this.segments[this.segments.length-1].bounds.bottom()+this.lineSpace;
+	    y = this.segments[this.segments.length-1].bounds.y1()+this.lineSpace;
 	}
 	let newseg = this.addSegment(new Vec2(0, y), '', font);
-	let dy = newseg.bounds.bottom() - height;
+	let dy = newseg.bounds.y1() - height;
 	if (0 < dy) {
 	    // scrolling.
 	    this.segments = this.segments.filter((seg) => {
@@ -249,10 +249,10 @@ class TextBox implements ImageSource {
 	    let size = font.getSize(s);
 	    let last = ((this.segments.length === 0)? null :
 			this.segments[this.segments.length-1]);	
-	    if (last === null || width < last.bounds.right()+size.x) {
+	    if (last === null || width < last.bounds.x1()+size.x) {
 		last = this.addNewline(font);
 	    } else if (last.font !== font) {
-		let pt = new Vec2(last.bounds.right(), last.bounds.y);
+		let pt = new Vec2(last.bounds.x1(), last.bounds.y);
 		last = this.addSegment(pt, '', font);
 	    }
 	    last.text += s;
@@ -293,7 +293,7 @@ class TextBox implements ImageSource {
 
     wrapLines(text: string, font: Font=null, header: string=null) {
 	let x = ((this.segments.length === 0)? 0 :
-		 this.segments[this.segments.length-1].bounds.right());
+		 this.segments[this.segments.length-1].bounds.x1());
 	let a = this.splitWords(x, text, font, header);
 	let s = '';
 	for (let i = 0; i < a.length; i++) {

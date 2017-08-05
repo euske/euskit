@@ -9,7 +9,8 @@
 const EPSILON = 0.0001;
 
 
-/**  2-element vector that can be used for a position or size.
+/**  Vec2
+ *   2-element vector that can be used for a position or size.
  */
 class Vec2 {
 
@@ -132,7 +133,8 @@ class Vec2 {
 }
 
 
-/**  3-element vector that can be used for a position or size.
+/**  Vec3
+ *   3-element vector that can be used for a position or size.
  */
 class Vec3 {
 
@@ -229,7 +231,8 @@ class Vec3 {
 }
 
 
-/**  Geometric object that can be used for hit detection.
+/**  Collider
+ *   Abstract geometric object that can be used for hit detection.
  */
 interface Collider {
     /** Returns a copy of the object. */
@@ -251,7 +254,8 @@ interface Collider {
 }
 
 
-/**  Enclosed shape.
+/**  Shape
+ *   Abstract enclosed shape.
  */
 interface Shape extends Collider {
     /** Returns true if the object is empty. */
@@ -265,7 +269,8 @@ interface Shape extends Collider {
 }
 
 
-/**  Axis-aligned line
+/**  AALine
+ *   Axis-aligned line
  */
 class AALine implements Collider {
 
@@ -321,7 +326,7 @@ class AALine implements Collider {
     /** Returns true if the rect is overlapping with this line. */
     overlapsRect(rect: Rect): boolean {
 	return !(this.x1 < rect.x || this.y1 < rect.y ||
-		 rect.right() < this.x0 || rect.bottom() < this.y0);
+		 rect.x1() < this.x0 || rect.y1() < this.y0);
     }
     
     /** Returns true if the circle is overlapping with this line. */
@@ -457,7 +462,8 @@ class AALine implements Collider {
 }
 
 
-/**  Rectangle
+/**  Rect
+ *   Rectangle.
  */
 class Rect implements Shape {
 
@@ -477,31 +483,35 @@ class Rect implements Shape {
 	return '('+this.x+', '+this.y+', '+this.width+', '+this.height+')';
     }
     
+    /** Returns a copy of the object. */
     copy(): Rect {
 	return new Rect(this.x, this.y, this.width, this.height);
     }
     
+    /** Returns true if rect is equivalent to the object. */
     equals(rect: Rect): boolean {
 	return (this.x == rect.x && this.y == rect.y &&
 		this.width == rect.width && this.height == rect.height);
     }
     
+    /** Returns true if rect has zero or negative size. */
     isZero(): boolean {
-	return (this.width == 0 && this.height == 0);
+	return (this.width <= 0 && this.height <= 0);
     }
     
-    right(): number {
+    x1(): number {
 	return this.x+this.width;
     }
-    bottom(): number {
+    y1(): number {
 	return this.y+this.height;
     }
-    centerx(): number {
+    cx(): number {
 	return this.x+this.width/2;
     }
-    centery(): number {
+    cy(): number {
 	return this.y+this.height/2;
     }
+    
     center(): Vec2 {
 	return new Vec2(this.x+this.width/2, this.y+this.height/2);
     }
@@ -652,9 +662,9 @@ class Rect implements Shape {
 
     overlapsCircle(circle: Circle): boolean {
 	let x0 = this.x;
-	let x1 = this.right();
+	let x1 = this.x1();
 	let y0 = this.y;
-	let y1 = this.bottom();
+	let y1 = this.y1();
 	let cx = circle.center.x;
 	let cy = circle.center.y;
 	let r = circle.radius;
@@ -688,9 +698,9 @@ class Rect implements Shape {
     }
     
     clamp(bounds: Rect): Rect {
-	let x = ((bounds.width < this.width)? bounds.centerx() :
+	let x = ((bounds.width < this.width)? bounds.cx() :
 		 clamp(bounds.x, this.x, bounds.x+bounds.width-this.width));
-	let y = ((bounds.height < this.height)? bounds.centery() :
+	let y = ((bounds.height < this.height)? bounds.cy() :
 		 clamp(bounds.y, this.y, bounds.y+bounds.height-this.height));
 	return new Rect(x, y, this.width, this.height);
     }
@@ -758,14 +768,14 @@ class Rect implements Shape {
 	if (circle.center.x < this.x || circle.center.y < this.y) {
 	    v = circle.contactCircle(v, new Circle(new Vec2(this.x, this.y)));
 	}
-	if (this.right() < circle.center.x || circle.center.y < this.y) {
-	    v = circle.contactCircle(v, new Circle(new Vec2(this.right(), this.y)));
+	if (this.x1() < circle.center.x || circle.center.y < this.y) {
+	    v = circle.contactCircle(v, new Circle(new Vec2(this.x1(), this.y)));
 	}
-	if (circle.center.x < this.x || this.bottom() < circle.center.y) {
-	    v = circle.contactCircle(v, new Circle(new Vec2(this.x, this.bottom())));
+	if (circle.center.x < this.x || this.y1() < circle.center.y) {
+	    v = circle.contactCircle(v, new Circle(new Vec2(this.x, this.y1())));
 	}
-	if (this.right() < circle.center.x || this.bottom() < circle.center.y) {
-	    v = circle.contactCircle(v, new Circle(new Vec2(this.right(), this.bottom())));
+	if (this.x1() < circle.center.x || this.y1() < circle.center.y) {
+	    v = circle.contactCircle(v, new Circle(new Vec2(this.x1(), this.y1())));
 	}
 	return v;
     }
@@ -879,9 +889,9 @@ class Circle implements Shape {
     }
 
     clamp(bounds: Rect): Circle {
-	let x = ((bounds.width < this.radius)? bounds.centerx() :
+	let x = ((bounds.width < this.radius)? bounds.cx() :
 		 clamp(bounds.x, this.center.x, bounds.x+bounds.width-this.radius));
-	let y = ((bounds.height < this.radius)? bounds.centery() :
+	let y = ((bounds.height < this.radius)? bounds.cy() :
 		 clamp(bounds.y, this.center.y, bounds.y+bounds.height-this.radius));
 	return new Circle(new Vec2(x, y), this.radius);
     }
