@@ -9,7 +9,7 @@ h3 { border-bottom: 1pt solid; }
 table { border-collapse: collapse; }
 td { padding: 2px; }
 a { font-weight: bold; }
-code { font-size: 125%; font-weight: bold; }
+code { font-size: 120%; font-weight: bold; }
 .p { width: 40em; }
 .inherited { background: #cccccc; }
 .overridable { background: #ccffcc; }
@@ -27,7 +27,7 @@ with pixel art. Growing up in 80s in Japan, those arcade games have
 always a special place in me. Euskit was my attempt to headstart in
 several game jams that I participated. The engine is designed to be
 lightweight and self-contained in that it doesn't depend on any 
-external library. It is licensed under MIT License.
+external library except TypeScript. It is licensed under MIT License.
 
 <h2>Key Concepts</h2>
 <h3>App / Scene</h3>
@@ -52,19 +52,21 @@ one <code>Scene</code>.
 An <code>Entity</code> is a bit like a GameObject in Unity. It has its
 own process, <code>Collider</code> and skin. Once you place an <code>Entity</code>
 in the game world, it moves on its own. Unlike Unity, however, Euskit 
-uses a traditional hierarchical class system instead of components.  
-Actually, an <code>Entity</code> is a subclass of <code>Task</code>, 
-which is registered at <code>TaskList</code>. Collision handling
-and rendering is handled by <code>Collider</code> and <code>Sprite</code>,
-both of which are contained by an <code>Entity</code>.
+uses a traditional hierarchical model instead of components.  
+Actually, an <code>Entity</code> is a subclass of <code>Task</code>.
+A <code>Task</code> is an independent object that runs by itself
+and managed by <code>TaskList</code>. A typical <code>Entity</code> has
+a reference to a <code>Collider</code> object, which is just a
+<code>Rect</code> in typical 2D games.
 <p class=p>
-<code>Sprite</code> is worth mentioning. As its name suggests,
-a <code>Sprite</code> has what's displayed on screen.
-Each <code>Sprite</code> has its locations, rotation and scaling as
-well as its contents. However <code>Sprite</code> is only concerned
-for painting some stuff on screen at a moment.  It doesn't know how to
-change them. Its job is taken care of by <code>Entity</code>.
-
+<code>Sprite</code> needs further explanation. Each <code>Entity</code> 
+contains one <code>Sprite</code> object. A <code>Sprite</code> is something
+to be displayed. It has a location, rotation and the reference to its content. 
+Unlike some other engines, <code>Sprite</code> doesn't know how to move itself.
+It is just sitting at a certain location on screen. An <code>Entity</code>
+is responsible to change/move its position.
+<p class=p>
+There are a couple of other helper objects:
 <ul>
 <li> <code>TaskList</code>
 <li> <code>EntityWorld</code>
