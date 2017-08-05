@@ -39,9 +39,7 @@ class RectImageSource implements ImageSource {
     render(ctx: CanvasRenderingContext2D) {
 	if (this.color !== null) {
 	    ctx.fillStyle = this.color;
-	    ctx.fillRect(
-		this.dstRect.x, this.dstRect.y,
-		this.dstRect.width, this.dstRect.height);
+	    fillRect(ctx, this.dstRect);
 	}
     }
 }

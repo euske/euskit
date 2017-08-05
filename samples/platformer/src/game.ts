@@ -335,8 +335,7 @@ class Game extends GameScene {
 
     render(ctx: CanvasRenderingContext2D) {
 	ctx.fillStyle = 'rgb(0,0,0)';
-	ctx.fillRect(this.screen.x, this.screen.y,
-		     this.screen.width, this.screen.height);
+	fillRect(ctx, this.screen);
 	// Render the background tiles.
 	this.tilemap.renderWindowFromBottomLeft(
 	    ctx, this.layer.window, 

@@ -77,8 +77,7 @@ class PictureScene extends GameScene {
 
     render(ctx: CanvasRenderingContext2D) {
 	ctx.fillStyle = 'rgb(0,0,0)';
-	ctx.fillRect(this.screen.x, this.screen.y,
-		     this.screen.width, this.screen.height);
+	fillRect(ctx, this.screen);
 	ctx.save();
 	if (this.image0 !== null) {
 	    ctx.globalAlpha = 1.0-this.alpha;
@@ -96,7 +95,7 @@ class PictureScene extends GameScene {
 	let rect = this.dialogBox.textbox.frame.inflate(-2,-2);
 	ctx.strokeStyle = 'white';
 	ctx.lineWidth = 2;
-	ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
+	strokeRect(ctx, rect);
     }
     
     changeScene(scene: Scene) {

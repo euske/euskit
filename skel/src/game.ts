@@ -72,8 +72,7 @@ class Game extends GameScene {
 
     render(ctx: CanvasRenderingContext2D) {
 	ctx.fillStyle = 'rgb(0,0,0)';
-	ctx.fillRect(this.screen.x, this.screen.y,
-		     this.screen.width, this.screen.height);
+	fillRect(ctx, this.screen);
 	super.render(ctx);
 	this.scoreBox.render(ctx);
     }

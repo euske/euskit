@@ -467,8 +467,7 @@ class Game extends Scene {
     
     render(ctx: CanvasRenderingContext2D) {
 	ctx.fillStyle = 'rgb(0,128,224)';
-	ctx.fillRect(this.screen.x, this.screen.y,
-		     this.screen.width, this.screen.height);
+	fillRect(ctx, this.screen);
 	super.render(ctx);
 	ctx.save();
 	ctx.translate(0, (this.screen.height-this.layer3.window.height)/2);
