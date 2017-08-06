@@ -114,7 +114,7 @@ class Player extends PlatformerEntity implements WorldObject {
 
     scene: Game;
     usermove: Vec2 = new Vec2();
-    holding: boolean = false;
+    holding: boolean = true;
     picked: Signal;
 
     constructor(scene: Game, pos: Vec2) {
@@ -126,6 +126,10 @@ class Player extends PlatformerEntity implements WorldObject {
 	this.jumpfunc = JUMPFUNC;
 	this.maxspeed = MAXSPEED;
 	this.picked = new Signal(this);
+	// Release a ladder when jumping.
+	this.jumped.subscribe(() => { this.holding = false; });
+	// Grab a ladder when landed.
+	this.landed.subscribe(() => { this.holding = true; });
     }
 
     hasLadder() {
@@ -136,10 +140,6 @@ class Player extends PlatformerEntity implements WorldObject {
 	return !(this.holding && this.hasLadder());
     }
 
-    isLanded() {
-	return (this.holding && this.hasLadder()) || super.isLanded();
-    }
-    
     getObstaclesFor(range: Rect, v: Vec2, context=null as string): Rect[] {
 	if (!this.holding) {
 	    return this.tilemap.getTileRects(this.tilemap.isObstacle, range);
@@ -150,12 +150,6 @@ class Player extends PlatformerEntity implements WorldObject {
     update() {
 	super.update();
 	let v = this.usermove;
-	if (this.hasLadder()) {
-	    if (v.y < 0) {
-		// Grab the ladder.
-		this.holding = true;
-	    }
-	}
 	if (!this.holding) {
 	    v = new Vec2(v.x, 0);
 	} else if (!this.hasLadder()) {
@@ -166,10 +160,6 @@ class Player extends PlatformerEntity implements WorldObject {
     }
     
     setJump(jumpend: number) {
-	if (0 < jumpend) {
-	    // Release the ladder when jumping.
-	    this.holding = false;
-	}
 	super.setJump(jumpend);
 	if (0 < jumpend && this.isJumping()) {
 	    APP.playSound('jump');
@@ -178,6 +168,10 @@ class Player extends PlatformerEntity implements WorldObject {
     
     setMove(v: Vec2) {
 	this.usermove = v.scale(8);
+	if (v.y != 0) {
+	    // Grab the ladder in air.
+	    this.holding = true;
+	}
     }
 
     collidedWith(entity: Entity) {
