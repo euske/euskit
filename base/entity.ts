@@ -136,12 +136,12 @@ class Entity extends Widget {
     }
     
     getCollider(pos: Vec2=null) {
-	pos = (pos !== null)? pos : this.pos;
-	if (pos !== null && this.collider !== null) {
-	    return this.collider.add(pos);
-	} else {
-	    return null;
+	if (this.collider === null) return null;
+	if (pos === null) {
+	    pos = this.pos;
+	    if (pos === null) return null;
 	}
+	return this.collider.add(pos);
     }
   
     canMove(v0: Vec2, context=null as string) {
