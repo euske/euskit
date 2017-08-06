@@ -370,24 +370,35 @@ class Sprite {
     /** Image rotation (in radian). */
     rotation: number = 0;
     
+    /** Returns the image source of the sprite. */
+    getImageSource(): ImageSource {
+	// [OVERRIDE]
+	return null as ImageSource;
+    }
+  
     /** Returns the position of the sprite. */
     getPos(): Vec2 {
 	// [OVERRIDE]
 	return null as Vec2;
     }
-  
-    /** Returns the bounds of the sprite at a given pos. */
-    getBounds(pos: Vec2=null): Rect {
-	// [OVERRIDE]
-	return null as Rect;
-    }
-  
+
     /** Returns true if the sprite can respond to mouse event. */
     mouseSelectable(p: Vec2): boolean {
 	// return this.getBounds().containsPt(p);
 	return false;
     }
 
+    /** Returns the bounds of the sprite at a given pos. */
+    getBounds(pos: Vec2=null): Rect {
+	let imgsrc = this.getImageSource();
+	if (imgsrc === null) return null;
+	if (pos === null) {
+	    pos = this.getPos();
+	    if (pos === null) return null;
+	}
+	return imgsrc.getBounds().add(pos);
+    }
+  
     /** Renders itself in the given context. */
     render(ctx: CanvasRenderingContext2D) {
 	ctx.save();
@@ -405,56 +416,39 @@ class Sprite {
 
     /** Renders its image. */
     renderImage(ctx: CanvasRenderingContext2D) {
-	// [OVERRIDE]
+	let imgsrc = this.getImageSource();
+	if (imgsrc !== null) {
+    	    imgsrc.render(ctx);
+	}
     }
 }
 
 
-/** Sprite that consists of a single image.
+/** Sprite that consists of a single image that is
+ *  fixed to a certain location.
  */
-class SimpleSprite extends Sprite {
+class FixedSprite extends Sprite {
     
     /** Image source to display. */
     imgsrc: ImageSource;
-    
-    constructor(imgsrc: ImageSource) {
-	super();
-	this.imgsrc = imgsrc;
-    }
-
-    toString() {
-	return '<SimpleSprite: '+this.imgsrc+'>';
-    }
-
-    /** Returns the bounds of the sprite at a given pos. */
-    getBounds(pos: Vec2=null): Rect {
-	if (this.imgsrc === null) return null;
-	if (pos === null) {
-	    pos = this.getPos();
-	    if (pos === null) return null;
-	}
-	return this.imgsrc.getBounds().add(pos);
-    }
-    
-    /** Renders its image. */
-    renderImage(ctx: CanvasRenderingContext2D) {
-    	this.imgsrc.render(ctx);
-    }
-}
-
-
-/** Sprite that is fixed to a certain location.
- */
-class FixedSprite extends SimpleSprite {
-
     /** Sprite position. */
     pos: Vec2;
     
-    constructor(imgsrc: ImageSource, pos: Vec2=null) {
-	super(imgsrc);
+    constructor(imgsrc: ImageSource=null, pos: Vec2=null) {
+	super();
+	this.imgsrc = imgsrc;
 	this.pos = pos;
     }
 
+    toString() {
+	return '<FixedSprite: '+this.imgsrc+'>';
+    }
+    
+    /** Returns the image source of the sprite. */
+    getImageSource(): ImageSource {
+	return this.imgsrc;
+    }
+  
     /** Returns the position of the sprite. */
     getPos(): Vec2 {
 	return this.pos;
@@ -462,7 +456,7 @@ class FixedSprite extends SimpleSprite {
 }
 
 
-/** Sprite that is atteched to an Entity.
+/** Sprite that is tied to an Entity.
  */
 class EntitySprite extends Sprite {
 
@@ -474,28 +468,19 @@ class EntitySprite extends Sprite {
 	this.entity = entity;
     }
 
+    /** Returns the image source of the sprite. */
+    getImageSource(): ImageSource {
+	return this.entity.imgsrc;
+    }
+  
     /** Returns the position of the sprite. */
     getPos(): Vec2 {
 	return this.entity.pos;
     }
     
-    /** Returns the bounds of the sprite at a given pos. */
-    getBounds(pos: Vec2=null): Rect {
-	let imgsrc = this.entity.imgsrc;
-	if (imgsrc === null) return null;
-	if (pos === null) {
-	    pos = this.getPos();
-	    if (pos === null) return null;
-	}
-	return imgsrc.getBounds().add(pos);
-    }
-    
     /** Renders its image. */
     renderImage(ctx: CanvasRenderingContext2D) {
-	let imgsrc = this.entity.imgsrc;
-	if (imgsrc !== null) {
-	    imgsrc.render(ctx);
-	}
+	super.renderImage(ctx);
 	this.entity.renderExtra(ctx);
     }
 }

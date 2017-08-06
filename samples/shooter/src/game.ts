@@ -168,7 +168,7 @@ class Enemy2 extends EnemyBase {
 class Shooter extends GameScene {
 
     player: Player;
-    stars: SimpleSprite;
+    stars: FixedSprite;
     nextenemy: number;		// Enemy spawning counter.
     score: number;
     scoreBox: TextBox;
