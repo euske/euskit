@@ -85,18 +85,18 @@ class ShadowSprite extends EntitySprite {
     }
 
     renderImage(ctx: CanvasRenderingContext2D) {
-	let imgsrc = this.shadow;
+	let shadow = this.shadow;
 	let pos = this.shadowPos;
 	if (pos !== null) {
 	    ctx.save();
 	    ctx.translate(pos.x, pos.y);
-	    let srcRect = imgsrc.srcRect;
-	    let dstRect = imgsrc.dstRect;
+	    let srcRect = shadow.srcRect;
+	    let dstRect = shadow.dstRect;
 	    // Shadow gets smaller based on its ground distance.
 	    let d = (pos.y - this.entity.pos.y)/4;
 	    if (d*2 <= dstRect.width && d*2 <= dstRect.height) {
 		ctx.drawImage(
-		    imgsrc.image,
+		    shadow.image,
 		    srcRect.x, srcRect.y, srcRect.width, srcRect.height,
 		    dstRect.x+d, dstRect.y+d*2,
 		    dstRect.width-d*2, dstRect.height-d*2);
@@ -120,8 +120,8 @@ class Player extends PlatformerEntity implements WorldObject {
     constructor(scene: Game, pos: Vec2) {
 	super(scene.tilemap, pos);
 	this.sprite = new ShadowSprite(this);
-	this.imgsrc = SPRITES.get(S.PLAYER);
-	this.collider = this.imgsrc.getBounds();
+	this.skin = SPRITES.get(S.PLAYER);
+	this.collider = this.skin.getBounds();
 	this.scene = scene;
 	this.jumpfunc = JUMPFUNC;
 	this.maxspeed = MAXSPEED;
@@ -203,8 +203,8 @@ class Monster extends PlanningEntity implements WorldObject {
 	super(scene.profile, scene.tilemap, pos);
 	this.scene = scene;
 	this.sprite = new ShadowSprite(this);
-	this.imgsrc = SPRITES.get(S.MONSTER);
-	this.collider = this.imgsrc.getBounds();
+	this.skin = SPRITES.get(S.MONSTER);
+	this.collider = this.skin.getBounds();
 	this.jumpfunc = JUMPFUNC;
 	this.maxspeed = MAXSPEED;
 	this.setHitbox(this.collider as Rect);
@@ -232,8 +232,8 @@ class Thingy extends Entity {
     
     constructor(pos: Vec2) {
 	super(pos);
-	this.imgsrc = SPRITES.get(S.THINGY);
-	this.collider = this.imgsrc.getBounds().inflate(-4, -4);
+	this.skin = SPRITES.get(S.THINGY);
+	this.collider = this.skin.getBounds().inflate(-4, -4);
     }
 }
 
@@ -320,7 +320,7 @@ class Game extends GameScene {
 
     onPicked(entity: Entity) {
 	let yay = new Projectile(entity.pos.move(0,-16));
-	yay.imgsrc = SPRITES.get(S.YAY);
+	yay.skin = SPRITES.get(S.YAY);
 	yay.movement = new Vec2(0,-4);
 	yay.lifetime = 0.5;
 	this.add(yay);

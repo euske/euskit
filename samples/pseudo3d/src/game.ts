@@ -260,7 +260,7 @@ class Thingy extends Entity3d {
 
     constructor(scene: Game, pos: Vec2) {
 	super(pos);
-	this.imgsrc = SPRITES.get(S.THINGY);
+	this.skin = SPRITES.get(S.THINGY);
 	this.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
 	this.collider = this.sprite3.getBounds(new Vec2()).inflate(-4, -4);
 	this.z = 4;
@@ -285,7 +285,7 @@ class Player extends Entity3d {
 	super(pos);
 	this.scene = scene;
 	this.picked = new Signal(this);
-	this.imgsrc = SPRITES.get(S.PLAYER);
+	this.skin = SPRITES.get(S.PLAYER);
 	this.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
 	this.collider = this.sprite3.getBounds(new Vec2()).inflate(-4, -4);
 	this.depth = scene.tilemap.tilesize;
@@ -457,7 +457,7 @@ class Game extends Scene {
     
     onPicked(entity: Entity) {
 	let yay = new Projectile(entity.pos.move(0,-16));
-	yay.imgsrc = SPRITES.get(S.YAY);
+	yay.skin = SPRITES.get(S.YAY);
 	yay.movement = new Vec2(0,-4);
 	yay.lifetime = 0.5;
 	this.add(yay);

@@ -27,7 +27,7 @@ class Bullet extends Projectile {
     constructor(pos: Vec2) {
 	super(pos);
 	let bounds = new Rect(-4, -1, 8, 2);
-	this.imgsrc = new RectImageSource('white', bounds)
+	this.skin = new RectImageSource('white', bounds)
 	this.collider = bounds;
     }
 }
@@ -38,7 +38,7 @@ class Bullet extends Projectile {
 class Explosion extends Entity {
     constructor(pos: Vec2) {
 	super(pos);
-	this.imgsrc = SPRITES.get(4);
+	this.skin = SPRITES.get(4);
 	this.lifetime = 0.2;
     }
 }
@@ -56,8 +56,8 @@ class Player extends Entity {
     constructor(scene: Shooter, pos: Vec2) {
 	super(pos);
 	this.scene = scene;
-	this.imgsrc = SPRITES.get(0);
-	this.collider = this.imgsrc.getBounds();
+	this.skin = SPRITES.get(0);
+	this.collider = this.skin.getBounds();
     }
 
     update() {
@@ -135,8 +135,8 @@ class Enemy1 extends EnemyBase {
 
     constructor(scene: Shooter, pos: Vec2) {
 	super(scene, pos);
-	this.imgsrc = SPRITES.get(1);
-	this.collider = this.imgsrc.getBounds();
+	this.skin = SPRITES.get(1);
+	this.collider = this.skin.getBounds();
 	this.movement = new Vec2(-rnd(1,8), rnd(3)-1);
     }
 }
@@ -148,8 +148,8 @@ class Enemy2 extends EnemyBase {
 
     constructor(scene: Shooter, pos: Vec2) {
 	super(scene, pos);
-	this.imgsrc = SPRITES.get(2);
-	this.collider = this.imgsrc.getBounds();
+	this.skin = SPRITES.get(2);
+	this.collider = this.skin.getBounds();
 	this.movement = new Vec2(-rnd(1,4), 0);
     }
 
@@ -191,7 +191,7 @@ class Shooter extends GameScene {
 
     update() {
 	super.update();
-	(this.stars.imgsrc as StarImageSource).move(new Vec2(-4, 0));
+	(this.stars.skin as StarImageSource).move(new Vec2(-4, 0));
 	// Spawn an enemy at a random interval.
 	if (this.nextenemy == 0) {
 	    let pos = new Vec2(this.screen.width, rnd(this.screen.height));

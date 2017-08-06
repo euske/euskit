@@ -29,8 +29,8 @@ class Player extends Entity {
     constructor(scene: Game, pos: Vec2) {
 	super(pos);
 	this.scene = scene;
-	this.imgsrc = SPRITES.get(0);
-	this.collider = this.imgsrc.getBounds();
+	this.skin = SPRITES.get(0);
+	this.collider = this.skin.getBounds();
 	this.usermove = new Vec2();
     }
 

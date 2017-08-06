@@ -371,7 +371,7 @@ class Sprite {
     rotation: number = 0;
     
     /** Returns the image source of the sprite. */
-    getImageSource(): ImageSource {
+    getSkin(): ImageSource {
 	// [OVERRIDE]
 	return null as ImageSource;
     }
@@ -390,13 +390,13 @@ class Sprite {
 
     /** Returns the bounds of the sprite at a given pos. */
     getBounds(pos: Vec2=null): Rect {
-	let imgsrc = this.getImageSource();
-	if (imgsrc === null) return null;
+	let skin = this.getSkin();
+	if (skin === null) return null;
 	if (pos === null) {
 	    pos = this.getPos();
 	    if (pos === null) return null;
 	}
-	return imgsrc.getBounds().add(pos);
+	return skin.getBounds().add(pos);
     }
   
     /** Renders itself in the given context. */
@@ -416,9 +416,9 @@ class Sprite {
 
     /** Renders its image. */
     renderImage(ctx: CanvasRenderingContext2D) {
-	let imgsrc = this.getImageSource();
-	if (imgsrc !== null) {
-    	    imgsrc.render(ctx);
+	let skin = this.getSkin();
+	if (skin !== null) {
+    	    skin.render(ctx);
 	}
     }
 }
@@ -430,23 +430,23 @@ class Sprite {
 class FixedSprite extends Sprite {
     
     /** Image source to display. */
-    imgsrc: ImageSource;
+    skin: ImageSource;
     /** Sprite position. */
     pos: Vec2;
     
-    constructor(imgsrc: ImageSource=null, pos: Vec2=null) {
+    constructor(skin: ImageSource=null, pos: Vec2=null) {
 	super();
-	this.imgsrc = imgsrc;
+	this.skin = skin;
 	this.pos = pos;
     }
 
     toString() {
-	return '<FixedSprite: '+this.imgsrc+'>';
+	return '<FixedSprite: '+this.skin+'>';
     }
     
     /** Returns the image source of the sprite. */
-    getImageSource(): ImageSource {
-	return this.imgsrc;
+    getSkin(): ImageSource {
+	return this.skin;
     }
   
     /** Returns the position of the sprite. */
@@ -469,8 +469,8 @@ class EntitySprite extends Sprite {
     }
 
     /** Returns the image source of the sprite. */
-    getImageSource(): ImageSource {
-	return this.entity.imgsrc;
+    getSkin(): ImageSource {
+	return this.entity.skin;
     }
   
     /** Returns the position of the sprite. */

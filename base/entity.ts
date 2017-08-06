@@ -105,7 +105,7 @@ class Entity extends Widget {
     
     pos: Vec2;
     sprite: Sprite;
-    imgsrc: ImageSource = null;
+    skin: ImageSource = null;
     collider: Collider = null;
 
     constructor(pos: Vec2) {
