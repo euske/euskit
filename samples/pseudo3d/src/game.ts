@@ -27,35 +27,36 @@ function getContact3(hitbox: Box, v: Vec3, obstacles: Box[])
 //  EntitySprite3d
 //
 class EntitySprite3d extends EntitySprite {
-
-    shadowz: number = 0;
-    floating: boolean = false;
     
     constructor(entity: Entity3d) {
 	super(entity);
     }
 
+    isFloating(): boolean {
+	return (this.entity as Entity3d).isFloating();
+    }
+
     render3(ctx: CanvasRenderingContext2D) {
 	let entity3 = this.entity as Entity3d;
-	let pos = this.entity.pos;
-	let z = entity3.z;
+	let pos = entity3.getPos3();
 	ctx.save();
-	ctx.translate(int(pos.x), int(pos.y));
 	let shadow = entity3.shadow;
-	if (shadow !== null) {
+	let shadowPos = entity3.getShadowPos();
+	if (shadow !== null && shadowPos !== null) {
 	    // Render the shadow first.
 	    let srcRect = shadow.srcRect;
 	    let dstRect = shadow.getBounds();
-	    let d = (z-this.shadowz)/4;
+	    let d = (pos.z-shadowPos.z)/4;
 	    if (d*2 <= dstRect.width && d*2 <= dstRect.height) {
 		ctx.drawImage(
 		    shadow.image,
 		    srcRect.x, srcRect.y, srcRect.width, srcRect.height,
-		    dstRect.x+d, dstRect.y+d-this.shadowz/2,
+		    dstRect.x+shadowPos.x+d,
+		    dstRect.y+shadowPos.y+d-shadowPos.z/2,
 		    dstRect.width-d*2, dstRect.height-d*2);
 	    }
 	}
-	ctx.translate(0, -z/2);
+	ctx.translate(int(pos.x), int(pos.y)-pos.z/2);
 	if (this.rotation) {
 	    ctx.rotate(this.rotation);
 	}
@@ -86,6 +87,16 @@ class Entity3d extends Entity {
     
     getPos3() {
 	return new Vec3(this.pos.x, this.pos.y, this.z);
+    }
+    
+    isFloating(): boolean {
+	// [OVERRIDE]
+	return false;
+    }
+
+    getShadowPos(): Vec3 {
+	// [OVERRIDE]
+	return null as Vec3;
     }
     
     movePos3(v: Vec3) {
@@ -190,7 +201,7 @@ class ScrollLayer3 extends ScrollLayer {
 		if (sprites.hasOwnProperty(k)) {
 		    for (let sprite of sprites[k]) {
 			if (sprite instanceof EntitySprite3d) {
-			    if (!sprite.floating) {
+			    if (!sprite.isFloating()) {
 				sprite.render3(ctx);
 			    }
 			} else {
@@ -213,7 +224,7 @@ class ScrollLayer3 extends ScrollLayer {
 		    ctx.save();
 		    ctx.translate(-ts-window.x, -window.y);
 		    if (sprite instanceof EntitySprite3d) {
-			if (sprite.floating) {
+			if (sprite.isFloating()) {
 			    sprite.render3(ctx);
 			}
 		    } else {
@@ -295,6 +306,20 @@ class Player extends Entity3d {
 	};
 	this.usermove3 = new Vec3();
     }
+
+    isFloating(): boolean {
+	return (this.scene.tilemap.tilesize/2 < this.z);
+    }
+
+    getShadowPos(): Vec3 {
+	let tilemap = this.scene.tilemap;
+	if (this.isFloating() &&
+	    tilemap.findTileByCoord(isBlock, this.sprite.getBounds())) {
+	    return new Vec3(this.pos.x, this.pos.y, tilemap.tilesize);
+	} else {
+	    return new Vec3(this.pos.x, this.pos.y, 0);
+	}
+    }
     
     getObstaclesFor3(range: Box, v: Vec3, context: string) {
 	let window = this.scene.layer3.window;
@@ -348,14 +373,6 @@ class Player extends Entity3d {
 	    this._jumpt++;
 	} else {
 	    this._jumpt = Infinity;
-	}
-	let tilemap = this.scene.tilemap;
-	this.sprite3.floating = (tilemap.tilesize/2 < this.z);
-	if (this.sprite3.floating &&
-	    tilemap.findTileByCoord(isBlock, this.sprite.getBounds())) {
-	    this.sprite3.shadowz = tilemap.tilesize;
-	} else {
-	    this.sprite3.shadowz = 0;
 	}
 	let window = this.scene.layer3.window;
 	if (!window.overlaps(this.getCollider())) {
