@@ -499,69 +499,45 @@ class Rect implements Shape {
 	return (this.width <= 0 && this.height <= 0);
     }
     
+    /** Returns the x-coords of the right edge of the rectangle. */
     x1(): number {
 	return this.x+this.width;
     }
+    /** Returns the y-coords of the bottom edge of the rectangle. */
     y1(): number {
 	return this.y+this.height;
     }
+    /** Returns the x-coords of the center. */
     cx(): number {
 	return this.x+this.width/2;
     }
+    /** Returns the y-coords of the center. */
     cy(): number {
 	return this.y+this.height/2;
     }
     
+    /** Returns the center of the rectangle. */
     center(): Vec2 {
 	return new Vec2(this.x+this.width/2, this.y+this.height/2);
     }
+    /** Returns the top left corner of the rectangle. */
     topLeft(): Vec2 {
 	return new Vec2(this.x, this.y);
     }
+    /** Returns the top right corner of the rectangle. */
     topRight(): Vec2 {
 	return new Vec2(this.x+this.width, this.y);
     }
+    /** Returns the bottom left corner of the rectangle. */
     bottomLeft(): Vec2 {
 	return new Vec2(this.x, this.y+this.height);
     }
+    /** Returns the bottom right corner of the rectangle. */
     bottomRight(): Vec2 {
 	return new Vec2(this.x+this.width, this.y+this.height);
     }
     
-    edge(vx: number, vy: number): AALine {
-	if (vx < 0) {
-	    return new AALine(this.x, this.y, this.x, this.y+this.height);
-	} else if (0 < vx) {
-	    return new AALine(this.x+this.width, this.y, this.x+this.width, this.y+this.height);
-	} else if (vy < 0) {
-	    return new AALine(this.x, this.y, this.x+this.width, this.y);
-	} else if (0 < vy) {
-	    return new AALine(this.x, this.y+this.height, this.x+this.width, this.y+this.height);
-	} else {
-	    return null;
-	}
-    }
-    
-    move(dx: number, dy: number): Rect {
-	return new Rect(this.x+dx, this.y+dy, this.width, this.height);  
-    }
-    
-    add(v: Vec2): Rect {
-	return new Rect(this.x+v.x, this.y+v.y, this.width, this.height);  
-    }
-    
-    sub(v: Vec2): Rect {
-	return new Rect(this.x-v.x, this.y-v.y, this.width, this.height);  
-    }
-    
-    inflate(dw: number, dh: number): Rect {
-	return new Rect(this.x-dw, this.y-dh, this.width+dw*2, this.height+dh*2);
-    }
-    
-    scale(n: number): Rect {
-	return new Rect(this.x, this.y, this.width*n, this.height*n);
-    }
-    
+    /** Returns an anchor point of the rectangle. */
     anchor(anchor: string): Vec2 {
 	switch (anchor) {
 	case 'nw':
@@ -583,6 +559,44 @@ class Rect implements Shape {
 	default:
 	    return new Vec2(this.x+this.width/2, this.y+this.height/2);
 	}
+    }
+    
+    /** Returns an edge of the rectangle. */
+    edge(direction: string): AALine {
+	switch (direction) {
+        case 'w':
+	    return new AALine(this.x, this.y, this.x, this.y+this.height);
+        case 'e':
+	    return new AALine(this.x+this.width, this.y,
+                              this.x+this.width, this.y+this.height);
+        case 'n':
+	    return new AALine(this.x, this.y, this.x+this.width, this.y);
+        case 's':
+	    return new AALine(this.x, this.y+this.height,
+                              this.x+this.width, this.y+this.height);
+        default:
+	    return null;
+	}
+    }
+    
+    move(dx: number, dy: number): Rect {
+	return new Rect(this.x+dx, this.y+dy, this.width, this.height);  
+    }
+    
+    add(v: Vec2): Rect {
+	return new Rect(this.x+v.x, this.y+v.y, this.width, this.height);  
+    }
+    
+    sub(v: Vec2): Rect {
+	return new Rect(this.x-v.x, this.y-v.y, this.width, this.height);  
+    }
+    
+    inflate(dw: number, dh: number): Rect {
+	return this.expand(dw*2, dh*2);
+    }
+    
+    scale(n: number, anchor='c'): Rect {
+        return this.expand(this.width*(n-1), this.height*(n-1), anchor);
     }
     
     expand(dw: number, dh: number, anchor='c'): Rect {
@@ -737,14 +751,14 @@ class Rect implements Shape {
 	    return new Vec2();
 	}
 	if (0 < v.x) {
-	    v = this.edge(-1, 0).contactRect(v, rect);
+	    v = this.edge('w').contactRect(v, rect);
 	} else if (v.x < 0) {
-	    v = this.edge(+1, 0).contactRect(v, rect);
+	    v = this.edge('e').contactRect(v, rect);
 	}
 	if (0 < v.y) {
-	    v = this.edge(0, -1).contactRect(v, rect);
+	    v = this.edge('n').contactRect(v, rect);
 	} else if (v.y < 0) {
-	    v = this.edge(0, +1).contactRect(v, rect);
+	    v = this.edge('s').contactRect(v, rect);
 	}
 	return v;
     }
@@ -755,14 +769,14 @@ class Rect implements Shape {
 	}
 
 	if (0 < v.x) {
-	    v = this.edge(-1, 0).contactCircle(v, circle);
+	    v = this.edge('w').contactCircle(v, circle);
 	} else if (v.x < 0) {
-	    v = this.edge(+1, 0).contactCircle(v, circle);
+	    v = this.edge('e').contactCircle(v, circle);
 	}
 	if (0 < v.y) {
-	    v = this.edge(0, -1).contactCircle(v, circle);
+	    v = this.edge('n').contactCircle(v, circle);
 	} else if (v.y < 0) {
-	    v = this.edge(0, +1).contactCircle(v, circle);
+	    v = this.edge('s').contactCircle(v, circle);
 	}
 
 	if (circle.center.x < this.x || circle.center.y < this.y) {
