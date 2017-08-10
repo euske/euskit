@@ -2,6 +2,7 @@
 /// <reference path="../../../base/geom.ts" />
 /// <reference path="../../../base/entity.ts" />
 /// <reference path="../../../base/text.ts" />
+/// <reference path="../../../base/layer.ts" />
 /// <reference path="../../../base/scene.ts" />
 /// <reference path="../../../base/app.ts" />
 
@@ -156,12 +157,12 @@ class Entity3d extends Entity {
 }
 
 
-//  ScrollLayer3
+//  Camera3
 // 
 interface SpriteDictionary {
     [index: string]: Sprite[];
 }
-class ScrollLayer3 extends ScrollLayer {
+class Camera3 extends Camera {
 
     tilemap: TileMap = null;
     tiles: SpriteSheet = null;
@@ -172,19 +173,21 @@ class ScrollLayer3 extends ScrollLayer {
 
 	// Set the drawing order.
 	let sprites = {} as SpriteDictionary;
-	for (let sprite of this.getAllSprites()) {
-	    if (sprite.visible) {
-		let bounds = sprite.getBounds();
-		if (bounds !== null && bounds.overlapsRect(window)) {
-		    let x = int((bounds.x+bounds.width/2)/ts);
-		    let y = int((bounds.y+bounds.height/2)/ts);
-		    let k = x+','+y;
-		    if (!sprites.hasOwnProperty(k)) {
-			sprites[k] = [];
+        for (let layer of this.layers) {
+	    for (let sprite of layer.getSprites()) {
+		if (sprite.visible) {
+		    let bounds = sprite.getBounds();
+		    if (bounds !== null && bounds.overlapsRect(window)) {
+		        let x = int((bounds.x+bounds.width/2)/ts);
+		        let y = int((bounds.y+bounds.height/2)/ts);
+		        let k = x+','+y;
+		        if (!sprites.hasOwnProperty(k)) {
+			    sprites[k] = [];
+		        }
+		        sprites[k].push(sprite);
 		    }
-		    sprites[k].push(sprite);
-		}
-	    }
+	        }
+            }
 	}
 
 	// Draw the tilemap.
@@ -215,24 +218,26 @@ class ScrollLayer3 extends ScrollLayer {
 	ctx.restore();
 	
 	// Draw floating objects.
-	for (let sprite of this.getAllSprites()) {
-	    if (sprite.visible) {
-		let bounds = sprite.getBounds();
-		if (bounds === null) {
-		    sprite.render(ctx);
-		} else if (bounds.overlaps(window)) {
-		    ctx.save();
-		    ctx.translate(-ts-window.x, -window.y);
-		    if (sprite instanceof EntitySprite3d) {
-			if (sprite.isFloating()) {
-			    sprite.render3(ctx);
-			}
-		    } else {
-			sprite.render(ctx);
+        for (let layer of this.layers) {
+	    for (let sprite of layer.getSprites()) {
+	        if (sprite.visible) {
+		    let bounds = sprite.getBounds();
+		    if (bounds === null) {
+		        sprite.render(ctx);
+		    } else if (bounds.overlaps(window)) {
+		        ctx.save();
+		        ctx.translate(-ts-window.x, -window.y);
+		        if (sprite instanceof EntitySprite3d) {
+			    if (sprite.isFloating()) {
+			        sprite.render3(ctx);
+			    }
+		        } else {
+			    sprite.render(ctx);
+		        }
+		        ctx.restore();
 		    }
-		    ctx.restore();
-		}
-	    }
+	        }
+            }
 	}
     }
 }
@@ -322,7 +327,7 @@ class Player extends Entity3d {
     }
     
     getObstaclesFor3(range: Box, v: Vec3, context: string) {
-	let window = this.scene.layer3.window;
+	let window = this.scene.camera3.window;
 	let tilemap = this.scene.tilemap;
 	let ts = tilemap.tilesize;
 	let bs = new Vec3(ts, ts, ts);
@@ -374,7 +379,7 @@ class Player extends Entity3d {
 	} else {
 	    this._jumpt = Infinity;
 	}
-	let window = this.scene.layer3.window;
+	let window = this.scene.camera3.window;
 	if (!window.overlaps(this.getCollider())) {
 	    this.stop();
 	}
@@ -406,7 +411,7 @@ class Game extends Scene {
     tasklist: TaskList;
     world: EntityWorld;
     layer: SpriteLayer;
-    layer3: ScrollLayer3;
+    camera3: Camera3;
     player: Player;
     score: number;
     speed: Vec2;
@@ -419,10 +424,10 @@ class Game extends Scene {
 	));
 	this.tasklist = new TaskList();
 	this.world = new EntityWorld();
-	this.layer = new SpriteLayer();
-	this.layer3 = new ScrollLayer3(this.tilemap.bounds);
-	this.layer3.tilemap = this.tilemap;
-	this.layer3.tiles = TILES;
+	this.camera3 = new Camera3(this.tilemap.bounds);
+	this.camera3.tilemap = this.tilemap;
+	this.camera3.tiles = TILES;
+	this.layer = this.camera3.newLayer();
 	this.score = 0;
 	this.speed = new Vec2(2, 0);
 	this.player = new Player(this, this.screen.center());
@@ -448,7 +453,7 @@ class Game extends Scene {
     add(task: Task) {
     	this.tasklist.add(task);
 	if (task instanceof Entity) {
-	    task.layer = this.layer3;
+	    task.layer = this.layer;
 	    task.world = this.world;
 	} else if (task instanceof Widget) {
 	    task.layer = this.layer;
@@ -487,23 +492,22 @@ class Game extends Scene {
 	fillRect(ctx, this.screen);
 	super.render(ctx);
 	ctx.save();
-	ctx.translate(0, (this.screen.height-this.layer3.window.height)/2);
-	this.layer3.render(ctx);
+	ctx.translate(0, (this.screen.height-this.camera3.window.height)/2);
+	this.camera3.render(ctx);
 	ctx.restore();
-	this.layer.render(ctx);
     }
 
     moveAll(v: Vec2) {
-	this.layer3.moveCenter(v);
+	this.camera3.moveCenter(v);
 	let ts = this.tilemap.tilesize;
-	let window = this.layer3.window;
+	let window = this.camera3.window;
 	let x0 = int(window.x/ts);
 	let y0 = int(window.y/ts);
 	if (x0 !== 0 || y0 !== 0) {
 	    // warp all the tiles and characters.
 	    this.shiftTiles(x0, y0);
 	    let vw = new Vec2(-x0*ts, -y0*ts);
-	    this.layer3.moveCenter(vw);
+	    this.camera3.moveCenter(vw);
 	    this.world.moveAll(vw);
 	}
 	if (this.player.running) {

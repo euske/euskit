@@ -132,22 +132,17 @@ class HTMLScene extends Scene {
 // 
 class GameScene extends Scene {
 
-    tasklist: TaskList;
-    world: EntityWorld;
-    layer: ScrollLayer;
-
-    constructor() {
-	super();
-	this.tasklist = new TaskList();
-	this.world = new EntityWorld();
-	this.layer = new ScrollLayer(this.screen);
-    }
+    tasklist: TaskList = null;
+    world: EntityWorld = null;
+    camera: Camera = null;
+    layer: SpriteLayer = null;
 
     init() {
 	super.init();
-	this.tasklist.init();
-	this.world.init();
-	this.layer.init();
+	this.tasklist = new TaskList();
+	this.world = new EntityWorld();
+        this.camera = new Camera(this.screen);
+	this.layer = this.camera.newLayer();
     }
 
     tick() {
@@ -158,7 +153,7 @@ class GameScene extends Scene {
 
     render(ctx: CanvasRenderingContext2D) {
 	super.render(ctx);
-	this.layer.render(ctx);
+	this.camera.render(ctx);
     }
 
     add(task: Task) {
@@ -173,16 +168,16 @@ class GameScene extends Scene {
 
     onMouseDown(p: Vec2, button: number) {
 	super.onMouseDown(p, button);
-	this.layer.onMouseDown(p, button);
+	this.camera.onMouseDown(p, button);
     }
 
     onMouseUp(p: Vec2, button: number) {
 	super.onMouseUp(p, button);
-	this.layer.onMouseUp(p, button);
+	this.camera.onMouseUp(p, button);
     }
     
     onMouseMove(p: Vec2) {
 	super.onMouseMove(p);
-	this.layer.onMouseMove(p);
+	this.camera.onMouseMove(p);
     }
 }

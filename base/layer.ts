@@ -35,28 +35,21 @@ class Widget extends Task {
 
 //  SpriteLayer
 // 
+interface SpriteFunc {
+    (sprite: Sprite): boolean;
+}
 class SpriteLayer {
 
     sprites: Sprite[] = [];
     widgets: Widget[] = [];
     
-    mouseFocus: Sprite = null;
-    mouseActive: Sprite = null;
-    clicked: Signal;
-
-    constructor() {
-	this.clicked = new Signal(this);
-    }
-
     toString() {
 	return ('<SpriteLayer: sprites='+this.sprites+'>');
     }
   
-    init() {
+    clear() {
 	this.sprites = [];
 	this.widgets = [];
-	this.mouseFocus = null;
-	this.mouseActive = null;
     }
   
     addSprite(sprite: Sprite) {
@@ -75,7 +68,7 @@ class SpriteLayer {
 	removeElement(this.widgets, widget);
     }
 
-    getAllSprites(): Sprite[] {
+    getSprites(): Sprite[] {
 	let sprites = [];
 	for (let widget of this.widgets) {
 	    for (let sprite of widget.getSprites()) {
@@ -88,67 +81,67 @@ class SpriteLayer {
 	return sprites;
     }
 
-    render(ctx: CanvasRenderingContext2D) {
-	for (let sprite of this.getAllSprites()) {
+    apply(f: SpriteFunc, window: Rect=null): Sprite {
+	for (let widget of this.widgets) {
+	    for (let sprite of widget.getSprites()) {
+		let bounds = sprite.getBounds()
+		if (window === null || bounds === null || 
+                    bounds.overlaps(window)) {
+                    if (f(sprite)) {
+		        return sprite;
+                    }
+	        }
+	    }
+	}
+	for (let sprite of this.sprites) {
+	    let bounds = sprite.getBounds()
+	    if (window === null || bounds === null || 
+                bounds.overlaps(window)) {
+                if (f(sprite)) {
+		    return sprite;
+                }                    
+	    }
+	}
+        return null;
+    }
+    
+    render(ctx: CanvasRenderingContext2D, window: Rect=null) {
+        this.apply((sprite: Sprite) => {
 	    if (sprite.visible) {
 		sprite.render(ctx);
 	    }
-	}
-    }
-
-    findSpriteAt(p: Vec2) {
-	let sprites = this.getAllSprites();
-	// check in the reversed order.
-	for (let i = sprites.length-1; 0 <= i; i--) {
-	    let sprite = sprites[i];
-	    if (sprite.mouseSelectable(p)) {
-		return sprite;
-	    }
-	}
-	return null;
-    }
-
-    onMouseDown(p: Vec2, button: number) {
-	if (button == 0) {
-	    this.mouseFocus = this.findSpriteAt(p);
-	    this.mouseActive = this.mouseFocus;
-	}
-    }
-    
-    onMouseUp(p: Vec2, button: number) {
-	if (button == 0) {
-	    this.mouseFocus = this.findSpriteAt(p);
-	    if (this.mouseFocus !== null &&
-		this.mouseFocus === this.mouseActive) {
-		this.clicked.fire(this.mouseActive);
-	    }
-	    this.mouseActive = null;
-	}
-    }
-    
-    onMouseMove(p: Vec2) {
-	if (this.mouseActive === null) {
-	    this.mouseFocus = this.findSpriteAt(p);
-	}
+            return false;
+        }, window);
     }
 }
 
 
-//  ScrollLayer
+//  Camera
 // 
-class ScrollLayer extends SpriteLayer {
+class Camera {
 
+    mouseFocus: Sprite = null;
+    mouseActive: Sprite = null;
+    clicked: Signal;
+
+    layers: SpriteLayer[] = [];
     window: Rect;
 
     constructor(window: Rect) {
-	super();
+	this.clicked = new Signal(this);
 	this.window = window.copy();
     }
 
     toString() {
-	return '<ScrollLayer: '+this.window+'>';
+	return '<Camera: '+this.window+'>';
     }
-  
+
+    newLayer(): SpriteLayer {
+        let layer = new SpriteLayer();
+        this.layers.push(layer);
+        return layer;
+    }
+    
     moveCenter(v: Vec2) {
 	this.window = this.window.add(v);
     }
@@ -175,14 +168,48 @@ class ScrollLayer extends SpriteLayer {
     render(ctx: CanvasRenderingContext2D) {
 	ctx.save();
 	ctx.translate(-this.window.x, -this.window.y);
-	for (let sprite of this.getAllSprites()) {
-	    if (sprite.visible) {
-		let bounds = sprite.getBounds()
-		if (bounds === null || bounds.overlaps(this.window)) {
-		    sprite.render(ctx);
-		}
-	    }
-	}
+        for (let layer of this.layers) {
+            layer.render(ctx, this.window);
+        }
 	ctx.restore();
+    }
+
+    findSpriteAt(p: Vec2) {
+	// check in the reversed order.
+        let f = ((sprite: Sprite) => {
+            return sprite.visible && sprite.mouseSelectable(p);
+        });
+        for (let i = this.layers.length; 0 < i; i--) {
+            let layer = this.layers[i-1];
+            let sprite = layer.apply(f);
+            if (sprite !== null) {
+                return sprite;
+            }
+        }
+	return null;
+    }
+
+    onMouseDown(p: Vec2, button: number) {
+	if (button == 0) {
+	    this.mouseFocus = this.findSpriteAt(p);
+	    this.mouseActive = this.mouseFocus;
+	}
+    }
+    
+    onMouseUp(p: Vec2, button: number) {
+	if (button == 0) {
+	    this.mouseFocus = this.findSpriteAt(p);
+	    if (this.mouseFocus !== null &&
+		this.mouseFocus === this.mouseActive) {
+		this.clicked.fire(this.mouseActive);
+	    }
+	    this.mouseActive = null;
+	}
+    }
+    
+    onMouseMove(p: Vec2) {
+	if (this.mouseActive === null) {
+	    this.mouseFocus = this.findSpriteAt(p);
+	}
     }
 }
