@@ -27,10 +27,10 @@ interface RangeMapMap {
 class TileMap {
 
     tilesize: number;
-    map: Int32Array[];
     width: number;
     height: number;
     bounds: Rect;
+    map: Int32Array[];
     
     isObstacle: TileFunc = ((c:number) => { return false; });
     isGrabbable: TileFunc = ((c:number) => { return false; });

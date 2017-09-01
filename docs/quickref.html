@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <style>
@@ -45,10 +45,12 @@ body { margin: 0; padding: 0; }
 <a href="#Color">Color</a>,
 <a href="#Vec2">Vec2</a>,
 <a href="#Vec3">Vec3</a>,
-<a href="#Shape">Shape</a>,
 <a href="#Collider">Collider</a>,
+<a href="#Shape">Shape</a>,
+<a href="#AALine">AALine</a>,
 <a href="#Rect">Rect</a>,
 <a href="#Circle">Circle</a>,
+<a href="#AAPlane">AAPlane</a>,
 <a href="#Box">Box</a>,
 <a href="#TileMap">TileMap</a>,
 <a href="#RangeMap">RangeMap</a>,
@@ -168,11 +170,12 @@ body { margin: 0; padding: 0; }
 <a name="main"><h3>Main function (<code>main.ts</code>)</h3></a>
 <table border>
 <tr><td><code>APP</td>
-  <td>The global App instance.</td></tr>
+  <td>The global <code>App</code> instance.</td></tr>
 <tr><td><code>addInitHook(<u>() =&gt; {}</u>)</td>
-  <td>Add a hook that is executed after the page load is complete.</td></tr>
-<tr><td><code>main(<u>ctor</u>, <u>width</u>=320, <u>height</u>=240,<br>&nbsp; <u>canvasId</u>='game', <u>framerate</u>=30)</code></td>
-  <td>Starts an app from the specified Scene.</td></tr>
+  <td>Execute a hook after the page is loaded.</td></tr>
+<tr><td><code>main(<br>&nbsp; <u>ctor</u>, <u>width</u>=320, <u>height</u>=240,<br>&nbsp; <u>canvasId</u>='game', <u>framerate</u>=30)</code></td>
+  <td>Specifies the canvas size and the initial constructor of a <code>Scene</code> object.
+    (without arg)</td></tr>
 </table>
 
 <h4>How to Use</h4>
@@ -197,7 +200,7 @@ body { margin: 0; padding: 0; }
 <a name="numeric"><h3>Numeric functions (<code>utils.ts</code>)</h3></a>
 <table border>
 <tr><td><code>fmod(<u>x</u>, <u>y</u>)</code></td>
-  <td>Equivalent to <code>fmod</code> C function.</td></tr>
+  <td>A better <code>mod</code> function; i.e. <code>fmod(-3,2)=1</code>.</td></tr>
 <tr><td><code>int(<u>x</u>)</code></td>
   <td>Equivalent to <code>Math.floor</code>.</td></tr>
 <tr><td><code>upperbound(<u>x</u>, <u>y</u>)</code></td>
@@ -246,12 +249,10 @@ body { margin: 0; padding: 0; }
   <td>Fills a rectangle.</td></tr>
 <tr><td><code>strokeRect(<u>ctx</u>, <u>rect</u>)</code></td>
   <td>Draws a rectangle.</td></tr>
-<tr><td><code>drawImageScaled(<br>&nbsp; <u>ctx</u>, <u>imgsrc</u>,<br>&nbsp; <u>sx</u>, <u>sy</u>, <u>sw</u>, <u>sh</u>,<br>&nbsp; <u>dx</u>, <u>dy</u>, <u>dw</u>, <u>dh</u>)</code></td>
-  <td>Draws a flipped image.</td></tr>
 <tr><td><code>ellipse(<u>ctx</u>, <u>cx</u>, <u>cy</u>, <u>rx</u>, <u>ry</u>)</code></td>
   <td>Draws an ellipse at (cx, cy).</td></tr>
-<tr><td><code>playSound(<u>sound</u>, <u>start</u>=0.025)</code></td>
-  <td>Plays a sound.</td></tr>
+<tr><td><code>drawImageScaled(<br>&nbsp; <u>ctx</u>, <u>imgsrc</u>,<br>&nbsp; <u>sx</u>, <u>sy</u>, <u>sw</u>, <u>sh</u>,<br>&nbsp; <u>dx</u>, <u>dy</u>, <u>dw</u>, <u>dh</u>)</code></td>
+  <td>Draws a flipped image.</td></tr>
 <tr><td><code>getKeySym(<u>keycode</u>)</code></td>
   <td>Returns the <code>KeySym</code> for <code>keyCode</code>.</td></tr>
 </table>
@@ -263,7 +264,7 @@ body { margin: 0; padding: 0; }
 A <code>Signal</code> represents an event that is attached to a 
 certain object and other objects can get notified.
 <table border>
-<tr class=ctor><td><code>new Signal(<u>arg0</u>, ...)</code></td>
+<tr class=ctor><td><code>new Signal(<em>baseargs</em> ...)</code></td>
   <td>Creates a <code>Signal</code> with given <code>baseargs</code>.</td></tr>
 <tr><td><code>.receivers</code></td>
   <td>A list of the receiver functions.</td></tr>
@@ -271,7 +272,7 @@ certain object and other objects can get notified.
   <td>Adds <code>receiver</code> to the subscriber list.</td></tr>
 <tr><td><code>.unsubscribe(<u>receiver</u>)</code></td>
   <td>Removes <code>receiver</code> from the subscriber list.</td></tr>
-<tr><td><code>.fire(<u>arg0</u>, ...)</code></td>
+<tr><td><code>.fire(<em>extraargs</em> ...)</code></td>
   <td>Sends a message to all the subscribers.
     Each receiver function gets (<code>baseargs</code> + <code>extraargs</code>)
     for arguments.</td></tr>
@@ -291,12 +292,12 @@ A <code>Color</code> represents an RGBA value.
   <td>The Blue value.</td></tr>
 <tr><td><code>.a</code></td>
   <td>The Alpha value.</td></tr>
+<tr><td><code>.setAlpha(<u>a</u>)</code></td>
+  <td>Creates a <code>Color</code> with a given alpha.</td></tr>
 <tr><td><code>.multiply(<u>t</u>)</code></td>
   <td>Multiplies each component by <code>t</code>.</tr>
 <tr><td><code>.blend(<u>color</u>, <u>t</u>)</code></td>
   <td>Blends with another <code>Color</code> with ratio <code>t</code>.</tr>
-<tr><td><code>.setAlpha(<u>a</u>)</code></td>
-  <td>Creates a <code>Color</code> with a given alpha.</td></tr>
 <tr><td><code>Color.generate(<u>h</u>, <u>v</u>=1.0)</code></td>
   <td>Creates a <code>Color</code> with a given hue.</td></tr>
 </table>
@@ -463,30 +464,6 @@ has its position (x, y) and size (width, height).
   <td>The center-x of the rectangle.</td></tr>
 <tr><td><code>.cy()</code></td>
   <td>The center-y of the rectangle.</td></tr>
-<tr><td><code>.edge(<u>vx</u>, <u>vy</u>)</code></td>
-  <td>Returns an edge of the rectangle.</td></tr>
-<tr><td><code>.inflate(<u>dw</u>, <u>dh</u>)</code></td>
-  <td>Creates a inflated/deflated rectangle by (<code>dw</code>, <code>dh</code>):
-    <div style="margin-left:1em;">
-      <svg xmlns="http://www.w3.org/2000/svg" 
-	   xmlns:xlink="http://www.w3.org/1999/xlink"
-	   version="1.1" width="100" height="48">
-	<g transform="translate(1.5,1.5)">
-	  <g fill="none" stroke="black" stroke-width="1">
-	    <rect x="20" y="12" width="50" height="20" />
-	    <rect x="0" y="0" width="90" height="44" />
-	    <line x1="0" y1="22" x2="20" y2="22" />
-	    <line x1="45" y1="0" x2="45" y2="12" />
-	    <circle cx="45" cy="22" r="2" />
-	  </g>
-	  <g style="font-size: 75%;">
-	    <text x="1" y="20">dw</text>
-	    <text x="46" y="10">dh</text>
-	  </g>
-	</g>
-      </svg>
-    </div>
-  </td></tr>
 <tr><td><code>.center()</code></td>
   <td>The center of the rectangle.</td></tr>
 <tr><td><code>.topLeft()</code></td>
@@ -530,8 +507,36 @@ has its position (x, y) and size (width, height).
       </svg>
     </div>
   </td></tr>
+<tr><td><code>.edge(<u>direction</u>)</code></td>
+  <td>Returns an edge of the rectangle.</td></tr>
+<tr><td><code>.inflate(<u>dw</u>, <u>dh</u>)</code></td>
+  <td>Creates a inflated/deflated rectangle by (<code>dw&times;2</code>, <code>dh&times;2</code>):
+    <div style="margin-left:1em;">
+      <svg xmlns="http://www.w3.org/2000/svg" 
+	   xmlns:xlink="http://www.w3.org/1999/xlink"
+	   version="1.1" width="100" height="48">
+	<g transform="translate(1.5,1.5)">
+	  <g fill="none" stroke="black" stroke-width="1">
+	    <rect x="20" y="12" width="50" height="20" />
+	    <rect x="0" y="0" width="90" height="44" />
+	    <line x1="0" y1="22" x2="20" y2="22" />
+	    <line x1="45" y1="0" x2="45" y2="12" />
+	    <line x1="45" y1="32" x2="45" y2="44" />
+	    <line x1="70" y1="22" x2="90" y2="22" />
+	    <circle cx="45" cy="22" r="2" />
+	  </g>
+	  <g style="font-size: 75%;">
+	    <text x="1" y="20">dw</text>
+	    <text x="46" y="11">dh</text>
+	    <text x="46" y="43">dh</text>
+	    <text x="71" y="20">dw</text>
+	  </g>
+	</g>
+      </svg>
+    </div>
+  </td></tr>
 <tr><td><code>.expand(<u>dw</u>, <u>dh</u>, <u>anchor</u>='c')</code></td>
-  <td>Creates an expanded rectangle by (<code>dw</code>, <code>dh</code>).
+  <td>Creates an expanded rectangle by (<code>dw&times;2</code>, <code>dh&times;2</code>).
     <div style="margin-left:1em;">
       <svg xmlns="http://www.w3.org/2000/svg" 
 	   xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -666,6 +671,20 @@ A <code>Circle</code> represents a circle that has its center and radius.
   <td>Trims a vector so that <code>circle</code> doesn't collide with this.</td></tr>
 </table>
 
+<a name="AAPlane"><h3>AAPlane (<code>geom.ts</code>)</h3></a>
+<p>
+A <code>AAPlane</code> represents an axis-aligned plane. 
+It is represented by two axis-aligned (either X, Y or Z) points.
+If two points are not aligned by any axis, it is invalid.
+<table border>
+<tr class=ctor><td><code>new AAPlane(<u>p0</u>, <u>p1</u>)</code></td>
+  <td>Creates an AALine.</td></tr>
+<tr><td><code>.p0</code></td>
+  <td>Point 0.</td></tr>
+<tr><td><code>.p1</code></td>
+  <td>Point 1.</td></tr>
+</table>
+
 <a name="Box"><h3>Box (<code>geom.ts</code>)</h3></a>
 <p>
 A <code>Box</code> is a 3D cuboid that has its position and size
@@ -685,6 +704,8 @@ both as <code>Vec3</code>.
   <td><code>true</code> if the box is empty.</td></tr>
 <tr><td><code>.center()</code></td>
   <td>The center of the box.</td></tr>
+<tr><td><code>.surface(<u>vx</u>, <u>vy</u>, <u>vz</u>)</code></td>
+  <td>Returns the <code>AAPlane</code> of the given surface.</td></tr>
 <tr><td><code>.anchor(<u>vx</u>=0, <u>vy</u>=0, <u>vz</u>=0)</code></td>
   <td>The anchor point of the box.</td></tr>
 <tr><td><code>.move(<u>dx</u>, <u>dy</u>, <u>dz</u>)</code></td>
@@ -735,16 +756,16 @@ A <code>TileMap</code> represents a two-dimensional array that holds map tiles.
   <td>The number of tiles that fit horizontally in the map.</td></tr>
 <tr><td><code>.height</code></td>
   <td>The number of tiles that fit vertically in the map.</td></tr>
-<tr><td><code>.map</code></td>
-  <td>Int32Array[] for the map data. Optionally given at construction.</td></tr>
 <tr><td><code>.bounds</code></td>
   <td>The bounds of the map in the actual size.</td></tr>
+<tr><td><code>.map</code></td>
+  <td>Int32Array[] for the map data. Optionally given at construction.</td></tr>
 <tr><td><code>.isObstacle</code></td>
-  <td>A function that returns <code>true</code> for obstacle tiles.</td></tr>
+  <td>A function <code>(number) =&gt; boolean</code> that returns true if the tile is an obstacle.</td></tr>
 <tr><td><code>.isGrabbable</code></td>
-  <td>A function that returns <code>true</code> for grabbable tiles (e.g. ladders).</td></tr>
+  <td>A function <code>(number) =&gt; boolean</code> that returns true if the tile is grabbable (e.g. ladders).</td></tr>
 <tr><td><code>.isStoppable</code></td>
-  <td>A function that returns <code>true</code> for stoppable tiles.</td></tr>
+  <td>A function <code>(number) =&gt; boolean</code> that returns true if the tile is stoppable.</td></tr>
 <tr><td><code>.get(x, y)</code></td>
   <td>Gets a tile at a specific position.</td></tr>
 <tr><td><code>.set(x, y, c)</code></td>
@@ -769,13 +790,13 @@ A <code>TileMap</code> represents a two-dimensional array that holds map tiles.
   <td>Returns a list of actual rectangles for tiles.</td></tr>
 <tr><td><code>.getRangeMap(key, f)</code></td>
   <td>Creates a <code>RangeMap</code> object for this tilemap.</td></tr>
-<tr><td><code>.renderFromBottomLeft(<br>&nbsp; ctx, bx, by,<br>&nbsp; tileset, ft,<br>&nbsp; <em>[x0, y0, w, h]</em>)</code></td>
+<tr><td><code>.renderFromBottomLeft(<br>&nbsp; ctx, ft,<br>&nbsp; <em>[x0, y0, w, h]</em>)</code></td>
   <td>Renders the tiles from bottom left for a given tile set.</td></tr>
-<tr><td><code>.renderFromTopRight(<br>&nbsp; ctx, bx, by,<br>&nbsp; tileset, ft,<br>&nbsp; <em>[x0, y0, w, h]</em>)</code></td>
+<tr><td><code>.renderFromTopRight(<br>&nbsp; ctx, ft,<br>&nbsp; <em>[x0, y0, w, h]</em>)</code></td>
   <td>Renders the tiles from top right for a given tile set.</td></tr>
-<tr><td><code>.renderWindowFromBottomLeft(<br>&nbsp; ctx, bx, by,<br>&nbsp; window, tileset, ft)</code></td>
+<tr><td><code>.renderWindowFromBottomLeft(<br>&nbsp; ctx, window, ft)</code></td>
   <td>Renders the tiles from bottom left within a window.</td></tr>
-<tr><td><code>.renderWindowFromTopRight(<br>&nbsp; ctx, bx, by,<br>&nbsp; window, tileset, ft)</code></td>
+<tr><td><code>.renderWindowFromTopRight(<br>&nbsp; ctx, window, ft)</code></td>
   <td>Renders the tiles from top right within a window.</td></tr>
 </table>
 
@@ -1044,10 +1065,20 @@ responsible for switching Scenes.
   <td>The canvas size.</td></tr>
 <tr><td><code>.framerate</code></td>
   <td>The framerate.</td></tr>
+<tr><td><code>.elem</code></td>
+  <td>The HTML element where a canvas is embedded.</td></tr>
 <tr><td><code>.canvas</code></td>
   <td>The <code>&lt;canvas&gt;</code> element.</td></tr>
 <tr><td><code>.ctx</code></td>
   <td>The <code>CanvasRenderingContext2D</code> object.</td></tr>
+<tr><td><code>.audioContext</code></td>
+  <td>The <code>AudioContext</code> object.</td></tr>
+<tr><td><code>.images</code></td>
+  <td>Set of available <code>HTMLImageElement</code> objects.</td></tr>
+<tr><td><code>.sounds</code></td>
+  <td>Set of available <code>HTMLAudioElement</code> objects.</td></tr>
+<tr><td><code>.labels</code></td>
+  <td>Set of available <code>HTMLDivElement</code> objects.</td></tr>
 <tr><td><code>.scene</code></td>
   <td>The current <code>Scene</code>.</td></tr>
 <tr><td><code>.active</code></td>
@@ -1060,14 +1091,17 @@ responsible for switching Scenes.
   <td>The current position of the mouse pointer.</td></tr>
 <tr><td><code>.mouseButton</code></td>
   <td>The current state of the mouse button.</td></tr>
+
 <tr><td><code>.addElement(bounds)</code></td>
   <td>Adds a new <code>&lt;div&gt;</code> element to the canvas.</td></tr>
 <tr><td><code>.removeElement(elem)</code></td>
   <td>Removes the element from the canvas.</td></tr>
-<tr><td><code>.lockKeys()</code></td>
-  <td>Blocks accidental keyboard input for one second.</td></tr>
-<tr><td><code>.setMusic(music, <em>[start, [end]]</em>)</code></td>
-  <td>Starts/Stops the music loop.</td></tr>
+<tr><td><code>.lockKeys(<u>t</u>=1)</code></td>
+  <td>Blocks keyboard input for the given duration.</td></tr>
+<tr><td><code>.setMusic(<br>&nbsp; <u>name</u>=null, <u>start</u>=0, <u>end</u>=0)</code></td>
+  <td>Starts playing the music. When <code>null</code> is given, stops playing.</td></tr>
+<tr><td><code>.playSound(<u>name</u>, <u>start</u>=0)</code></td>
+  <td>Plays the specified sound.</td></tr>
 <tr><td><code>.init(scene)</code></td>
   <td>Initializes the game with the first <code>Scene</code>.</td></tr>
 <tr><td><code>.post(msg)</code></td>

@@ -247,6 +247,27 @@ function strokeRect(
     ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
 }
 
+/** Draw an ellipse.
+ * @param ctx Context to draw.
+ * @param cx Center X.
+ * @param cy Center Y.
+ * @param rx Radius X.
+ * @param ry Radius Y.
+ */
+function ellipse(
+    ctx: CanvasRenderingContext2D,
+    cx: number, cy: number, rx: number, ry: number) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    if (ry < rx) {
+	ctx.scale(1, ry/rx);
+    } else {
+	ctx.scale(rx/ry, 1);
+    }
+    ctx.arc(0, 0, Math.max(rx, ry), 0, Math.PI*2);
+    ctx.restore();
+}
+
 /** Draw a scaled image. 
  *  When the destination width/height is negative, 
  *  the image is flipped.
@@ -274,27 +295,6 @@ function drawImageScaled(
 	      (0 < dh)? 1 : -1);
     ctx.drawImage(src, sx, sy, sw, sh, 0, 0,
 		  Math.abs(dw), Math.abs(dh));
-    ctx.restore();
-}
-
-/** Draw an ellipse.
- * @param ctx Context to draw.
- * @param cx Center X.
- * @param cy Center Y.
- * @param rx Radius X.
- * @param ry Radius Y.
- */
-function ellipse(
-    ctx: CanvasRenderingContext2D,
-    cx: number, cy: number, rx: number, ry: number) {
-    ctx.save();
-    ctx.translate(cx, cy);
-    if (ry < rx) {
-	ctx.scale(1, ry/rx);
-    } else {
-	ctx.scale(rx/ry, 1);
-    }
-    ctx.arc(0, 0, Math.max(rx, ry), 0, Math.PI*2);
     ctx.restore();
 }
 
@@ -457,14 +457,14 @@ class Color {
 	}
     }
 
-    /** Multiplies the brightness. */
-    multiply(t: number): Color {
-	return new Color(this.r*t, this.g*t, this.b*t, this.a);
-    }
-
     /** Changes the alpha value. */
     setAlpha(a: number): Color {
 	return new Color(this.r, this.g, this.b, a);
+    }
+
+    /** Multiplies the brightness. */
+    multiply(t: number): Color {
+	return new Color(this.r*t, this.g*t, this.b*t, this.a);
     }
 
     /** Blends with another Color. 
