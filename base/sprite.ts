@@ -91,16 +91,16 @@ class CanvasImageSource implements ImageSource {
     /** Source rectangle. */
     srcRect: Rect;
     
-    constructor(canvas: HTMLCanvasElement, dstRect: Rect=null, srcRect: Rect=null) {
+    constructor(canvas: HTMLCanvasElement, srcRect: Rect=null, dstRect: Rect=null) {
 	this.canvas = canvas;
-	if (dstRect === null) {
-	    dstRect = new Rect(-canvas.width/2, -canvas.height/2, canvas.width, canvas.height);
-	}
-	this.dstRect = dstRect;
 	if (srcRect === null) {
 	    srcRect = new Rect(0, 0, canvas.width, canvas.height);
 	}
 	this.srcRect = srcRect;
+	if (dstRect === null) {
+	    dstRect = new Rect(-canvas.width/2, -canvas.height/2, canvas.width, canvas.height);
+	}
+	this.dstRect = dstRect;
     }
 
     /** Returns the bounds of the image at (0, 0). */
@@ -131,9 +131,15 @@ class HTMLImageSource implements ImageSource {
     /** Destination rectangle. */
     dstRect: Rect;
     
-    constructor(image: HTMLImageElement, srcRect: Rect, dstRect: Rect) {
+    constructor(image: HTMLImageElement, srcRect: Rect=null, dstRect: Rect=null) {
 	this.image = image;
+	if (srcRect === null) {
+	    srcRect = new Rect(0, 0, image.width, image.height);
+	}
 	this.srcRect = srcRect;
+	if (dstRect === null) {
+	    dstRect = new Rect(-image.width/2, -image.height/2, image.width, image.height);
+	}
 	this.dstRect = dstRect;
     }
 
@@ -159,16 +165,17 @@ class HTMLImageSource implements ImageSource {
  */
 class TiledImageSource implements ImageSource {
 
-    /** Bounds to fill. */
-    bounds: Rect;
     /** Image source to be tiled. */
     imgsrc: ImageSource;
+    /** Bounds to fill. */
+    bounds: Rect;
     /** Image offset. */
-    offset: Vec2 = new Vec2();
+    offset: Vec2;
     
-    constructor(bounds: Rect, imgsrc: ImageSource=null) {
-	this.bounds = bounds;
+    constructor(imgsrc: ImageSource, bounds: Rect, offset: Vec2=null) {
 	this.imgsrc = imgsrc;
+	this.bounds = bounds;
+	this.offset = (offset !== null)? offset : new Vec2();
     }
 
     /** Returns the bounds of the sprite at a given pos. */
@@ -178,28 +185,25 @@ class TiledImageSource implements ImageSource {
 
     /** Renders this image in the given context. */
     render(ctx: CanvasRenderingContext2D) {
-	let imgsrc = this.imgsrc;
-	if (imgsrc !== null) {
-	    ctx.save();
-	    ctx.translate(int(this.bounds.x), int(this.bounds.y));
-	    ctx.beginPath();
-	    ctx.rect(0, 0, this.bounds.width, this.bounds.height);
-	    ctx.clip();
-	    let dstRect = imgsrc.getBounds();
-	    let w = dstRect.width;
-	    let h = dstRect.height;
-	    let dx0 = int(Math.floor(this.offset.x/w)*w - this.offset.x);
-	    let dy0 = int(Math.floor(this.offset.y/h)*h - this.offset.y);
-	    for (let dy = dy0; dy < this.bounds.height; dy += h) {
-		for (let dx = dx0; dx < this.bounds.width; dx += w) {
-		    ctx.save();
-		    ctx.translate(dx, dy);
-		    imgsrc.render(ctx);
-		    ctx.restore();
-		}
+	ctx.save();
+	ctx.translate(int(this.bounds.x), int(this.bounds.y));
+	ctx.beginPath();
+	ctx.rect(0, 0, this.bounds.width, this.bounds.height);
+	ctx.clip();
+	let dstRect = this.imgsrc.getBounds();
+	let w = dstRect.width;
+	let h = dstRect.height;
+	let dx0 = int(Math.floor(this.offset.x/w)*w - this.offset.x);
+	let dy0 = int(Math.floor(this.offset.y/h)*h - this.offset.y);
+	for (let dy = dy0; dy < this.bounds.height; dy += h) {
+	    for (let dx = dx0; dx < this.bounds.width; dx += w) {
+		ctx.save();
+		ctx.translate(dx, dy);
+		this.imgsrc.render(ctx);
+		ctx.restore();
 	    }
-	    ctx.restore();
 	}
+	ctx.restore();
     }
 }
 

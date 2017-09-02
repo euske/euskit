@@ -12,9 +12,9 @@ a { font-weight: bold; }
 u { font-weight: bold; }
 body { margin: 0; padding: 0; }
 .code { border: 1px solid; padding: 0.2em; background: #eeeeee; }
-.ctor { background: #ffffcc; }
+.ctor { background: #ccffcc; }
 .inherited { background: #cccccc; }
-.overridable { background: #ccffcc; }
+.overridable { background: #ffffcc; }
 .nav { position: fixed; top: 0; left: 0; width: 20%; }
 .main { position: absolute; top: 0; left: 20%; width: 80%; }
 .list { margin-top: 1em; }
@@ -56,11 +56,15 @@ body { margin: 0; padding: 0; }
 <a href="#RangeMap">RangeMap</a>,
 <a href="#ImageSource">ImageSource</a>,
 <a href="#SpriteSheet">SpriteSheet</a>,
+<a href="#PhysicsConfig">PhysicsConfig</a>,
+<a href="#TaskList">TaskList</a>,
+<a href="#TaskQueue">TaskQueue</a>,
 </div>
 
 <div class=list>
-<div class=head>Basic Classes:</div>
+<div class=head>Basic Objects:</div>
 <a href="#Task">Task</a>,
+<a href="#Widget">Widget</a>,
 <a href="#Entity">Entity</a>,
 <a href="#Sprite">Sprite</a>
 <a href="#Layer">Layer</a>,
@@ -69,7 +73,7 @@ body { margin: 0; padding: 0; }
 </div>
 
 <div class=list>
-<div class=head>Specialized Classes:</div>
+<div class=head>Specialized Objects:</div>
 <a href="#Projectile">Projectile</a>,
 <a href="#TiledSprite">TiledSprite</a>,
 <a href="#FlowSprite">FlowSprite</a>,
@@ -104,7 +108,6 @@ body { margin: 0; padding: 0; }
 </div>
 
 <p><b>Legend:</b><br>
-<span class=ctor><code>constructor</code></span>,<br>
 <span class=inherited><code>inherited method</code></span>,<br>
 <span class=overridable><code>overridable method</code></span><br>
 
@@ -265,7 +268,7 @@ A <code>Signal</code> represents an event that is attached to a
 certain object and other objects can get notified.
 <table border>
 <tr class=ctor><td><code>new Signal(<em>baseargs</em> ...)</code></td>
-  <td>Creates a <code>Signal</code> with given <code>baseargs</code>.</td></tr>
+  <td>New <code>Signal</code> object with given <code>baseargs</code>.</td></tr>
 <tr><td><code>.receivers</code></td>
   <td>A list of the receiver functions.</td></tr>
 <tr><td><code>.subscribe(<u>receiver</u>)</code></td>
@@ -283,7 +286,7 @@ certain object and other objects can get notified.
 A <code>Color</code> represents an RGBA value.
 <table border>
 <tr class=ctor><td><code>new Color(<u>r</u>, <u>g</u>, <u>b</u>, <u>a</u>=1.0)</code></td>
-  <td>Creates a <code>Color</code> for RGBA values.</td></tr>
+  <td>New <code>Color</code> object for RGBA values.</td></tr>
 <tr><td><code>.r</code></td>
   <td>The Red value.</td></tr>
 <tr><td><code>.g</code></td>
@@ -307,7 +310,7 @@ A <code>Color</code> represents an RGBA value.
 A <code>Vec2</code> represents two-dimensional vector that has (x, y) elements.
 <table border>
 <tr class=ctor><td><code>new Vec2(<u>x</u>=0, <u>y</u>=0)</code></td>
-  <td>Creates a vector (<code>x</code>, <code>y</code>).</td></tr>
+  <td>New 2D vector (<code>x</code>, <code>y</code>).</td></tr>
 <tr><td><code>.x</code></td>
   <td>The x value.</td></tr>
 <tr><td><code>.y</code></td>
@@ -351,7 +354,7 @@ A <code>Vec2</code> represents two-dimensional vector that has (x, y) elements.
 A <code>Vec3</code> represents three-dimensional vector that has (x, y, z) elements.
 <table border>
 <tr class=ctor><td><code>new Vec3(<u>x</u>=0, <u>y</u>=0, <u>z</u>=0)</code></td>
-  <td>Creates a vector (<code>x</code>, <code>y</code>, <code>z</code>).</td></tr>
+  <td>New 3D vector (<code>x</code>, <code>y</code>, <code>z</code>).</td></tr>
 <tr><td><code>.x</code></td>
   <td>The x value.</td></tr>
 <tr><td><code>.y</code></td>
@@ -430,7 +433,7 @@ A <code>AALine</code> represents an axis-aligned (either horizontal or
 parpendicular) line.
 <table border>
 <tr class=ctor><td><code>new AALine(<u>x0</u>, <u>y0</u>, <u>x1</u>, <u>y1</u>)</code></td>
-  <td>Creates an AALine.</td></tr>
+  <td>New AALine.</td></tr>
 <tr><td><code>.x0</code></td>
   <td>The x0 value.</td></tr>
 <tr><td><code>.y0</code></td>
@@ -446,8 +449,8 @@ parpendicular) line.
 A <code>Rect</code> object is a 2D rectangle that 
 has its position (x, y) and size (width, height).
 <table border>
-<tr class=ctor><td><code>new Rect(<u>x</u>=0, <u>y</u>=0,<br>&nbsp; <u>width</u>=0, <u>height</u>=0)</code></td>
-  <td>Creates a rectangle (<code>x</code>, <code>y</code>, <code>width</code>, <code>height</code>).</td></tr>
+<tr class=ctor><td><code>new Rect(<br>&nbsp; <u>x</u>=0, <u>y</u>=0,<br>&nbsp; <u>width</u>=0, <u>height</u>=0)</code></td>
+  <td>New rectangle (<code>x</code>, <code>y</code>, <code>width</code>, <code>height</code>).</td></tr>
 <tr><td><code>.x</code></td>
   <td>The x value of the top-left corner.</td></tr>
 <tr><td><code>.y</code></td>
@@ -508,7 +511,31 @@ has its position (x, y) and size (width, height).
     </div>
   </td></tr>
 <tr><td><code>.edge(<u>direction</u>)</code></td>
-  <td>Returns an edge of the rectangle.</td></tr>
+  <td>Returns an edge of the rectangle.
+    <div style="margin-left:1em;">
+      <svg xmlns="http://www.w3.org/2000/svg" 
+	   xmlns:xlink="http://www.w3.org/1999/xlink"
+	   version="1.1" width="125" height="49">
+	<g transform="translate(2.5,2.5)">
+	  <g fill="none" stroke="black" stroke-width="1">
+	    <rect x="0" y="0" width="80" height="40" />
+	    <g stroke-width="3">
+	    <line x1="30" x2="50" y1="0" y2="0" />
+	    <line x1="0" x2="0" y1="10" y2="30" />
+	    <line x1="80" x2="80" y1="10" y2="30" />
+	    <line x1="30" x2="50" y1="40" y2="40" />
+	    </g>
+	  </g>
+	  <g style="font-family: monospace;">
+	    <text x="40" y="11" text-anchor="middle">n</text>
+	    <text x="2" y="25" text-anchor="begin">w</text>
+	    <text x="78" y="25" text-anchor="end">e</text>
+	    <text x="40" y="37" text-anchor="middle">s</text>
+	  </g>
+	</g>
+      </svg>
+    </div>
+  </td></tr>
 <tr><td><code>.inflate(<u>dw</u>, <u>dh</u>)</code></td>
   <td>Creates a inflated/deflated rectangle by (<code>dw&times;2</code>, <code>dh&times;2</code>):
     <div style="margin-left:1em;">
@@ -643,12 +670,12 @@ has its position (x, y) and size (width, height).
   <td>Trims a vector so that <code>rect</code> is restricted inside this.</td></tr>
 </table>
 
-<a name="Circle"><h3>Circle : <a href="#Shape">Shape</a>, <a href="#Collider">Collider</a> (<code>geom.ts</code>)</h3></a>
+<a name="Circle"><h3>Circle : <a href="#Shape">Shape</a> (<code>geom.ts</code>)</h3></a>
 <p>
 A <code>Circle</code> represents a circle that has its center and radius.
 <table border>
 <tr class=ctor><td><code>new Circle(<u>center</u>, <u>radius</u>=0)</code></td>
-  <td>Creates a circle.</td></tr>
+  <td>New circle with the given center and radius.</td></tr>
 <tr><td><code>.center</code></td>
   <td>The center of the circle.</td></tr>
 <tr><td><code>.radius</code></td>
@@ -678,7 +705,7 @@ It is represented by two axis-aligned (either X, Y or Z) points.
 If two points are not aligned by any axis, it is invalid.
 <table border>
 <tr class=ctor><td><code>new AAPlane(<u>p0</u>, <u>p1</u>)</code></td>
-  <td>Creates an AALine.</td></tr>
+  <td>New AAPlane for the given points.</td></tr>
 <tr><td><code>.p0</code></td>
   <td>Point 0.</td></tr>
 <tr><td><code>.p1</code></td>
@@ -691,7 +718,7 @@ A <code>Box</code> is a 3D cuboid that has its position and size
 both as <code>Vec3</code>.
 <table border>
 <tr class=ctor><td><code>new Box(<u>origin</u>, <u>size</u>=null)</code></td>
-  <td>Creates a box (<code>origin</code>, <code>size</code>).</td></tr>
+  <td>New Box with (<code>origin</code>, <code>size</code>).</td></tr>
 <tr><td><code>.origin</code></td>
   <td>The origin of the box.</td></tr>
 <tr><td><code>.size</code></td>
@@ -748,8 +775,8 @@ both as <code>Vec3</code>.
 <p>
 A <code>TileMap</code> represents a two-dimensional array that holds map tiles.
 <table border>
-<tr class=ctor><td><code>new TileMap(tilesize,<br>&nbsp; width, height, <em>[map]</em>)</code></td>
-  <td>Creates a new tilemap for a given size.</td></tr>
+<tr class=ctor><td><code>new TileMap(<br>&nbsp; <u>tilesize</u>, <u>width</u>, <u>height</u>, <br>&nbsp; <u>map</u>=null)</code></td>
+  <td>New TileMap for a given size.</td></tr>
 <tr><td><code>.tilesize</code></td>
   <td>The tile size.</td></tr>
 <tr><td><code>.width</code></td>
@@ -760,43 +787,37 @@ A <code>TileMap</code> represents a two-dimensional array that holds map tiles.
   <td>The bounds of the map in the actual size.</td></tr>
 <tr><td><code>.map</code></td>
   <td>Int32Array[] for the map data. Optionally given at construction.</td></tr>
-<tr><td><code>.isObstacle</code></td>
-  <td>A function <code>(number) =&gt; boolean</code> that returns true if the tile is an obstacle.</td></tr>
-<tr><td><code>.isGrabbable</code></td>
-  <td>A function <code>(number) =&gt; boolean</code> that returns true if the tile is grabbable (e.g. ladders).</td></tr>
-<tr><td><code>.isStoppable</code></td>
-  <td>A function <code>(number) =&gt; boolean</code> that returns true if the tile is stoppable.</td></tr>
-<tr><td><code>.get(x, y)</code></td>
+<tr><td><code>.get(<u>x</u>, <u>y</u>)</code></td>
   <td>Gets a tile at a specific position.</td></tr>
-<tr><td><code>.set(x, y, c)</code></td>
+<tr><td><code>.set(<u>x</u>, <u>y</u>, <u>c</u>)</code></td>
   <td>Sets a tile at a specific position. (Clears the RangeMap cache.)</td></tr>
-<tr><td><code>.fill(c, <em>[rect]</em>)</code></td>
+<tr><td><code>.fill(<u>c</u>, <u>rect</u>=null)</code></td>
   <td>Fills tiles in a given area.</td></tr>
 <tr><td><code>.copy()</code></td>
   <td>Copies the tilemap.</td></tr>
-<tr><td><code>.coord2map(rect)</code></td>
+<tr><td><code>.coord2map(<u>rect</u>)</code></td>
   <td>Converts an actual Rect/Vec2 to the tile cells.</td></tr>
-<tr><td><code>.map2coord(rect)</code></td>
+<tr><td><code>.map2coord(<u>rect</u>)</code></td>
   <td>Converts a Rect/Vec2 for tile cells to the actual size.</td></tr>
-<tr><td><code>.apply(f, <em>[rect]</em>)</code></td>
+<tr><td><code>.apply(<br>&nbsp; <u>(x,y,c) =&gt; boolean</u>,<br>&nbsp; <u>rect</u>=null)</code></td>
   <td>Applies a function to tiles.</td></tr>
-<tr><td><code>.shift(vx, vy, <em>[rect]</em>)</code></td>
-  <td>Shift the contents of cells in the given area.</td></tr>
-<tr><td><code>.findTile(f, rect)</code></td>
+<tr><td><code>.shift(<u>vx</u>, <u>vy</u>, <u>rect</u>=null)</code></td>
+  <td>Shift all the cells in the given area.</td></tr>
+<tr><td><code>.findTile(<br>&nbsp; <u>(c) =&gt; boolean</u>, <br>&nbsp; <u>rect</u>=null)</code></td>
   <td>Returns the position of the first tile in the given area.</td></tr>
-<tr><td><code>.findTileByCoord(f, rect)</code></td>
+<tr><td><code>.findTileByCoord(<br>&nbsp; <u>(c) =&gt; boolean</u>, <br>&nbsp; <u>range</u>)</code></td>
   <td>Returns the position of the first tile in the given area.</td></tr>
-<tr><td><code>.getTileRects(f, rect)</code></td>
+<tr><td><code>.getTileRects(<br>&nbsp; <u>(c) =&gt; boolean</u>, <br>&nbsp; <u>range</u>)</code></td>
   <td>Returns a list of actual rectangles for tiles.</td></tr>
-<tr><td><code>.getRangeMap(key, f)</code></td>
+<tr><td><code>.getRangeMap(<br>&nbsp; <u>key</u>, <br>&nbsp; <u>(c) =&gt; boolean</u>)</code></td>
   <td>Creates a <code>RangeMap</code> object for this tilemap.</td></tr>
-<tr><td><code>.renderFromBottomLeft(<br>&nbsp; ctx, ft,<br>&nbsp; <em>[x0, y0, w, h]</em>)</code></td>
+<tr><td><code>.renderFromBottomLeft(<br>&nbsp; <u>ctx</u>, <u>ft</u>,<br>&nbsp; <u>x0</u>=0, <u>y0</u>=0, <u>w</u>=0, <u>h</u>=0)</code></td>
   <td>Renders the tiles from bottom left for a given tile set.</td></tr>
-<tr><td><code>.renderFromTopRight(<br>&nbsp; ctx, ft,<br>&nbsp; <em>[x0, y0, w, h]</em>)</code></td>
+<tr><td><code>.renderFromTopRight(<br>&nbsp; <u>ctx</u>, <u>ft</u>,<br>&nbsp; <u>x0</u>=0, <u>y0</u>=0, <u>w</u>=0, <u>h</u>=0)</code></td>
   <td>Renders the tiles from top right for a given tile set.</td></tr>
-<tr><td><code>.renderWindowFromBottomLeft(<br>&nbsp; ctx, window, ft)</code></td>
+<tr><td><code>.renderWindowFromBottomLeft(<br>&nbsp; <u>ctx</u>, <u>window</u>, <u>ft</u>)</code></td>
   <td>Renders the tiles from bottom left within a window.</td></tr>
-<tr><td><code>.renderWindowFromTopRight(<br>&nbsp; ctx, window, ft)</code></td>
+<tr><td><code>.renderWindowFromTopRight(<br>&nbsp; <u>ctx</u>, <u>window</u>, <u>ft</u>)</code></td>
   <td>Renders the tiles from top right within a window.</td></tr>
 </table>
 
@@ -804,16 +825,16 @@ A <code>TileMap</code> represents a two-dimensional array that holds map tiles.
 <p>
 A <code>RangeMap</code> is a partial copy of <code>TileMap</code> 
 that allows range queries for specific tiles.
+Notice: This object is always returned by <code>TileMap.getRangeMap()</code> method
+and not explicitly created by a user.
 <table border>
-<tr class=ctor><td><code>new RangeMap(tilemap, f)</code></td>
-  <td>Creates a new rangemap for certain tiles in a tilemap.</td></tr>
 <tr><td><code>.width</code></td>
   <td>The number of tiles that fit horizontally in the map.</td></tr>
 <tr><td><code>.height</code></td>
   <td>The number of tiles that fit vertically in the map.</td></tr>
-<tr><td><code>.get(x0, y0, x1, y1)</code></td>
+<tr><td><code>.get(<u>x0</u>, <u>y0</u>, <u>x1</u>, <u>y1</u>)</code></td>
   <td>Returns the number of specific tiles within the given area.</td></tr>
-<tr><td><code>.exists(rect)</code></td>
+<tr><td><code>.exists(<u>rect</u>)</code></td>
   <td><code>true</code> if a specific tile exists within the given area.</td></tr>
 </table>
 
@@ -821,16 +842,23 @@ that allows range queries for specific tiles.
 <p>
 An <code>ImageSource</code> is an abstract object to render something on screen.
 <table border>
-<tr class=ctor><td><code>new RectImageSource(color, dstRect)</code></td>
-  <td>Creates a <code>ImageSource</code> with a solid rectangle.</td></tr>
-<tr class=ctor><td><code>new OvalImageSource(color, dstRect)</code></td>
-  <td>Creates a <code>ImageSource</code> with a solid oval.</td></tr>
-<tr class=ctor><td><code>new HTMLImageSource(image, srcRect, dstRect)</code></td>
-  <td>Creates a <code>ImageSource</code> that refers to a potion of
-    <code>&lt;img&gt;</code>.</td></tr>
+<tr class=ctor><td><code>new RectImageSource(<u>color</u>, <u>dstRect</u>)</code></td>
+  <td>ImageSource with a filled rectangle.</td></tr>
+<tr class=ctor><td><code>new OvalImageSource(<u>color</u>, <u>dstRect</u>)</code></td>
+  <td>ImageSource with a filled oval.</td></tr>
+<tr class=ctor><td><code>new CanvasImageSource(<br>&nbsp; <u>canvas</u>, <u>srcRect</u>=null, <u>dstRect</u>=null)</code></td>
+  <td>ImageSource that refers to a portion of 
+    <code>&lt;canvas&gt;</code> element.</td></tr>
+<tr class=ctor><td><code>new HTMLImageSource(<br>&nbsp; <u>image</u>, <u>srcRect</u>=null, <u>dstRect</u>=null)</code></td>
+  <td>ImageSource that refers to a portion of
+    <code>&lt;img&gt;</code> element.</td></tr>
+<tr class=ctor><td><code>new TiledImageSource(<br>&nbsp; <u>imgsrc</u>, <u>bounds</u>, <u>offset</u>=null)</code></td>
+  <td>ImageSource that is composed of another ImageSource.</td></tr>
+<tr class=ctor><td><code>new StarImageSource(<br>&nbsp; <u>bounds</u>, <u>nstars</u>, <u>maxdepth</u>=3, <u>imgsrcs</u>=null)</code></td>
+  <td>ImageSource that can be used for "star flowing" effects.</td></tr>
 <tr><td><code>.getBounds()</code></td>
   <td>Returns the bounds rectangle of the ImageSource.</td></tr>
-<tr><td><code>.render(ctx)</code></td>
+<tr><td><code>.render(<u>ctx</u>)</code></td>
   <td>Renders the image at (0, 0) in the given Context.</td></tr>
 </table>
 
@@ -846,37 +874,21 @@ A set of <code>ImageSource</code> objects indexed by a number.
   <td>Returns the <code>i,j</code>-th <code>ImageSource</code>.</td></tr>
 </table>
 
-<a name="basic-classes"><h2>Basic Classes</h2></a>
-
-<a name="Task"><h3>Task (<code>task.ts</code>)</h3></a>
+<a name="PhysicsConfig"><h3>PhysicsConfig (<code>entity.ts</code>)</h3></a>
 <p>
-A <code>Task</code> is a process that belongs to a <code>TaskList</code>
-and its method is executed periodically.
 <table border>
-<tr class=ctor><td><code>new Task()</code></td>
-  <td>Creates a new task.</td></tr>
-<tr><td><code>.running</code></td>
-  <td><code>true</code> if the task is running.</td></tr>
-<tr><td><code>.tasklist</code></td>
-  <td><code>TaskList</code> that the task belongs to.</td></tr>
-<tr><td><code>.lifetime</code></td>
-  <td>Duration that the task can run.</td></tr>
-<tr><td><code>.startTime</code></td>
-  <td>Time the task started.</td></tr>
-<tr><td><code>.stopped</code></td>
-  <td>Fired when the task stops.</td></tr>
-<tr><td><code>.getTime()</code></td>
-  <td>Elapsed time since the task has started (in seconds).</td></tr>
-<tr><td><code>.init()</code></td>
-  <td>Invoked when the task is started.</td></tr>
-<tr><td><code>.tick()</code></td>
-  <td>Invoked at every frame while the task is running.</td></tr>
-<tr><td><code>.stop()</code></td>
-  <td>Terminates the task.</td></tr>
-<tr><td><code>.chain(next)</code></td>
-  <td>Schedules another task.</td></tr>
-<tr class=overridable><td><code>.update()</code></td>
-  <td>Updates for the current frame.</td></tr>
+<tr class=ctor><td><code>new PhysicsConfig()</code></td>
+  <td>Creates a new configuration.</td></tr>
+<tr><td><code>.maxspeed</code></td>
+  <td>A vector for the maximum speed (absolute values).</td></tr>
+<tr><td><code>.jumpfunc</code></td>
+  <td>A gravity function <code>(vy, t) =&gt; number</code></td></tr>
+<tr><td><code>.isObstacle</code></td>
+  <td>A function <code>(c) =&gt; boolean</code> that returns true if the tile is an obstacle.</td></tr>
+<tr><td><code>.isGrabbable</code></td>
+  <td>A function <code>(c) =&gt; boolean</code> that returns true if the tile is grabbable (e.g. ladders).</td></tr>
+<tr><td><code>.isStoppable</code></td>
+  <td>A function <code>(c) =&gt; boolean</code> that returns true if the tile is stoppable.</td></tr>
 </table>
 
 <a name="TaskList"><h3>TaskList (<code>task.ts</code>)</h3></a>
@@ -913,6 +925,39 @@ Manages a list of <code>Task</code>s that run sequentially.
   <td>Empty the task list.</td></tr>
 <tr><td><code>.tick()</code></td>
   <td>Invoked at every frame. Update the current tasks.</td></tr>
+</table>
+
+<a name="basic-objects"><h2>Basic Objects</h2></a>
+
+<a name="Task"><h3>Task (<code>task.ts</code>)</h3></a>
+<p>
+A <code>Task</code> is a process that belongs to a <code>TaskList</code>
+and its method is executed periodically.
+<table border>
+<tr class=ctor><td><code>new Task()</code></td>
+  <td>Creates a new task.</td></tr>
+<tr><td><code>.running</code></td>
+  <td><code>true</code> if the task is running.</td></tr>
+<tr><td><code>.tasklist</code></td>
+  <td><code>TaskList</code> that the task belongs to.</td></tr>
+<tr><td><code>.lifetime</code></td>
+  <td>Duration that the task can run.</td></tr>
+<tr><td><code>.startTime</code></td>
+  <td>Time the task started.</td></tr>
+<tr><td><code>.stopped</code></td>
+  <td>Fired when the task stops.</td></tr>
+<tr><td><code>.getTime()</code></td>
+  <td>Elapsed time since the task has started (in seconds).</td></tr>
+<tr><td><code>.init()</code></td>
+  <td>Invoked when the task is started.</td></tr>
+<tr><td><code>.tick()</code></td>
+  <td>Invoked at every frame while the task is running.</td></tr>
+<tr><td><code>.stop()</code></td>
+  <td>Terminates the task.</td></tr>
+<tr><td><code>.chain(next)</code></td>
+  <td>Schedules another task.</td></tr>
+<tr class=overridable><td><code>.update()</code></td>
+  <td>Updates for the current frame.</td></tr>
 </table>
 
 <a name="Widget"><h3>Widget : <a href="#Task">Task</a> (<code>entity.ts</code>)</h3></a>
@@ -1109,7 +1154,7 @@ responsible for switching Scenes.
 </table>
 
 
-<a name="specialized-classes"><h2>Specialized Classes</h2></a>
+<a name="specialized-objects"><h2>Specialized Objects</h2></a>
 
 <a name="TiledSprite"><h3>TiledSprite : <a href="#Sprite">Sprite</a> (<code>sprite.ts</code>)</h3></a>
 <p>
@@ -1182,12 +1227,10 @@ Suitable for charcters or objects that can jump or fall.
   <td>The order that the entity is drawn to the screen.</td></tr>
 <tr class=inherited><td><code>.scale</code></td>
   <td>A vector for the polarity of the entity image.</td></tr>
+<tr><td><code>.physics</code></td>
+  <td>The physics options.</td></tr>
 <tr><td><code>.velocity</code></td>
   <td>A vector for the current velocity.</td></tr>
-<tr><td><code>.maxspeed</code></td>
-  <td>A vector for the maximum speed (absolute values).</td></tr>
-<tr><td><code>.jumpfunc</code></td>
-  <td>A gravity function <code>(vy:number, t:number) =&gt; number</code></td></tr>
 <tr class=inherited><td><code>.stop()</code></td>
   <td>Terminates the entity.</td></tr>
 <tr class=inherited><td><code>.movePos(v)</code></td>
@@ -1251,12 +1294,10 @@ Suitable for tile-based platformer games.
   <td>The order that the entity is drawn to the screen.</td></tr>
 <tr class=inherited><td><code>.scale</code></td>
   <td>A vector for the polarity of the entity image.</td></tr>
+<tr class=inherited><td><code>.physics</code></td>
+  <td>The physics options.</td></tr>
 <tr class=inherited><td><code>.velocity</code></td>
   <td>A vector for the current velocity.</td></tr>
-<tr class=inherited><td><code>.maxspeed</code></td>
-  <td>A vector for the maximum speed (absolute values).</td></tr>
-<tr class=inherited><td><code>.jumpfunc</code></td>
-  <td>A gravity function <code>(vy:number, t:number) =&gt; number</code></td></tr>
 <tr><td><code>.tilemap</code></td>
   <td>A <code>TileMap</code> that interacts with the entity.</td></tr>
 <tr class=inherited><td><code>.stop()</code></td>
