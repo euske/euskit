@@ -40,10 +40,6 @@ addInitHook(() => {
     TILES = new ImageSpriteSheet(
 	APP.images['tiles'], new Vec2(48,48), new Vec2(0,16));
 });
-const JUMPFUNC = (vy:number, t:number) => {
-    return (0 <= t && t <= 6)? -8 : vy+2;
-};
-const MAXSPEED = new Vec2(16, 16);
 
 
 //  WorldObject
@@ -118,13 +114,11 @@ class Player extends PlatformerEntity implements WorldObject {
     picked: Signal;
 
     constructor(scene: Game, pos: Vec2) {
-	super(scene.tilemap, pos);
+	super(scene.tilemap, scene.physics, pos);
 	this.sprite = new ShadowSprite(this);
 	this.skin = SPRITES.get(S.PLAYER);
 	this.collider = this.skin.getBounds();
 	this.scene = scene;
-	this.jumpfunc = JUMPFUNC;
-	this.maxspeed = MAXSPEED;
 	this.picked = new Signal(this);
 	// Release a ladder when jumping.
 	this.jumped.subscribe(() => { this.holding = false; });
@@ -133,7 +127,7 @@ class Player extends PlatformerEntity implements WorldObject {
     }
 
     hasLadder() {
-	return this.hasTile(this.tilemap.isGrabbable);
+	return this.hasTile(this.physics.isGrabbable);
     }
 
     canFall() {
@@ -142,7 +136,7 @@ class Player extends PlatformerEntity implements WorldObject {
 
     getObstaclesFor(range: Rect, v: Vec2, context=null as string): Rect[] {
 	if (!this.holding) {
-	    return this.tilemap.getTileRects(this.tilemap.isObstacle, range);
+	    return this.tilemap.getTileRects(this.physics.isObstacle, range);
 	}
 	return super.getObstaclesFor(range, v, context);
     }
@@ -194,13 +188,11 @@ class Monster extends PlanningEntity implements WorldObject {
     target: Entity;
 
     constructor(scene: Game, pos: Vec2) {
-	super(scene.profile, scene.tilemap, pos);
+	super(scene.grid, scene.tilemap, scene.physics, pos);
 	this.scene = scene;
 	this.sprite = new ShadowSprite(this);
 	this.skin = SPRITES.get(S.MONSTER);
 	this.collider = this.skin.getBounds();
-	this.jumpfunc = JUMPFUNC;
-	this.maxspeed = MAXSPEED;
 	this.setHitbox(this.collider as Rect);
     }
 
@@ -236,13 +228,23 @@ class Thingy extends Entity {
 // 
 class Game extends GameScene {
 
+    physics: PhysicsConfig;
     tilemap: TileMap;
+    grid: GridConfig;
     player: Player;
-    profile: GridProfile;
     thingies: number;
     
     init() {
 	super.init();
+	this.physics = new PhysicsConfig();
+	this.physics.jumpfunc = ((vy:number, t:number) => {
+	    return (0 <= t && t <= 6)? -8 : vy+2;
+	});
+	this.physics.maxspeed = new Vec2(16, 16);
+	this.physics.isObstacle = ((c:number) => { return c == T.BLOCK; });
+	this.physics.isGrabbable = ((c:number) => { return c == T.LADDER; });
+	this.physics.isStoppable = ((c:number) => { return c == T.BLOCK || c == T.LADDER; });
+	
 	const MAP = [
 	    "00000000000000300000",
 	    "00002111210001121100",
@@ -263,10 +265,7 @@ class Game extends GameScene {
 	this.tilemap = new TileMap(32, 20, 15, MAP.map(
 	    (v:string) => { return str2array(v); }
 	));
-	this.tilemap.isObstacle = ((c:number) => { return c == T.BLOCK; });
-	this.tilemap.isGrabbable = ((c:number) => { return c == T.LADDER; });
-	this.tilemap.isStoppable = ((c:number) => { return c == T.BLOCK || c == T.LADDER; });
-	this.profile = new GridProfile(this.tilemap);
+	this.grid = new GridConfig(this.tilemap);
 
 	// Place the player.
 	let p = this.tilemap.findTile((c:number) => { return c == T.PLAYER; });

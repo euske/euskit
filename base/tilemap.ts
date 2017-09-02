@@ -32,10 +32,6 @@ class TileMap {
     bounds: Rect;
     map: Int32Array[];
     
-    isObstacle: TileFunc = ((c:number) => { return false; });
-    isGrabbable: TileFunc = ((c:number) => { return false; });
-    isStoppable: TileFunc = ((c:number) => { return false; });
-
     private _rangemap: RangeMapMap = {};
 
     constructor(tilesize: number, width: number, height: number,

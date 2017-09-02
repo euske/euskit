@@ -233,30 +233,42 @@ class Projectile extends Entity {
 }
 
 
-//  PhysicalEntity
+//  PhysicsConfig
 //
 interface JumpFunc {
     (vy:number, t:number): number;
 }
+class PhysicsConfig {
+    
+    jumpfunc: JumpFunc = ((vy:number, t:number) => {
+	return (0 <= t && t <= 5)? -4 : vy+1;
+    });
+    maxspeed: Vec2 = new Vec2(6,6);
+    
+    isObstacle: TileFunc = ((c:number) => { return false; });
+    isGrabbable: TileFunc = ((c:number) => { return false; });
+    isStoppable: TileFunc = ((c:number) => { return false; });
+}
+
+
+//  PhysicalEntity
+//
 class PhysicalEntity extends Entity {
 
+    physics: PhysicsConfig;
     jumped: Signal;
     landed: Signal;
-    jumpfunc: JumpFunc;
     velocity: Vec2 = new Vec2();
-    maxspeed: Vec2 = new Vec2(6,6);
     
     protected _jumpt: number = Infinity;
     protected _jumpend: number = 0;
     protected _landed: boolean = false;
     
-    constructor(pos: Vec2) {
+    constructor(physics: PhysicsConfig, pos: Vec2) {
 	super(pos);
+	this.physics = physics;
 	this.jumped = new Signal(this);
 	this.landed = new Signal(this);
-	this.jumpfunc = (vy:number, t:number) => {
-	    return (0 <= t && t <= 5)? -4 : vy+1;
-	};
     }
 
     setJump(jumpend: number) {
@@ -281,10 +293,10 @@ class PhysicalEntity extends Entity {
   
     fall(t: number) {
 	if (this.canFall()) {
-	    let vy = this.jumpfunc(this.velocity.y, t);
+	    let vy = this.physics.jumpfunc(this.velocity.y, t);
 	    let v = new Vec2(this.velocity.x, vy);
 	    v = this.moveIfPossible(v, 'fall');
-	    this.velocity = v.clamp(this.maxspeed);
+	    this.velocity = v.clamp(this.physics.maxspeed);
 	    let landed = (0 < vy && this.velocity.y == 0);
 	    if (!this._landed && landed) {
 		this.landed.fire();
@@ -320,8 +332,8 @@ class PlatformerEntity extends PhysicalEntity {
     
     tilemap: TileMap;
 
-    constructor(tilemap: TileMap, pos: Vec2) {
-	super(pos);
+    constructor(tilemap: TileMap, physics: PhysicsConfig, pos: Vec2) {
+	super(physics, pos);
 	this.tilemap = tilemap;
     }
     
@@ -332,8 +344,8 @@ class PlatformerEntity extends PhysicalEntity {
 
     getObstaclesFor(range: Rect, v: Vec2, context=null as string): Rect[] {
 	let f = ((context == 'fall')?
-		 this.tilemap.isStoppable :
-		 this.tilemap.isObstacle);
+		 this.physics.isStoppable :
+		 this.physics.isObstacle);
 	return this.tilemap.getTileRects(f, range);
     }
 }

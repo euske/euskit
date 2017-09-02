@@ -4,9 +4,9 @@
 /// <reference path="entity.ts" />
 
 
-//  GridProfile
+//  GridConfig
 // 
-class GridProfile {
+class GridConfig {
     
     gridsize: number;
     offset: number;
@@ -89,14 +89,14 @@ class PlanActionEntry {
 }
 class PlanMap {
 
-    profile: GridProfile;
+    grid: GridConfig;
     goal: Vec2;
     
     private _map: PlanActionMap;
     private _queue: PlanActionEntry[];
     
-    constructor(profile: GridProfile) {
-	this.profile = profile;
+    constructor(grid: GridConfig) {
+	this.grid = grid;
 	this.goal = null;
     }
 
@@ -126,21 +126,21 @@ class PlanMap {
     }
 
     render(ctx:CanvasRenderingContext2D, start:Vec2=null) {
-	let profile = this.profile;
-	let gs = profile.gridsize;
+	let grid = this.grid;
+	let gs = grid.gridsize;
 	let rs = gs/2;
 	ctx.lineWidth = 1;
 	for (let k in this._map) {
 	    let action = this._map[k];
 	    let color = action.getColor();
 	    if (color !== null) {
-		let p0 = profile.grid2coord(action.p);
+		let p0 = grid.grid2coord(action.p);
 		ctx.strokeStyle = color;
 		ctx.strokeRect(p0.x-rs/2+.5,
 			       p0.y-rs/2+.5,
 			       rs, rs);
 		if (action.next !== null) {
-		    let p1 = profile.grid2coord(action.next.p);
+		    let p1 = grid.grid2coord(action.next.p);
 		    ctx.beginPath();
 		    ctx.moveTo(p0.x+.5, p0.y+.5);
 		    ctx.lineTo(p1.x+.5, p1.y+.5);
@@ -149,14 +149,14 @@ class PlanMap {
 	    }
 	}
 	if (this.goal !== null) {
-	    let p = profile.grid2coord(this.goal);
+	    let p = grid.grid2coord(this.goal);
 	    ctx.strokeStyle = '#00ff00';
 	    ctx.strokeRect(p.x-gs/2+.5,
 			   p.y-gs/2+.5,
 			   gs, gs);
 	}
 	if (start !== null) {
-	    let p = profile.grid2coord(start);
+	    let p = grid.grid2coord(start);
 	    ctx.strokeStyle = '#ff0000';
 	    ctx.strokeRect(p.x-gs/2+.5,
 			   p.y-gs/2+.5,
