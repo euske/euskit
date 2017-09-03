@@ -29,49 +29,96 @@ game jams that I participated. The engine is designed to be
 lightweight and self-contained in that it doesn't depend on any
 external library except TypeScript. It is licensed under MIT License.
 
-<h2>Key Concepts</h2>
-<h3>App / Scene</h3>
-<p class=p>
-Every game has exactly one <code>App</code> object.
-It does the basic pluming and resource management; it has
-an event loop and connect all the external parts (i.e. a browser)
-to the game. Typically, you don't have to change this part.
-<p class=p>
-A <code>Scene</code> is a mini-app within the <code>App</code>.  It's
-pretty much an event handler that manages the in-game state. When
-you're making a game with Euskit, what you write is pretty much 
-a new <code>Scene</code>.  Euskit supports
-multiple <code>Scene</code>s. When there are several parts of a game
-whose interaction is drastically different from each other, having
-multiple <code>Scene</code>s and switching between them is more
-convenient. But you can also create an entire game with just
-one <code>Scene</code>.
+<h2>Big Picture</h2>
+<p>
+Here are the things you need to make a game with Euskit:
+<div style="position:relative; margin:1em; padding:0; height:10em;">
+<div style="position:absolute; margin:0; top:0; left:0;">
+  <svg xmlns="http://www.w3.org/2000/svg" 
+       xmlns:xlink="http://www.w3.org/1999/xlink"
+       version="1.1" width="250" height="150">
+    <g transform="translate(1.5,1.5)">
+      <g fill="none" stroke="black" stroke-width="1">
+	<line x1="140" y1="12" x2="55" y2="100" />
+	<line x1="140" y1="12" x2="175" y2="100" />
+	<ellipse cx="140" cy="12" rx="20" ry="12" fill="white" />
+	<rect x="0" y="55" width="110" height="92" fill="white" />
+	<rect x="120" y="55" width="110" height="92" fill="white" />
+	<rect x="30" y="62" width="50" height="16" fill="white" />
+	<rect x="18" y="84" width="80" height="40" fill="white" />
+	<rect x="14" y="88" width="80" height="40" fill="white" />
+	<rect x="10" y="92" width="80" height="40" fill="white" />
+	<rect x="30" y="114" width="16" height="16" />
+	<rect x="33" y="117" width="10" height="10" />
+	<line x1="45" y1="106" x2="38" y2="122" />
+      </g>
+      <g style="font-size: 75%;">
+	<text x="140" y="15" text-anchor="middle">App</text>
+	<text x="165" y="15">Images, ...</text>
+	<text x="55" y="52" text-anchor="middle">Scene</text>
+	<text x="175" y="52" text-anchor="middle">Scene</text>
+	<text x="240" y="100" text-anchor="begin">...</text>
+	<text x="55" y="74" text-anchor="middle">Camera</text>
+	<text x="45" y="106" text-anchor="begin">Sprite</text>
+	<text x="48" y="126" text-anchor="begin">Entity</text>
+	<text x="70" y="144" text-anchor="begin">Layer</text>
+      </g>
+    </g>
+  </svg>
+</div>
+  <div style="position:absolute; left: 270px; top: 0px; margin:0; line-height: 120%;">
+    <a target="euskit-quickref" href="quickref.html#App"><code>App</code></a>: 
+    Resource management (images and sounds) and event loop.<br>
+    <a target="euskit-quickref" href="quickref.html#Scene"><code>Scene</code></a>: 
+    Game state management and event handling.<br>
+    <a target="euskit-quickref" href="quickref.html#Entity"><code>Entity</code></a>: 
+    In-game character.<br>
+    <a target="euskit-quickref" href="quickref.html#Sprite"><code>Sprite</code></a>: 
+    Graphical object to be shown.<br>
+    <a target="euskit-quickref" href="quickref.html#Layer"><code>Layer</code></a>: 
+    Container where Sprites are placed in.<br>
+    <a target="euskit-quickref" href="quickref.html#Camera"><code>Camera</code></a>: 
+    Stack of layers to be rendered.<br>
+  </div>
+</div>
 
-<h3>Task / Entity / Sprite</h3>
-<p class=p>
-An <code>Entity</code> is a bit like a GameObject in Unity. It has its
-own process, <code>Collider</code> and skin. Once you place an <code>Entity</code>
-in the game world, it moves on its own. Unlike Unity, however, Euskit 
-uses a traditional hierarchical model instead of components.  
-Actually, an <code>Entity</code> is a subclass of <code>Task</code>.
-A <code>Task</code> is an independent object that runs by itself
-and managed by <code>TaskList</code>. A typical <code>Entity</code> has
-a reference to a <code>Collider</code> object, which is just a
-<code>Rect</code> in typical 2D games.
-<p class=p>
-<code>Sprite</code> needs further explanation. Each <code>Entity</code> 
-contains one <code>Sprite</code> object. A <code>Sprite</code> is something
-to be displayed. It has a location, rotation and the reference to its content. 
-Unlike some other engines, <code>Sprite</code> doesn't know how to move itself.
-It is just sitting at a certain location on screen. An <code>Entity</code>
-is responsible to change/move its position.
-<p class=p>
-There are a couple of other helper objects:
-<ul>
-<li> <code>TaskList</code>
-<li> <code>EntityWorld</code>
-<li> <code>SpriteLayer</code>
-</ul>
+<h3>Key Concepts</h3>
+<dl>
+  <dt> App
+  <dd class=p>
+    Every game has exactly one <code>App</code> object.
+    It does the basic pluming and resource management; it has
+    an event loop and connect all the external parts (i.e. a browser)
+    to the game. Typically, you don't have to change this part.
+  <dt> Scene
+  <dd class=p>
+    A <code>Scene</code> can be thought of a mini-app or "mode" within the App.  
+    It's pretty much an event handler that manages the in-game states.
+    This is primarily what a Euskit user will write. Euskit supports
+    multiple Scenes, but it's possible to create an entire game with just
+    one Scene.
+  <dt> Entity
+  <dd class=p>
+    An <code>Entity</code> is a bit like a GameObject in Unity.  
+    (Unlike Unity, however, Euskit uses a traditional hierarchical model 
+    instead of components.)
+    Each Entity has its own process, <code>Collider</code> and one or more
+    <code>Sprite</code>s.
+    Once you place an Entity in the game world, it moves on its own.
+    A <code>Rect</code> is typically used for <code>Collider</code> in 2D games.
+  <dt> Task
+  <dd class=p>
+    Each <code>Entity</code> is a subclass of <code>Task</code>.
+    A <code>Task</code> is an independent object that runs by itself
+    and managed by <code>TaskList</code>.
+  <dt> Sprite
+  <dd class=p>
+    A <code>Sprite</code> is something to be displayed. 
+    It has a location, rotation and the reference to its content. 
+    Unlike some other engines, <code>Sprite</code> doesn't know how to move itself.
+    It is just sitting at a certain location on screen. <code>Scene</code> or
+    <code>Entity</code> is responsible to change/move its position.
+</dl>
 
 <h2>Basic Tasks</h2>
 <h3>Showing / Moving stuff</h3>

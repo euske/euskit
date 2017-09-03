@@ -59,6 +59,8 @@ body { margin: 0; padding: 0; }
 <a href="#PhysicsConfig">PhysicsConfig</a>,
 <a href="#TaskList">TaskList</a>,
 <a href="#TaskQueue">TaskQueue</a>,
+<a href="#EntityWorld">EntityWorld</a>,
+<a href="#SpriteLayer">SpriteLayer</a>
 </div>
 
 <div class=list>
@@ -119,8 +121,9 @@ body { margin: 0; padding: 0; }
 
 <h1>API Quick Reference</h1>
 
-<a name="concepts"><h2>Concepts</h2></a>
-<div style="position: relative;">
+<a name="big-picture"><h2>Big Picture</h2></a>
+<div style="position:relative; margin:0; padding:0; height:10em;">
+<div style="position:absolute; margin:0; top:0; left:0;">
   <svg xmlns="http://www.w3.org/2000/svg" 
        xmlns:xlink="http://www.w3.org/1999/xlink"
        version="1.1" width="250" height="150">
@@ -128,43 +131,44 @@ body { margin: 0; padding: 0; }
       <g fill="none" stroke="black" stroke-width="1">
 	<line x1="140" y1="12" x2="55" y2="100" />
 	<line x1="140" y1="12" x2="175" y2="100" />
+	<ellipse cx="140" cy="12" rx="20" ry="12" fill="white" />
 	<rect x="0" y="55" width="110" height="92" fill="white" />
 	<rect x="120" y="55" width="110" height="92" fill="white" />
-	<ellipse cx="140" cy="12" rx="20" ry="12" fill="white" />
-	<rect x="18" y="60" width="80" height="60" fill="white" />
-	<rect x="14" y="64" width="80" height="60" fill="white" />
-	<rect x="10" y="68" width="80" height="60" fill="white" />
-	<circle cx="20" cy="80" r="5" />
-	<rect x="30" y="110" width="16" height="16" />
-	<rect x="33" y="113" width="10" height="10" />
-	<line x1="45" y1="102" x2="38" y2="118" />
+	<rect x="30" y="62" width="50" height="16" fill="white" />
+	<rect x="18" y="84" width="80" height="40" fill="white" />
+	<rect x="14" y="88" width="80" height="40" fill="white" />
+	<rect x="10" y="92" width="80" height="40" fill="white" />
+	<rect x="30" y="114" width="16" height="16" />
+	<rect x="33" y="117" width="10" height="10" />
+	<line x1="45" y1="106" x2="38" y2="122" />
       </g>
       <g style="font-size: 75%;">
 	<text x="140" y="15" text-anchor="middle">App</text>
-	<text x="28" y="85" text-anchor="begin">Task</text>
-	<text x="45" y="102" text-anchor="begin">Sprite</text>
-	<text x="48" y="122" text-anchor="begin">Entity</text>
-	<text x="70" y="140" text-anchor="begin">Layer</text>
+	<text x="165" y="15">Images, ...</text>
 	<text x="55" y="52" text-anchor="middle">Scene</text>
 	<text x="175" y="52" text-anchor="middle">Scene</text>
 	<text x="240" y="100" text-anchor="begin">...</text>
-	<text x="165" y="15">Images, ...</text>
+	<text x="55" y="74" text-anchor="middle">Camera</text>
+	<text x="45" y="106" text-anchor="begin">Sprite</text>
+	<text x="48" y="126" text-anchor="begin">Entity</text>
+	<text x="70" y="144" text-anchor="begin">Layer</text>
       </g>
     </g>
   </svg>
-  <div style="position: absolute; left: 270px; top: 0px;">
+</div>
+  <div style="position:absolute; left: 270px; top: 0px; margin:0; line-height: 120%;">
     <a href="#App"><code>App</code></a>: 
-    Manages global states and shared resources (images and sounds).<br>
+    Resource management (images and sounds) and event loop.<br>
     <a href="#Scene"><code>Scene</code></a>: 
-    Handles input events and character movements.<br>
-    <a href="#Layer"><code>Layer</code></a>: 
-    Contains a set of <code>Task</code>/<code>Sprite</code>/<code>Entity</code>.<br>
-    <a href="#Task"><code>Task</code></a>: 
-    A process that gets called for every frame.<br>
+    Game state management and event handling.<br>
     <a href="#Entity"><code>Entity</code></a>: 
-    A <code>Task</code> that can collide another <code>Entity</code>.<br>
+    In-game character.<br>
     <a href="#Sprite"><code>Sprite</code></a>: 
-    A visible object that belongs to a layer.<br>
+    Graphical object to be shown.<br>
+    <a href="#Layer"><code>Layer</code></a>: 
+    Container where Sprites are placed in.<br>
+    <a href="#Camera"><code>Camera</code></a>: 
+    Stack of layers to be rendered.<br>
   </div>
 </div>
 
@@ -927,12 +931,15 @@ Manages a list of <code>Task</code>s that run sequentially.
   <td>Invoked at every frame. Update the current tasks.</td></tr>
 </table>
 
+<a name="EntityWorld"><h3>EntityWorld (<code>entity.ts</code>)</h3></a>
+<a name="SpriteLayer"><h3>SpriteLayer (<code>sprite.ts</code>)</h3></a>
+
 <a name="basic-objects"><h2>Basic Objects</h2></a>
 
 <a name="Task"><h3>Task (<code>task.ts</code>)</h3></a>
 <p>
-A <code>Task</code> is a process that belongs to a <code>TaskList</code>
-and its method is executed periodically.
+A <code>Task</code> is an independent object that runs by itself
+and managed by <code>TaskList</code>.
 <table border>
 <tr class=ctor><td><code>new Task()</code></td>
   <td>Creates a new task.</td></tr>
@@ -971,7 +978,13 @@ has some visual aspect.
 
 <a name="Entity"><h3>Entity : <a href="#Widget">Widget</a> (<code>entity.ts</code>)</h3></a>
 <p>
-An <code>Entity</code> is an object that is placed at a certain location.
+An <code>Entity</code> is a bit like a GameObject in Unity.  
+(Unlike Unity, however, Euskit uses a traditional hierarchical model 
+instead of components.)
+Each Entity has its own process, <code>Collider</code> and one or more
+<code>Sprite</code>s.
+Once you place an Entity in the game world, it moves on its own.
+A <code>Rect</code> is typically used for <code>Collider</code> in 2D games.
 <table border>
 <tr class=ctor><td><code>new Entity(pos)</code></td>
   <td>Creates a new entity.</td></tr>
@@ -999,7 +1012,11 @@ An <code>Entity</code> is an object that is placed at a certain location.
 
 <a name="Sprite"><h3>Sprite (<code>sprite.ts</code>)</h3></a>
 <p>
-A <code>Sprite</code> represents something that's shown on the screen.
+A <code>Sprite</code> is something to be displayed. 
+It has a location, rotation and the reference to its content. 
+Unlike some other engines, <code>Sprite</code> doesn't know how to move itself.
+It is just sitting at a certain location on screen. <code>Scene</code> or
+<code>Entity</code> is responsible to change/move its position.
 <table border>
 <tr class=ctor><td><code>new Sprite(<em>[imgsrc]</em>)</code></td>
   <td>Creates a new sprite.</td></tr>
@@ -1064,8 +1081,11 @@ at once and interact each other.
 
 <a name="Scene"><h3>Scene (<code>scene.ts</code>)</h3></a>
 <p>
-A <code>Scene</code> represents one state of a game that can have its own
-event handling (such as title screen or cut scene).
+A <code>Scene</code> can be thought of a mini-app or "mode" within the App.  
+It's pretty much an event handler that manages the in-game states.
+This is primarily what a Euskit user will write. Euskit supports
+multiple Scenes, but it's possible to create an entire game with just
+one Scene.
 <table border>
 <tr class=ctor><td><code>new Scene()</code></td>
   <td>Creates a new scene.</td></tr>
@@ -1101,8 +1121,10 @@ event handling (such as title screen or cut scene).
 
 <a name="App"><h3>App (<code>app.ts</code>)</h3></a>
 <p>
-An <code>App</code> holds all the shared resources and is
-responsible for switching Scenes.
+Every game has exactly one <code>App</code> object.
+It does the basic pluming and resource management; it has
+an event loop and connect all the external parts (i.e. a browser)
+to the game. Typically, you don't have to change this part.
 <table border>
 <tr class=ctor><td><code>new App(size, framerate, elem)</code></td>
   <td>Creates a new app with given HTML5 resources.</td></tr>
