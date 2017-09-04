@@ -510,7 +510,7 @@ class Game extends Scene {
 	    this.camera3.moveCenter(vw);
 	    this.world.moveAll(vw);
 	}
-	if (this.player.running) {
+	if (this.player.isRunning()) {
 	    this.player.moveIfPossible3(new Vec3(v.x, v.y, 0), 'fall');
 	}
     }

@@ -25,8 +25,8 @@ class Tweener extends Animator {
     srcpos: Vec2 = null;
     dstpos: Vec2 = null;
     
-    init() {
-	super.init();
+    start() {
+	super.start();
 	this.srcpos = this.entity.pos.copy();
     }
     

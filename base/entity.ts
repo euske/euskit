@@ -34,7 +34,7 @@ class EntityWorld {
 
     moveAll(v: Vec2) {
 	for (let entity of this.entities) {
-	    if (!entity.running) continue;
+	    if (!entity.isRunning()) continue;
 	    entity.movePos(v);
 	}
     }
@@ -50,7 +50,7 @@ class EntityWorld {
     checkEntityPairs(f: (e0:Entity, e1:Entity)=>void) {
 	for (let i = 0; i < this.entities.length; i++) {
 	    let entity0 = this.entities[i];
-	    if (entity0.running) {
+	    if (entity0.isRunning()) {
 		let collider0 = entity0.getCollider();
 		if (collider0 !== null) {
 		    let a = this.findEntities(
@@ -75,7 +75,7 @@ class EntityWorld {
 	}
 	let a:Entity[] = [];
 	for (let entity1 of entities) {
-	    if (entity1.running && f(entity1)) {
+	    if (entity1.isRunning() && f(entity1)) {
 		a.push(entity1);
 	    }
 	}
@@ -84,7 +84,7 @@ class EntityWorld {
     
     hasEntity(f: (e:Entity)=>boolean, collider0: Collider) {
 	for (let entity1 of this.entities) {
-	    if (entity1.running && f(entity1)) {
+	    if (entity1.isRunning() && f(entity1)) {
 		let collider1 = entity1.getCollider();
 		if (collider1 !== null && collider0.overlaps(collider1)) {
 		    return true;
@@ -125,8 +125,8 @@ class Entity extends Widget {
 	return super.chain(task, signal);
     }
 
-    init() {
-	super.init();
+    start() {
+	super.start();
 	this.world.addEntity(this);
     }
 

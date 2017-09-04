@@ -1,13 +1,19 @@
 /// <reference path="utils.ts" />
 
 
+enum TaskState {
+    Scheduled,
+    Running,
+    Finished,
+}
+
 /** Object that represents a continuous process.
  *  tick() method is invoked at every frame.
  */
 class Task {
 
     /** True if the task is running. */
-    running: boolean = true;
+    state: TaskState = TaskState.Scheduled;
     /** List to which this task belongs. */
     tasklist: TaskList = null;
     /** Lifetime. 
@@ -33,15 +39,23 @@ class Task {
 	return (getTime() - this.startTime);
     }
 
+    /** Returns true if the task is running. */
+    isRunning() {
+	return (this.state == TaskState.Running);
+    }
+
     /** Invoked when the task is started. */
-    init() {
-	this.startTime = getTime();
+    start() {
+	if (this.state == TaskState.Scheduled) {
+	    this.state = TaskState.Running;
+	    this.startTime = getTime();
+	}
     }
 
     /** Terminates the task. */
     stop() {
-	if (this.running) {
-	    this.running = false;
+	if (this.state == TaskState.Running) {
+	    this.state = TaskState.Finished;
 	    this.stopped.fire();
 	}
     }
@@ -50,14 +64,17 @@ class Task {
      * @param next Next Task.
      */
     chain(next: Task, signal: Signal=null): Task {
-	if (this.running) {
+	switch (this.state) {
+	case TaskState.Scheduled:
+	case TaskState.Running:
 	    signal = (signal !== null)? signal : this.stopped;
 	    signal.subscribe(() => {
 		if (this.tasklist !== null) {
 		    this.tasklist.add(next)
 		}
 	    });
-	} else {
+	    break;
+	case TaskState.Finished:
             // Start immediately if this task has already finished.
 	    if (this.tasklist !== null) {
 		this.tasklist.add(next)
@@ -123,8 +140,8 @@ class SoundTask extends Task {
 	this.soundEnd = soundEnd;
     }
 
-    init() {
-	super.init();
+    start() {
+	super.start();
 	this.sound.currentTime = this.soundStart;
 	this.sound.play();
     }
@@ -166,15 +183,15 @@ class TaskList {
 	for (let task of this.tasks) {
 	    if (task.tasklist === null) {
 		task.tasklist = this;
-		task.init();
+		task.start();
 	    }
-	    if (task.running) {
+	    if (task.isRunning()) {
 		task.tick();
 	    }
 	}
         
         // Remove the finished tasks from the list.
-	this.tasks = this.tasks.filter((task: Task) => { return task.running; });
+	this.tasks = this.tasks.filter((task: Task) => { return task.isRunning(); });
     }
 
     /** Add a new Task to the list.
@@ -247,9 +264,9 @@ class TaskQueue extends Task {
             // Starts the next task.
 	    if (task.tasklist === null) {
 		task.tasklist = this.tasklist;
-		task.init();
+		task.start();
 	    }
-	    if (task.running) {
+	    if (task.isRunning()) {
 		task.tick();
 		break;
 	    }
