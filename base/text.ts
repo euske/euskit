@@ -2,7 +2,7 @@
 /// <reference path="geom.ts" />
 /// <reference path="task.ts" />
 /// <reference path="sprite.ts" />
-/// <reference path="layer.ts" />
+/// <reference path="entity.ts" />
 
 
 function makeGlyphs(src: HTMLImageElement, color: string=null,

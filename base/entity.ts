@@ -6,92 +6,31 @@
 /// <reference path="tilemap.ts" />
 
 
-//  EntityWorld
-// 
-class EntityWorld {
+//  Widget
+//
+class Widget extends Task {
 
-    entities: Entity[] = [];
+    layer: SpriteLayer = null;
     
-    toString() {
-	return ('<EntityWorld: entities='+this.entities+'>');
-    }
-  
-    init() {
-	this.entities = [];
-    }
-  
-    tick() {
-	this.checkEntityCollisions();
-    }
-
-    addEntity(entity: Entity) {
-	this.entities.push(entity);
-    }
-
-    removeEntity(entity: Entity) {
-	removeElement(this.entities, entity);
-    }
-
-    moveAll(v: Vec2) {
-	for (let entity of this.entities) {
-	    if (!entity.isRunning()) continue;
-	    entity.movePos(v);
+    chain(task: Task, signal: Signal=null): Task {
+	if (task instanceof Widget) {
+	    task.layer = this.layer;
 	}
+	return super.chain(task, signal);
     }
 
-    checkEntityCollisions() {
-	this.checkEntityPairs(
-	    (e0:Entity, e1:Entity) => {
-		e0.collidedWith(e1);
-		e1.collidedWith(e0);
-	    });
+    start() {
+	super.start();
+	this.layer.addWidget(this);
     }
 
-    checkEntityPairs(f: (e0:Entity, e1:Entity)=>void) {
-	for (let i = 0; i < this.entities.length; i++) {
-	    let entity0 = this.entities[i];
-	    if (entity0.isRunning()) {
-		let collider0 = entity0.getCollider();
-		if (collider0 !== null) {
-		    let a = this.findEntities(
-			(e:Entity) => {
-			    let collider1 = e.getCollider();
-			    return (entity0 !== e &&
-				    collider1 !== null &&
-				    collider0.overlaps(collider1));
-			},
-			this.entities.slice(i+1));
-		    for (let e of a) {
-			f(entity0, e);
-		    }
-		}
-	    }
-	}
+    stop() {
+	this.layer.removeWidget(this);
+	super.stop();
     }
 
-    findEntities(f: (e:Entity)=>boolean, entities: Entity[]=null) {
-	if (entities === null) {
-	    entities = this.entities;
-	}
-	let a:Entity[] = [];
-	for (let entity1 of entities) {
-	    if (entity1.isRunning() && f(entity1)) {
-		a.push(entity1);
-	    }
-	}
-	return a;
-    }
-    
-    hasEntity(f: (e:Entity)=>boolean, collider0: Collider) {
-	for (let entity1 of this.entities) {
-	    if (entity1.isRunning() && f(entity1)) {
-		let collider1 = entity1.getCollider();
-		if (collider1 !== null && collider0.overlaps(collider1)) {
-		    return true;
-		}
-	    }
-	}
-	return false;
+    getSprites(): Sprite[] {
+	return [];
     }
 }
 
@@ -207,6 +146,96 @@ class Entity extends Widget {
 
     collidedWith(entity: Entity) {
 	// [OVERRIDE]
+    }
+}
+
+
+//  EntityWorld
+// 
+class EntityWorld {
+
+    entities: Entity[] = [];
+    
+    toString() {
+	return ('<EntityWorld: entities='+this.entities+'>');
+    }
+  
+    init() {
+	this.entities = [];
+    }
+  
+    tick() {
+	this.checkEntityCollisions();
+    }
+
+    addEntity(entity: Entity) {
+	this.entities.push(entity);
+    }
+
+    removeEntity(entity: Entity) {
+	removeElement(this.entities, entity);
+    }
+
+    moveAll(v: Vec2) {
+	for (let entity of this.entities) {
+	    if (!entity.isRunning()) continue;
+	    entity.movePos(v);
+	}
+    }
+
+    checkEntityCollisions() {
+	this.checkEntityPairs(
+	    (e0:Entity, e1:Entity) => {
+		e0.collidedWith(e1);
+		e1.collidedWith(e0);
+	    });
+    }
+
+    checkEntityPairs(f: (e0:Entity, e1:Entity)=>void) {
+	for (let i = 0; i < this.entities.length; i++) {
+	    let entity0 = this.entities[i];
+	    if (entity0.isRunning()) {
+		let collider0 = entity0.getCollider();
+		if (collider0 !== null) {
+		    let a = this.findEntities(
+			(e:Entity) => {
+			    let collider1 = e.getCollider();
+			    return (entity0 !== e &&
+				    collider1 !== null &&
+				    collider0.overlaps(collider1));
+			},
+			this.entities.slice(i+1));
+		    for (let e of a) {
+			f(entity0, e);
+		    }
+		}
+	    }
+	}
+    }
+
+    findEntities(f: (e:Entity)=>boolean, entities: Entity[]=null) {
+	if (entities === null) {
+	    entities = this.entities;
+	}
+	let a:Entity[] = [];
+	for (let entity1 of entities) {
+	    if (entity1.isRunning() && f(entity1)) {
+		a.push(entity1);
+	    }
+	}
+	return a;
+    }
+    
+    hasEntity(f: (e:Entity)=>boolean, collider0: Collider) {
+	for (let entity1 of this.entities) {
+	    if (entity1.isRunning() && f(entity1)) {
+		let collider1 = entity1.getCollider();
+		if (collider1 !== null && collider0.overlaps(collider1)) {
+		    return true;
+		}
+	    }
+	}
+	return false;
     }
 }
 
