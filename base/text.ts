@@ -680,8 +680,7 @@ class DialogBox extends Widget {
 	while (true) {
 	    task = this.getCurrentTask();
 	    if (task === null) break;
-	    if (task.tasklist === null) {
-		task.tasklist = this.tasklist;
+	    if (task.isScheduled()) {
 		task.start();
 	    }
 	    if (task.isRunning()) {
@@ -733,8 +732,7 @@ class DialogBox extends Widget {
 	while (true) {
 	    let task = this.getCurrentTask();
 	    if (task === null) break;
-	    if (task.tasklist === null) {
-		task.tasklist = this.tasklist;
+	    if (task.isScheduled()) {
 		task.start();
 	    }
 	    task.ff();
@@ -748,6 +746,7 @@ class DialogBox extends Widget {
     }
 
     addTask(task: TextTask) {
+	task.tasklist = this.tasklist;
 	this.queue.push(task);
 	if (this.autoHide) {
 	    this.sprite.visible = true;

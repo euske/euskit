@@ -408,7 +408,7 @@ class Player extends Entity3d {
 class Game extends Scene {
     
     tilemap: TileMap;
-    tasklist: TaskList;
+    tasklist: ParallelTaskList;
     world: EntityWorld;
     layer: SpriteLayer;
     camera3: Camera3;
@@ -422,7 +422,7 @@ class Game extends Scene {
 	this.tilemap = new TileMap(32, 12, 7, ROWS.map(
 	    (c:number) => { return new Int32Array(12).fill(c); }
 	));
-	this.tasklist = new TaskList();
+	this.tasklist = new ParallelTaskList();
 	this.world = new EntityWorld();
 	this.camera3 = new Camera3(this.tilemap.bounds);
 	this.camera3.tilemap = this.tilemap;

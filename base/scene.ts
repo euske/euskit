@@ -132,14 +132,14 @@ class HTMLScene extends Scene {
 // 
 class GameScene extends Scene {
 
-    tasklist: TaskList = null;
+    tasklist: ParallelTaskList = null;
     world: EntityWorld = null;
     camera: Camera = null;
     layer: SpriteLayer = null;
 
     init() {
 	super.init();
-	this.tasklist = new TaskList();
+	this.tasklist = new ParallelTaskList();
 	this.world = new EntityWorld();
         this.camera = new Camera(this.screen);
 	this.layer = this.camera.newLayer();
