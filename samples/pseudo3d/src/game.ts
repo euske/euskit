@@ -409,7 +409,7 @@ class Game extends Scene {
     
     tilemap: TileMap;
     tasklist: ParallelTaskList;
-    world: EntityWorld;
+    field: EntityField;
     layer: SpriteLayer;
     camera3: Camera3;
     player: Player;
@@ -423,7 +423,7 @@ class Game extends Scene {
 	    (c:number) => { return new Int32Array(12).fill(c); }
 	));
 	this.tasklist = new ParallelTaskList();
-	this.world = new EntityWorld();
+	this.field = new EntityField();
 	this.camera3 = new Camera3(this.tilemap.bounds);
 	this.camera3.tilemap = this.tilemap;
 	this.camera3.tiles = TILES;
@@ -452,18 +452,18 @@ class Game extends Scene {
 
     add(task: Task) {
     	this.tasklist.add(task);
+	if (task instanceof Widget) {
+	    task.layer = this.layer;
+	}
 	if (task instanceof Entity) {
-	    task.layer = this.layer;
-	    task.world = this.world;
-	} else if (task instanceof Widget) {
-	    task.layer = this.layer;
+	    task.field = this.field;
 	}
     }
 
     tick() {
 	super.tick();
 	this.tasklist.tick();
-	this.world.tick();
+	this.field.tick();
 	this.moveAll(this.speed);
     }
 
@@ -508,7 +508,7 @@ class Game extends Scene {
 	    this.shiftTiles(x0, y0);
 	    let vw = new Vec2(-x0*ts, -y0*ts);
 	    this.camera3.moveCenter(vw);
-	    this.world.moveAll(vw);
+	    this.field.moveAll(vw);
 	}
 	if (this.player.isRunning()) {
 	    this.player.moveIfPossible3(new Vec3(v.x, v.y, 0), 'fall');

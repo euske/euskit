@@ -133,14 +133,14 @@ class HTMLScene extends Scene {
 class GameScene extends Scene {
 
     tasklist: ParallelTaskList = null;
-    world: EntityWorld = null;
+    field: EntityField = null;
     camera: Camera = null;
     layer: SpriteLayer = null;
 
     init() {
 	super.init();
 	this.tasklist = new ParallelTaskList();
-	this.world = new EntityWorld();
+	this.field = new EntityField();
         this.camera = new Camera(this.screen);
 	this.layer = this.camera.newLayer();
     }
@@ -148,7 +148,7 @@ class GameScene extends Scene {
     tick() {
 	super.tick();
 	this.tasklist.tick();
-	this.world.tick();
+	this.field.tick();
     }
 
     render(ctx: CanvasRenderingContext2D) {
@@ -162,7 +162,7 @@ class GameScene extends Scene {
 	    task.layer = this.layer;
 	}
 	if (task instanceof Entity) {
-	    task.world = this.world;
+	    task.field = this.field;
 	}
     }
 

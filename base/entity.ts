@@ -40,7 +40,7 @@ class Widget extends Task {
 //
 class Entity extends Widget {
 
-    world: EntityWorld = null;
+    field: EntityField = null;
     
     pos: Vec2;
     sprite: Sprite;
@@ -59,18 +59,18 @@ class Entity extends Widget {
 
     chain(task: Task, signal: Signal=null): Task {
 	if (task instanceof Entity) {
-	    task.world = this.world;
+	    task.field = this.field;
 	}
 	return super.chain(task, signal);
     }
 
     start() {
 	super.start();
-	this.world.addEntity(this);
+	this.field.addEntity(this);
     }
 
     stop() {
-	this.world.removeEntity(this);
+	this.field.removeEntity(this);
 	super.stop();
     }
     
@@ -150,14 +150,14 @@ class Entity extends Widget {
 }
 
 
-//  EntityWorld
+//  EntityField
 // 
-class EntityWorld {
+class EntityField {
 
     entities: Entity[] = [];
     
     toString() {
-	return ('<EntityWorld: entities='+this.entities+'>');
+	return ('<EntityField: entities='+this.entities+'>');
     }
   
     init() {
