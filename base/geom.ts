@@ -718,6 +718,23 @@ class Rect implements Shape {
 		 clamp(bounds.y, this.y, bounds.y+bounds.height-this.height));
 	return new Rect(x, y, this.width, this.height);
     }
+
+    edgePt(v: number): Vec2 {
+	v = fmod(v, this.width*2 + this.height*2);
+	if (v < this.width) {
+	    return new Vec2(this.x+v, this.y);
+	}
+	v -= this.width;
+	if (v < this.height) {
+	    return new Vec2(this.x+this.width, this.y+v);
+	}
+	v -= this.height;
+	if (v < this.width) {
+	    return new Vec2(this.x+this.width-v, this.y+this.height);
+	}
+	// assert(v <= this.height);
+	return new Vec2(this.x, this.y+this.height-v);
+    }
     
     rndPt(): Vec2 {
 	return new Vec2(this.x+frnd(this.width),
@@ -726,19 +743,7 @@ class Rect implements Shape {
 
     rndPtEdge(): Vec2 {
 	let v = frnd(this.width*2 + this.height*2);
-	if (v < this.width) {
-	    return new Vec2(this.x+v, this.y);
-	}
-	v -= this.width;
-	if (v < this.width) {
-	    return new Vec2(this.x+v, this.y+this.height);
-	}
-	v -= this.width;
-	if (v < this.height) {
-	    return new Vec2(this.x, this.y+v);
-	}
-	// assert(v <= this.height);
-	return new Vec2(this.x+this.width, this.y+v);
+	return this.edgePt(v);
     }
     
     modPt(p: Vec2): Vec2 {
