@@ -14,12 +14,13 @@ body { margin: 0; padding: 0; }
 .code { border: 1px solid; padding: 0.2em; background: #eeeeee; }
 .ctor { background: #ccffcc; }
 .inherited { background: #cccccc; }
-.overridable { background: #ffffcc; }
+.override { background: #ffffcc; }
 .nav { position: fixed; top: 0; left: 0; width: 20%; }
 .main { position: absolute; top: 0; left: 20%; width: 80%; }
 .list { margin-top: 1em; }
 .list > .head { font-weight: bold; background: #88ffff; }
 .navhead { font-size: 150%; font-weight: bold; }
+.legend { font-size: 80%; margin: 8px; }
 </style>
 <title>Euskit Quick Reference</title>
 </head>
@@ -31,6 +32,13 @@ body { margin: 0; padding: 0; }
 <div class=navhead><a href="https://github.com/euske/euskit">Euskit</a></div>
 
 <div class=list>
+
+<div class=legend><b>Legend:</b>
+<span class=ctor><code>ctor</code></span>,
+<span class=inherited><code>inherited</code></span>,
+<span class=override><code>override</code></span>
+</div>
+
 <div class=head>Functions:</div>
 <a href="#main">Main</a>,
 <a href="#misc">Misc.</a>,
@@ -54,7 +62,6 @@ body { margin: 0; padding: 0; }
 <a href="#Box">Box</a>,
 <a href="#TileMap">TileMap</a>,
 <a href="#RangeMap">RangeMap</a>,
-<a href="#ImageSource">ImageSource</a>,
 <a href="#SpriteSheet">SpriteSheet</a>,
 <a href="#PhysicsConfig">PhysicsConfig</a>,
 <a href="#TaskList">TaskList</a>,
@@ -65,10 +72,11 @@ body { margin: 0; padding: 0; }
 
 <div class=list>
 <div class=head>Basic Objects:</div>
+<a href="#ImageSource">ImageSource</a>,
+<a href="#Sprite">Sprite</a>
 <a href="#Task">Task</a>,
 <a href="#Widget">Widget</a>,
 <a href="#Entity">Entity</a>,
-<a href="#Sprite">Sprite</a>
 <a href="#Layer">Layer</a>,
 <a href="#Scene">Scene</a>,
 <a href="#App">App</a>
@@ -108,10 +116,6 @@ body { margin: 0; padding: 0; }
 <a href="#PlanActionRunner">PlanActionRunner</a>,
 <a href="#PlanningEntity">PlanningEntity</a>
 </div>
-
-<p><b>Legend:</b><br>
-<span class=inherited><code>inherited method</code></span>,<br>
-<span class=overridable><code>overridable method</code></span><br>
 
 </div>
 </div>
@@ -177,9 +181,9 @@ body { margin: 0; padding: 0; }
 <a name="main"><h3>Main function (<code>main.ts</code>)</h3></a>
 <table border>
 <tr><td><code>APP</td>
-  <td>The global <code>App</code> instance.</td></tr>
+  <td>Global <code>App</code> instance.</td></tr>
 <tr><td><code>addInitHook(<u>() =&gt; {}</u>)</td>
-  <td>Execute a hook after the page is loaded.</td></tr>
+  <td>Has a hook executed after the page is loaded.</td></tr>
 <tr><td><code>main(<br>&nbsp; <u>ctor</u>, <u>width</u>=320, <u>height</u>=240,<br>&nbsp; <u>canvasId</u>='game', <u>framerate</u>=30)</code></td>
   <td>Specifies the canvas size and the initial constructor of a <code>Scene</code> object.
     (without arg)</td></tr>
@@ -197,7 +201,7 @@ body { margin: 0; padding: 0; }
 <a name="misc"><h3>Misc. functions (<code>utils.ts</code>)</h3></a>
 <table border>
 <tr><td><code>log(<u>msg</u>, ...)</code></td>
-  <td>Log the messages to the console.</td></tr>
+  <td>Displays the messages to the console.</td></tr>
 <tr><td><code>assert(<u>cond</u>, <u>msg</u>="assertion error")</code></td>
   <td>Throws an exception when the condition is not met.</td></tr>
 <tr><td><code>applyMixins(<u>ctor</u>, <u>bases</u>)</code></td>
@@ -207,7 +211,7 @@ body { margin: 0; padding: 0; }
 <a name="numeric"><h3>Numeric functions (<code>utils.ts</code>)</h3></a>
 <table border>
 <tr><td><code>fmod(<u>x</u>, <u>y</u>)</code></td>
-  <td>A better <code>mod</code> function; i.e. <code>fmod(-3,2)=1</code>.</td></tr>
+  <td>Better <code>mod</code> function; i.e. <code>fmod(-3,2)=1</code>.</td></tr>
 <tr><td><code>int(<u>x</u>)</code></td>
   <td>Equivalent to <code>Math.floor</code>.</td></tr>
 <tr><td><code>upperbound(<u>x</u>, <u>y</u>)</code></td>
@@ -233,13 +237,15 @@ body { margin: 0; padding: 0; }
 <a name="array"><h3>Array functions (<code>utils.ts</code>)</h3></a>
 <table border>
 <tr><td><code>choice(<u>a</u>)</code></td>
-  <td>A random element of <code>a</code>.</td></tr>
+  <td>Returns a random element of <code>a</code>.</td></tr>
 <tr><td><code>removeElement(<u>a</u>, <u>obj</u>)</code></td>
   <td>Removes an element from <code>a</code>.</td></tr>
 <tr><td><code>range(<u>n</u>)</code></td>
   <td>Returns an array filled with a sequence [0, <code>n</code>-1].</td></tr>
 <tr><td><code>str2array(<u>img</u>)</code></td>
   <td>Converts a string to a number array.</td></tr>
+<tr><td><code>makeMatrix(<u>rows</u>, <u>cols</u>, <u>value</u>=0)</code></td>
+  <td>Creates a 2D matrix for a given size.</td></tr>
 </table>
 
 <a name="html5"><h3>HTML5 functions (<code>utils.ts</code>)</h3></a>
@@ -271,15 +277,15 @@ body { margin: 0; padding: 0; }
 A <code>Signal</code> represents an event that is attached to a 
 certain object and other objects can get notified.
 <table border>
-<tr class=ctor><td><code>new Signal(<em>baseargs</em> ...)</code></td>
+<tr class=ctor><td><code>new Signal(<em>baseargs</em>, ...)</code></td>
   <td>New <code>Signal</code> object with given <code>baseargs</code>.</td></tr>
 <tr><td><code>.receivers</code></td>
-  <td>A list of the receiver functions.</td></tr>
+  <td>List of the receiver functions.</td></tr>
 <tr><td><code>.subscribe(<u>receiver</u>)</code></td>
   <td>Adds <code>receiver</code> to the subscriber list.</td></tr>
 <tr><td><code>.unsubscribe(<u>receiver</u>)</code></td>
   <td>Removes <code>receiver</code> from the subscriber list.</td></tr>
-<tr><td><code>.fire(<em>extraargs</em> ...)</code></td>
+<tr><td><code>.fire(<em>extraargs</em>, ...)</code></td>
   <td>Sends a message to all the subscribers.
     Each receiver function gets (<code>baseargs</code> + <code>extraargs</code>)
     for arguments.</td></tr>
@@ -292,13 +298,13 @@ A <code>Color</code> represents an RGBA value.
 <tr class=ctor><td><code>new Color(<u>r</u>, <u>g</u>, <u>b</u>, <u>a</u>=1.0)</code></td>
   <td>New <code>Color</code> object for RGBA values.</td></tr>
 <tr><td><code>.r</code></td>
-  <td>The Red value.</td></tr>
+  <td>Red value.</td></tr>
 <tr><td><code>.g</code></td>
-  <td>The Green value.</td></tr>
+  <td>Green value.</td></tr>
 <tr><td><code>.b</code></td>
-  <td>The Blue value.</td></tr>
+  <td>Blue value.</td></tr>
 <tr><td><code>.a</code></td>
-  <td>The Alpha value.</td></tr>
+  <td>Alpha value.</td></tr>
 <tr><td><code>.setAlpha(<u>a</u>)</code></td>
   <td>Creates a <code>Color</code> with a given alpha.</td></tr>
 <tr><td><code>.multiply(<u>t</u>)</code></td>
@@ -316,9 +322,9 @@ A <code>Vec2</code> represents two-dimensional vector that has (x, y) elements.
 <tr class=ctor><td><code>new Vec2(<u>x</u>=0, <u>y</u>=0)</code></td>
   <td>New 2D vector (<code>x</code>, <code>y</code>).</td></tr>
 <tr><td><code>.x</code></td>
-  <td>The x value.</td></tr>
+  <td>X value.</td></tr>
 <tr><td><code>.y</code></td>
-  <td>The y value.</td></tr>
+  <td>Y value.</td></tr>
 <tr><td><code>.copy()</code></td>
   <td>Duplicates the vector.</td></tr>
 <tr><td><code>.equals(<u>p</u>)</code></td>
@@ -326,9 +332,9 @@ A <code>Vec2</code> represents two-dimensional vector that has (x, y) elements.
 <tr><td><code>.isZero()</code></td>
   <td><code>true</code> if the vector is zero length.</td></tr>
 <tr><td><code>.len2()</code></td>
-  <td>The length<sup>2</sup> of the vector.</td></tr>
+  <td>Length<sup>2</sup> of the vector.</td></tr>
 <tr><td><code>.len()</code></td>
-  <td>The length of the vector.</td></tr>
+  <td>Length of the vector.</td></tr>
 <tr><td><code>.sign()</code></td>
   <td>(<code>sign(x)</code>, <code>sign(y)</code>).</td></tr>
 <tr><td><code>.add(<u>v</u>)</code></td>
@@ -360,11 +366,11 @@ A <code>Vec3</code> represents three-dimensional vector that has (x, y, z) eleme
 <tr class=ctor><td><code>new Vec3(<u>x</u>=0, <u>y</u>=0, <u>z</u>=0)</code></td>
   <td>New 3D vector (<code>x</code>, <code>y</code>, <code>z</code>).</td></tr>
 <tr><td><code>.x</code></td>
-  <td>The x value.</td></tr>
+  <td>X value.</td></tr>
 <tr><td><code>.y</code></td>
-  <td>The y value.</td></tr>
+  <td>Y value.</td></tr>
 <tr><td><code>.z</code></td>
-  <td>The z value.</td></tr>
+  <td>Z value.</td></tr>
 <tr><td><code>.copy()</code></td>
   <td>Duplicates the vector.</td></tr>
 <tr><td><code>.equals(<u>p</u>)</code></td>
@@ -372,9 +378,9 @@ A <code>Vec3</code> represents three-dimensional vector that has (x, y, z) eleme
 <tr><td><code>.isZero()</code></td>
   <td><code>true</code> if the vector is zero length.</td></tr>
 <tr><td><code>.len2()</code></td>
-  <td>The length<sup>2</sup> of the vector.</td></tr>
+  <td>Length<sup>2</sup> of the vector.</td></tr>
 <tr><td><code>.len()</code></td>
-  <td>The length of the vector.</td></tr>
+  <td>Length of the vector.</td></tr>
 <tr><td><code>.sign()</code></td>
   <td>(<code>sign(x)</code>, <code>sign(y)</code>, <code>sign(z)</code>).</td></tr>
 <tr><td><code>.add(<u>v</u>)</code></td>
@@ -425,6 +431,8 @@ represents an enclosed shape.
   <td><code>true</code> if the shape is empty.</td></tr>
 <tr><td><code>.containsPt(<u>p</u>)</code></td>
   <td><code>true</code> if the shape contains <code>p</code>.</td></tr>
+<tr><td><code>.edgePt(<u>t</u>)</code></td>
+  <td>Returns a point on the contour.</td></tr>
 <tr><td><code>.rndPt()</code></td>
   <td>Returns a random point within the shape.</td></tr>
 <tr><td><code>.rndPtEdge()</code></td>
@@ -439,13 +447,13 @@ parpendicular) line.
 <tr class=ctor><td><code>new AALine(<u>x0</u>, <u>y0</u>, <u>x1</u>, <u>y1</u>)</code></td>
   <td>New AALine.</td></tr>
 <tr><td><code>.x0</code></td>
-  <td>The x0 value.</td></tr>
+  <td>Left x value.</td></tr>
 <tr><td><code>.y0</code></td>
-  <td>The y0 value.</td></tr>
+  <td>Top y value.</td></tr>
 <tr><td><code>.x1</code></td>
-  <td>The x1 value.</td></tr>
+  <td>Right x value.</td></tr>
 <tr><td><code>.y1</code></td>
-  <td>The y1 value.</td></tr>
+  <td>Bottom y value.</td></tr>
 </table>
 
 <a name="Rect"><h3>Rect : <a href="#Shape">Shape</a> (<code>geom.ts</code>)</h3></a>
@@ -456,33 +464,33 @@ has its position (x, y) and size (width, height).
 <tr class=ctor><td><code>new Rect(<br>&nbsp; <u>x</u>=0, <u>y</u>=0,<br>&nbsp; <u>width</u>=0, <u>height</u>=0)</code></td>
   <td>New rectangle (<code>x</code>, <code>y</code>, <code>width</code>, <code>height</code>).</td></tr>
 <tr><td><code>.x</code></td>
-  <td>The x value of the top-left corner.</td></tr>
+  <td>X value of the top-left corner.</td></tr>
 <tr><td><code>.y</code></td>
-  <td>The y value of the top-left corner.</td></tr>
+  <td>Y value of the top-left corner.</td></tr>
 <tr><td><code>.width</code></td>
-  <td>The width of the rectangle.</td></tr>
+  <td>Width of the rectangle.</td></tr>
 <tr><td><code>.height</code></td>
-  <td>The height of the rectangle.</td></tr>
+  <td>Height of the rectangle.</td></tr>
 <tr><td><code>.x1()</code></td>
-  <td>The x value of the right edge of the rectangle.</td></tr>
+  <td>X value of the right edge of the rectangle.</td></tr>
 <tr><td><code>.y1()</code></td>
-  <td>The y value of the bottom edge of the rectangle.</td></tr>
+  <td>Y value of the bottom edge of the rectangle.</td></tr>
 <tr><td><code>.cx()</code></td>
-  <td>The center-x of the rectangle.</td></tr>
+  <td>Center x of the rectangle.</td></tr>
 <tr><td><code>.cy()</code></td>
-  <td>The center-y of the rectangle.</td></tr>
+  <td>Center y of the rectangle.</td></tr>
 <tr><td><code>.center()</code></td>
-  <td>The center of the rectangle.</td></tr>
+  <td>Center point of the rectangle.</td></tr>
 <tr><td><code>.topLeft()</code></td>
-  <td>The top left corner of the rectangle.</td></tr>
+  <td>Top left corner of the rectangle.</td></tr>
 <tr><td><code>.topRight()</code></td>
-  <td>The top right corner of the rectangle.</td></tr>
+  <td>Top right corner of the rectangle.</td></tr>
 <tr><td><code>.bottomLeft()</code></td>
-  <td>The bottom left corner of the rectangle.</td></tr>
+  <td>Bottom left corner of the rectangle.</td></tr>
 <tr><td><code>.bottomRight()</code></td>
-  <td>The bottom right corner of the rectangle.</td></tr>
+  <td>Bottom right corner of the rectangle.</td></tr>
 <tr><td><code>.anchor(<u>anchor</u>)</code></td>
-  <td>The anchor point of the rectangle:
+  <td>Anchor point of the rectangle:
     <div style="margin-left:1em;">
       <svg xmlns="http://www.w3.org/2000/svg" 
 	   xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -651,9 +659,9 @@ has its position (x, y) and size (width, height).
     </div>
   </td></tr>
 <tr><td><code>.xdistance(<u>rect</u>)</code></td>
-  <td>The x-distance to <code>rect</code>.</td></tr>
+  <td>X-distance to <code>rect</code>.</td></tr>
 <tr><td><code>.ydistance(<u>rect</u>)</code></td>
-  <td>The y-distance to <code>rect</code>.</td></tr>
+  <td>Y-distance to <code>rect</code>.</td></tr>
 <tr><td><code>.containsRect(<u>rect</u>)</code></td>
   <td><code>true</code> if the rectangle contains <code>rect</code>.</td></tr>
 <tr><td><code>.overlapsRect(<u>rect</u>)</code></td>
@@ -681,15 +689,15 @@ A <code>Circle</code> represents a circle that has its center and radius.
 <tr class=ctor><td><code>new Circle(<u>center</u>, <u>radius</u>=0)</code></td>
   <td>New circle with the given center and radius.</td></tr>
 <tr><td><code>.center</code></td>
-  <td>The center of the circle.</td></tr>
+  <td>Center of the circle.</td></tr>
 <tr><td><code>.radius</code></td>
-  <td>The radius of the circle.</td></tr>
+  <td>Radius of the circle.</td></tr>
 <tr><td><code>.inflate(<u>dr</u>)</code></td>
   <td>Creates a inflated/deflated circle by <code>dr</code>.</tr></tr>
 <tr><td><code>.resize(<u>radius</u>)</code></td>
   <td>Creates a resized circle.</tr></tr>
 <tr><td><code>.distance(<u>p</u>)</code></td>
-  <td>The distance to point <code>p</code>.</td></tr>
+  <td>Distance to point <code>p</code>.</td></tr>
 <tr><td><code>.containsCircle(<u>circle</u>)</code></td>
   <td><code>true</code> if the circle contains another <code>circle</code>.</td></tr>
 <tr><td><code>.overlapsCircle(<u>circle</u>)</code></td>
@@ -724,9 +732,9 @@ both as <code>Vec3</code>.
 <tr class=ctor><td><code>new Box(<u>origin</u>, <u>size</u>=null)</code></td>
   <td>New Box with (<code>origin</code>, <code>size</code>).</td></tr>
 <tr><td><code>.origin</code></td>
-  <td>The origin of the box.</td></tr>
+  <td>Origin of the box.</td></tr>
 <tr><td><code>.size</code></td>
-  <td>The size of the box.</td></tr>
+  <td>Size of the box.</td></tr>
 <tr><td><code>.copy()</code></td>
   <td>Duplicates the box.</td></tr>
 <tr><td><code>.equals(<u>box</u>)</code></td>
@@ -734,11 +742,11 @@ both as <code>Vec3</code>.
 <tr><td><code>.isZero()</code></td>
   <td><code>true</code> if the box is empty.</td></tr>
 <tr><td><code>.center()</code></td>
-  <td>The center of the box.</td></tr>
+  <td>Center of the box.</td></tr>
 <tr><td><code>.surface(<u>vx</u>, <u>vy</u>, <u>vz</u>)</code></td>
   <td>Returns the <code>AAPlane</code> of the given surface.</td></tr>
 <tr><td><code>.anchor(<u>vx</u>=0, <u>vy</u>=0, <u>vz</u>=0)</code></td>
-  <td>The anchor point of the box.</td></tr>
+  <td>Anchor point of the box.</td></tr>
 <tr><td><code>.move(<u>dx</u>, <u>dy</u>, <u>dz</u>)</code></td>
   <td>Creates a box moved by (<code>dx</code>, <code>dy</code>, <code>dz</code>).</td></tr>
 <tr><td><code>.add(<u>v</u>)</code></td>
@@ -748,11 +756,11 @@ both as <code>Vec3</code>.
 <tr><td><code>.inflate(<u>dx</u>, <u>dy</u>, <u>dz</u>)</code></td>
   <td>Creates a inflated/deflated box by (<code>dx</code>, <code>dy</code>, <code>dz</code>).</td></tr>
 <tr><td><code>.xdistance(<u>box</u>)</code></td>
-  <td>The x-distance to <code>box</code>.</td></tr>
+  <td>X-distance to <code>box</code>.</td></tr>
 <tr><td><code>.ydistance(<u>box</u>)</code></td>
-  <td>The y-distance to <code>box</code>.</td></tr>
+  <td>Y-distance to <code>box</code>.</td></tr>
 <tr><td><code>.zdistance(<u>box</u>)</code></td>
-  <td>The z-distance to <code>box</code>.</td></tr>
+  <td>Z-distance to <code>box</code>.</td></tr>
 <tr><td><code>.union(<u>box</u>)</code></td>
   <td>Combines two boxes (union).</td></tr>
 <tr><td><code>.intersection(<u>box</u>)</code></td>
@@ -782,13 +790,13 @@ A <code>TileMap</code> represents a two-dimensional array that holds map tiles.
 <tr class=ctor><td><code>new TileMap(<br>&nbsp; <u>tilesize</u>, <u>width</u>, <u>height</u>, <br>&nbsp; <u>map</u>=null)</code></td>
   <td>New TileMap for a given size.</td></tr>
 <tr><td><code>.tilesize</code></td>
-  <td>The tile size.</td></tr>
+  <td>Tile size.</td></tr>
 <tr><td><code>.width</code></td>
-  <td>The number of tiles that fit horizontally in the map.</td></tr>
+  <td>Number of tiles that fit horizontally in the map.</td></tr>
 <tr><td><code>.height</code></td>
-  <td>The number of tiles that fit vertically in the map.</td></tr>
+  <td>Number of tiles that fit vertically in the map.</td></tr>
 <tr><td><code>.bounds</code></td>
-  <td>The bounds of the map in the actual size.</td></tr>
+  <td>Bounds of the map in the actual size.</td></tr>
 <tr><td><code>.map</code></td>
   <td>Int32Array[] for the map data. Optionally given at construction.</td></tr>
 <tr><td><code>.get(<u>x</u>, <u>y</u>)</code></td>
@@ -833,14 +841,86 @@ Notice: This object is always returned by <code>TileMap.getRangeMap()</code> met
 and not explicitly created by a user.
 <table border>
 <tr><td><code>.width</code></td>
-  <td>The number of tiles that fit horizontally in the map.</td></tr>
+  <td>Number of tiles that fit horizontally in the map.</td></tr>
 <tr><td><code>.height</code></td>
-  <td>The number of tiles that fit vertically in the map.</td></tr>
+  <td>Number of tiles that fit vertically in the map.</td></tr>
 <tr><td><code>.get(<u>x0</u>, <u>y0</u>, <u>x1</u>, <u>y1</u>)</code></td>
   <td>Returns the number of specific tiles within the given area.</td></tr>
 <tr><td><code>.exists(<u>rect</u>)</code></td>
   <td><code>true</code> if a specific tile exists within the given area.</td></tr>
 </table>
+
+<a name="SpriteSheet"><h3>SpriteSheet (<code>sprite.ts</code>)</h3></a>
+<p>
+A set of <code>ImageSource</code> objects indexed by a number.
+<table border>
+<tr class=ctor><td><code>new ImageSpriteSheet(image, size, <em>[origin]</em>)</code></td>
+  <td>Creates a <code>SpriteSheet</code> from <code>&lt;img&gt;</code>.</td></tr>
+<tr class=ctor><td><code>new SimpleSpriteSheet(imgsrcs)</code></td>
+  <td>Creates a <code>SpriteSheet</code> with solid colors.</td></tr>
+<tr><td><code>.get(i, <em>[j, [w, [h, [origin]]]]</em>)</code></td>
+  <td>Returns the <code>i,j</code>-th <code>ImageSource</code>.</td></tr>
+</table>
+
+<a name="PhysicsConfig"><h3>PhysicsConfig (<code>entity.ts</code>)</h3></a>
+<p>
+<table border>
+<tr class=ctor><td><code>new PhysicsConfig()</code></td>
+  <td>Creates a new configuration.</td></tr>
+<tr><td><code>.maxspeed</code></td>
+  <td>Vector for the maximum speed (absolute values).</td></tr>
+<tr><td><code>.jumpfunc</code></td>
+  <td>Gravity function <code>(vy, t) =&gt; number</code></td></tr>
+<tr><td><code>.isObstacle</code></td>
+  <td>Function <code>(c) =&gt; boolean</code> that returns true if the tile is an obstacle.</td></tr>
+<tr><td><code>.isGrabbable</code></td>
+  <td>Function <code>(c) =&gt; boolean</code> that returns true if the tile is grabbable (e.g. ladders).</td></tr>
+<tr><td><code>.isStoppable</code></td>
+  <td>Function <code>(c) =&gt; boolean</code> that returns true if the tile is stoppable.</td></tr>
+</table>
+
+<a name="TaskList"><h3>TaskList (<code>task.ts</code>)</h3></a>
+<p>
+Manages a list of <code>Task</code>s.
+<table border>
+<tr class=ctor><td><code>new ParallelTaskList()</code></td>
+  <td>Tasklist that runs given tasks parallelly.</td></tr>
+<tr class=ctor><td><code>new SequentialTaskList()</code></td>
+  <td>Tasklist that runs given tasks sequentially.</td></tr>
+<tr><td><code>.init()</code></td>
+  <td>Initializes the task list.</td></tr>
+<tr><td><code>.tick()</code></td>
+  <td>Invoked at every frame. Update the current tasks.</td></tr>
+<tr><td><code>.add(task)</code></td>
+  <td>Adds a task to the list.</td></tr>
+<tr><td><code>.remove(task)</code></td>
+  <td>Removes a task from the list.</td></tr>
+</table>
+
+<a name="TaskQueue"><h3>TaskQueue (<code>task.ts</code>)</h3></a>
+<p>
+Manages a list of <code>Task</code>s that run sequentially.
+<table border>
+<tr class=ctor><td><code>new TaskQueue()</code></td>
+  <td>Creates an empty task queue.</td></tr>
+<tr><td><code>.stopWhenEmpty</code></td>
+  <td>Set <code>true</code> to automatically kill the queue when there's no <code>Task</code>.</td></tr>
+<tr><td><code>.getCurrentTask()</code></td>
+  <td>Returns a task that is currently running.</td></tr>
+<tr><td><code>.add(task)</code></td>
+  <td>Adds a task to the list.</td></tr>
+<tr><td><code>.remove(task)</code></td>
+  <td>Removes a task from the list.</td></tr>
+<tr><td><code>.clear()</code></td>
+  <td>Empties the task list.</td></tr>
+<tr><td><code>.tick()</code></td>
+  <td>Invoked at every frame. Update the current tasks.</td></tr>
+</table>
+
+<a name="EntityWorld"><h3>EntityWorld (<code>entity.ts</code>)</h3></a>
+<a name="SpriteLayer"><h3>SpriteLayer (<code>sprite.ts</code>)</h3></a>
+
+<a name="basic-objects"><h2>Basic Objects</h2></a>
 
 <a name="ImageSource"><h3>ImageSource (<code>sprite.ts</code>)</h3></a>
 <p>
@@ -866,75 +946,35 @@ An <code>ImageSource</code> is an abstract object to render something on screen.
   <td>Renders the image at (0, 0) in the given Context.</td></tr>
 </table>
 
-<a name="SpriteSheet"><h3>SpriteSheet (<code>sprite.ts</code>)</h3></a>
+<a name="Sprite"><h3>Sprite (<code>sprite.ts</code>)</h3></a>
 <p>
-A set of <code>ImageSource</code> objects indexed by a number.
+A <code>Sprite</code> is something to be displayed. 
+It has a location, rotation and scale. Typically it does not move by itself.
+A <code>Scene</code> or <code>Entity</code> is responsible to change its position.
 <table border>
-<tr class=ctor><td><code>new ImageSpriteSheet(image, size, <em>[origin]</em>)</code></td>
-  <td>Creates a <code>SpriteSheet</code> from <code>&lt;img&gt;</code>.</td></tr>
-<tr class=ctor><td><code>new SimpleSpriteSheet(imgsrcs)</code></td>
-  <td>Creates a <code>SpriteSheet</code> with solid colors.</td></tr>
-<tr><td><code>.get(i, <em>[j, [w, [h, [origin]]]]</em>)</code></td>
-  <td>Returns the <code>i,j</code>-th <code>ImageSource</code>.</td></tr>
+<tr class=ctor><td><code>new FixedSprite(<br>&nbsp; <u>imgsrc</u>=null, <u>pos</u>=null)</code></td>
+  <td>Sprite with a fixed <code>ImageSource</code> and position.</td></tr>
+<tr class=ctor><td><code>new EntitySprite(<u>entity</u>)</code></td>
+  <td>Sprite that belongs to an <code>Entity</code>.</td></tr>
+<tr><td><code>.visible</code></td>
+  <td><code>true</code> if the sprite is visible.</td></tr>
+<tr><td><code>.scale</code></td>
+  <td>Vector for the scale of the sprite image.</td></tr>
+<tr><td><code>.rotation</code></td>
+  <td>Rotation of the sprite image (in radian).</td></tr>
+<tr><td><code>.getBounds([pos])</code></td>
+  <td>Returns the bounds for the given <code>pos</code>.</td></tr>
+<tr><td><code>.render(ctx)</code></td>
+  <td>Draws the sprite at the given position.</td></tr>
+<tr class=override><td><code>.getSkin()</code></td>
+  <td>Returns the <code>ImageSource</code> of the sprite's content.</td></tr>
+<tr class=override><td><code>.getPos()</code></td>
+  <td>Returns the position of the sprite.</td></tr>
+<tr class=override><td><code>.mouseSelectable(p)</code></td>
+  <td>Returns <code>true</code> if the sprite can be focused for the given position.</td></tr>
+<tr class=override><td><code>.renderImage(ctx)</code></td>
+  <td>Draws the actual image of the sprite.</td></tr>
 </table>
-
-<a name="PhysicsConfig"><h3>PhysicsConfig (<code>entity.ts</code>)</h3></a>
-<p>
-<table border>
-<tr class=ctor><td><code>new PhysicsConfig()</code></td>
-  <td>Creates a new configuration.</td></tr>
-<tr><td><code>.maxspeed</code></td>
-  <td>A vector for the maximum speed (absolute values).</td></tr>
-<tr><td><code>.jumpfunc</code></td>
-  <td>A gravity function <code>(vy, t) =&gt; number</code></td></tr>
-<tr><td><code>.isObstacle</code></td>
-  <td>A function <code>(c) =&gt; boolean</code> that returns true if the tile is an obstacle.</td></tr>
-<tr><td><code>.isGrabbable</code></td>
-  <td>A function <code>(c) =&gt; boolean</code> that returns true if the tile is grabbable (e.g. ladders).</td></tr>
-<tr><td><code>.isStoppable</code></td>
-  <td>A function <code>(c) =&gt; boolean</code> that returns true if the tile is stoppable.</td></tr>
-</table>
-
-<a name="TaskList"><h3>TaskList (<code>task.ts</code>)</h3></a>
-<p>
-Manages a list of <code>Task</code>s.
-<table border>
-<tr class=ctor><td><code>new TaskList()</code></td>
-  <td>Creates an empty task list.</td></tr>
-<tr><td><code>.init()</code></td>
-  <td>Initializes the task list.</td></tr>
-<tr><td><code>.tick()</code></td>
-  <td>Invoked at every frame. Update the current tasks.</td></tr>
-<tr><td><code>.add(task)</code></td>
-  <td>Add a task to the list.</td></tr>
-<tr><td><code>.remove(task)</code></td>
-  <td>Remove a task from the list.</td></tr>
-</table>
-
-<a name="TaskQueue"><h3>TaskQueue (<code>task.ts</code>)</h3></a>
-<p>
-Manages a list of <code>Task</code>s that run sequentially.
-<table border>
-<tr class=ctor><td><code>new TaskQueue()</code></td>
-  <td>Creates an empty task queue.</td></tr>
-<tr><td><code>.stopWhenEmpty</code></td>
-  <td>Set <code>true</code> to automatically kill the queue when there's no <code>Task</code>.</td></tr>
-<tr><td><code>.getCurrentTask()</code></td>
-  <td>Return a task that is currently running.</td></tr>
-<tr><td><code>.add(task)</code></td>
-  <td>Add a task to the list.</td></tr>
-<tr><td><code>.remove(task)</code></td>
-  <td>Remove a task from the list.</td></tr>
-<tr><td><code>.clear()</code></td>
-  <td>Empty the task list.</td></tr>
-<tr><td><code>.tick()</code></td>
-  <td>Invoked at every frame. Update the current tasks.</td></tr>
-</table>
-
-<a name="EntityWorld"><h3>EntityWorld (<code>entity.ts</code>)</h3></a>
-<a name="SpriteLayer"><h3>SpriteLayer (<code>sprite.ts</code>)</h3></a>
-
-<a name="basic-objects"><h2>Basic Objects</h2></a>
 
 <a name="Task"><h3>Task (<code>task.ts</code>)</h3></a>
 <p>
@@ -942,9 +982,13 @@ A <code>Task</code> is an independent object that runs by itself
 and managed by <code>TaskList</code>.
 <table border>
 <tr class=ctor><td><code>new Task()</code></td>
-  <td>Creates a new task.</td></tr>
-<tr><td><code>.running</code></td>
-  <td><code>true</code> if the task is running.</td></tr>
+  <td>Creates a new empty task.</td></tr>
+<tr class=ctor><td><code>new DelayTask(<br>&nbsp; <u>delay</u>, <u>proc</u>=null)</code></td>
+  <td>Task that waits a certain amount and then execute the given function.</td></tr>
+<tr class=ctor><td><code>new SoundTask(<br>&nbsp; <u>sound</u>, <u>soundStart</u>=MP3_GAP, <u>soundEnd</u>=0)</code></td>
+  <td>Task that plays a sound.</td></tr>
+<tr><td><code>.state</code></td>
+  <td>Either one of <code>Scheduled</code>, <code>Running</code> or <code>Finished</code>.</td>
 <tr><td><code>.tasklist</code></td>
   <td><code>TaskList</code> that the task belongs to.</td></tr>
 <tr><td><code>.lifetime</code></td>
@@ -952,18 +996,18 @@ and managed by <code>TaskList</code>.
 <tr><td><code>.startTime</code></td>
   <td>Time the task started.</td></tr>
 <tr><td><code>.stopped</code></td>
-  <td>Fired when the task stops.</td></tr>
+  <td>Signal fired when the task stops.</td></tr>
 <tr><td><code>.getTime()</code></td>
   <td>Elapsed time since the task has started (in seconds).</td></tr>
-<tr><td><code>.init()</code></td>
+<tr><td><code>.start()</code></td>
   <td>Invoked when the task is started.</td></tr>
-<tr><td><code>.tick()</code></td>
-  <td>Invoked at every frame while the task is running.</td></tr>
 <tr><td><code>.stop()</code></td>
   <td>Terminates the task.</td></tr>
+<tr><td><code>.tick()</code></td>
+  <td>Invoked at every frame while the task is running.</td></tr>
 <tr><td><code>.chain(next)</code></td>
   <td>Schedules another task.</td></tr>
-<tr class=overridable><td><code>.update()</code></td>
+<tr class=override><td><code>.update()</code></td>
   <td>Updates for the current frame.</td></tr>
 </table>
 
@@ -1002,36 +1046,12 @@ A <code>Rect</code> is typically used for <code>Collider</code> in 2D games.
   <td>Moves the entity by <code>v</code>.</td></tr>
 <tr><td><code>.moveIfPossible(v, <em>[context]</em>)</code></td>
   <td>Moves the entity by <code>v</code> without colliding obstacles.</td></tr>
-<tr class=overridable><td><code>.getObstaclesFor(range, context)</code></td>
+<tr class=override><td><code>.getObstaclesFor(range, context)</code></td>
   <td>Returns a list of <code>Shape</code>s within <code>range</code>.</td></tr>
-<tr class=overridable><td><code>.getFencesFor(range, context)</code></td>
+<tr class=override><td><code>.getFencesFor(range, context)</code></td>
   <td>Returns a list of bounding rectangles that limits the entity within.</td></tr>
-<tr class=overridable><td><code>.collidedWith(entity)</code></td>
+<tr class=override><td><code>.collidedWith(entity)</code></td>
   <td>Invoked when the entity collides another entity.</td></tr>
-</table>
-
-<a name="Sprite"><h3>Sprite (<code>sprite.ts</code>)</h3></a>
-<p>
-A <code>Sprite</code> is something to be displayed. 
-It has a location, rotation and the reference to its content. 
-Unlike some other engines, <code>Sprite</code> doesn't know how to move itself.
-It is just sitting at a certain location on screen. <code>Scene</code> or
-<code>Entity</code> is responsible to change/move its position.
-<table border>
-<tr class=ctor><td><code>new Sprite(<em>[imgsrc]</em>)</code></td>
-  <td>Creates a new sprite.</td></tr>
-<tr><td><code>.imgsrc</code></td>
-  <td>A <code>ImageSource</code> for the sprite's content.</td></tr>
-<tr><td><code>.visible</code></td>
-  <td><code>true</code> if the sprite is visible.</td></tr>
-<tr><td><code>.zOrder</code></td>
-  <td>The order that the sprite is drawn to the screen.</td></tr>
-<tr><td><code>.scale</code></td>
-  <td>A vector for the polarity of the sprite image.</td></tr>
-<tr><td><code>.getBounds([pos])</code></td>
-  <td>Returns the bounds for the given <code>pos</code>.</td></tr>
-<tr class=overridable><td><code>.render(ctx, bx, by)</code></td>
-  <td>Draws the sprite at the location (<code>bx</code>, <code>by</code>).</td></tr>
 </table>
 
 <a name="Layer"><h3>Layer (<code>layer.ts</code>)</h3></a>
@@ -1071,11 +1091,11 @@ at once and interact each other.
   <td>Invoked when a mouse button is released.
 <tr><td><code>.onMouseMove(p)</code></td>
   <td>Invoked when a mouse pointer is moved.
-<tr class=overridable><td><code>.init()</code></td>
+<tr class=override><td><code>.init()</code></td>
   <td>Invoked when the layer is initialized.</td></tr>
-<tr class=overridable><td><code>.tick(t)</code></td>
+<tr class=override><td><code>.tick(t)</code></td>
   <td>Invoked for every frame.</td></tr>
-<tr class=overridable><td><code>.render(ctx, bx, by)</code></td>
+<tr class=override><td><code>.render(ctx, bx, by)</code></td>
   <td>Draws all the sprites at the location (<code>bx</code>, <code>by</code>).</td></tr>
 </table>
 
@@ -1093,29 +1113,29 @@ one Scene.
   <td>The canvas rectangle.</td></tr>
 <tr><td><code>.changeScene(scene)</code></td>
   <td>Signals the <code>App</code> to switch to a scene.</td></tr>
-<tr class=overridable><td><code>.init()</code></td>
+<tr class=override><td><code>.init()</code></td>
   <td>Initializes the scene.</td></tr>
-<tr class=overridable><td><code>.tick(t)</code></td>
+<tr class=override><td><code>.tick(t)</code></td>
   <td>Invoked for every frame.</td></tr>
-<tr class=overridable><td><code>.render(ctx, bx, by)</code></td>
+<tr class=override><td><code>.render(ctx, bx, by)</code></td>
   <td>Draws the scene at the location (<code>bx</code>, <code>by</code>).</td></tr>
-<tr class=overridable><td><code>.onDirChanged(v)</code></td>
+<tr class=override><td><code>.onDirChanged(v)</code></td>
   <td>Invoked when a directional input is changed.</td></tr>
-<tr class=overridable><td><code>.onButtonPressed(keySym)</code></td>
+<tr class=override><td><code>.onButtonPressed(keySym)</code></td>
   <td>Invoked when the button state is pressed.</td></tr>
-<tr class=overridable><td><code>.onButtonReleased(keySym)</code></td>
+<tr class=override><td><code>.onButtonReleased(keySym)</code></td>
   <td>Invoked when the button state is released.</td></tr>
-<tr class=overridable><td><code>.onKeyDown(keyCode)</code></td>
+<tr class=override><td><code>.onKeyDown(keyCode)</code></td>
   <td>Invoked when a key is pressed.</td></tr>
-<tr class=overridable><td><code>.onKeyUp(keyCode)</code></td>
+<tr class=override><td><code>.onKeyUp(keyCode)</code></td>
   <td>Invoked when a key is released.</td></tr>
-<tr class=overridable><td><code>.onKeyPress(charCode)</code></td>
+<tr class=override><td><code>.onKeyPress(charCode)</code></td>
   <td>Invoked when a character is typed.</td></tr>
-<tr class=overridable><td><code>.onMouseDown(p, button)</code></td>
+<tr class=override><td><code>.onMouseDown(p, button)</code></td>
   <td>Invoked when a mouse button is pressed.</td></tr>
-<tr class=overridable><td><code>.onMouseUp(p, button)</code></td>
+<tr class=override><td><code>.onMouseUp(p, button)</code></td>
   <td>Invoked when a mouse button is released.</td></tr>
-<tr class=overridable><td><code>.onMouseMove(p)</code></td>
+<tr class=override><td><code>.onMouseMove(p)</code></td>
   <td>Invoked when a mouse pointer is moved.</td></tr>
 </table>
 
@@ -1259,11 +1279,11 @@ Suitable for charcters or objects that can jump or fall.
   <td>Moves the entity by <code>v</code>.</td></tr>
 <tr class=inherited><td><code>.collider</code></td>
   <td>A <code>Rect</code>/<code>Circle</code> for the entity's collider.</td></tr>
-<tr class=overridable><td><code>.update()</code></td>
+<tr class=override><td><code>.update()</code></td>
   <td>Updates for the current frame.</td></tr>
-<tr class=overridable><td><code>.render(ctx, bx, by)</code></td>
+<tr class=override><td><code>.render(ctx, bx, by)</code></td>
   <td>Draws the entity at the location (<code>bx</code>, <code>by</code>).</td></tr>
-<tr class=overridable><td><code>.collidedWith(entity)</code></td>
+<tr class=override><td><code>.collidedWith(entity)</code></td>
   <td>Invoked when the entity collides another entity.</td></tr>
 <tr class=inherited><td><code>.moveIfPossible(v, <em>[context]</em>)</code></td>
   <td>Moves the entity by <code>v</code> without colliding obstacles.</td></tr>
@@ -1271,23 +1291,23 @@ Suitable for charcters or objects that can jump or fall.
   <td><code>true</code> if the entity is movable toward <code>v</code>.</td></tr>
 <tr class=inherited><td><code>.getMove(v)</code></td>
   <td>Trims the vector <code>v</code> so that it doesn't collide.</td></tr>
-<tr class=overridable><td><code>.getObstaclesFor(range, context)</code></td>
+<tr class=override><td><code>.getObstaclesFor(range, context)</code></td>
   <td>Returns a list of <code>Shape</code>s within <code>range</code>.</td></tr>
-<tr class=overridable><td><code>.getFencesFor(range, context)</code></td>
+<tr class=override><td><code>.getFencesFor(range, context)</code></td>
   <td>Returns a list of bounding rectangles that limits the entity within.</td></tr>
 <tr><td><code>.setJumpFunc(function)</code></td>
   <td>Sets the gravity function.</td></tr>
 <tr><td><code>.setJump(jumpend)</code></td>
   <td>Starts a jump maneuver that ends at <code>t=jumpend</code>.</td></tr>
-<tr class=overridable><td><code>.jump()</code></td>
+<tr class=override><td><code>.jump()</code></td>
   <td>Invoked when the entity starts jumping.</td></tr>
 <tr><td><code>.fall()</code></td>
   <td>Invoked for every update.</td></tr>
 <tr><td><code>.isLanded()</code></td>
   <td><code>true</code> if the entity is landed on a platform.</td></tr>
-<tr class=overridable><td><code>.land()</code></td>
+<tr class=override><td><code>.land()</code></td>
   <td>Invoked when the entity is landed on a platform.</td></tr>
-<tr class=overridable><td><code>.isHolding()</code></td>
+<tr class=override><td><code>.isHolding()</code></td>
   <td><code>true</code> if the entity is in a state that stops falling.</td></tr>
 </table>
 
@@ -1328,11 +1348,11 @@ Suitable for tile-based platformer games.
   <td>Moves the entity by <code>v</code>.</td></tr>
 <tr class=inherited><td><code>.collider</code></td>
   <td>A <code>Rect</code>/<code>Circle</code> for the entity's collider.</td></tr>
-<tr class=overridable><td><code>.update()</code></td>
+<tr class=override><td><code>.update()</code></td>
   <td>Updates for the current frame.</td></tr>
-<tr class=overridable><td><code>.render(ctx, bx, by)</code></td>
+<tr class=override><td><code>.render(ctx, bx, by)</code></td>
   <td>Draws the entity at the location (<code>bx</code>, <code>by</code>).</td></tr>
-<tr class=overridable><td><code>.collidedWith(entity)</code></td>
+<tr class=override><td><code>.collidedWith(entity)</code></td>
   <td>Invoked when the entity collides another entity.</td></tr>
 <tr class=inherited><td><code>.moveIfPossible(v, <em>[context]</em>)</code></td>
   <td>Moves the entity by <code>v</code> without colliding obstacles.</td></tr>
@@ -1340,19 +1360,19 @@ Suitable for tile-based platformer games.
   <td><code>true</code> if the entity is movable toward <code>v</code>.</td></tr>
 <tr class=inherited><td><code>.getMove(v)</code></td>
   <td>Trims the vector <code>v</code> so that it doesn't collide.</td></tr>
-<tr class=overridable><td><code>.getFencesFor(range, context)</code></td>
+<tr class=override><td><code>.getFencesFor(range, context)</code></td>
   <td>Returns a list of bounding rectangles that limits the entity within.</td></tr>
 <tr class=inherited><td><code>.setJumpFunc(function)</code></td>
   <td>Sets the gravity function.</td></tr>
 <tr class=inherited><td><code>.setJump(jumpend)</code></td>
   <td>Starts a jump maneuver that ends at <code>t=jumpend</code>.</td></tr>
-<tr class=overridable><td><code>.jump()</code></td>
+<tr class=override><td><code>.jump()</code></td>
   <td>Invoked when the entity starts jumping.</td></tr>
 <tr class=inherited><td><code>.fall()</code></td>
   <td>Invoked for every update.</td></tr>
 <tr class=inherited><td><code>.isLanded()</code></td>
   <td><code>true</code> if the entity is landed on a platform.</td></tr>
-<tr class=overridable><td><code>.land()</code></td>
+<tr class=override><td><code>.land()</code></td>
   <td>Invoked when the entity is landed on a platform.</td></tr>
 </table>
 
@@ -1371,9 +1391,9 @@ Only shows the objects within the window.
   <td>A list of <code>Entity</code>s that belong to the layer.</td></tr>
 <tr><td><code>.window</code></td>
   <td>A <code>Rect</code> that specifies the window.</td></tr>
-<tr class=overridable><td><code>.init()</code></td>
+<tr class=override><td><code>.init()</code></td>
   <td>Invoked when the layer is initialized.</td></tr>
-<tr class=overridable><td><code>.tick(t)</code></td>
+<tr class=override><td><code>.tick(t)</code></td>
   <td>Invoked for every frame.</td></tr>
 <tr class=inherited><td><code>.render(ctx, bx, by)</code></td>
   <td>Draws all the sprites at the location (<code>bx</code>, <code>by</code>).</td></tr>
@@ -1408,27 +1428,27 @@ a few convenient methods.
   <td>Adds a <code>Task</code>/<code>Sprite</code>/<code>Entity</code> to the list.</td></tr>
 <tr class=inherited><td><code>.changeScene(scene)</code></td>
   <td>Signals the <code>App</code> to switch to a scene.</td></tr>
-<tr class=overridable><td><code>.init()</code></td>
+<tr class=override><td><code>.init()</code></td>
   <td>Initializes the scene.</td></tr>
-<tr class=overridable><td><code>.tick(t)</code></td>
+<tr class=override><td><code>.tick(t)</code></td>
   <td>Invoked for every frame.</td></tr>
-<tr class=overridable><td><code>.render(ctx, bx, by)</code></td>
+<tr class=override><td><code>.render(ctx, bx, by)</code></td>
   <td>Draws the scene at the location (<code>bx</code>, <code>by</code>).</td></tr>
-<tr class=overridable><td><code>.setDir(v)</code></td>
+<tr class=override><td><code>.setDir(v)</code></td>
   <td>Invoked when a directional input is changed.</td></tr>
-<tr class=overridable><td><code>.setAction(action)</code></td>
+<tr class=override><td><code>.setAction(action)</code></td>
   <td>Invoked when the action key state is changed.</td></tr>
-<tr class=overridable><td><code>.setCancel(cancel)</code></td>
+<tr class=override><td><code>.setCancel(cancel)</code></td>
   <td>Invoked when the cancel key state is changed.</td></tr>
-<tr class=overridable><td><code>.keydown(keyCode)</code></td>
+<tr class=override><td><code>.keydown(keyCode)</code></td>
   <td>Invoked when a key is pressed.</td></tr>
-<tr class=overridable><td><code>.keyup(keyCode)</code></td>
+<tr class=override><td><code>.keyup(keyCode)</code></td>
   <td>Invoked when a key is released.</td></tr>
-<tr class=overridable><td><code>.mousedown(x, y, button)</code></td>
+<tr class=override><td><code>.mousedown(x, y, button)</code></td>
   <td>Invoked when a mouse button is pressed.</td></tr>
-<tr class=overridable><td><code>.mouseup(x, y, button)</code></td>
+<tr class=override><td><code>.mouseup(x, y, button)</code></td>
   <td>Invoked when a mouse button is released.</td></tr>
-<tr class=overridable><td><code>.mousemove(x, y)</code></td>
+<tr class=override><td><code>.mousemove(x, y)</code></td>
   <td>Invoked when a mouse pointer is moved.</td></tr>
 </table>
 
@@ -1443,7 +1463,7 @@ Suitable for game title or help screen, etc.
   <td>A string to display.</td></tr>
 <tr class=inherited><td><code>.changeScene(scene)</code></td>
   <td>Signals the <code>App</code> to switch to a scene.</td></tr>
-<tr class=overridable><td><code>.change()</code></td>
+<tr class=override><td><code>.change()</code></td>
   <td>Invoked when there's a mouse or keyboard input.</td></tr>
 </table>
 
