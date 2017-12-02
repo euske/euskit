@@ -149,6 +149,17 @@ function str2array(s: string, f: (c:string)=>number=parseInt): Int32Array
     return a;
 }
 
+/** Creates a 2D array for a given size.
+ * @param rows Number of rows.
+ * @param cols Number of columns.
+ * @param value Initial value (default=0).
+ */
+function makeMatrix(rows: number, cols: number, value=0): Int32Array[] {
+    return range(rows).map(() => {
+	return new Int32Array(cols).fill(value);
+    });
+}
+
 /** Removes all child DOM Nodes with the given name. 
  * @param node Parent DOM Node.
  * @param name Name of child Nodes to be removed.

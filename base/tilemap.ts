@@ -3,13 +3,6 @@
 /// <reference path="sprite.ts" />
 
 
-function makeMatrix(rows: number, cols: number, value=0): Int32Array[] {
-    return range(rows).map(() => {
-	return new Int32Array(cols).fill(value);
-    });
-}
-
-
 //  TileMap
 //
 interface TileFunc {

@@ -262,6 +262,8 @@ interface Shape extends Collider {
     isZero(): boolean;
     /** Returns true if the point is contained within this object. */
     containsPt(p: Vec2): boolean;
+    /** Returns a point on the contour. */
+    edgePt(t: number): Vec2;
     /** Returns a random point inside the object. */
     rndPt(): Vec2;
     /** Returns a random point on the edge of the object. */
@@ -719,21 +721,21 @@ class Rect implements Shape {
 	return new Rect(x, y, this.width, this.height);
     }
 
-    edgePt(v: number): Vec2 {
-	v = fmod(v, this.width*2 + this.height*2);
-	if (v < this.width) {
-	    return new Vec2(this.x+v, this.y);
+    edgePt(t: number): Vec2 {
+	t = fmod(t, this.width*2 + this.height*2);
+	if (t < this.width) {
+	    return new Vec2(this.x+t, this.y);
 	}
-	v -= this.width;
-	if (v < this.height) {
-	    return new Vec2(this.x+this.width, this.y+v);
+	t -= this.width;
+	if (t < this.height) {
+	    return new Vec2(this.x+this.width, this.y+t);
 	}
-	v -= this.height;
-	if (v < this.width) {
-	    return new Vec2(this.x+this.width-v, this.y+this.height);
+	t -= this.height;
+	if (t < this.width) {
+	    return new Vec2(this.x+this.width-t, this.y+this.height);
 	}
-	// assert(v <= this.height);
-	return new Vec2(this.x, this.y+this.height-v);
+	// assert(t <= this.height);
+	return new Vec2(this.x, this.y+this.height-t);
     }
     
     rndPt(): Vec2 {
@@ -742,8 +744,8 @@ class Rect implements Shape {
     }
 
     rndPtEdge(): Vec2 {
-	let v = frnd(this.width*2 + this.height*2);
-	return this.edgePt(v);
+	let t = frnd(this.width*2 + this.height*2);
+	return this.edgePt(t);
     }
     
     modPt(p: Vec2): Vec2 {
@@ -915,6 +917,11 @@ class Circle implements Shape {
 	return new Circle(new Vec2(x, y), this.radius);
     }
     
+    edgePt(t: number): Vec2 {
+	return new Vec2(this.center.x+this.radius*Math.cos(t),
+			this.center.y+this.radius*Math.sin(t));
+    }
+    
     rndPt(): Vec2 {
 	let r = frnd(this.radius);
 	let t = frnd(Math.PI*2);
@@ -924,10 +931,9 @@ class Circle implements Shape {
     
     rndPtEdge(): Vec2 {
 	let t = frnd(Math.PI*2);
-	return new Vec2(this.center.x+this.radius*Math.cos(t),
-			this.center.y+this.radius*Math.sin(t));
+	return this.edgePt(t);
     }
-    
+
     contactCircle(v: Vec2, circle: Circle): Vec2 {
 	if (this.overlapsCircle(circle)) {
 	    return new Vec2();
