@@ -9,8 +9,8 @@ BASES= \
 	$(BASEDIR)/entity.ts \
 	$(BASEDIR)/geom.ts \
 	$(BASEDIR)/layer.ts \
-	$(BASEDIR)/planmap.ts \
-	$(BASEDIR)/planrunner.ts \
+	$(BASEDIR)/pathfind.ts \
+	$(BASEDIR)/planplat.ts \
 	$(BASEDIR)/scene.ts \
 	$(BASEDIR)/sprite.ts \
 	$(BASEDIR)/text.ts \

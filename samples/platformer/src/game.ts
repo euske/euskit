@@ -5,8 +5,8 @@
 /// <reference path="../../../base/scene.ts" />
 /// <reference path="../../../base/app.ts" />
 /// <reference path="../../../base/tilemap.ts" />
-/// <reference path="../../../base/planmap.ts" />
-/// <reference path="../../../base/planrunner.ts" />
+/// <reference path="../../../base/pathfind.ts" />
+/// <reference path="../../../base/planplat.ts" />
 
 //  Platformer
 //
