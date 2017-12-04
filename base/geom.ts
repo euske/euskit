@@ -124,12 +124,19 @@ class Vec2 {
     /** Create a new rectangle based on this point. 
      * @param dw Width.
      * @param dh Height.
+     */
+    inflate(dw: number, dh: number): Rect {
+	return this.expand(dw*2, dh*2);
+    }
+    
+    /** Create a new rectangle based on this point. 
+     * @param dw Width.
+     * @param dh Height.
      * @param anchor Anchor point.
      */
     expand(dw: number, dh: number, anchor='c'): Rect {
 	return new Rect(this.x, this.y).expand(dw, dh, anchor);
     }
-    
 }
 
 
