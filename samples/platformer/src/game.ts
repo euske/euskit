@@ -198,15 +198,14 @@ class Monster extends PlanningEntity implements WorldObject {
 
     update() {
 	super.update();
-	if (!this.isPlanRunning()) {
-	    let p = this.target.pos;
-	    let runner = this.getPlan(p, 20, 40)
-	    if (runner !== null) {
-		this.startPlan(runner);
+	if (this.runner === null) {
+	    let pos = this.grid.coord2grid(this.target.pos);
+	    let action = this.buildPlan(pos);
+	    if (action !== null) {
+		this.setRunner(new PlatformerActionRunner(this, action));
 	    }
 	}
 	(this.sprite as ShadowSprite).shadowPos = findShadowPos(this.tilemap, this.pos);
-	this.move();
     }
 }
 applyMixins(Monster, [WorldObject]);

@@ -406,6 +406,8 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
     plan: PlatformerPlanMap;
     gridbox: Rect = null;
 
+    runner: ActionRunner = null;
+
     private _jumppts: Vec2[] = null;
     private _fallpts: Vec2[] = null;
     speed: number = 4;
@@ -440,6 +442,15 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 	start = (start !== null)? start : this.getGridPos();
 	let range = (size == 0)? this.tilemap.bounds : goal.inflate(size, size);
 	return this.plan.build(this, goal, range, start, maxcost) as PlatformerAction;
+    }
+
+    setRunner(runner: ActionRunner) {
+	if (this.runner !== null) {
+	    this.runner.stop();
+	}
+	runner.stopped.subscribe(() => { this.runner = null; });
+	this.tasklist.add(runner);
+	this.runner = runner;
     }
 
     // PlatformerActor methods
