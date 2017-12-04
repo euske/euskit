@@ -93,13 +93,15 @@ class Camera {
 
     mouseFocus: Sprite = null;
     mouseActive: Sprite = null;
-    clicked: Signal;
+    mousedown: Signal;
+    mouseup: Signal;
 
     layers: SpriteLayer[] = [];
     window: Rect;
 
     constructor(window: Rect) {
-	this.clicked = new Signal(this);
+	this.mousedown = new Signal(this);
+	this.mouseup = new Signal(this);
 	this.window = window.copy();
     }
 
@@ -147,9 +149,7 @@ class Camera {
 
     findSpriteAt(p: Vec2) {
 	// check in the reversed order.
-        let f = ((sprite: Sprite) => {
-            return sprite.visible && sprite.mouseSelectable(p);
-        });
+        let f = ((sprite: Sprite) => { return sprite.mouseSelectable(p); });
         for (let i = this.layers.length; 0 < i; i--) {
             let layer = this.layers[i-1];
             let sprite = layer.apply(f);
@@ -164,15 +164,17 @@ class Camera {
 	if (button == 0) {
 	    this.mouseFocus = this.findSpriteAt(p);
 	    this.mouseActive = this.mouseFocus;
+	    if (this.mouseActive !== null) {
+		this.mousedown.fire(this.mouseActive, p);
+	    }
 	}
     }
     
     onMouseUp(p: Vec2, button: number) {
 	if (button == 0) {
 	    this.mouseFocus = this.findSpriteAt(p);
-	    if (this.mouseFocus !== null &&
-		this.mouseFocus === this.mouseActive) {
-		this.clicked.fire(this.mouseActive);
+	    if (this.mouseActive !== null) {
+		this.mouseup.fire(this.mouseActive, p);
 	    }
 	    this.mouseActive = null;
 	}

@@ -156,14 +156,14 @@ class GameScene extends Scene {
 	this.camera.render(ctx);
     }
 
-    add(task: Task) {
-	this.tasklist.add(task);
+    add(task: Task, layer: SpriteLayer=null, field: EntityField=null) {
 	if (task instanceof Widget) {
-	    task.layer = this.layer;
+	    task.layer = (layer !== null)? layer : this.layer;
 	}
 	if (task instanceof Entity) {
-	    task.field = this.field;
+	    task.field = (field !== null)? field : this.field;
 	}
+	this.tasklist.add(task);
     }
 
     onMouseDown(p: Vec2, button: number) {

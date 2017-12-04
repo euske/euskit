@@ -388,8 +388,7 @@ class Sprite {
 
     /** Returns true if the sprite can respond to mouse event. */
     mouseSelectable(p: Vec2): boolean {
-	// return this.getBounds().containsPt(p);
-	return false;
+	return this.visible && this.getBounds().containsPt(p);
     }
 
     /** Returns the bounds of the sprite at a given pos. */
