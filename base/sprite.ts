@@ -315,6 +315,7 @@ class SimpleSpriteSheet extends SpriteSheet {
 
     /** Returns an ImageSource at the given cell. */
     get(x:number, y=0, w=1, h=1, origin: Vec2=null): ImageSource {
+	if (x < 0 || this.imgsrcs.length <= x || y != 0) return null;
 	return this.imgsrcs[x];
     }
 
@@ -373,6 +374,7 @@ class Sprite {
     scale: Vec2 = new Vec2(1, 1);
     /** Image rotation (in radian). */
     rotation: number = 0;
+    alpha: number = 1.0;
     
     /** Returns the image source of the sprite. */
     getSkin(): ImageSource {
@@ -405,6 +407,12 @@ class Sprite {
     /** Renders itself in the given context. */
     render(ctx: CanvasRenderingContext2D) {
 	ctx.save();
+	this.setupContext(ctx);
+	this.renderImage(ctx);
+	ctx.restore();
+    }
+
+    setupContext(ctx: CanvasRenderingContext2D) {
 	let pos = this.getPos();
 	if (pos !== null) {
 	    ctx.translate(pos.x, pos.y);
@@ -413,10 +421,9 @@ class Sprite {
 	    ctx.rotate(this.rotation);
 	}
 	ctx.scale(this.scale.x, this.scale.y);
-	this.renderImage(ctx);
-	ctx.restore();
+	ctx.globalAlpha = this.alpha;
     }
-
+    
     /** Renders its image. */
     renderImage(ctx: CanvasRenderingContext2D) {
 	let skin = this.getSkin();
