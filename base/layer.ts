@@ -5,7 +5,7 @@
 
 
 //  SpriteLayer
-// 
+//
 interface SpriteFunc {
     (sprite: Sprite): boolean;
 }
@@ -13,16 +13,16 @@ class SpriteLayer {
 
     sprites: Sprite[] = [];
     widgets: Widget[] = [];
-    
+
     toString() {
 	return ('<SpriteLayer: sprites='+this.sprites+'>');
     }
-  
+
     clear() {
 	this.sprites = [];
 	this.widgets = [];
     }
-  
+
     addSprite(sprite: Sprite) {
 	this.sprites.push(sprite);
     }
@@ -56,7 +56,7 @@ class SpriteLayer {
 	for (let widget of this.widgets) {
 	    for (let sprite of widget.getSprites()) {
 		let bounds = sprite.getBounds()
-		if (window === null || bounds === null || 
+		if (window === null || bounds === null ||
                     bounds.overlaps(window)) {
                     if (f(sprite)) {
 		        return sprite;
@@ -66,16 +66,16 @@ class SpriteLayer {
 	}
 	for (let sprite of this.sprites) {
 	    let bounds = sprite.getBounds()
-	    if (window === null || bounds === null || 
+	    if (window === null || bounds === null ||
                 bounds.overlaps(window)) {
                 if (f(sprite)) {
 		    return sprite;
-                }                    
+                }
 	    }
 	}
         return null;
     }
-    
+
     render(ctx: CanvasRenderingContext2D, window: Rect=null) {
         this.apply((sprite: Sprite) => {
 	    if (sprite.visible) {
@@ -88,7 +88,7 @@ class SpriteLayer {
 
 
 //  Camera
-// 
+//
 class Camera {
 
     mouseFocus: Sprite = null;
@@ -114,11 +114,11 @@ class Camera {
         this.layers.push(layer);
         return layer;
     }
-    
+
     moveCenter(v: Vec2) {
 	this.window = this.window.add(v);
     }
-    
+
     setCenter(bounds: Rect, rect: Rect) {
 	if (this.window.width < rect.width) {
 	    this.window.x = (rect.width-this.window.width)/2;
@@ -169,7 +169,7 @@ class Camera {
 	    }
 	}
     }
-    
+
     onMouseUp(p: Vec2, button: number) {
 	if (button == 0) {
 	    this.mouseFocus = this.findSpriteAt(p);
@@ -179,7 +179,7 @@ class Camera {
 	    this.mouseActive = null;
 	}
     }
-    
+
     onMouseMove(p: Vec2) {
 	if (this.mouseActive === null) {
 	    this.mouseFocus = this.findSpriteAt(p);

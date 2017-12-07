@@ -8,13 +8,13 @@
 //  Base class for all animator.
 //
 class Animator extends Task {
-    
+
     entity: Entity;
-    
+
     constructor(entity: Entity) {
 	super();
 	this.entity = entity;
-    }    
+    }
 }
 
 
@@ -24,12 +24,12 @@ class Tweener extends Animator {
 
     srcpos: Vec2 = null;
     dstpos: Vec2 = null;
-    
+
     start() {
 	super.start();
 	this.srcpos = this.entity.pos.copy();
     }
-    
+
     update() {
 	super.update();
 	if (this.srcpos !== null && this.dstpos !== null) {
@@ -100,7 +100,7 @@ class Blinker extends Widget {
 
     sprite: Sprite;
     interval: number = 1.0;
-    
+
     constructor(sprite: Sprite) {
 	super();
 	this.sprite = sprite;

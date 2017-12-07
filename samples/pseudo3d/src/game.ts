@@ -28,7 +28,7 @@ function getContact3(hitbox: Box, v: Vec3, obstacles: Box[])
 //  EntitySprite3d
 //
 class EntitySprite3d extends EntitySprite {
-    
+
     constructor(entity: Entity3d) {
 	super(entity);
     }
@@ -79,17 +79,17 @@ class Entity3d extends Entity {
     z: number = 0;
     velocity3: Vec3 = new Vec3();
     maxspeed3: Vec3 = new Vec3();
-    
+
     constructor(pos: Vec2) {
 	super(pos);
 	this.sprite3 = new EntitySprite3d(this);
 	this.sprite = this.sprite3;
     }
-    
+
     getPos3() {
 	return new Vec3(this.pos.x, this.pos.y, this.z);
     }
-    
+
     isFloating(): boolean {
 	// [OVERRIDE]
 	return false;
@@ -99,7 +99,7 @@ class Entity3d extends Entity {
 	// [OVERRIDE]
 	return null as Vec3;
     }
-    
+
     movePos3(v: Vec3) {
 	this.pos = this.pos.move(v.x, v.y);
 	this.z += v.z;
@@ -144,7 +144,7 @@ class Entity3d extends Entity {
 	}
 	return collider1.origin.sub(collider0.origin);
     }
-    
+
     getObstaclesFor3(range: Box, v: Vec3, context: string): Box[] {
 	return null;
     }
@@ -158,7 +158,7 @@ class Entity3d extends Entity {
 
 
 //  Camera3
-// 
+//
 interface SpriteDictionary {
     [index: string]: Sprite[];
 }
@@ -194,7 +194,7 @@ class Camera3 extends Camera {
 	ctx.save();
 	ctx.translate(-ts, 0);
 	this.tilemap.renderWindowFromTopRight(
-	    ctx, window, 
+	    ctx, window,
 	    (x,y,c) => { return (c == 0)? this.tiles.get(c) : null; });
 	this.tilemap.renderWindowFromTopRight(
 	    ctx, window,
@@ -216,7 +216,7 @@ class Camera3 extends Camera {
 		return (c == 0)? null : this.tiles.get(c);
 	    });
 	ctx.restore();
-	
+
 	// Draw floating objects.
         for (let layer of this.layers) {
 	    for (let sprite of layer.getSprites()) {
@@ -287,16 +287,16 @@ class Thingy extends Entity3d {
 //  Player
 //
 class Player extends Entity3d {
-    
+
     scene: Game;
     picked: Signal;
-    
+
     jumpfunc3: (vz:number, t:number) => number;
     usermove3: Vec3;
 
     _jumpt: number;
     _jumpend: number;
-    
+
     constructor(scene: Game, pos: Vec2) {
 	super(pos);
 	this.scene = scene;
@@ -325,7 +325,7 @@ class Player extends Entity3d {
 	    return new Vec3(this.pos.x, this.pos.y, 0);
 	}
     }
-    
+
     getObstaclesFor3(range: Box, v: Vec3, context: string) {
 	let window = this.scene.camera3.window;
 	let tilemap = this.scene.tilemap;
@@ -347,7 +347,7 @@ class Player extends Entity3d {
 	tilemap.apply(f, tilemap.coord2map(area));
 	return boxes;
     }
-    
+
     canJump3() {
 	return (0 <= this.velocity3.z && !this.canMove3(new Vec3(0,0,-1)));
     }
@@ -359,7 +359,7 @@ class Player extends Entity3d {
     setMove(v: Vec2) {
 	this.usermove3 = new Vec3(v.x*4, v.y*4, 0);
     }
-    
+
     setJump(jumpend: number) {
 	if (0 < jumpend) {
 	    if (this.canJump3()) {
@@ -384,7 +384,7 @@ class Player extends Entity3d {
 	    this.stop();
 	}
     }
-  
+
     fall() {
 	if (this.canFall3()) {
 	    let vz = this.jumpfunc3(this.velocity3.z, this._jumpt);
@@ -404,9 +404,9 @@ class Player extends Entity3d {
 
 
 //  Game
-// 
+//
 class Game extends Scene {
-    
+
     tilemap: TileMap;
     tasklist: ParallelTaskList;
     field: EntityField;
@@ -415,7 +415,7 @@ class Game extends Scene {
     player: Player;
     score: number;
     speed: Vec2;
-    
+
     init() {
 	super.init();
 	let ROWS = [T.WALL,0,0,0,0,0,T.WALL];
@@ -440,7 +440,7 @@ class Game extends Scene {
 	    this.changeScene(new GameOver(this.score));
 	});
 	this.add(this.player);
-	
+
 	// show a banner.
 	let banner = new BannerBox(
 	    this.screen, FONT,
@@ -476,7 +476,7 @@ class Game extends Scene {
     onButtonReleased(keysym: KeySym) {
 	this.player.setJump(0);
     }
-    
+
     onPicked(entity: Entity) {
 	let yay = new Projectile(entity.pos.move(0,-16));
 	yay.skin = SPRITES.get(S.YAY);
@@ -486,7 +486,7 @@ class Game extends Scene {
 	this.score += 1;
 	this.speed.x += 1;
     }
-    
+
     render(ctx: CanvasRenderingContext2D) {
 	ctx.fillStyle = 'rgb(0,128,224)';
 	fillRect(ctx, this.screen);
@@ -545,9 +545,9 @@ class Game extends Scene {
 
 
 //  GameOver
-// 
+//
 class GameOver extends HTMLScene {
-    
+
     constructor(score: number) {
 	var html = `<strong>Game Over!</strong><p>Score: ${score}`;
 	super(html);

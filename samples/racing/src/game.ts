@@ -44,11 +44,11 @@ class Player extends Entity {
 	    this.moveIfPossible(this.usermove);
 	}
     }
-    
+
     setMove(v: Vec2) {
 	this.usermove = v.scale(4);
     }
-    
+
     getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
 	// Restrict its position within the screen.
 	return [this.scene.screen];
@@ -63,7 +63,7 @@ const FLOOR = 1;
 const WATER = 2;
 const GREEN = 3;
 class Track extends TileMap {
-    
+
     offset: number;
     brx: number;		// Bridge position
     brw: number;		// Bridge width
@@ -87,7 +87,7 @@ class Track extends TileMap {
     isFloor(rect: Rect) {
 	return this.findTileByCoord((c:number) => { return c == FLOOR; }, rect);
     }
-    
+
     proceed(speed: number) {
 	this.offset += speed;
 	if (16 <= this.offset) {
@@ -136,12 +136,12 @@ class Track extends TileMap {
 
 
 //  Racing
-// 
+//
 class Racing extends GameScene {
 
     player: Player;
     track: Track;
-    
+
     score: number;
     scoreBox: TextBox;
     highScore: number;
@@ -153,10 +153,10 @@ class Racing extends GameScene {
 	this.highScoreBox = new TextBox(this.screen.inflate(-2,-2), FONT);
 	this.highScore = -1;
     }
-    
+
     init() {
 	super.init();
-	
+
 	this.player = new Player(this, this.screen.center());
 	this.add(this.player);
 

@@ -5,7 +5,7 @@
 
 
 //  GridConfig
-// 
+//
 class GridConfig {
 
     tilemap: TileMap;
@@ -83,9 +83,9 @@ class PlanAction {
 	    action = action.next;
 	}
 	return a;
-	
+
     }
-    
+
     chain(next: PlanAction) {
 	let action: PlanAction = this;
 	while (true) {
@@ -126,12 +126,12 @@ class PlanActionEntry {
 class PlanMap {
 
     grid: GridConfig;
-    
+
     private _map: PlanActionMap;
     private _queue: PlanActionEntry[];
     private _goal: Vec2 = null;   // for debugging
     private _start: Vec2 = null;  // for debugging
-    
+
     constructor(grid: GridConfig) {
 	this.grid = grid;
     }
@@ -185,8 +185,8 @@ class PlanMap {
 	//log("build: goal="+goal+", start="+start+", range="+range+", maxcost="+maxcost);
 	this._map = {};
 	this._queue = [];
-	this._goal = goal;  
-	this._start = start;  
+	this._goal = goal;
+	this._start = start;
 	this.addAction(null, new NullAction(goal));
 	while (0 < this._queue.length) {
 	    let entry = this._queue.shift();
@@ -235,7 +235,7 @@ class PlanMap {
 //  ActionRunner
 //
 class ActionRunner extends Task {
-    
+
     actor: PlanActor;
     action: PlanAction;
     timeout: number;
@@ -249,7 +249,7 @@ class ActionRunner extends Task {
 	this.action = action;
 	this.lifetime = timeout;
     }
-    
+
     toString() {
 	return ('<ActionRunner: actor='+this.actor+', action='+this.action+'>');
     }

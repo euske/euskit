@@ -6,7 +6,7 @@
  *  render() is responsible to draw the image.
  */
 interface ImageSource {
-    
+
     /** Returns the bounds of the image at (0, 0). */
     getBounds(): Rect;
 
@@ -24,7 +24,7 @@ class RectImageSource implements ImageSource {
     color: string;
     /** Destination rectangle. */
     dstRect: Rect;
-    
+
     constructor(color: string, dstRect: Rect) {
 	this.color = color;
 	this.dstRect = dstRect;
@@ -48,12 +48,12 @@ class RectImageSource implements ImageSource {
 /** ImageSource that is a solid filled oval.
  */
 class OvalImageSource implements ImageSource {
-    
+
     /** Fill color. */
     color: string;
     /** Destination rectangle. */
     dstRect: Rect;
-    
+
     constructor(color: string, dstRect: Rect) {
 	this.color = color;
 	this.dstRect = dstRect;
@@ -90,7 +90,7 @@ class CanvasImageSource implements ImageSource {
     dstRect: Rect;
     /** Source rectangle. */
     srcRect: Rect;
-    
+
     constructor(canvas: HTMLCanvasElement, srcRect: Rect=null, dstRect: Rect=null) {
 	this.canvas = canvas;
 	if (srcRect === null) {
@@ -130,7 +130,7 @@ class HTMLImageSource implements ImageSource {
     srcRect: Rect;
     /** Destination rectangle. */
     dstRect: Rect;
-    
+
     constructor(image: HTMLImageElement, srcRect: Rect=null, dstRect: Rect=null) {
 	this.image = image;
 	if (srcRect === null) {
@@ -171,7 +171,7 @@ class TiledImageSource implements ImageSource {
     bounds: Rect;
     /** Image offset. */
     offset: Vec2;
-    
+
     constructor(imgsrc: ImageSource, bounds: Rect, offset: Vec2=null) {
 	this.imgsrc = imgsrc;
 	this.bounds = bounds;
@@ -225,14 +225,14 @@ class Star {
  *  A image is scattered across the area with a varied depth.
  */
 class StarImageSource implements ImageSource {
-    
+
     /** Bounds to fill. */
     bounds: Rect;
     /** Maximum depth of stars. */
     maxdepth: number;
     /** Image source to be used as a single star. */
     imgsrcs: ImageSource[];
-    
+
     private _stars: Star[] = [];
 
     constructor(bounds: Rect, nstars: number,
@@ -270,7 +270,7 @@ class StarImageSource implements ImageSource {
 	}
 	ctx.restore();
     }
-    
+
     /** Moves the stars by the given offset. */
     move(offset: Vec2) {
 	for (let star of this._stars) {
@@ -290,7 +290,7 @@ class StarImageSource implements ImageSource {
  *  Each cell on the grid represents an individual ImageSource.
  */
 class SpriteSheet {
-    
+
     constructor() {
     }
 
@@ -305,7 +305,7 @@ class SpriteSheet {
  *  Used as placeholders for ImageSpriteSheet.
  */
 class SimpleSpriteSheet extends SpriteSheet {
-    
+
     imgsrcs: ImageSource[];
 
     constructor(imgsrcs: ImageSource[]) {
@@ -329,7 +329,7 @@ class SimpleSpriteSheet extends SpriteSheet {
 /** SpriteSheet that is based on a single HTML image.
  */
 class ImageSpriteSheet extends SpriteSheet {
-    
+
     /** Source image. */
     image: HTMLImageElement;
     /** Size of each cell. */
@@ -375,13 +375,13 @@ class Sprite {
     /** Image rotation (in radian). */
     rotation: number = 0;
     alpha: number = 1.0;
-    
+
     /** Returns the image source of the sprite. */
     getSkin(): ImageSource {
 	// [OVERRIDE]
 	return null as ImageSource;
     }
-  
+
     /** Returns the position of the sprite. */
     getPos(): Vec2 {
 	// [OVERRIDE]
@@ -403,7 +403,7 @@ class Sprite {
 	}
 	return skin.getBounds().add(pos);
     }
-  
+
     /** Renders itself in the given context. */
     render(ctx: CanvasRenderingContext2D) {
 	ctx.save();
@@ -423,7 +423,7 @@ class Sprite {
 	ctx.scale(this.scale.x, this.scale.y);
 	ctx.globalAlpha = this.alpha;
     }
-    
+
     /** Renders its image. */
     renderImage(ctx: CanvasRenderingContext2D) {
 	let skin = this.getSkin();
@@ -438,12 +438,12 @@ class Sprite {
  *  fixed to a certain location.
  */
 class FixedSprite extends Sprite {
-    
+
     /** Image source to display. */
     skin: ImageSource;
     /** Sprite position. */
     pos: Vec2;
-    
+
     constructor(skin: ImageSource=null, pos: Vec2=null) {
 	super();
 	this.skin = skin;
@@ -453,12 +453,12 @@ class FixedSprite extends Sprite {
     toString() {
 	return '<FixedSprite: '+this.skin+'>';
     }
-    
+
     /** Returns the image source of the sprite. */
     getSkin(): ImageSource {
 	return this.skin;
     }
-  
+
     /** Returns the position of the sprite. */
     getPos(): Vec2 {
 	return this.pos;
@@ -472,7 +472,7 @@ class EntitySprite extends Sprite {
 
     /** Entity that this sprite belongs to. */
     entity: Entity;
-    
+
     constructor(entity: Entity) {
 	super();
 	this.entity = entity;
@@ -482,12 +482,12 @@ class EntitySprite extends Sprite {
     getSkin(): ImageSource {
 	return this.entity.skin;
     }
-  
+
     /** Returns the position of the sprite. */
     getPos(): Vec2 {
 	return this.entity.pos;
     }
-    
+
     /** Renders its image. */
     renderImage(ctx: CanvasRenderingContext2D) {
 	super.renderImage(ctx);

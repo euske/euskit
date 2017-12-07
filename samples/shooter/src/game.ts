@@ -84,11 +84,11 @@ class Player extends Entity {
 	    this.nextfire = 0;
 	}
     }
-    
+
     setMove(v: Vec2) {
 	this.usermove = v.scale(4);
     }
-    
+
     getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
 	// Restrict its position within the screen.
 	return [this.scene.screen];
@@ -117,7 +117,7 @@ class EnemyBase extends Projectile {
 	this.frame = scene.screen;
 	this.killed = new Signal(this);
     }
-    
+
     collidedWith(entity: Entity) {
 	if (entity instanceof Bullet) {
 	    APP.playSound('explosion');
@@ -164,7 +164,7 @@ class Enemy2 extends EnemyBase {
 
 
 //  Shooter
-// 
+//
 class Shooter extends GameScene {
 
     player: Player;
@@ -177,7 +177,7 @@ class Shooter extends GameScene {
 	super();
 	this.scoreBox = new TextBox(this.screen.inflate(-8,-8), FONT);
     }
-    
+
     init() {
 	super.init();
 	this.player = new Player(this, this.screen.center());

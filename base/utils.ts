@@ -1,4 +1,4 @@
-/** 
+/**
  * Utility functions.
  */
 
@@ -94,7 +94,7 @@ function getTime(): number
     return Date.now()*0.001;
 }
 
-/** Returns a pretty printed string. 
+/** Returns a pretty printed string.
  * @param v Number to format.
  * @param n Number of digits to fill.
  * @param c Filler character.
@@ -160,7 +160,7 @@ function makeMatrix(rows: number, cols: number, value=0): Int32Array[] {
     });
 }
 
-/** Removes all child DOM Nodes with the given name. 
+/** Removes all child DOM Nodes with the given name.
  * @param node Parent DOM Node.
  * @param name Name of child Nodes to be removed.
  */
@@ -279,8 +279,8 @@ function ellipse(
     ctx.restore();
 }
 
-/** Draw a scaled image. 
- *  When the destination width/height is negative, 
+/** Draw a scaled image.
+ *  When the destination width/height is negative,
  *  the image is flipped.
  * @param ctx Context to draw.
  * @param src Source image.
@@ -382,18 +382,18 @@ class Signal {
     constructor(...params: any[]) {
 	this.baseargs = Array.prototype.slice.call(arguments);
     }
-	
+
     toString() {
 	return ('<Signal('+this.baseargs+') '+this.receivers+'>');
     }
-  
+
     /** Adds a receiver function for the signal.
      * @param recv Receiver function to add.
      */
     subscribe(recv: Action) {
 	this.receivers.push(recv);
     }
-  
+
     /** Removes a receiver function for the signal.
      * @param recv Receiver function to remove.
      */
@@ -426,7 +426,7 @@ class Color {
     /** Alpha. */
     a: number;
 
-    /** Generates a Color value. 
+    /** Generates a Color value.
      * @param h Hue.
      * @param v Brightness.
      */
@@ -452,7 +452,7 @@ class Color {
 	this.b = b;
 	this.a = a;
     }
-    
+
     toString() {
 	if (0 <= this.a) {
 	    return ('rgba('+
@@ -478,7 +478,7 @@ class Color {
 	return new Color(this.r*t, this.g*t, this.b*t, this.a);
     }
 
-    /** Blends with another Color. 
+    /** Blends with another Color.
      * @param color Color to bland.
      * @param t Blending ratio.
      */

@@ -1,6 +1,6 @@
 /// <reference path="utils.ts" />
 
-/** 
+/**
  * Geometric objects and functions.
  */
 
@@ -30,47 +30,47 @@ class Vec2 {
     copy(): Vec2 {
 	return new Vec2(this.x, this.y);
     }
-    
+
     /** Returns true if p is equivalent to the object. */
     equals(p: Vec2): boolean {
 	return (this.x == p.x && this.y == p.y);
     }
-    
+
     /** Returns true if p.x == 0 and p.y == 0. */
     isZero(): boolean {
 	return (this.x == 0 && this.y == 0);
     }
-    
+
     /** Returns the squared length of the vector. */
     len2(): number {
 	return (this.x*this.x + this.y*this.y);
     }
-    
+
     /** Returns the length of the vector. */
     len(): number {
 	return Math.sqrt(this.x*this.x + this.y*this.y);
     }
-    
+
     /** Returns a new vector consisting of the sign of each element. */
     sign(): Vec2 {
 	return new Vec2(sign(this.x), sign(this.y));
     }
-    
+
     /** Returns a new vector (this + v). */
     add(v: Vec2): Vec2 {
 	return new Vec2(this.x+v.x, this.y+v.y);
     }
-    
+
     /** Returns a new vector (this - v). */
     sub(v: Vec2): Vec2 {
 	return new Vec2(this.x-v.x, this.y-v.y);
     }
-    
+
     /** Returns a new scaled vector by n. */
     scale(n: number): Vec2 {
 	return new Vec2(this.x*n, this.y*n);
     }
-    
+
     /** Returns |this - p|. */
     distance(p: Vec2): number {
 	return this.sub(p).len();
@@ -82,29 +82,29 @@ class Vec2 {
 	    clamp(-bounds.x, this.x, +bounds.x),
 	    clamp(-bounds.y, this.y, +bounds.y));
     }
-    
+
     /** Returns a new point that is moved by (dx, dy). */
     move(dx: number, dy: number): Vec2 {
 	return new Vec2(this.x+dx, this.y+dy);
     }
 
-    /** Returns a new interpolated vector between this and p. 
+    /** Returns a new interpolated vector between this and p.
      * @param p The other point.
-     * @param t Interpolation value. 
+     * @param t Interpolation value.
      *          When t=0.0 the new vector would be the same as this.
      *          When t=1.0 the new vector would be the same as p.
      */
     interpolate(p: Vec2, t: number): Vec2 {
 	return new Vec2((1.0-t)*this.x+t*p.x, (1.0-t)*this.y+t*p.y);
     }
-    
+
     /** Returns a new vector rotated clockwise by d radian. */
     rotate(d: number): Vec2 {
 	let s = Math.sin(d);
 	let c = Math.cos(d);
 	return new Vec2(this.x*c-this.y*s, this.x*s+this.y*c);
     }
-    
+
     /** Returns a new vector rotated clockwise by d*90 degree. */
     rot90(d: number): Vec2 {
 	d = d % 4;
@@ -120,16 +120,16 @@ class Vec2 {
 	    return this.copy();
 	}
     }
-    
-    /** Create a new rectangle based on this point. 
+
+    /** Create a new rectangle based on this point.
      * @param dw Width.
      * @param dh Height.
      */
     inflate(dw: number, dh: number): Rect {
 	return this.expand(dw*2, dh*2);
     }
-    
-    /** Create a new rectangle based on this point. 
+
+    /** Create a new rectangle based on this point.
      * @param dw Width.
      * @param dh Height.
      * @param anchor Anchor point.
@@ -154,61 +154,61 @@ class Vec3 {
 	this.y = y;
 	this.z = z;
     }
-    
+
     toString() {
 	return '('+this.x+', '+this.y+', '+this.z+')';
     }
-    
+
     /** Returns a copy of the object. */
     copy(): Vec3 {
 	return new Vec3(this.x, this.y, this.z);
     }
-    
+
     /** Returns true if p is equivalent to the object. */
     equals(p: Vec3): boolean {
 	return (this.x == p.x && this.y == p.y && this.z == p.z);
     }
-    
+
     /** Returns true if p.x == 0, p.y == 0 and p.z == 0. */
     isZero(): boolean {
 	return (this.x == 0 && this.y == 0 && this.z == 0);
     }
-    
+
     /** Returns the squared length of the vector. */
     len2(): number {
 	return (this.x*this.x + this.y*this.y + this.z*this.z);
     }
-    
+
     /** Returns the length of the vector. */
     len(): number {
 	return Math.sqrt(this.x*this.x + this.y*this.y + this.z*this.z);
     }
-    
+
     /** Returns a new vector consisting of the sign of each element. */
     sign(): Vec3 {
 	return new Vec3(sign(this.x), sign(this.y), sign(this.z));
     }
-    
+
     /** Returns a new vector (this + v). */
     add(v: Vec3): Vec3 {
 	return new Vec3(this.x+v.x, this.y+v.y, this.z+v.z);
     }
-    
+
     /** Returns a new vector (this - v). */
     sub(v: Vec3): Vec3 {
 	return new Vec3(this.x-v.x, this.y-v.y, this.z-v.z);
     }
-    
+
     /** Returns a new scaled vector by n. */
     scale(n: number): Vec3 {
 	return new Vec3(this.x*n, this.y*n, this.z*n);
     }
-    
+
     /** Returns |this - p|. */
     distance(p: Vec3): number {
 	return this.sub(p).len();
     }
-    
+
     /** Clamp the position within a given rectangle. */
     clamp(bounds: Vec3): Vec3 {
 	return new Vec3(
@@ -216,15 +216,15 @@ class Vec3 {
 	    clamp(-bounds.y, this.y, +bounds.y),
 	    clamp(-bounds.z, this.z, +bounds.z));
     }
-    
+
     /** Returns a new point that is moved by (dx, dy, dz). */
     move(dx: number, dy: number, dz: number): Vec3 {
 	return new Vec3(this.x+dx, this.y+dy, this.z+dz);
     }
 
-    /** Returns a new interpolated vector between this and p. 
+    /** Returns a new interpolated vector between this and p.
      * @param p The other point.
-     * @param t Interpolation value. 
+     * @param t Interpolation value.
      *          When t=0.0 the new vector would be the same as this.
      *          When t=1.0 the new vector would be the same as p.
      */
@@ -234,7 +234,7 @@ class Vec3 {
 	    (1.0-t)*this.y+t*p.y,
 	    (1.0-t)*this.z+t*p.z);
     }
-    
+
 }
 
 
@@ -287,40 +287,40 @@ class AALine implements Collider {
     y0: number;
     x1: number;
     y1: number;
-    
+
     constructor(x0: number, y0: number, x1: number, y1: number) {
-	this.x0 = x0;	
-	this.y0 = y0;	
-	this.x1 = x1;	
-	this.y1 = y1;	
+	this.x0 = x0;
+	this.y0 = y0;
+	this.x1 = x1;
+	this.y1 = y1;
     }
-    
+
     /** Returns a copy of the object. */
     copy(): AALine {
 	return new AALine(this.x0, this.y0, this.x1, this.y1);
     }
-    
+
     /** Returns true if line is equivalent to the object. */
     equals(line: AALine): boolean {
 	return (this.x0 == line.x0 && this.y0 == line.y0 &&
 		this.x1 == line.x1 && this.y1 == line.y1);
     }
-    
+
     /** Returns a new AALine that is moved by (dx, dy). */
     move(dx: number, dy: number): AALine {
 	return new AALine(this.x0+dx, this.y0+dy, this.x1+dx, this.y1+dy);
     }
-    
+
     /** Returns a new AALine that is moved by v. */
     add(v: Vec2): AALine {
 	return new AALine(this.x0+v.x, this.y0+v.y, this.x1+v.x, this.y1+v.y);
     }
-    
+
     /** Returns a new AALine that is moved by -v. */
     sub(v: Vec2): AALine {
 	return new AALine(this.x0-v.x, this.y0-v.y, this.x1-v.x, this.y1-v.y);
     }
-    
+
     /** Returns true if the given object is overlapping with this line. */
     overlaps(collider: Collider): boolean {
 	if (collider instanceof Rect) {
@@ -337,7 +337,7 @@ class AALine implements Collider {
 	return !(this.x1 < rect.x || this.y1 < rect.y ||
 		 rect.x1() < this.x0 || rect.y1() < this.y0);
     }
-    
+
     /** Returns true if the circle is overlapping with this line. */
     overlapsCircle(circle: Circle): boolean {
 	if (this.x1 <= circle.center.x-circle.radius ||
@@ -351,7 +351,7 @@ class AALine implements Collider {
 		circle.containsPt(new Vec2(this.x0, this.y0)) ||
 		circle.containsPt(new Vec2(this.x1, this.y1)));
     }
-    
+
     /** Trims a vector so that the given object does not collide with this line. */
     contact(v: Vec2, collider: Collider): Vec2 {
 	if (collider instanceof Rect) {
@@ -373,7 +373,7 @@ class AALine implements Collider {
 	    return v;
 	}
     }
-	
+
     /** Calculate a contact point when this line is horizontal. */
     private contactRectH(v: Vec2, rect: Rect, y: number): Vec2 {
 	let y0 = rect.y;
@@ -396,7 +396,7 @@ class AALine implements Collider {
 	}
 	return new Vec2(dx, dy);
     }
-    
+
     /** Calculate a contact point when this line is vertical. */
     private contactRectV(v: Vec2, rect: Rect, x: number): Vec2 {
 	let x0 = rect.x;
@@ -430,7 +430,7 @@ class AALine implements Collider {
 	    return v;
 	}
     }
-	
+
     /** Calculate a contact point when this line is horizontal. */
     private contactCircleH(v: Vec2, circle: Circle, y: number): Vec2 {
 	let x = circle.center.x + v.x;
@@ -480,34 +480,34 @@ class Rect implements Shape {
     y: number;
     width: number;
     height: number;
-    
+
     constructor(x=0, y=0, width=0, height=0) {
 	this.x = x;
 	this.y = y;
 	this.width = width;
 	this.height = height;
     }
-    
+
     toString() {
 	return '('+this.x+', '+this.y+', '+this.width+', '+this.height+')';
     }
-    
+
     /** Returns a copy of the object. */
     copy(): Rect {
 	return new Rect(this.x, this.y, this.width, this.height);
     }
-    
+
     /** Returns true if rect is equivalent to the object. */
     equals(rect: Rect): boolean {
 	return (this.x == rect.x && this.y == rect.y &&
 		this.width == rect.width && this.height == rect.height);
     }
-    
+
     /** Returns true if rect has zero or negative size. */
     isZero(): boolean {
 	return (this.width <= 0 && this.height <= 0);
     }
-    
+
     /** Returns the x-coords of the right edge of the rectangle. */
     x1(): number {
 	return this.x+this.width;
@@ -524,7 +524,7 @@ class Rect implements Shape {
     cy(): number {
 	return this.y+this.height/2;
     }
-    
+
     /** Returns the center of the rectangle. */
     center(): Vec2 {
 	return new Vec2(this.x+this.width/2, this.y+this.height/2);
@@ -545,7 +545,7 @@ class Rect implements Shape {
     bottomRight(): Vec2 {
 	return new Vec2(this.x+this.width, this.y+this.height);
     }
-    
+
     /** Returns an anchor point of the rectangle. */
     anchor(anchor: string): Vec2 {
 	switch (anchor) {
@@ -569,7 +569,7 @@ class Rect implements Shape {
 	    return new Vec2(this.x+this.width/2, this.y+this.height/2);
 	}
     }
-    
+
     /** Returns an edge of the rectangle. */
     edge(direction: string): AALine {
 	switch (direction) {
@@ -587,27 +587,27 @@ class Rect implements Shape {
 	    return null;
 	}
     }
-    
+
     move(dx: number, dy: number): Rect {
-	return new Rect(this.x+dx, this.y+dy, this.width, this.height);  
+	return new Rect(this.x+dx, this.y+dy, this.width, this.height);
     }
-    
+
     add(v: Vec2): Rect {
-	return new Rect(this.x+v.x, this.y+v.y, this.width, this.height);  
+	return new Rect(this.x+v.x, this.y+v.y, this.width, this.height);
     }
-    
+
     sub(v: Vec2): Rect {
-	return new Rect(this.x-v.x, this.y-v.y, this.width, this.height);  
+	return new Rect(this.x-v.x, this.y-v.y, this.width, this.height);
     }
-    
+
     inflate(dw: number, dh: number): Rect {
 	return this.expand(dw*2, dh*2);
     }
-    
+
     scale(n: number, anchor='c'): Rect {
         return this.expand(this.width*(n-1), this.height*(n-1), anchor);
     }
-    
+
     expand(dw: number, dh: number, anchor='c'): Rect {
 	switch (anchor) {
 	case 'nw':
@@ -630,7 +630,7 @@ class Rect implements Shape {
 	    return new Rect(this.x-dw/2, this.y-dh/2, this.width+dw, this.height+dh);
 	}
     }
-    
+
     resize(w: number, h: number, anchor='c'): Rect {
 	switch (anchor) {
 	case 'nw':
@@ -654,7 +654,7 @@ class Rect implements Shape {
 			    this.y+(this.height-h)/2, w, h);
 	}
     }
-    
+
     xdistance(rect: Rect): number {
 	return Math.max(rect.x-(this.x+this.width),
 			this.x-(rect.x+rect.width));
@@ -663,19 +663,19 @@ class Rect implements Shape {
 	return Math.max(rect.y-(this.y+this.height),
 			this.y-(rect.y+rect.height));
     }
-    
+
     containsPt(p: Vec2): boolean {
 	return (this.x <= p.x && this.y <= p.y &&
 		p.x < this.x+this.width && p.y < this.y+this.height);
     }
-    
+
     containsRect(rect: Rect): boolean {
 	return (this.x <= rect.x &&
 		this.y <= rect.y &&
 		rect.x+rect.width <= this.x+this.width &&
 		rect.y+rect.height <= this.y+this.height);
     }
-    
+
     overlapsRect(rect: Rect): boolean {
 	return (rect.x < this.x+this.width &&
 		rect.y < this.y+this.height &&
@@ -711,7 +711,7 @@ class Rect implements Shape {
 	let y1 = Math.max(this.y+this.height, rect.y+rect.height);
 	return new Rect(x0, y0, x1-x0, y1-y0);
     }
-    
+
     intersection(rect: Rect): Rect {
 	let x0 = Math.max(this.x, rect.x);
 	let y0 = Math.max(this.y, rect.y);
@@ -719,7 +719,7 @@ class Rect implements Shape {
 	let y1 = Math.min(this.y+this.height, rect.y+rect.height);
 	return new Rect(x0, y0, x1-x0, y1-y0);
     }
-    
+
     clamp(bounds: Rect): Rect {
 	let x = ((bounds.width < this.width)? bounds.cx() :
 		 clamp(bounds.x, this.x, bounds.x+bounds.width-this.width));
@@ -744,7 +744,7 @@ class Rect implements Shape {
 	// assert(t <= this.height);
 	return new Vec2(this.x, this.y+this.height-t);
     }
-    
+
     rndPt(): Vec2 {
 	return new Vec2(this.x+frnd(this.width),
 			this.y+frnd(this.height));
@@ -754,12 +754,12 @@ class Rect implements Shape {
 	let t = frnd(this.width*2 + this.height*2);
 	return this.edgePt(t);
     }
-    
+
     modPt(p: Vec2): Vec2 {
 	return new Vec2(this.x+fmod(p.x-this.x, this.width),
 			this.y+fmod(p.y-this.y, this.height));
     }
-    
+
     contactRect(v: Vec2, rect: Rect): Vec2 {
 	if (this.overlapsRect(rect)) {
 	    return new Vec2();
@@ -860,36 +860,36 @@ class Circle implements Shape {
     toString() {
 	return 'Circle(center='+this.center+', radius='+this.radius+')';
     }
-    
+
     copy(): Circle {
 	return new Circle(this.center.copy(), this.radius);
     }
-    
+
     equals(circle: Circle): boolean {
 	return (this.center.equals(circle.center) &&
 		this.radius == circle.radius);
     }
-    
+
     isZero(): boolean {
 	return this.radius == 0;
     }
-    
+
     move(dx: number, dy: number): Circle {
-	return new Circle(this.center.move(dx, dy), this.radius);  
+	return new Circle(this.center.move(dx, dy), this.radius);
     }
-    
+
     add(v: Vec2): Circle {
 	return new Circle(this.center.add(v), this.radius);
     }
-    
+
     sub(v: Vec2): Circle {
 	return new Circle(this.center.sub(v), this.radius);
     }
-    
+
     inflate(dr: number): Circle {
 	return new Circle(this.center, this.radius+dr);
     }
-    
+
     resize(radius: number): Circle {
 	return new Circle(this.center, radius);
     }
@@ -911,7 +911,7 @@ class Circle implements Shape {
 	let d = this.distance(circle.center);
 	return d < this.radius+circle.radius;
     }
-    
+
     overlapsRect(rect: Rect): boolean {
 	return rect.overlapsCircle(this);
     }
@@ -923,19 +923,19 @@ class Circle implements Shape {
 		 clamp(bounds.y, this.center.y, bounds.y+bounds.height-this.radius));
 	return new Circle(new Vec2(x, y), this.radius);
     }
-    
+
     edgePt(t: number): Vec2 {
 	return new Vec2(this.center.x+this.radius*Math.cos(t),
 			this.center.y+this.radius*Math.sin(t));
     }
-    
+
     rndPt(): Vec2 {
 	let r = frnd(this.radius);
 	let t = frnd(Math.PI*2);
 	return new Vec2(this.center.x+r*Math.cos(t),
 			this.center.y+r*Math.sin(t));
     }
-    
+
     rndPtEdge(): Vec2 {
 	let t = frnd(Math.PI*2);
 	return this.edgePt(t);
@@ -945,7 +945,7 @@ class Circle implements Shape {
 	if (this.overlapsCircle(circle)) {
 	    return new Vec2();
 	}
-	
+
 	let d = circle.center.sub(this.center);
 	let dv = d.x*v.x + d.y*v.y;
 	let v2 = v.len2();
@@ -975,7 +975,7 @@ class Circle implements Shape {
 	} else {
 	    return false;
 	}
-    }    
+    }
 
     contact(v: Vec2, collider: Collider): Vec2 {
 	if (collider instanceof Circle) {
@@ -985,7 +985,7 @@ class Circle implements Shape {
 	} else {
 	    return v;
 	}
-    }    
+    }
 
     getAABB(): Rect {
 	return new Rect(
@@ -1003,7 +1003,7 @@ class AAPlane {
 
     p0: Vec3;
     p1: Vec3;
-    
+
     constructor(p0: Vec3, p1: Vec3) {
 	this.p0 = p0;
 	this.p1 = p1;
@@ -1020,7 +1020,7 @@ class AAPlane {
 	    return v;
 	}
     }
-    
+
     private contactBoxYZ(v: Vec3, box: Box, x: number): Vec3 {
 	let x0 = box.origin.x;
 	let x1 = x0+box.size.x;
@@ -1046,7 +1046,7 @@ class AAPlane {
 	}
 	return new Vec3(dx, dy, dz);
     }
-    
+
     private contactBoxZX(v: Vec3, box: Box, y: number): Vec3 {
 	let y0 = box.origin.y;
 	let y1 = y0+box.size.y;
@@ -1072,7 +1072,7 @@ class AAPlane {
 	}
 	return new Vec3(dx, dy, dz);
     }
-    
+
     private contactBoxXY(v: Vec3, box: Box, z: number): Vec3 {
 	let z0 = box.origin.z;
 	let z1 = z0+box.size.z;
@@ -1107,35 +1107,35 @@ class Box {
 
     origin: Vec3;
     size: Vec3;
-    
+
     constructor(origin: Vec3, size: Vec3=null) {
 	this.origin = origin;
 	this.size = (size !== null)? size : new Vec3();
     }
-    
+
     toString() {
 	return '('+this.origin+', '+this.size+')';
     }
-    
+
     copy(): Box {
 	return new Box(this.origin.copy(), this.size.copy());
     }
-    
+
     equals(box: Box): boolean {
 	return (this.origin.equals(box.origin) &&
 		this.size.equals(box.size));
     }
-    
+
     isZero(): boolean {
 	return this.size.isZero();
     }
-    
+
     center(): Vec3 {
 	return new Vec3(this.origin.x+this.size.x/2,
 			this.origin.y+this.size.y/2,
 			this.origin.z+this.size.z/2);
     }
-    
+
     surface(vx: number, vy: number, vz: number): AAPlane {
 	if (vx < 0) {
 	    return new AAPlane(
@@ -1165,7 +1165,7 @@ class Box {
 	    return null;
 	}
     }
-    
+
     anchor(vx=0, vy=0, vz=0): Vec3 {
 	let x: number, y: number, z: number;
 	if (vx < 0) {
@@ -1191,52 +1191,52 @@ class Box {
 	}
 	return new Vec3(x, y, z);
     }
-    
+
     move(dx: number, dy: number, dz: number): Box {
 	return new Box(this.origin.move(dx, dy, dz), this.size);
     }
-    
+
     add(v: Vec3): Box {
 	return new Box(this.origin.add(v), this.size);
     }
-    
+
     sub(v: Vec3): Box {
 	return new Box(this.origin.sub(v), this.size);
     }
-    
+
     inflate(dx: number, dy: number, dz: number): Box {
 	return new Box(this.origin.move(-dx, -dy, -dz),
 		       this.size.move(dx*2, dy*2, dz*2));
     }
-    
+
     xdistance(box: Box): number {
 	return Math.max(box.origin.x-(this.origin.x+this.size.x),
 			this.origin.x-(box.origin.x+box.size.x));
     }
-    
+
     ydistance(box: Box): number {
 	return Math.max(box.origin.y-(this.origin.y+this.size.y),
 			this.origin.y-(box.origin.y+box.size.y));
     }
-    
+
     zdistance(box: Box): number {
 	return Math.max(box.origin.z-(this.origin.z+this.size.z),
 			this.origin.z-(box.origin.z+box.size.z));
     }
-    
+
     containsPt(p: Vec3): boolean {
 	return (this.origin.x <= p.x && this.origin.y <= p.y && this.origin.z <= p.z &&
 		p.x < this.origin.x+this.size.x &&
 		p.y < this.origin.y+this.size.y &&
 		p.z < this.origin.z+this.size.z);
     }
-    
+
     overlapsBox(box: Box): boolean {
 	return (this.xdistance(box) < 0 &&
 		this.ydistance(box) < 0 &&
 		this.zdistance(box) < 0);
     }
-    
+
     union(box: Box): Box {
 	let x0 = Math.min(this.origin.x, box.origin.x);
 	let y0 = Math.min(this.origin.y, box.origin.y);
@@ -1247,7 +1247,7 @@ class Box {
 	return new Box(new Vec3(x0, y0, z0),
 		       new Vec3(x1-x0, y1-y0, z1-z0));
     }
-    
+
     intersection(box: Box): Box {
 	let x0 = Math.max(this.origin.x, box.origin.x);
 	let y0 = Math.max(this.origin.y, box.origin.y);
@@ -1258,7 +1258,7 @@ class Box {
 	return new Box(new Vec3(x0, y0, z0),
 		       new Vec3(x1-x0, y1-y0, z1-z0));
     }
-    
+
     clamp(bounds: Box): Box {
 	let x = ((bounds.size.x < this.size.x)?
 		 (bounds.origin.x+bounds.size.x/2) :
@@ -1274,7 +1274,7 @@ class Box {
 		       bounds.origin.z+bounds.size.z-this.size.z));
 	return new Box(new Vec3(x, y, z), this.size);
     }
-    
+
     rndPt(): Vec3 {
 	return new Vec3(this.origin.x+frnd(this.size.x),
 			this.origin.y+frnd(this.size.y),

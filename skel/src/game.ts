@@ -38,7 +38,7 @@ class Player extends Entity {
 	super.update();
 	this.moveIfPossible(this.usermove);
     }
-    
+
     setMove(v: Vec2) {
 	this.usermove = v.scale(4);
     }
@@ -46,13 +46,13 @@ class Player extends Entity {
 
 
 //  Game
-// 
+//
 class Game extends GameScene {
 
     player: Player;
     scoreBox: TextBox;
     score: number;
-    
+
     init() {
 	super.init();
 	this.scoreBox = new TextBox(this.screen.inflate(-8,-8), FONT);

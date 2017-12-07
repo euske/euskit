@@ -127,7 +127,7 @@ body { margin: 0; padding: 0; }
 <a name="big-picture"><h2>Big Picture</h2></a>
 <div style="position:relative; margin:0; padding:0; height:10em;">
 <div style="position:absolute; margin:0; top:0; left:0;">
-  <svg xmlns="http://www.w3.org/2000/svg" 
+  <svg xmlns="http://www.w3.org/2000/svg"
        xmlns:xlink="http://www.w3.org/1999/xlink"
        version="1.1" width="250" height="150">
     <g transform="translate(1.5,1.5)">
@@ -160,17 +160,17 @@ body { margin: 0; padding: 0; }
   </svg>
 </div>
   <div style="position:absolute; left: 270px; top: 0px; margin:0; line-height: 120%;">
-    <a href="#App"><code>App</code></a>: 
+    <a href="#App"><code>App</code></a>:
     Resource management (images and sounds) and event loop.<br>
-    <a href="#Scene"><code>Scene</code></a>: 
+    <a href="#Scene"><code>Scene</code></a>:
     Game state management and event handling.<br>
-    <a href="#Entity"><code>Entity</code></a>: 
+    <a href="#Entity"><code>Entity</code></a>:
     In-game character.<br>
-    <a href="#Sprite"><code>Sprite</code></a>: 
+    <a href="#Sprite"><code>Sprite</code></a>:
     Graphical object to be shown.<br>
-    <a href="#SpriteLayer"><code>SpriteLayer</code></a>: 
+    <a href="#SpriteLayer"><code>SpriteLayer</code></a>:
     Container where Sprites are placed in.<br>
-    <a href="#Camera"><code>Camera</code></a>: 
+    <a href="#Camera"><code>Camera</code></a>:
     Stack of layers to be rendered.<br>
   </div>
 </div>
@@ -187,7 +187,7 @@ An <code>ImageSource</code> is an abstract object to render something on screen.
 <tr class=ctor><td><code>new OvalImageSource(<u>color</u>, <u>dstRect</u>)</code></td>
   <td>ImageSource with a filled oval.</td></tr>
 <tr class=ctor><td><code>new CanvasImageSource(<br>&nbsp; <u>canvas</u>, <u>srcRect</u>=null, <u>dstRect</u>=null)</code></td>
-  <td>ImageSource that refers to a portion of 
+  <td>ImageSource that refers to a portion of
     <code>&lt;canvas&gt;</code> element.</td></tr>
 <tr class=ctor><td><code>new HTMLImageSource(<br>&nbsp; <u>image</u>, <u>srcRect</u>=null, <u>dstRect</u>=null)</code></td>
   <td>ImageSource that refers to a portion of
@@ -204,7 +204,7 @@ An <code>ImageSource</code> is an abstract object to render something on screen.
 
 <a name="Sprite"><h3>Sprite (<code>sprite.ts</code>)</h3></a>
 <p>
-A <code>Sprite</code> is something to be displayed. 
+A <code>Sprite</code> is something to be displayed.
 It has a location, rotation and scale. Typically it does not move by itself.
 A <code>Scene</code> or <code>Entity</code> is responsible to change its position.
 <table border>
@@ -310,7 +310,7 @@ Sprites. Each Entity can moves on its own.
 
 <a name="SpriteLayer"><h3>SpriteLayer (<code>layer.ts</code>)</h3></a>
 <p>
-A <code>SpriteLayer</code> contains a set of objects that can be rendered 
+A <code>SpriteLayer</code> contains a set of objects that can be rendered
 at once and interact each other.
 <table border>
 <tr class=ctor><td><code>new SpriteLayer()</code></td>
@@ -355,7 +355,7 @@ at once and interact each other.
 
 <a name="Scene"><h3>Scene (<code>scene.ts</code>)</h3></a>
 <p>
-A <code>Scene</code> can be thought of a mini-app or "mode" within the App.  
+A <code>Scene</code> can be thought of a mini-app or "mode" within the App.
 It's pretty much an event handler that manages the in-game states.
 This is primarily what a Euskit user will write. Euskit supports
 multiple Scenes, but it's possible to create an entire game with just
@@ -467,7 +467,7 @@ Suitable for backgrounds.
 
 <a name="StarSprite"><h3>StarSprite : <a href="#Sprite">Sprite</a> (<code>sprite.ts</code>)</h3></a>
 <p>
-A <code>Sprite</code> that shows multiple parallaxed stars. 
+A <code>Sprite</code> that shows multiple parallaxed stars.
 Suitable for space-y backgrounds.
 <table border>
 <tr class=ctor><td><code>new StarSprite(<br>&nbsp; bounds, nstars,<br>&nbsp; <em>[maxdepth]</em>)</code></td>
@@ -484,7 +484,7 @@ Suitable for space-y backgrounds.
 
 <a name="Projectile"><h3>Projectile : <a href="#Entity">Entity</a> (<code>entity.ts</code>)</h3></a>
 <p>
-A <code>Projectile</code> is an <code>Entity</code> that 
+A <code>Projectile</code> is an <code>Entity</code> that
 keeps moving towards a specific direction.
 Suitable for bullets or obstacles.
 <table border>
@@ -632,7 +632,7 @@ Suitable for tile-based platformer games.
 
 <a name="ScrollLayer"><h3>ScrollLayer : <a href="#Layer">Layer</a> (<code>layer.ts</code>)</h3></a>
 <p>
-A <code>Layer</code> that can scroll the displayed area. 
+A <code>Layer</code> that can scroll the displayed area.
 Only shows the objects within the window.
 <table border>
 <tr class=ctor><td><code>new ScrollLayer(window)</code></td>
@@ -708,7 +708,7 @@ a few convenient methods.
 
 <a name="HTMLScene"><h3>HTMLScene : <a href="#Scene">Scene</a> (<code>scene.ts</code>)</h3></a>
 <p>
-A <code>Scene</code> for a static HTML text. 
+A <code>Scene</code> for a static HTML text.
 Suitable for game title or help screen, etc.
 <table border>
 <tr class=ctor><td><code>new HTMLScene(app, text)</code></td>
@@ -783,7 +783,7 @@ A <code>Font</code> with shadow.
 
 <a name="Signal"><h3>Signal (<code>utils.ts</code>)</h3></a>
 <p>
-A <code>Signal</code> represents an event that is attached to a 
+A <code>Signal</code> represents an event that is attached to a
 certain object and other objects can get notified.
 <table border>
 <tr class=ctor><td><code>new Signal(<em>baseargs</em>, ...)</code></td>
@@ -910,7 +910,7 @@ A <code>Vec3</code> represents three-dimensional vector that has (x, y, z) eleme
 
 <a name="Collider"><h3>Collider (<code>geom.ts</code>)</h3></a>
 <p>
-A <code>Collider</code> is an abstract geometric object 
+A <code>Collider</code> is an abstract geometric object
 that can be used for hit detection.
 <table border>
 <tr><td><code>.copy()</code></td>
@@ -967,7 +967,7 @@ parpendicular) line.
 
 <a name="Rect"><h3>Rect : <a href="#Shape">Shape</a> (<code>geom.ts</code>)</h3></a>
 <p>
-A <code>Rect</code> object is a 2D rectangle that 
+A <code>Rect</code> object is a 2D rectangle that
 has its position (x, y) and size (width, height).
 <table border>
 <tr class=ctor><td><code>new Rect(<br>&nbsp; <u>x</u>=0, <u>y</u>=0,<br>&nbsp; <u>width</u>=0, <u>height</u>=0)</code></td>
@@ -1001,7 +1001,7 @@ has its position (x, y) and size (width, height).
 <tr><td><code>.anchor(<u>anchor</u>)</code></td>
   <td>Anchor point of the rectangle:
     <div style="margin-left:1em;">
-      <svg xmlns="http://www.w3.org/2000/svg" 
+      <svg xmlns="http://www.w3.org/2000/svg"
 	   xmlns:xlink="http://www.w3.org/1999/xlink"
 	   version="1.1" width="125" height="49">
 	<g transform="translate(2.5,2.5)">
@@ -1034,7 +1034,7 @@ has its position (x, y) and size (width, height).
 <tr><td><code>.edge(<u>direction</u>)</code></td>
   <td>Returns an edge of the rectangle.
     <div style="margin-left:1em;">
-      <svg xmlns="http://www.w3.org/2000/svg" 
+      <svg xmlns="http://www.w3.org/2000/svg"
 	   xmlns:xlink="http://www.w3.org/1999/xlink"
 	   version="1.1" width="125" height="49">
 	<g transform="translate(2.5,2.5)">
@@ -1060,7 +1060,7 @@ has its position (x, y) and size (width, height).
 <tr><td><code>.inflate(<u>dw</u>, <u>dh</u>)</code></td>
   <td>Creates a inflated/deflated rectangle by (<code>dw&times;2</code>, <code>dh&times;2</code>):
     <div style="margin-left:1em;">
-      <svg xmlns="http://www.w3.org/2000/svg" 
+      <svg xmlns="http://www.w3.org/2000/svg"
 	   xmlns:xlink="http://www.w3.org/1999/xlink"
 	   version="1.1" width="100" height="48">
 	<g transform="translate(1.5,1.5)">
@@ -1086,7 +1086,7 @@ has its position (x, y) and size (width, height).
 <tr><td><code>.expand(<u>dw</u>, <u>dh</u>, <u>anchor</u>='c')</code></td>
   <td>Creates an expanded rectangle by (<code>dw&times;2</code>, <code>dh&times;2</code>).
     <div style="margin-left:1em;">
-      <svg xmlns="http://www.w3.org/2000/svg" 
+      <svg xmlns="http://www.w3.org/2000/svg"
 	   xmlns:xlink="http://www.w3.org/1999/xlink"
 	   version="1.1" width="200" height="90">
 	<marker id="arrow" viewBox="-5 -5 10 10" orient="auto">
@@ -1128,7 +1128,7 @@ has its position (x, y) and size (width, height).
 <tr><td><code>.resize(<u>w</u>, <u>h</u>, <u>anchor</u>='c')</code></td>
   <td>Creates a resized rectangle.
     <div style="margin-left:1em;">
-      <svg xmlns="http://www.w3.org/2000/svg" 
+      <svg xmlns="http://www.w3.org/2000/svg"
 	   xmlns:xlink="http://www.w3.org/1999/xlink"
 	   version="1.1" width="200" height="90">
 	<marker id="arrow" viewBox="-5 -5 10 10" orient="auto">
@@ -1221,7 +1221,7 @@ A <code>Circle</code> represents a circle that has its center and radius.
 
 <a name="AAPlane"><h3>AAPlane (<code>geom.ts</code>)</h3></a>
 <p>
-A <code>AAPlane</code> represents an axis-aligned plane. 
+A <code>AAPlane</code> represents an axis-aligned plane.
 It is represented by two axis-aligned (either X, Y or Z) points.
 If two points are not aligned by any axis, it is invalid.
 <table border>
@@ -1344,7 +1344,7 @@ A <code>TileMap</code> represents a two-dimensional array that holds map tiles.
 
 <a name="RangeMap"><h3>RangeMap (<code>tilemap.ts</code>)</h3></a>
 <p>
-A <code>RangeMap</code> is a partial copy of <code>TileMap</code> 
+A <code>RangeMap</code> is a partial copy of <code>TileMap</code>
 that allows range queries for specific tiles.
 Notice: This object is always returned by <code>TileMap.getRangeMap()</code> method
 and not explicitly created by a user.

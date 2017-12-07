@@ -31,7 +31,7 @@ class Font {
 
     protected _csize: number;
     protected _glyphs: HTMLCanvasElement;
-    
+
     constructor(glyphs: HTMLImageElement, color: string=null, scale=1) {
 	this._csize = glyphs.height;
 	this.width = this._csize*scale;
@@ -53,7 +53,7 @@ class Font {
 	this.renderBackground(ctx, text, x, y);
 	this.renderGlyphs(ctx, this._glyphs, this._csize, text, x, y);
     }
-  
+
     renderBackground(
 	ctx: CanvasRenderingContext2D,
 	text: string, x: number, y: number) {
@@ -93,9 +93,9 @@ class InvertedFont extends Font {
 class ShadowFont extends Font {
 
     shadowDist: number;
-    
+
     private _glyphs2: HTMLCanvasElement;
-    
+
     constructor(glyphs: HTMLImageElement, color: string=null, scale=1,
 		shadowColor='black', shadowDist=1) {
 	super(glyphs, color, scale);
@@ -107,7 +107,7 @@ class ShadowFont extends Font {
 	let size = super.getSize(text);
 	return size.move(this.shadowDist, this.shadowDist);
     }
-  
+
     renderString(
 	ctx: CanvasRenderingContext2D,
 	text: string, x: number, y: number) {
@@ -149,7 +149,7 @@ class TextBox implements ImageSource {
     borderColor: string = null;
     borderWidth: number = 2;
     segments: TextSegment[] = [];
-    
+
     constructor(frame: Rect, font: Font=null) {
 	this.frame = frame.copy();
 	this.font = font;
@@ -173,11 +173,11 @@ class TextBox implements ImageSource {
     getBounds() {
 	return this.frame;
     }
-  
+
     getInnerBounds() {
 	return this.frame.inflate(-this.padding, -this.padding);
     }
-  
+
     render(ctx: CanvasRenderingContext2D) {
 	ctx.save();
 	ctx.translate(int(this.frame.x), int(this.frame.y));
@@ -243,12 +243,12 @@ class TextBox implements ImageSource {
 	    }
 	    let j = text.indexOf('\n', i);
 	    if (j < 0) {
-		j = text.length; 
+		j = text.length;
 	    }
 	    let s = text.substring(i, j);
 	    let size = font.getSize(s);
 	    let last = ((this.segments.length === 0)? null :
-			this.segments[this.segments.length-1]);	
+			this.segments[this.segments.length-1]);
 	    if (last === null || width < last.bounds.x1()+size.x) {
 		last = this.addNewline(font);
 	    } else if (last.font !== font) {
@@ -261,7 +261,7 @@ class TextBox implements ImageSource {
 	    i = j;
 	}
     }
-  
+
     splitWords(x: number, text: string,
 	       font: Font=null, header: string=null) {
 	font = (font !== null)? font : this.font;
@@ -348,7 +348,7 @@ class BannerBox extends Widget {
     textbox: TextBox;
     sprite: FixedSprite;
     interval: number = 0;
-    
+
     constructor(frame: Rect, font: Font, lines: string[], lineSpace=4) {
 	super();
 	this.textbox = new TextBox(frame, font);
@@ -379,7 +379,7 @@ class BannerBox extends Widget {
 class TextTask extends Task {
 
     dialog: DialogBox;
-    
+
     constructor(dialog: DialogBox) {
 	super();
 	this.dialog = dialog;
@@ -398,7 +398,7 @@ class TextTask extends Task {
 
     onMouseUp(p: Vec2, button: number) {
     }
-    
+
     onMouseMove(p: Vec2) {
     }
 }
@@ -476,7 +476,7 @@ class DisplayTask extends TextTask {
 //  MenuTask
 //
 class MenuItem {
-    
+
     pos: Vec2;
     text: string;
     value: any;
@@ -497,7 +497,7 @@ class MenuTask extends TextTask {
     current: MenuItem = null;
     focus: MenuItem = null;
     sound: string = null;
-    
+
     constructor(dialog: DialogBox) {
 	super(dialog);
 	this.selected = new Signal(this);
@@ -583,7 +583,7 @@ class MenuTask extends TextTask {
 	    }
 	}
     }
-    
+
     onMouseMove(p: Vec2) {
 	this.updateFocus(p);
 	this.updateSelection();
@@ -617,7 +617,7 @@ class MenuTask extends TextTask {
 class WaitTask extends TextTask {
 
     ended: Signal;
-    
+
     constructor(dialog: DialogBox) {
 	super(dialog);
 	this.ended = new Signal(this);
@@ -655,7 +655,7 @@ class DialogBox extends Widget {
     autoHide: boolean = false;
     sound: string = null;
     queue: TextTask[] = [];
-    
+
     constructor(textbox: TextBox, hiFont: Font=null) {
 	super();
         this.sprite = new FixedSprite(textbox);
@@ -709,7 +709,7 @@ class DialogBox extends Widget {
 	    task.onMouseDown(p, button);
 	}
     }
-    
+
     onMouseUp(p: Vec2, button: number) {
 	let task = this.getCurrentTask();
 	if (task !== null) {
@@ -718,7 +718,7 @@ class DialogBox extends Widget {
 	    task.onMouseUp(p, button);
 	}
     }
-    
+
     onMouseMove(p: Vec2) {
 	let task = this.getCurrentTask();
 	if (task !== null) {
@@ -727,7 +727,7 @@ class DialogBox extends Widget {
 	    task.onMouseMove(p);
 	}
     }
-    
+
     ff() {
 	while (true) {
 	    let task = this.getCurrentTask();
@@ -752,7 +752,7 @@ class DialogBox extends Widget {
 	    this.sprite.visible = true;
 	}
     }
-    
+
     removeTask(task: TextTask) {
 	removeElement(this.queue, task);
 	if (this.autoHide && this.queue.length == 0) {

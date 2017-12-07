@@ -28,4 +28,3 @@ How to Build Samples
 
     $ make
     (then open samples/index.html)
-

@@ -9,7 +9,7 @@
 //
 interface PlatformerActor extends PlanActor {
     isCloseTo(p: Vec2): boolean;
-    
+
     canMove(v: Vec2): boolean;
     canJump(): boolean;
     canFall(): boolean;
@@ -21,7 +21,7 @@ interface PlatformerActor extends PlanActor {
     getFallPoints(): Vec2[];
     moveToward(p: Vec2): void;
     jumpToward(p: Vec2): void;
-    
+
     canMoveTo(p: Vec2): boolean;
     canGrabAt(p: Vec2): boolean;
     canStandAt(p: Vec2): boolean;
@@ -33,7 +33,7 @@ interface PlatformerActor extends PlanActor {
 
 
 //  PlatformerAction
-// 
+//
 class PlatformerAction extends PlanAction {
     toString() {
 	return ('<PlatformAction('+this.p.x+','+this.p.y+'): cost='+this.cost+'>');
@@ -67,7 +67,7 @@ class PlatformerClimbAction extends PlatformerAction {
 
 
 //  PlatformerPlanMap
-// 
+//
 class PlatformerPlanMap extends PlanMap {
 
     obstacle: RangeMap;
@@ -84,7 +84,7 @@ class PlatformerPlanMap extends PlanMap {
 	this.stoppable = tilemap.getRangeMap(
 	    'stoppable', physics.isStoppable);
     }
-    
+
     expandPlan(actor: PlatformerActor, range: Rect,
 	       a0: PlatformerAction, start: Vec2=null) {
 	let p0 = a0.p;
@@ -197,7 +197,7 @@ class PlatformerPlanMap extends PlanMap {
 
 
 //  PointSet
-// 
+//
 interface PointMap {
     [index: string]: Vec2;
 }
@@ -297,7 +297,7 @@ class PlatformerActionRunner extends ActionRunner {
 	    if (actor.isCloseTo(dst)) {
 		return action.next;
 	    }
-	    
+
 	} else if (action instanceof PlatformerFallAction) {
 	    let dst = action.next.p;
 	    let path = this.findSimplePath(cur, dst);
@@ -313,7 +313,7 @@ class PlatformerActionRunner extends ActionRunner {
 	    if (actor.isCloseTo(dst)) {
 		return action.next;
 	    }
-	    
+
 	} else if (action instanceof PlatformerJumpAction) {
 	    let dst = action.next.p;
 	    if (actor.canJump() && actor.canFall() &&
@@ -328,16 +328,16 @@ class PlatformerActionRunner extends ActionRunner {
 	    }
 
 	}
-	
+
 	return super.execute(action);
     }
 
-    // findSimplePath(x0, y0, x1, x1, cb): 
+    // findSimplePath(x0, y0, x1, x1, cb):
     //   returns a list of points that a character can proceed without being blocked.
     //   returns null if no such path exists. This function takes O(w*h).
     //   Note: this returns only a straightforward path without any detour.
     findSimplePath(p0: Vec2, p1: Vec2) {
-	
+
 	class PathEntry {
 	    p: Vec2;
 	    d: number;
@@ -348,14 +348,14 @@ class PlatformerActionRunner extends ActionRunner {
 		this.next = next;
 	    }
 	}
-	
+
 	let a:PathEntry[][] = []
 	let w = Math.abs(p1.x-p0.x);
 	let h = Math.abs(p1.y-p0.y);
 	let vx = (p0.x <= p1.x)? +1 : -1;
 	let vy = (p0.y <= p1.y)? +1 : -1;
 	let actor = this.actor as PlatformerActor;
-	
+
 	for (let dy = 0; dy <= h; dy++) {
 	    a.push([]);
 	    // y: y0...y1
@@ -429,7 +429,7 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
     isCloseTo(p: Vec2) {
 	return this.grid.grid2coord(p).distance(this.pos) < this.maxdist;
     }
-    
+
     setHitbox(hitbox: Rect) {
 	let gs = this.grid.gridsize;
 	this.gridbox = new Rect(
@@ -454,7 +454,7 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
     }
 
     // PlatformerActor methods
-    
+
     getJumpPoints() {
 	if (this._jumppts === null) {
 	    this._jumppts = calcJumpRange(
@@ -555,7 +555,7 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 	}
 	return true;
     }
-    
+
     moveToward(p: Vec2) {
 	let p0 = this.pos;
 	let p1 = this.getGridBoxAt(p).center();
@@ -564,12 +564,12 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 	v.y = clamp(-this.speed, v.y, +this.speed);
 	this.moveIfPossible(v);
     }
-    
+
     jumpToward(p: Vec2) {
 	this.setJump(Infinity);
 	this.moveToward(p);
     }
-    
+
     isClearedFor(p1: Vec2) {
 	let hb0 = this.getGridBox();
 	let hb1 = this.getGridBoxAt(p1);

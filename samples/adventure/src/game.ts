@@ -20,7 +20,7 @@ addInitHook(() => {
 
 
 //  PictureScene
-// 
+//
 class PictureScene extends GameScene {
 
     dialogBox: DialogBox;
@@ -42,7 +42,7 @@ class PictureScene extends GameScene {
 	textbox.background = 'rgba(0,0,0,0.5)'
 	this.dialogBox = new DialogBox(textbox, HIFONT);
     }
-    
+
     init() {
 	super.init();
 	this.add(this.dialogBox);
@@ -58,22 +58,22 @@ class PictureScene extends GameScene {
     onKeyDown(key: number) {
 	super.onKeyDown(key);
 	this.dialogBox.onKeyDown(key);
-    }    
+    }
 
     onMouseDown(p: Vec2, button: number) {
 	super.onMouseDown(p, button);
 	this.dialogBox.onMouseDown(p, button);
-    }    
+    }
 
     onMouseUp(p: Vec2, button: number) {
 	super.onMouseUp(p, button);
 	this.dialogBox.onMouseUp(p, button);
-    }    
+    }
 
     onMouseMove(p: Vec2) {
 	super.onMouseMove(p);
 	this.dialogBox.onMouseMove(p);
-    }    
+    }
 
     render(ctx: CanvasRenderingContext2D) {
 	ctx.fillStyle = 'rgb(0,0,0)';
@@ -97,7 +97,7 @@ class PictureScene extends GameScene {
 	ctx.lineWidth = 2;
 	strokeRect(ctx, rect);
     }
-    
+
     changeScene(scene: Scene) {
 	if (scene instanceof PictureScene) {
 	    scene.image0 = this.image1;
@@ -108,7 +108,7 @@ class PictureScene extends GameScene {
 
 
 //  Scene1
-// 
+//
 class Scene1 extends PictureScene {
     constructor() {
 	super();
@@ -130,7 +130,7 @@ class Scene1 extends PictureScene {
 }
 
 //  Scene2
-// 
+//
 class Scene2 extends PictureScene {
     constructor() {
 	super();
@@ -152,7 +152,7 @@ class Scene2 extends PictureScene {
 }
 
 //  Scene3
-// 
+//
 class Scene3 extends PictureScene {
     constructor() {
 	super();
@@ -175,9 +175,9 @@ class Scene3 extends PictureScene {
 
 
 //  Adventure
-// 
+//
 class Adventure extends Scene {
-    
+
     init() {
 	super.init();
 	this.changeScene(new Scene1());

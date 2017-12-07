@@ -24,7 +24,7 @@ function getprops(a: NodeListOf<Element>) {
     }
     return d;
 }
-  
+
 
 //  App
 //  handles the event loop and global state management.
@@ -43,21 +43,21 @@ class App {
     images: ImageAsset;
     sounds: AudioAsset;
     labels: TextAsset;
-    
+
     scene: Scene = null;
     active: boolean = false;
     keys: { [index: number]: boolean } = {};
     keyDir: Vec2 = new Vec2();
     mousePos: Vec2 = new Vec2();
     mouseButton: boolean = false;
-    
+
     private _keylock: number = 0;
     private _msgs: Action[] = [];
     private _music: HTMLAudioElement = null;
     private _loop_start: number = 0;
     private _loop_end: number = 0;
     private _touch_id: any = null;
-    
+
     constructor(size: Vec2,
 		framerate: number,
 		elem: HTMLElement) {
@@ -320,8 +320,8 @@ class App {
 	    this._music.play();
 	}
     }
-  
-    /** Play a sound resource. 
+
+    /** Play a sound resource.
      * @param sound Sound name.
      * @param start Start position.
      */
@@ -361,7 +361,7 @@ function main<T extends Scene>(
 	    app.repaint();
 	}
     }
-    
+
     function keydown(e: KeyboardEvent) {
 	if (app.active) {
 	    switch (e.keyCode) {
@@ -391,7 +391,7 @@ function main<T extends Scene>(
 	    }
 	}
     }
-    
+
     function keyup(e: KeyboardEvent) {
 	if (app.active) {
 	    switch (e.keyCode) {
@@ -410,53 +410,53 @@ function main<T extends Scene>(
 	    app.keyPress(e);
 	}
     }
-    
+
     function mousedown(e: MouseEvent) {
 	if (app.active) {
 	    app.mouseDown(e);
 	}
     }
-    
+
     function mouseup(e: MouseEvent) {
 	if (app.active) {
 	    app.mouseUp(e);
 	}
     }
-    
+
     function mousemove(e: MouseEvent) {
 	if (app.active) {
 	    app.mouseMove(e);
 	}
     }
-    
+
     function touchstart(e: TouchEvent) {
 	if (app.active) {
 	    app.touchStart(e);
 	    e.preventDefault();
 	}
     }
-    
+
     function touchend(e: TouchEvent) {
 	if (app.active) {
 	    app.touchEnd(e);
 	    e.preventDefault();
 	}
     }
-    
+
     function touchmove(e: TouchEvent) {
 	if (app.active) {
 	    app.touchMove(e);
 	    e.preventDefault();
 	}
     }
-    
+
     function focus(e: FocusEvent) {
 	log("app.focus");
 	if (!app.active) {
 	    app.focus();
 	}
     }
-    
+
     function blur(e: FocusEvent) {
 	log("app.blur");
 	if (app.active) {
@@ -504,7 +504,7 @@ function main<T extends Scene>(
     for (let hook of HOOKS) {
 	hook();
     }
-    
+
     app.init(new scene0());
     app.focus();
     elem.appendChild(canvas);

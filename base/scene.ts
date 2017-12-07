@@ -18,7 +18,7 @@ class Scene {
     changeScene(scene: Scene) {
 	APP.post(function () { APP.init(scene); });
     }
-  
+
     init() {
 	// [OVERRIDE]
     }
@@ -42,7 +42,7 @@ class Scene {
     onButtonPressed(keysym: KeySym) {
 	// [OVERRIDE]
     }
-    
+
     onButtonReleased(keysym: KeySym) {
 	// [OVERRIDE]
     }
@@ -66,7 +66,7 @@ class Scene {
     onMouseUp(p: Vec2, button: number) {
 	// [OVERRIDE]
     }
-    
+
     onMouseMove(p: Vec2) {
 	// [OVERRIDE]
     }
@@ -74,7 +74,7 @@ class Scene {
     onFocus() {
 	// [OVERRIDE]
     }
-    
+
     onBlur() {
 	// [OVERRIDE]
     }
@@ -107,7 +107,7 @@ class HTMLScene extends Scene {
 	e.innerHTML = this.text;
 	e.onmousedown = (function (e) { scene.change(); });
     }
-  
+
     render(ctx: CanvasRenderingContext2D) {
 	ctx.fillStyle = 'rgb(0,0,0)';
 	fillRect(ctx, this.screen);
@@ -124,12 +124,12 @@ class HTMLScene extends Scene {
     onKeyDown(key: number) {
 	this.change();
     }
-  
+
 }
 
 
 //  GameScene
-// 
+//
 class GameScene extends Scene {
 
     tasklist: ParallelTaskList = null;
@@ -175,7 +175,7 @@ class GameScene extends Scene {
 	super.onMouseUp(p, button);
 	this.camera.onMouseUp(p, button);
     }
-    
+
     onMouseMove(p: Vec2) {
 	super.onMouseMove(p);
 	this.camera.onMouseMove(p);

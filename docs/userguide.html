@@ -34,7 +34,7 @@ external library except TypeScript. It is licensed under MIT License.
 Here are the things you need to make a game with Euskit:
 <div style="position:relative; margin:1em; padding:0; height:10em;">
 <div style="position:absolute; margin:0; top:0; left:0;">
-  <svg xmlns="http://www.w3.org/2000/svg" 
+  <svg xmlns="http://www.w3.org/2000/svg"
        xmlns:xlink="http://www.w3.org/1999/xlink"
        version="1.1" width="250" height="150">
     <g transform="translate(1.5,1.5)">
@@ -67,17 +67,17 @@ Here are the things you need to make a game with Euskit:
   </svg>
 </div>
   <div style="position:absolute; left: 270px; top: 0px; margin:0; line-height: 120%;">
-    <a target="euskit-quickref" href="quickref.html#App"><code>App</code></a>: 
+    <a target="euskit-quickref" href="quickref.html#App"><code>App</code></a>:
     Resource management (images and sounds) and event loop.<br>
-    <a target="euskit-quickref" href="quickref.html#Scene"><code>Scene</code></a>: 
+    <a target="euskit-quickref" href="quickref.html#Scene"><code>Scene</code></a>:
     Game state management and event handling.<br>
-    <a target="euskit-quickref" href="quickref.html#Entity"><code>Entity</code></a>: 
+    <a target="euskit-quickref" href="quickref.html#Entity"><code>Entity</code></a>:
     In-game character.<br>
-    <a target="euskit-quickref" href="quickref.html#Sprite"><code>Sprite</code></a>: 
+    <a target="euskit-quickref" href="quickref.html#Sprite"><code>Sprite</code></a>:
     Graphical object to be shown.<br>
-    <a target="euskit-quickref" href="quickref.html#Layer"><code>Layer</code></a>: 
+    <a target="euskit-quickref" href="quickref.html#Layer"><code>Layer</code></a>:
     Container where Sprites are placed in.<br>
-    <a target="euskit-quickref" href="quickref.html#Camera"><code>Camera</code></a>: 
+    <a target="euskit-quickref" href="quickref.html#Camera"><code>Camera</code></a>:
     Stack of layers to be rendered.<br>
   </div>
 </div>
@@ -92,15 +92,15 @@ Here are the things you need to make a game with Euskit:
     to the game. Typically, you don't have to change this part.
   <dt> Scene
   <dd class=p>
-    A <code>Scene</code> can be thought of a mini-app or "mode" within the App.  
+    A <code>Scene</code> can be thought of a mini-app or "mode" within the App.
     It's pretty much an event handler that manages the in-game states.
     This is primarily what a Euskit user will write. Euskit supports
     multiple Scenes, but it's possible to create an entire game with just
     one Scene.
   <dt> Entity
   <dd class=p>
-    An <code>Entity</code> is a bit like a GameObject in Unity.  
-    (Unlike Unity, however, Euskit uses a traditional hierarchical model 
+    An <code>Entity</code> is a bit like a GameObject in Unity.
+    (Unlike Unity, however, Euskit uses a traditional hierarchical model
     instead of components.)
     Each Entity has its own process, <code>Collider</code> and one or more
     <code>Sprite</code>s.
@@ -113,8 +113,8 @@ Here are the things you need to make a game with Euskit:
     and managed by <code>TaskList</code>.
   <dt> Sprite
   <dd class=p>
-    A <code>Sprite</code> is something to be displayed. 
-    It has a location, rotation and the reference to its content. 
+    A <code>Sprite</code> is something to be displayed.
+    It has a location, rotation and the reference to its content.
     Unlike some other engines, <code>Sprite</code> doesn't know how to move itself.
     It is just sitting at a certain location on screen. <code>Scene</code> or
     <code>Entity</code> is responsible to change/move its position.
@@ -164,26 +164,26 @@ $ ./tools/setup.sh /path/to/project
 <li> Every game has exactly one top-level object, <code>App</code>.
 <li> The <code>App</code> object manages shared resources (such as images
 and sounds) and redirects the GUI events to its
-current <code>Scene</code>.  
+current <code>Scene</code>.
 <li> A <code>Scene</code> object responds to
 each event and interacts with the user. A game can have
 multiple <code>Scene</code>s (such as a title and cutscene screen) and
-there's always only one that is active.  
+there's always only one that is active.
 <li> Each <code>Scene</code> can
 contain zero or more <code>Layer</code>s.  This is
 where <code>Task</code>s, <code>Sprite</code>s
 and <code>Entity</code>s reside. Each of these objects can run
 independently and can be created or destroyed as
-needed. 
+needed.
 <li> A <code>Task</code> is just an independent process
 whose <code>update()</code> method is called at every frame.  A
 new <code>Task</code> can be created and added to a <code>Layer</code>
 at any time. When a Task dies because it is terminated externally or
 its speficied lifetime is passed, it is automatically removed from
-its <code>Layer</code>. 
+its <code>Layer</code>.
 <li> A <code>Sprite</code> is a visible
-<code>Task</code>. It has a position and its own rendering function 
-<code>render()</code> and can be shown at a screen. 
+<code>Task</code>. It has a position and its own rendering function
+<code>render()</code> and can be shown at a screen.
 <li> An <code>Entity</code> is a <code>Sprite</code> that has a
 physical extent. In Euskit, pure <code>Sprite</code>s are mostly used
 as particles or text labels, and <code>Entity</code>s are often used
@@ -191,7 +191,7 @@ as a player or other characters in a game.
 </ul>
 
 <div style="position: relative;">
-  <svg xmlns="http://www.w3.org/2000/svg" 
+  <svg xmlns="http://www.w3.org/2000/svg"
        xmlns:xlink="http://www.w3.org/1999/xlink"
        version="1.1" width="250" height="150">
     <g transform="translate(1.5,1.5)">

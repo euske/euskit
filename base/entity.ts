@@ -11,7 +11,7 @@
 class Widget extends Task {
 
     layer: SpriteLayer = null;
-    
+
     chain(task: Task, signal: Signal=null): Task {
 	if (task instanceof Widget) {
 	    task.layer = this.layer;
@@ -36,19 +36,19 @@ class Widget extends Task {
 
 
 //  EntityField
-// 
+//
 class EntityField {
 
     entities: Entity[] = [];
-    
+
     toString() {
 	return ('<EntityField: entities='+this.entities+'>');
     }
-  
+
     init() {
 	this.entities = [];
     }
-  
+
     tick() {
 	this.checkEntityCollisions();
     }
@@ -110,7 +110,7 @@ class EntityField {
 	}
 	return a;
     }
-    
+
     hasEntity(f: (e:Entity)=>boolean, collider0: Collider) {
 	for (let entity1 of this.entities) {
 	    if (entity1.isRunning() && f(entity1)) {
@@ -131,7 +131,7 @@ class EntityField {
 class Entity extends Widget {
 
     field: EntityField = null;
-    
+
     pos: Vec2;
     sprite: Sprite;
     skin: ImageSource = null;
@@ -163,7 +163,7 @@ class Entity extends Widget {
 	this.field.removeEntity(this);
 	super.stop();
     }
-    
+
     getCollider(pos: Vec2=null) {
 	if (this.collider === null) return null;
 	if (pos === null) {
@@ -172,7 +172,7 @@ class Entity extends Widget {
 	}
 	return this.collider.add(pos);
     }
-  
+
     canMove(v0: Vec2, context=null as string) {
 	let v1 = this.getMove(this.pos, v0, context);
 	return v1.equals(v0);
@@ -206,7 +206,7 @@ class Entity extends Widget {
     movePos(v: Vec2) {
 	this.pos = this.pos.add(v);
     }
-    
+
     moveIfPossible(v: Vec2, context=null as string) {
 	v = this.getMove(this.pos, v, context);
 	this.movePos(v);
@@ -225,7 +225,7 @@ class Entity extends Widget {
 	// [OVERRIDE]
 	return null;
     }
-  
+
     getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
 	// [OVERRIDE]
 	return null;
@@ -234,18 +234,18 @@ class Entity extends Widget {
     collidedWith(entity: Entity) {
 	// [OVERRIDE]
     }
-    
+
     renderExtra(ctx: CanvasRenderingContext2D) {
 	// [OVERRIDE]
     }
-    
+
 }
 
 
 //  Projectile
-// 
+//
 class Projectile extends Entity {
-    
+
     movement: Vec2 = new Vec2();
     frame: Rect = null;
 
@@ -270,12 +270,12 @@ interface JumpFunc {
     (vy:number, t:number): number;
 }
 class PhysicsConfig {
-    
+
     jumpfunc: JumpFunc = ((vy:number, t:number) => {
 	return (0 <= t && t <= 5)? -4 : vy+1;
     });
     maxspeed: Vec2 = new Vec2(6,6);
-    
+
     isObstacle: TileFunc = ((c:number) => { return false; });
     isGrabbable: TileFunc = ((c:number) => { return false; });
     isStoppable: TileFunc = ((c:number) => { return false; });
@@ -290,11 +290,11 @@ class PhysicalEntity extends Entity {
     jumped: Signal;
     landed: Signal;
     velocity: Vec2 = new Vec2();
-    
+
     protected _jumpt: number = Infinity;
     protected _jumpend: number = 0;
     protected _landed: boolean = false;
-    
+
     constructor(physics: PhysicsConfig, pos: Vec2) {
 	super(pos);
 	this.physics = physics;
@@ -321,7 +321,7 @@ class PhysicalEntity extends Entity {
 	    this._jumpt = Infinity;
 	}
     }
-  
+
     fall(t: number) {
 	if (this.canFall()) {
 	    let vy = this.physics.jumpfunc(this.velocity.y, t);
@@ -341,7 +341,7 @@ class PhysicalEntity extends Entity {
     isLanded() {
 	return this._landed;
     }
-    
+
     isJumping() {
 	return (this._jumpt < this._jumpend);
     }
@@ -360,14 +360,14 @@ class PhysicalEntity extends Entity {
 //  PlatformerEntity
 //
 class PlatformerEntity extends PhysicalEntity {
-    
+
     tilemap: TileMap;
 
     constructor(tilemap: TileMap, physics: PhysicsConfig, pos: Vec2) {
 	super(physics, pos);
 	this.tilemap = tilemap;
     }
-    
+
     hasTile(f: TileFunc, pos: Vec2=null) {
 	let range = this.getCollider(pos).getAABB();
 	return (this.tilemap.findTileByCoord(f, range) !== null);

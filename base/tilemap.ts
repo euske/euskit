@@ -24,7 +24,7 @@ class TileMap {
     height: number;
     bounds: Rect;
     map: Int32Array[];
-    
+
     private _rangemap: RangeMapMap = {};
 
     constructor(tilesize: number, width: number, height: number,
@@ -44,7 +44,7 @@ class TileMap {
     toString() {
 	return '<TileMap: '+this.width+','+this.height+'>';
     }
-  
+
     get(x: number, y: number): number {
 	if (0 <= x && 0 <= y && x < this.width && y < this.height) {
 	    return this.map[y][x];
@@ -125,7 +125,7 @@ class TileMap {
 	}
 	return null;
     }
-  
+
     shift(vx: number, vy: number, rect: Rect=null) {
 	if (rect === null) {
 	    rect = new Rect(0, 0, this.width, this.height);
@@ -241,7 +241,7 @@ class TileMap {
 	ctx.save();
 	ctx.translate(x0*ts-window.x, y0*ts-window.y);
 	this.renderFromBottomLeft(
-	    ctx, ft, 
+	    ctx, ft,
 	    x0, y0, x1-x0+1, y1-y0+1);
 	ctx.restore();
     }
@@ -258,7 +258,7 @@ class TileMap {
 	ctx.save();
 	ctx.translate(x0*ts-window.x, y0*ts-window.y);
 	this.renderFromTopRight(
-	    ctx, ft, 
+	    ctx, ft,
 	    x0, y0, x1-x0+1, y1-y0+1);
 	ctx.restore();
     }
@@ -273,7 +273,7 @@ class RangeMap {
     height: number;
 
     private _data: Int32Array[];
-    
+
     constructor(tilemap: TileMap, f: TileFunc) {
 	let data = new Array(tilemap.height+1);
 	let row0 = new Int32Array(tilemap.width+1);

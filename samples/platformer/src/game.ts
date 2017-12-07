@@ -45,13 +45,13 @@ addInitHook(() => {
 //  WorldObject
 //
 class WorldObject {
-    
+
     scene: Game;
-    
+
     getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
 	return [this.scene.screen];
     }
-    
+
 }
 
 function findShadowPos(tilemap: TileMap, pos: Vec2) {
@@ -74,7 +74,7 @@ class ShadowSprite extends EntitySprite {
 
     shadow: HTMLImageSource;
     shadowPos: Vec2 = null;
-    
+
     constructor(entity: Entity) {
 	super(entity);
 	this.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
@@ -140,7 +140,7 @@ class Player extends PlatformerEntity implements WorldObject {
 	}
 	return super.getObstaclesFor(range, v, context);
     }
-    
+
     update() {
 	super.update();
 	let v = this.usermove;
@@ -152,14 +152,14 @@ class Player extends PlatformerEntity implements WorldObject {
 	this.moveIfPossible(v);
 	(this.sprite as ShadowSprite).shadowPos = findShadowPos(this.tilemap, this.pos);
     }
-    
+
     setJump(jumpend: number) {
 	super.setJump(jumpend);
 	if (0 < jumpend && this.isJumping()) {
 	    APP.playSound('jump');
 	}
     }
-    
+
     setMove(v: Vec2) {
 	this.usermove = v.scale(8);
 	if (v.y != 0) {
@@ -214,7 +214,7 @@ applyMixins(Monster, [WorldObject]);
 //  Thingy
 //
 class Thingy extends Entity {
-    
+
     constructor(pos: Vec2) {
 	super(pos);
 	this.skin = SPRITES.get(S.THINGY);
@@ -224,7 +224,7 @@ class Thingy extends Entity {
 
 
 //  Game
-// 
+//
 class Game extends GameScene {
 
     physics: PhysicsConfig;
@@ -232,7 +232,7 @@ class Game extends GameScene {
     grid: GridConfig;
     player: Player;
     thingies: number;
-    
+
     init() {
 	super.init();
 	this.physics = new PhysicsConfig();
@@ -243,7 +243,7 @@ class Game extends GameScene {
 	this.physics.isObstacle = ((c:number) => { return c == T.BLOCK; });
 	this.physics.isGrabbable = ((c:number) => { return c == T.LADDER; });
 	this.physics.isStoppable = ((c:number) => { return c == T.BLOCK || c == T.LADDER; });
-	
+
 	const MAP = [
 	    "00000000000000300000",
 	    "00002111210001121100",
@@ -318,7 +318,7 @@ class Game extends GameScene {
 	this.add(yay);
 	this.thingies--;
 	if (this.thingies == 0) {
-	    this.add(new DelayTask(2, () => { 
+	    this.add(new DelayTask(2, () => {
 		APP.lockKeys();
 		this.changeScene(new Ending());
 	    }));
@@ -330,11 +330,11 @@ class Game extends GameScene {
 	fillRect(ctx, this.screen);
 	// Render the background tiles.
 	this.tilemap.renderWindowFromBottomLeft(
-	    ctx, this.camera.window, 
+	    ctx, this.camera.window,
 	    (x,y,c) => { return (c != T.BLOCK)? TILES.get(T.BACKGROUND) : null; });
 	// Render the map tiles.
 	this.tilemap.renderWindowFromBottomLeft(
-	    ctx, this.camera.window, 
+	    ctx, this.camera.window,
 	    (x,y,c) => { return (c == T.BLOCK || c == T.LADDER)? TILES.get(c) : null; });
 	super.render(ctx);
     }
@@ -342,9 +342,9 @@ class Game extends GameScene {
 
 
 //  Ending
-// 
+//
 class Ending extends HTMLScene {
-    
+
     constructor() {
 	var html = '<strong>You Won!</strong><p>Yay!';
 	super(html);

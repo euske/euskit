@@ -28,7 +28,7 @@ class Task {
     state: TaskState = TaskState.Scheduled;
     /** List to which this task belongs. */
     tasklist: TaskList = null;
-    /** Lifetime. 
+    /** Lifetime.
      * This task automatically terminates itself after
      * the time specified here passes. */
     lifetime: number = Infinity;
@@ -45,7 +45,7 @@ class Task {
 	return '<Task: time='+this.getTime()+'>';
     }
 
-    /** Returns the number of seconds elapsed since 
+    /** Returns the number of seconds elapsed since
      * this task has started. */
     getTime() {
 	return (getTime() - this.startTime);
@@ -77,7 +77,7 @@ class Task {
 	}
     }
 
-    /** Schedules another task right after this task. 
+    /** Schedules another task right after this task.
      * @param next Next Task.
      */
     chain(next: Task, signal: Signal=null): Task {
@@ -99,7 +99,7 @@ class Task {
 	}
 	return next;
     }
-  
+
     /** Invoked at every frame while the task is running. */
     tick() {
 	this.update();
@@ -107,7 +107,7 @@ class Task {
 	    this.stop();
 	}
     }
-  
+
     update() {
 	// [OVERRIDE]
     }
@@ -145,7 +145,7 @@ class SoundTask extends Task {
     soundStart: number;
     /** End time of the sound. */
     soundEnd: number;
-    
+
     /** Constructor.
      * @param sound Sound object to play.
      * @param soundStart Start time of the sound.
@@ -196,7 +196,7 @@ class ParallelTaskList extends Task implements TaskList {
     init() {
 	this.tasks = [];
     }
-    
+
     /** Invoked at every frame. Update the current tasks. */
     tick() {
 	for (let task of this.tasks) {
@@ -207,7 +207,7 @@ class ParallelTaskList extends Task implements TaskList {
 		task.tick();
 	    }
 	}
-        
+
         // Remove the finished tasks from the list.
 	this.tasks = this.tasks.filter((task: Task) => { return task.isRunning(); });
         // Terminates itself then the list is empty.
@@ -249,7 +249,7 @@ class SequentialTaskList extends Task implements TaskList {
 	super();
 	this.tasks = (tasks !== null)? tasks : [];
     }
-  
+
     /** Empties the task list. */
     init() {
 	this.tasks = [];
@@ -262,7 +262,7 @@ class SequentialTaskList extends Task implements TaskList {
 	task.tasklist = this.tasklist;
 	this.tasks.push(task);
     }
-  
+
     /** Remove an existing Task from the list.
      * @param task Task to remove.
      */
@@ -293,7 +293,7 @@ class SequentialTaskList extends Task implements TaskList {
             // Finishes the current task.
 	    this.remove(task);
 	}
-        
+
         // Terminates itself then the list is empty.
 	if (this.stopWhenEmpty && task === null) {
 	    this.stop();
