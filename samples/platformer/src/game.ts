@@ -34,7 +34,6 @@ enum T {
     PLAYER = 9,
 }
 addInitHook(() => {
-    //PlanningEntity.debug = true;
     SPRITES = new ImageSpriteSheet(
 	APP.images['sprites'], new Vec2(32,32), new Vec2(16,16));
     TILES = new ImageSpriteSheet(
@@ -198,14 +197,25 @@ class Monster extends PlanningEntity implements WorldObject {
 
     update() {
 	super.update();
+	let goal = this.grid.coord2grid(this.target.pos);
+	if (this.runner instanceof PlatformerActionRunner) {
+	    if (!this.runner.goal.equals(goal)) {
+		// abandon an obsolete plan.
+		this.setRunner(null);
+	    }
+	}
 	if (this.runner === null) {
-	    let pos = this.grid.coord2grid(this.target.pos);
-	    let action = this.buildPlan(pos);
+	    let action = this.buildPlan(goal);
 	    if (action !== null) {
-		this.setRunner(new PlatformerActionRunner(this, action));
+		this.setRunner(new PlatformerActionRunner(this, action, goal));
 	    }
 	}
 	(this.sprite as ShadowSprite).shadowPos = findShadowPos(this.tilemap, this.pos);
+    }
+
+    setAction(action: PlanAction) {
+	super.setAction(action);
+	log("setAction: "+action);
     }
 }
 applyMixins(Monster, [WorldObject]);
@@ -232,6 +242,9 @@ class Game extends GameScene {
     grid: GridConfig;
     player: Player;
     thingies: number;
+
+    debug: boolean = false;
+    watch: PlanningEntity = null;
 
     init() {
 	super.init();
@@ -288,6 +301,7 @@ class Game extends GameScene {
 		let monster = new Monster(this, rect.center());
 		monster.target = this.player;
 		this.add(monster);
+		this.watch = monster;
 		break;
 	    }
 	    return false;
@@ -337,6 +351,12 @@ class Game extends GameScene {
 	    ctx, this.camera.window,
 	    (x,y,c) => { return (c == T.BLOCK || c == T.LADDER)? TILES.get(c) : null; });
 	super.render(ctx);
+	// Render the planmap.
+	if (this.debug) {
+	    if (this.watch !== null && this.watch.runner !== null) {
+		this.watch.planmap.render(ctx, this.grid);
+	    }
+	}
     }
 }
 

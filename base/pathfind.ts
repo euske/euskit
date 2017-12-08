@@ -125,23 +125,37 @@ class PlanActionEntry {
 }
 class PlanMap {
 
-    grid: GridConfig;
-
-    private _map: PlanActionMap;
-    private _queue: PlanActionEntry[];
+    private _map: PlanActionMap = {};
+    private _queue: PlanActionEntry[] = [];
     private _goal: Vec2 = null;   // for debugging
     private _start: Vec2 = null;  // for debugging
 
-    constructor(grid: GridConfig) {
-	this.grid = grid;
-    }
-
     toString() {
-	return ('<PlanMap '+this.grid+'>');
+	return ('<PlanMap>');
     }
 
-    render(ctx: CanvasRenderingContext2D) {
-	let grid = this.grid;
+    addAction(start: Vec2, action: PlanAction) {
+	let key = action.getKey();
+	let prev = this._map[key];
+	if (prev === undefined || action.cost < prev.cost) {
+	    this._map[key] = action;
+	    let dist = ((start === null)? Infinity :
+			(Math.abs(start.x-action.p.x)+
+			 Math.abs(start.y-action.p.y)));
+	    this._queue.push(new PlanActionEntry(action, dist+action.cost));
+	}
+    }
+
+    getAction(x: number, y: number, context: string=null) {
+	let k = getKey(x, y, context);
+	if (this._map.hasOwnProperty(k)) {
+	    return this._map[k];
+	} else {
+	    return null;
+	}
+    }
+
+    render(ctx: CanvasRenderingContext2D, grid: GridConfig) {
 	let gs = grid.gridsize;
 	let rs = gs/2;
 	ctx.lineWidth = 1;
@@ -181,7 +195,6 @@ class PlanMap {
 
     build(actor: PlanActor, goal: Vec2, range: Rect,
 	  start: Vec2=null, maxcost=Infinity): PlanAction {
-	range = this.grid.clip(range);
 	//log("build: goal="+goal+", start="+start+", range="+range+", maxcost="+maxcost);
 	this._map = {};
 	this._queue = [];
@@ -193,7 +206,7 @@ class PlanMap {
 	    let action = entry.action;
 	    if (start !== null && start.equals(action.p)) return action;
 	    if (maxcost <= action.cost) continue;
-	    this.expandPlan(actor, range, action, start);
+	    this.expand(actor, range, action, start);
 	    // A* search.
 	    if (start !== null) {
 		this._queue.sort((a:PlanActionEntry,b:PlanActionEntry) => {
@@ -204,29 +217,8 @@ class PlanMap {
 	return null;
     }
 
-    addAction(start: Vec2, action: PlanAction) {
-	let key = action.getKey();
-	let prev = this._map[key];
-	if (prev === undefined || action.cost < prev.cost) {
-	    this._map[key] = action;
-	    let dist = ((start === null)? Infinity :
-			(Math.abs(start.x-action.p.x)+
-			 Math.abs(start.y-action.p.y)));
-	    this._queue.push(new PlanActionEntry(action, dist+action.cost));
-	}
-    }
-
-    getAction(x: number, y: number, context: string=null) {
-	let k = getKey(x, y, context);
-	if (this._map.hasOwnProperty(k)) {
-	    return this._map[k];
-	} else {
-	    return null;
-	}
-    }
-
-    expandPlan(actor: PlanActor, range: Rect,
-	       a0: PlanAction, start: Vec2=null) {
+    expand(actor: PlanActor, range: Rect, prev: PlanAction,
+	   start: Vec2=null) {
 	// [OVERRIDE]
     }
 }
