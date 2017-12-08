@@ -62,7 +62,7 @@ function findShadowPos(tilemap: TileMap, pos: Vec2) {
 	p.y++;
     }
     let y = tilemap.map2coord(p).center().y;
-    return new Vec2(pos.x, y);
+    return new Vec2(0, y-pos.y);
 }
 
 
@@ -88,7 +88,7 @@ class ShadowSprite extends EntitySprite {
 	    let srcRect = shadow.srcRect;
 	    let dstRect = shadow.dstRect;
 	    // Shadow gets smaller based on its ground distance.
-	    let d = (pos.y - this.entity.pos.y)/4;
+	    let d = pos.y/4;
 	    if (d*2 <= dstRect.width && d*2 <= dstRect.height) {
 		ctx.drawImage(
 		    shadow.image,
