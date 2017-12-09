@@ -187,12 +187,14 @@ class Monster extends PlanningEntity implements WorldObject {
     target: Entity;
 
     constructor(scene: Game, pos: Vec2) {
-	super(scene.grid, scene.tilemap, scene.physics, pos);
+	let skin = SPRITES.get(S.MONSTER);
+	super(scene.tilemap, scene.physics,
+	      scene.grid, scene.caps, skin.getBounds(),
+	      pos, 4);
 	this.scene = scene;
 	this.sprite = new ShadowSprite(this);
-	this.skin = SPRITES.get(S.MONSTER);
-	this.collider = this.skin.getBounds();
-	this.setHitbox(this.collider as Rect);
+	this.skin = skin;
+	this.collider = skin.getBounds();
     }
 
     update() {
@@ -240,6 +242,7 @@ class Game extends GameScene {
     physics: PhysicsConfig;
     tilemap: TileMap;
     grid: GridConfig;
+    caps: PlatformerCaps;
     player: Player;
     thingies: number;
 
@@ -278,6 +281,7 @@ class Game extends GameScene {
 	    (v:string) => { return str2array(v); }
 	));
 	this.grid = new GridConfig(this.tilemap);
+	this.caps = new PlatformerCaps(this.grid, this.physics, new Vec2(4, 4));
 
 	// Place the player.
 	let p = this.tilemap.findTile((c:number) => { return c == T.PLAYER; });
