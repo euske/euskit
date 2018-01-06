@@ -217,7 +217,9 @@ class Monster extends PlanningEntity implements WorldObject {
 
     setAction(action: PlanAction) {
 	super.setAction(action);
-	log("setAction: "+action);
+        if (action !== null && !(action instanceof NullAction)) {
+	    log("setAction: "+action);
+        }
     }
 }
 applyMixins(Monster, [WorldObject]);
