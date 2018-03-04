@@ -122,6 +122,18 @@ class EntityField {
 	}
 	return false;
     }
+
+    filterEntities(f: (e:Entity)=>boolean) {
+	let a:Entity[] = [];
+	for (let entity1 of this.entities) {
+	    if (entity1.isRunning() && !f(entity1)) {
+		a.push(entity1);
+	    }
+	}
+        for (let entity1 of a) {
+            entity1.stop();
+        }
+    }
 }
 
 

@@ -374,6 +374,26 @@ class BannerBox extends Widget {
 }
 
 
+//  TextParticle
+//
+class TextParticle extends BannerBox {
+
+    movement: Vec2 = null;
+
+    constructor(pos: Vec2, frame: Rect, font: Font, lines: string[], lineSpace=4) {
+	super(frame, font, lines, lineSpace);
+	this.sprite.pos = pos;
+    }
+
+    update() {
+	super.update();
+        if (this.movement !== null) {
+            this.sprite.pos = this.sprite.pos.add(this.movement);
+        }
+    }
+}
+
+
 //  TextTask
 //
 class TextTask extends Task {
