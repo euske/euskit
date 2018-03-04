@@ -42,6 +42,10 @@ class Player extends Entity {
     setMove(v: Vec2) {
 	this.usermove = v.scale(4);
     }
+
+    getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
+	return [this.scene.screen];
+    }
 }
 
 
