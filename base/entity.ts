@@ -167,8 +167,8 @@ class Entity extends Widget {
 	return super.chain(task, signal);
     }
 
-    start(taskList: TaskList) {
-	super.start(taskList);
+    started(taskList: TaskList) {
+	super.started(taskList);
 	this.field.addEntity(this);
     }
 

@@ -456,8 +456,8 @@ class DisplayTask extends TextTask {
 	this.font = dialog.textbox.font;
     }
 
-    start(taskList: TaskList) {
-	super.start(taskList);
+    started(taskList: TaskList) {
+	super.started(taskList);
 	this.text = this.dialog.textbox.wrapLines(this.text, this.font)
     }
 
@@ -536,8 +536,8 @@ class MenuTask extends TextTask {
 	return item;
     }
 
-    start(taskList: TaskList) {
-	super.start(taskList);
+    started(taskList: TaskList) {
+	super.started(taskList);
 	for (let item of this.items) {
 	    item.seg = this.dialog.textbox.addSegment(item.pos, item.text);
 	}
@@ -701,7 +701,7 @@ class DialogBox extends Widget {
 	    task = this.getCurrentTask();
 	    if (task === null) break;
 	    if (task.isScheduled()) {
-		task.start(this);
+		task.started(this);
 	    }
 	    if (task.isRunning()) {
 		task.tick();
@@ -753,7 +753,7 @@ class DialogBox extends Widget {
 	    let task = this.getCurrentTask();
 	    if (task === null) break;
 	    if (task.isScheduled()) {
-		task.start(this);
+		task.started(this);
 	    }
 	    task.ff();
 	    if (task.isRunning()) break;

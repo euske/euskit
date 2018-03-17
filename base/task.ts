@@ -24,13 +24,10 @@ class Task {
     /** Start time. */
     startTime: number = Infinity;
 
-    /** Fired when this task is started. */
-    started: Signal;
     /** Fired when this task is stopped. */
     stopped: Signal;
 
     constructor() {
-	this.started = new Signal(this);
 	this.stopped = new Signal(this);
     }
 
@@ -55,12 +52,11 @@ class Task {
     }
 
     /** Invoked when the task is started. */
-    start(taskList: TaskList) {
+    started(taskList: TaskList) {
 	if (this.state == TaskState.Scheduled) {
 	    this.state = TaskState.Running;
             this.taskList = taskList;
 	    this.startTime = getTime();
-	    this.started.fire();
 	}
     }
 
@@ -152,8 +148,8 @@ class SoundTask extends Task {
 	this.soundEnd = soundEnd;
     }
 
-    start(taskList: TaskList) {
-	super.start(taskList);
+    started(taskList: TaskList) {
+	super.started(taskList);
 	this.sound.currentTime = this.soundStart;
 	this.sound.play();
     }
@@ -209,7 +205,7 @@ class ParallelTaskList extends Task implements TaskList {
     tick() {
 	for (let task of this.tasks) {
 	    if (task.isScheduled()) {
-		task.start(this);
+		task.started(this);
 	    }
 	    if (task.isRunning()) {
 		task.tick();
@@ -290,7 +286,7 @@ class SequentialTaskList extends Task implements TaskList {
 	    if (task === null) break;
             // Starts the next task.
 	    if (task.isScheduled()) {
-		task.start(this);
+		task.started(this);
 	    }
 	    if (task.isRunning()) {
 		task.tick();

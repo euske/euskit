@@ -119,8 +119,8 @@ class Widget extends Task {
 	return super.chain(task, signal);
     }
 
-    start(taskList: TaskList) {
-	super.start(taskList);
+    started(taskList: TaskList) {
+	super.started(taskList);
 	this.layer.addWidget(this);
     }
 
