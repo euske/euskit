@@ -456,8 +456,8 @@ class DisplayTask extends TextTask {
 	this.font = dialog.textbox.font;
     }
 
-    start() {
-	super.start();
+    start(taskList: TaskList) {
+	super.start(taskList);
 	this.text = this.dialog.textbox.wrapLines(this.text, this.font)
     }
 
@@ -536,8 +536,8 @@ class MenuTask extends TextTask {
 	return item;
     }
 
-    start() {
-	super.start();
+    start(taskList: TaskList) {
+	super.start(taskList);
 	for (let item of this.items) {
 	    item.seg = this.dialog.textbox.addSegment(item.pos, item.text);
 	}
@@ -701,13 +701,13 @@ class DialogBox extends Widget {
 	    task = this.getCurrentTask();
 	    if (task === null) break;
 	    if (task.isScheduled()) {
-		task.start();
+		task.start(this);
 	    }
 	    if (task.isRunning()) {
 		task.tick();
 		break;
 	    }
-	    this.removeTask(task);
+	    this.remove(task);
 	}
 	if (this.autoHide && task === null) {
 	    this.sprite.visible = false;
@@ -753,11 +753,11 @@ class DialogBox extends Widget {
 	    let task = this.getCurrentTask();
 	    if (task === null) break;
 	    if (task.isScheduled()) {
-		task.start();
+		task.start(this);
 	    }
 	    task.ff();
 	    if (task.isRunning()) break;
-	    this.removeTask(task);
+	    this.remove(task);
 	}
     }
 
@@ -765,15 +765,16 @@ class DialogBox extends Widget {
 	return (0 < this.queue.length)? this.queue[0] : null;
     }
 
-    addTask(task: TextTask) {
-	task.tasklist = this.tasklist;
-	this.queue.push(task);
+    add(task: Task) {
+        if (task instanceof TextTask) {
+	    this.queue.push(task);
+        }
 	if (this.autoHide) {
 	    this.sprite.visible = true;
 	}
     }
 
-    removeTask(task: TextTask) {
+    remove(task: TextTask) {
 	removeElement(this.queue, task);
 	if (this.autoHide && this.queue.length == 0) {
 	    this.sprite.visible = false;
@@ -782,7 +783,7 @@ class DialogBox extends Widget {
 
     addPause(duration: number) {
 	let task = new PauseTask(this, duration);
-	this.addTask(task);
+	this.add(task);
 	return task;
     }
 
@@ -792,19 +793,19 @@ class DialogBox extends Widget {
 	task.speed = (0 <= speed)? speed : this.speed;
 	task.sound = (sound !== null)? sound : this.sound;
 	task.font = (font !== null)? font : this.textbox.font;
-	this.addTask(task);
+	this.add(task);
 	return task;
     }
 
     addMenu() {
 	let task = new MenuTask(this);
-	this.addTask(task);
+	this.add(task);
 	return task;
     }
 
     addWait() {
 	let task = new WaitTask(this);
-	this.addTask(task);
+	this.add(task);
 	return task;
     }
 }

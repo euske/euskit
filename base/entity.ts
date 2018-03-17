@@ -19,8 +19,8 @@ class Widget extends Task {
 	return super.chain(task, signal);
     }
 
-    start() {
-	super.start();
+    start(taskList: TaskList) {
+	super.start(taskList);
 	this.layer.addWidget(this);
     }
 
@@ -166,8 +166,8 @@ class Entity extends Widget {
 	return super.chain(task, signal);
     }
 
-    start() {
-	super.start();
+    start(taskList: TaskList) {
+	super.start(taskList);
 	this.field.addEntity(this);
     }
 

@@ -7,17 +7,6 @@ enum TaskState {
     Finished,
 }
 
-interface TaskList {
-    /** Add a new Task to the list.
-     * @param task Task to add.
-     */
-    add(task: Task): void;
-
-    /** Remove an existing Task from the list.
-     * @param task Task to remove.
-     */
-    remove(task: Task): void;
-}
 
 /** Object that represents a continuous process.
  *  tick() method is invoked at every frame.
@@ -27,17 +16,21 @@ class Task {
     /** True if the task is running. */
     state: TaskState = TaskState.Scheduled;
     /** List to which this task belongs. */
-    tasklist: TaskList = null;
+    taskList: TaskList = null;
     /** Lifetime.
      * This task automatically terminates itself after
      * the time specified here passes. */
     lifetime: number = Infinity;
     /** Start time. */
-    startTime: number = 0;
-    /** Signal object which is fired when this task stops. */
+    startTime: number = Infinity;
+
+    /** Fired when this task is started. */
+    started: Signal;
+    /** Fired when this task is stopped. */
     stopped: Signal;
 
     constructor() {
+	this.started = new Signal(this);
 	this.stopped = new Signal(this);
     }
 
@@ -62,10 +55,12 @@ class Task {
     }
 
     /** Invoked when the task is started. */
-    start() {
+    start(taskList: TaskList) {
 	if (this.state == TaskState.Scheduled) {
 	    this.state = TaskState.Running;
+            this.taskList = taskList;
 	    this.startTime = getTime();
+	    this.started.fire();
 	}
     }
 
@@ -86,15 +81,15 @@ class Task {
 	case TaskState.Running:
 	    signal = (signal !== null)? signal : this.stopped;
 	    signal.subscribe(() => {
-		if (this.tasklist !== null) {
-		    this.tasklist.add(next);
+		if (this.taskList !== null) {
+		    this.taskList.add(next);
 		}
 	    });
 	    break;
 	case TaskState.Finished:
             // Start immediately if this task has already finished.
-	    if (this.tasklist !== null) {
-		this.tasklist.add(next);
+	    if (this.taskList !== null) {
+		this.taskList.add(next);
 	    }
 	}
 	return next;
@@ -157,8 +152,8 @@ class SoundTask extends Task {
 	this.soundEnd = soundEnd;
     }
 
-    start() {
-	super.start();
+    start(taskList: TaskList) {
+	super.start(taskList);
 	this.sound.currentTime = this.soundStart;
 	this.sound.play();
     }
@@ -178,6 +173,19 @@ class SoundTask extends Task {
     }
 }
 
+/** Abstract list of Tasks
+ */
+interface TaskList {
+    /** Add a new Task to the list.
+     * @param task Task to add.
+     */
+    add(task: Task): void;
+
+    /** Remove an existing Task from the list.
+     * @param task Task to remove.
+     */
+    remove(task: Task): void;
+}
 
 /** List of Tasks that run parallely.
  */
@@ -201,7 +209,7 @@ class ParallelTaskList extends Task implements TaskList {
     tick() {
 	for (let task of this.tasks) {
 	    if (task.isScheduled()) {
-		task.start();
+		task.start(this);
 	    }
 	    if (task.isRunning()) {
 		task.tick();
@@ -220,7 +228,6 @@ class ParallelTaskList extends Task implements TaskList {
      * @param task Task to add.
      */
     add(task: Task) {
-	task.tasklist = this;
 	this.tasks.push(task);
     }
 
@@ -259,7 +266,6 @@ class SequentialTaskList extends Task implements TaskList {
      * @param task Task to add.
      */
     add(task: Task) {
-	task.tasklist = this.tasklist;
 	this.tasks.push(task);
     }
 
@@ -284,7 +290,7 @@ class SequentialTaskList extends Task implements TaskList {
 	    if (task === null) break;
             // Starts the next task.
 	    if (task.isScheduled()) {
-		task.start();
+		task.start(this);
 	    }
 	    if (task.isRunning()) {
 		task.tick();
