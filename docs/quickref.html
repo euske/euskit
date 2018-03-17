@@ -212,12 +212,12 @@ A <code>Scene</code> or <code>Entity</code> is responsible to change its positio
   <td>Sprite with a fixed <code>ImageSource</code> and position.</td></tr>
 <tr class=ctor><td><code>new EntitySprite(<u>entity</u>)</code></td>
   <td>Sprite that belongs to an <code>Entity</code>.</td></tr>
-<tr><td><code>.visible</code></td>
-  <td><code>true</code> if the sprite is visible.</td></tr>
 <tr><td><code>.scale</code></td>
   <td>Vector for the scale of the sprite image.</td></tr>
 <tr><td><code>.rotation</code></td>
   <td>Rotation of the sprite image (in radian).</td></tr>
+<tr><td><code>.isVisible()</code></td>
+  <td><code>true</code> if the sprite is visible.</td></tr>
 <tr><td><code>.getBounds([pos])</code></td>
   <td>Returns the bounds for the given <code>pos</code>.</td></tr>
 <tr><td><code>.render(ctx)</code></td>
@@ -280,6 +280,8 @@ Sprites. Each Entity can moves on its own.
 <table border>
 <tr class=ctor><td><code>new Entity(pos)</code></td>
   <td>Creates a new entity at a given position.</td></tr>
+<tr><td><code>.visible</code></td>
+  <td><code>true</code> if the entity sprite is visible.</td></tr>
 <tr><td><code>.sprite</code></td>
   <td><code>Sprite</code> that belongs to this entity.</td></tr>
 <tr><td><code>.skin</code></td>
@@ -726,37 +728,66 @@ Suitable for game title or help screen, etc.
 <p>
 A <code>Font</code> represents a monospace bitmap font.
 <table border>
-<tr class=ctor><td><code>new Font(glyphs, <em>[color, [scale]]</em>)</code></td>
-  <td>Creates a <code>Font</code> with a given <code>glyphs</code>.</td></tr>
+<tr class=ctor><td><code>new Font(glyphs, <u>color</u>=null, <u>scale</u>=1)</code></td>
+  <td>Font with a given <code>glyphs</code>.</td></tr>
+<tr class=ctor><td><code>new InvertedFont(glyphs,<br>&nbsp; <u>color</u>=null, <u>scale</u>=1)</code></td>
+  <td>Inverted Font.</td></tr>
+<tr class=ctor><td><code>new ShadowFont(glyphs,<br>&nbsp; <u>color</u>=null, <u>scale</u>=1,<br>&nbsp; <u>shadowColor</u>='black',<br>&nbsp; <u>shadowDist</u>=1</em>)</code></td>
+  <td>Font with shadow.</td></tr>
 <tr><td><code>.width</code></td>
-  <td>The width of individual character.</td></tr>
+  <td>Width of each character.</td></tr>
 <tr><td><code>.height</code></td>
-  <td>The height of individual character.</td></tr>
+  <td>Height of each character.</td></tr>
+<tr><td><code>.background</code></td>
+  <td>Background color (<code>null</code> for transparent).</td></tr>
 <tr><td><code>.getSize(text)</code></td>
   <td>Computes the pixel size for a given text.</td></tr>
 <tr><td><code>.renderString(ctx, text, x, y)</code></td>
   <td>Draws the text at a given location.</td></tr>
 </table>
 
-<a name="ShadowFont"><h3>ShadowFont : <a href="#Font">Font</a> (<code>text.ts</code>)</h3></a>
+<a name="TextBox"><h3>TextBox : <a href="#ImageSource">ImageSource</a> (<code>text.ts</code>)</h3></a>
 <p>
-A <code>Font</code> with shadow.
+A type of <code>ImageSource</code> represents a text display.
 <table border>
-<tr class=ctor><td><code>new ShadowFont(glyphs,<br>&nbsp; <em>[color, [scale,<br>&nbsp; [shadowcolor,<br>&nbsp; [shadowdist]]]]</em>)</code></td>
-  <td>Creates a <code>ShadowFont</code> with a given <code>glyphs</code>.</td></tr>
-<tr class=inherited><td><code>.width</code></td>
-  <td>The width of individual character.</td></tr>
-<tr class=inherited><td><code>.height</code></td>
-  <td>The height of individual character.</td></tr>
-<tr class=inherited><td><code>.getSize(text)</code></td>
+<tr class=ctor><td><code>new Text(<u>frame</u>, <u>font</u>=null)</code></td>
+  <td>TextBox with a given frame and font.</td></tr>
+<tr><td><code>.frame</code></td>
+  <td>Area of text displayed.</td></tr>
+<tr><td><code>.font</code></td>
+  <td>Default font.</td></tr>
+<tr><td><code>.header</code></td>
+  <td>Header string for each line.</td></tr>
+<tr><td><code>.lineSpace</code></td>
+  <td>Space between lines.</td></tr>
+<tr><td><code>.padding</code></td>
+  <td>Padding between text and frame.</td></tr>
+<tr><td><code>.background</code></td>
+  <td>Background color (<code>null</code> for transparency).</td></tr>
+<tr><td><code>.borderColor</code></td>
+  <td>Border color (<code>null</code> for no border).</td></tr>
+<tr><td><code>.borderWidth</code></td>
+  <td>Border width.</td></tr>
+<tr><td><code>.getSize(lines, <u>font</u>=null)</code></td>
   <td>Computes the pixel size for a given text.</td></tr>
-<tr class=inherited><td><code>.renderString(ctx, text, x, y)</code></td>
-  <td>Draws the text at a given location.</td></tr>
-<tr><td><code>.getSize2(text)</code></td>
-  <td>Computes the pixel size for a given text (including the shadow).</td></tr>
+<tr><td><code>.getBounds()</code></td>
+  <td>Returns the frame rectangle.</td></tr>
+<tr><td><code>.getInnerBounds()</code></td>
+  <td>Returns the area that the actual text is displayed.</td></tr>
+<tr><td><code>.clear()</code></td>
+  <td>Clears all the texts displayed.</td></tr>
+<tr><td><code>.addSegment(p, text, <u>font</u>=null)</code></td>
+  <td>Add a text segment at a given location.</td></tr>
+<tr><td><code>.addText(text, <u>font</u>=null)</code></td>
+  <td>Append a text.</td></tr>
+<tr><td><code>.addNewline(<u>font</u>=null)</code></td>
+  <td>Append a newline.</td></tr>
+<tr><td><code>.putText(lines,<br>&nbsp; <u>halign</u>='left', <u>valign</u>='top')</code></td>
+  <td>Layout the given lines.</td></tr>
+<tr><td><code>.render(ctx)</code></td>
+  <td>Draws the text.</td></tr>
 </table>
 
-<a name="TextBox"><h3>TextBox : <a href="#Sprite">Sprite</a> (<code>text.ts</code>)</h3></a>
 <a name="DialogBox"><h3>DialogBox : <a href="#TextBox">TextBox</a> (<code>text.ts</code>)</h3></a>
 
 <a name="animation"><h2>Animation Library</h2></a>
