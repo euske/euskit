@@ -23,13 +23,30 @@ addInitHook(() => {
 });
 
 
+//  Blinker
+//
+class Blinker extends Entity {
+
+    interval: number = 1.0;
+
+    constructor(entity: Entity) {
+	super(entity.pos);
+	this.skin = entity.skin;
+    }
+
+    update() {
+        super.update();
+        this.visible = (phase(this.getTime(), this.interval) == 0);
+    }
+}
+
+
 //  Player
 //
 class Player extends Entity {
 
     scene: Racing;
     usermove: Vec2 = new Vec2();
-    alive: boolean = true;
 
     constructor(scene: Racing, pos: Vec2) {
 	super(pos);
@@ -40,9 +57,7 @@ class Player extends Entity {
 
     update() {
 	super.update();
-	if (this.alive) {
-	    this.moveIfPossible(this.usermove);
-	}
+	this.moveIfPossible(this.usermove);
     }
 
     setMove(v: Vec2) {
@@ -170,7 +185,7 @@ class Racing extends GameScene {
 
     update() {
 	super.update();
-	if (this.player.alive) {
+	if (this.player.isRunning()) {
 	    let b = this.player.getCollider().move(0, this.track.offset) as Rect;
 	    if (this.track.isFloor(b)) {
 		let speed = int((1.0-this.player.pos.y/this.screen.height)*16);
@@ -178,12 +193,12 @@ class Racing extends GameScene {
 		this.score += int(lowerbound(0, Math.sqrt(speed)-2));
 		this.updateScore();
 	    } else {
-		this.player.alive = false;
-		let blinker = new Blinker(this.player.sprite);
+                let blinker = new Blinker(this.player);
 		blinker.interval = 0.2;
 		blinker.lifetime = 1.0;
 		blinker.stopped.subscribe(() => { this.init(); });
-		this.add(blinker);
+		this.player.chain(blinker);
+                this.player.stop();
 		APP.setMusic();
 		APP.playSound('plunge');
 	    }

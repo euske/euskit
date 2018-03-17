@@ -97,8 +97,8 @@ class Player extends Entity {
     collidedWith(entity: Entity) {
 	if (entity instanceof EnemyBase) {
 	    APP.playSound('explosion');
-	    this.stop();
 	    this.chain(new Explosion(this.pos));
+	    this.stop();
 	}
     }
 }

@@ -8,13 +8,16 @@
  */
 class Sprite {
 
-    /** True if this sprite is rendered. */
-    visible: boolean = true;
     /** Image scaling. Negative values can be used for flipped images. */
     scale: Vec2 = new Vec2(1, 1);
     /** Image rotation (in radian). */
     rotation: number = 0;
     alpha: number = 1.0;
+
+    /** Returns true if the sprite is visible. */
+    isVisible(): boolean {
+        return true;
+    }
 
     /** Returns the image source of the sprite. */
     getSkin(): ImageSource {
@@ -30,7 +33,7 @@ class Sprite {
 
     /** Returns true if the sprite can respond to mouse event. */
     mouseSelectable(p: Vec2): boolean {
-	return this.visible && this.getBounds().containsPt(p);
+	return this.isVisible() && this.getBounds().containsPt(p);
     }
 
     /** Returns the bounds of the sprite at a given pos. */
@@ -79,6 +82,8 @@ class Sprite {
  */
 class FixedSprite extends Sprite {
 
+    /** Visibility */
+    visible: boolean = true;
     /** Image source to display. */
     skin: ImageSource;
     /** Sprite position. */
@@ -209,7 +214,7 @@ class SpriteLayer {
 
     render(ctx: CanvasRenderingContext2D, window: Rect=null) {
         this.apply((sprite: Sprite) => {
-	    if (sprite.visible) {
+	    if (sprite.isVisible()) {
 		sprite.render(ctx);
 	    }
             return false;

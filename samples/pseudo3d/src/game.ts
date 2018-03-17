@@ -175,7 +175,7 @@ class Camera3 extends Camera {
 	let sprites = {} as SpriteDictionary;
         for (let layer of this.layers) {
 	    for (let sprite of layer.getSprites()) {
-		if (sprite.visible) {
+		if (sprite.isVisible()) {
 		    let bounds = sprite.getBounds();
 		    if (bounds !== null && bounds.overlapsRect(window)) {
 		        let x = int((bounds.x+bounds.width/2)/ts);
@@ -220,7 +220,7 @@ class Camera3 extends Camera {
 	// Draw floating objects.
         for (let layer of this.layers) {
 	    for (let sprite of layer.getSprites()) {
-	        if (sprite.visible) {
+	        if (sprite.isVisible()) {
 		    let bounds = sprite.getBounds();
 		    if (bounds === null) {
 		        sprite.render(ctx);

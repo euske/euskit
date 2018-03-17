@@ -93,30 +93,3 @@ class PolyTweenerInOut extends PolyTweener {
 	return this.srcpos.interpolate(this.dstpos, t);
     }
 }
-
-
-//  Blinker
-//
-class Blinker extends Widget {
-
-    sprite: Sprite;
-    interval: number = 1.0;
-
-    constructor(sprite: Sprite) {
-	super();
-	this.sprite = sprite;
-    }
-
-    getSprites(): Sprite[] {
-	let sprites = super.getSprites();
-	if (this.sprite !== null) {
-	    sprites.push(this.sprite);
-	}
-	return sprites;
-    }
-
-    update() {
-	super.update();
-	this.sprite.visible = (phase(this.getTime(), this.interval) == 0);
-    }
-}

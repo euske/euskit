@@ -18,6 +18,11 @@ class EntitySprite extends Sprite {
 	this.entity = entity;
     }
 
+    /** Returns true if the sprite is visible. */
+    isVisible(): boolean {
+        return this.entity.visible;
+    }
+
     /** Returns the image source of the sprite. */
     getSkin(): ImageSource {
 	return this.entity.skin;
@@ -147,6 +152,7 @@ class Entity extends Widget {
 
     pos: Vec2;
     sprite: Sprite;
+    visible: boolean = true;
     skin: ImageSource = null;
     collider: Collider = null;
 
