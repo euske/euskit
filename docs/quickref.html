@@ -178,7 +178,7 @@ body { margin: 0; padding: 0; }
 
 <a name="basic-objects"><h2>Basic Objects</h2></a>
 
-<a name="ImageSource"><h3>ImageSource (<code>sprite.ts</code>)</h3></a>
+<a name="ImageSource"><h3>ImageSource (<code>imgsrc.ts</code>)</h3></a>
 <p>
 An <code>ImageSource</code> is an abstract object to render something on screen.
 <table border>
@@ -308,7 +308,7 @@ Sprites. Each Entity can moves on its own.
   <td>Draws extra objects around the entity sprite.</td></tr>
 </table>
 
-<a name="SpriteLayer"><h3>SpriteLayer (<code>layer.ts</code>)</h3></a>
+<a name="SpriteLayer"><h3>SpriteLayer (<code>sprite.ts</code>)</h3></a>
 <p>
 A <code>SpriteLayer</code> contains a set of objects that can be rendered
 at once and interact each other.
@@ -630,7 +630,7 @@ Suitable for tile-based platformer games.
   <td>Invoked when the entity is landed on a platform.</td></tr>
 </table>
 
-<a name="ScrollLayer"><h3>ScrollLayer : <a href="#Layer">Layer</a> (<code>layer.ts</code>)</h3></a>
+<a name="ScrollLayer"><h3>ScrollLayer : <a href="#Layer">Layer</a> (<code>sprite.ts</code>)</h3></a>
 <p>
 A <code>Layer</code> that can scroll the displayed area.
 Only shows the objects within the window.
@@ -1359,7 +1359,7 @@ and not explicitly created by a user.
   <td><code>true</code> if a specific tile exists within the given area.</td></tr>
 </table>
 
-<a name="SpriteSheet"><h3>SpriteSheet (<code>sprite.ts</code>)</h3></a>
+<a name="SpriteSheet"><h3>SpriteSheet (<code>imgsrc.ts</code>)</h3></a>
 <p>
 A set of <code>ImageSource</code> objects indexed by a number.
 <table border>

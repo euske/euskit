@@ -1,6 +1,7 @@
 /// <reference path="utils.ts" />
 /// <reference path="geom.ts" />
 /// <reference path="task.ts" />
+/// <reference path="sprite.ts" />
 /// <reference path="entity.ts" />
 
 
