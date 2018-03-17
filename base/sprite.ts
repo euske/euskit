@@ -125,12 +125,12 @@ class Widget extends Task {
     }
 
     started(taskList: TaskList) {
-	super.started(taskList);
-	this.layer.addWidget(this);
+        super.started(taskList);
+	this.layer.add(this);
     }
 
     stop() {
-	this.layer.removeWidget(this);
+	this.layer.remove(this);
 	super.stop();
     }
 
@@ -159,20 +159,20 @@ class SpriteLayer {
 	this.widgets = [];
     }
 
-    addSprite(sprite: Sprite) {
-	this.sprites.push(sprite);
+    add(obj: Sprite|Widget) {
+        if (obj instanceof Sprite) {
+	    this.sprites.push(obj);
+        } else if (obj instanceof Widget) {
+            this.widgets.push(obj);
+        }
     }
 
-    removeSprite(sprite: Sprite) {
-	removeElement(this.sprites, sprite);
-    }
-
-    addWidget(widget: Widget) {
-	this.widgets.push(widget);
-    }
-
-    removeWidget(widget: Widget) {
-	removeElement(this.widgets, widget);
+    remove(obj: Sprite|Widget) {
+        if (obj instanceof Sprite) {
+	    removeElement(this.sprites, obj);
+        } else if (obj instanceof Widget) {
+	    removeElement(this.widgets, obj);
+        }
     }
 
     getSprites(): Sprite[] {
