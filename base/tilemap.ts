@@ -1,6 +1,6 @@
 /// <reference path="utils.ts" />
 /// <reference path="geom.ts" />
-/// <reference path="sprite.ts" />
+/// <reference path="imgsrc.ts" />
 
 
 //  TileMap
