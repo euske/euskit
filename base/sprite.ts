@@ -301,10 +301,9 @@ class SpriteSheet {
 }
 
 
-/** Simple list of ImageSources.
- *  Used as placeholders for ImageSpriteSheet.
+/** Array of ImageSources.
  */
-class SimpleSpriteSheet extends SpriteSheet {
+class ArraySpriteSheet extends SpriteSheet {
 
     imgsrcs: ImageSource[];
 
