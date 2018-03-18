@@ -64,6 +64,13 @@ class Task {
     cleanup() {
     }
 
+    /** Invoked at every frame while the task is running. */
+    tick() {
+	if (this.lifetime <= this.getTime()) {
+	    this.stop();
+	}
+    }
+
     /** Terminates the task. */
     stop() {
 	if (this.state == TaskState.Running) {
@@ -93,13 +100,6 @@ class Task {
 	    }
 	}
 	return next;
-    }
-
-    /** Invoked at every frame while the task is running. */
-    tick() {
-	if (this.lifetime <= this.getTime()) {
-	    this.stop();
-	}
     }
 }
 

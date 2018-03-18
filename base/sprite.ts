@@ -181,7 +181,7 @@ class SingleWidget extends Widget {
         this.sprite = sprite;
     }
 
-    /** Returns a list of Sprites that are owned by this widget. */
+    /** Returns the list of Sprites that are owned by this widget. */
     getSprites(): Sprite[] {
 	return [this.sprite];
     }    

@@ -45,6 +45,7 @@ body { margin: 0; padding: 0; }
 <a href="#Widget">Widget</a>,
 <a href="#Entity">Entity</a>,
 <a href="#SpriteLayer">SpriteLayer</a>,
+<a href="#World">World</a>,
 <a href="#Scene">Scene</a>,
 <a href="#App">App</a>
 </div>
@@ -129,21 +130,21 @@ body { margin: 0; padding: 0; }
 <div style="position:absolute; margin:0; top:0; left:0;">
   <svg xmlns="http://www.w3.org/2000/svg"
        xmlns:xlink="http://www.w3.org/1999/xlink"
-       version="1.1" width="250" height="150">
+       version="1.1" width="250" height="160">
     <g transform="translate(1.5,1.5)">
       <g fill="none" stroke="black" stroke-width="1">
 	<line x1="140" y1="12" x2="55" y2="100" />
 	<line x1="140" y1="12" x2="175" y2="100" />
 	<ellipse cx="140" cy="12" rx="20" ry="12" fill="white" />
-	<rect x="0" y="55" width="110" height="92" fill="white" />
-	<rect x="120" y="55" width="110" height="92" fill="white" />
-	<rect x="30" y="62" width="50" height="16" fill="white" />
-	<rect x="18" y="84" width="80" height="40" fill="white" />
-	<rect x="14" y="88" width="80" height="40" fill="white" />
-	<rect x="10" y="92" width="80" height="40" fill="white" />
-	<rect x="30" y="114" width="16" height="16" />
-	<rect x="33" y="117" width="10" height="10" />
-	<line x1="45" y1="106" x2="38" y2="122" />
+	<rect x="0" y="55" width="110" height="96" fill="white" />
+	<rect x="120" y="55" width="110" height="96" fill="white" />
+	<rect x="6" y="72" width="96" height="72" fill="white" />
+	<rect x="18" y="80" width="80" height="40" fill="white" />
+	<rect x="14" y="84" width="80" height="40" fill="white" />
+	<rect x="10" y="88" width="80" height="40" fill="white" />
+	<rect x="30" y="110" width="16" height="16" />
+	<rect x="33" y="113" width="10" height="10" />
+	<line x1="45" y1="102" x2="38" y2="118" />
       </g>
       <g style="font-size: 75%;">
 	<text x="140" y="15" text-anchor="middle">App</text>
@@ -151,10 +152,10 @@ body { margin: 0; padding: 0; }
 	<text x="55" y="52" text-anchor="middle">Scene</text>
 	<text x="175" y="52" text-anchor="middle">Scene</text>
 	<text x="240" y="100" text-anchor="begin">...</text>
-	<text x="55" y="74" text-anchor="middle">Camera</text>
-	<text x="45" y="106" text-anchor="begin">Sprite</text>
-	<text x="48" y="126" text-anchor="begin">Entity</text>
-	<text x="70" y="144" text-anchor="begin">SpriteLayer</text>
+	<text x="55" y="70" text-anchor="middle">World</text>
+	<text x="45" y="102" text-anchor="begin">Sprite</text>
+	<text x="48" y="122" text-anchor="begin">Entity</text>
+	<text x="10" y="140" text-anchor="begin">SpriteLayer</text>
       </g>
     </g>
   </svg>
@@ -164,14 +165,14 @@ body { margin: 0; padding: 0; }
     Resource management (images and sounds) and event loop.<br>
     <a href="#Scene"><code>Scene</code></a>:
     Game state management and event handling.<br>
+    <a href="#World"><code>World</code></a>:
+    Stack of layers to be rendered.<br>
     <a href="#Entity"><code>Entity</code></a>:
     In-game character.<br>
     <a href="#Sprite"><code>Sprite</code></a>:
     Graphical object to be shown.<br>
     <a href="#SpriteLayer"><code>SpriteLayer</code></a>:
     Container where Sprites are placed in.<br>
-    <a href="#Camera"><code>Camera</code></a>:
-    Stack of layers to be rendered.<br>
   </div>
 </div>
 
@@ -218,17 +219,17 @@ A <code>Scene</code> or <code>Entity</code> is responsible to change its positio
   <td>Rotation of the sprite image (in radian).</td></tr>
 <tr><td><code>.isVisible()</code></td>
   <td><code>true</code> if the sprite is visible.</td></tr>
-<tr><td><code>.getBounds([pos])</code></td>
+<tr><td><code>.getBounds(<u>pos</u>=null)</code></td>
   <td>Returns the bounds for the given <code>pos</code>.</td></tr>
-<tr><td><code>.render(ctx)</code></td>
+<tr><td><code>.render(<u>ctx</u>)</code></td>
   <td>Draws the sprite at the given position.</td></tr>
 <tr class=override><td><code>.getSkin()</code></td>
   <td>Returns the <code>ImageSource</code> of the sprite's content.</td></tr>
 <tr class=override><td><code>.getPos()</code></td>
   <td>Returns the position of the sprite.</td></tr>
-<tr class=override><td><code>.mouseSelectable(p)</code></td>
+<tr class=override><td><code>.mouseSelectable(<u>p</u>)</code></td>
   <td>Returns <code>true</code> if the sprite can be focused for the given position.</td></tr>
-<tr class=override><td><code>.renderImage(ctx)</code></td>
+<tr class=override><td><code>.renderImage(<u>ctx</u>)</code></td>
   <td>Draws the actual image of the sprite.</td></tr>
 </table>
 
@@ -243,10 +244,10 @@ and managed by <code>TaskList</code>.
   <td>Task that waits a certain amount and then execute the given function.</td></tr>
 <tr class=ctor><td><code>new SoundTask(<br>&nbsp; <u>sound</u>, <u>soundStart</u>=MP3_GAP, <u>soundEnd</u>=0)</code></td>
   <td>Task that plays a sound.</td></tr>
+<tr><td><code>.parent</code></td>
+  <td><code>TaskList</code> that the task belongs to.</td></tr>
 <tr><td><code>.state</code></td>
   <td>Either one of <code>Scheduled</code>, <code>Running</code> or <code>Finished</code>.</td>
-<tr><td><code>.tasklist</code></td>
-  <td><code>TaskList</code> that the task belongs to.</td></tr>
 <tr><td><code>.lifetime</code></td>
   <td>Duration that the task can run.</td></tr>
 <tr><td><code>.startTime</code></td>
@@ -255,22 +256,32 @@ and managed by <code>TaskList</code>.
   <td>Signal fired when the task stops.</td></tr>
 <tr><td><code>.getTime()</code></td>
   <td>Elapsed time since the task has started (in seconds).</td></tr>
-<tr><td><code>.start()</code></td>
-  <td>Invoked when the task is started.</td></tr>
+<tr><td><code>.isRunning()</code></td>
+  <td>True if the task is in running state.</td></tr>
 <tr><td><code>.stop()</code></td>
   <td>Terminates the task.</td></tr>
-<tr><td><code>.tick()</code></td>
-  <td>Invoked at every frame while the task is running.</td></tr>
 <tr><td><code>.chain(next)</code></td>
   <td>Schedules another task.</td></tr>
-<tr class=override><td><code>.update()</code></td>
-  <td>Updates for the current frame.</td></tr>
+<tr><td><code>.init()</code></td>
+  <td>Invoked when the task is started.</td></tr>
+<tr><td><code>.cleanup()</code></td>
+  <td>Invoked when the task is stopped.</td></tr>
+<tr class=override><td><code>.tick()</code></td>
+  <td>Invoked at every frame while the task is running.</td></tr>
 </table>
 
 <a name="Widget"><h3>Widget : <a href="#Task">Task</a> (<code>entity.ts</code>)</h3></a>
 <p>
 A <code>Widget</code> is a task that belongs to a <code>SpriteLayer</code> and
 has some visual aspect.
+<table border>
+<tr class=ctor><td><code>new Widget()</code></td>
+  <td>Creates a new empty widget.</td></tr>
+<tr class=ctor><td><code>new SingleWidget(<u>sprite</u>)</code></td>
+  <td>Creates a widget with a single sprite.</td></tr>
+<tr class=override><td><code>.getSprites()</code></td>
+  <td>Returns the list of sprites owned by this widget.</td></tr>
+</table>
 
 <a name="Entity"><h3>Entity : <a href="#Widget">Widget</a> (<code>entity.ts</code>)</h3></a>
 <p>
@@ -278,36 +289,36 @@ An <code>Entity</code> is a main object for game characters.
 Each Entity has its own process, <code>Collider</code> and one or more
 Sprites. Each Entity can moves on its own.
 <table border>
-<tr class=ctor><td><code>new Entity(pos)</code></td>
+<tr class=ctor><td><code>new Entity(<u>pos</u>)</code></td>
   <td>Creates a new entity at a given position.</td></tr>
-<tr><td><code>.visible</code></td>
-  <td><code>true</code> if the entity sprite is visible.</td></tr>
+<tr><td><code>.pos</code></td>
+  <td>Entity position.</td></tr>
 <tr><td><code>.sprite</code></td>
   <td><code>Sprite</code> that belongs to this entity.</td></tr>
+<tr><td><code>.visible</code></td>
+  <td><code>true</code> if the entity sprite is visible.</td></tr>
 <tr><td><code>.skin</code></td>
   <td><code>ImageSource</code> that is used for the sprite.</td></tr>
 <tr><td><code>.collider</code></td>
   <td><code>Rect</code>/<code>Circle</code> for the entity's collider.</td></tr>
-<tr><td><code>.getCollider([pos])</code></td>
+<tr><td><code>.getCollider(<u>pos</u>=null)</code></td>
   <td>Returns the collider for the given <code>pos</code>.</td></tr>
-<tr><td><code>.canMove(v)</code></td>
+<tr><td><code>.canMove(<u>v</u>, <u>context</u>=null)</code></td>
   <td><code>true</code> if the entity is movable toward <code>v</code>.</td></tr>
-<tr><td><code>.getMove(v)</code></td>
+<tr><td><code>.getMove(<u>pos</u>, <u>v</u>, <u>context</u>=null)</code></td>
   <td>Trims the vector <code>v</code> so that it doesn't collide.</td></tr>
-<tr><td><code>.movePos(v)</code></td>
+<tr><td><code>.movePos(<u>v</u>)</code></td>
   <td>Moves the entity by <code>v</code>.</td></tr>
-<tr><td><code>.moveIfPossible(v, <em>[context]</em>)</code></td>
+<tr><td><code>.moveIfPossible(<u>v</u>, <u>context</u>=null)</code></td>
   <td>Moves the entity by <code>v</code> without colliding obstacles.</td></tr>
-<tr><td><code>.getSprites()</code></td>
-  <td>Returns a list of extra <code>Sprites</code>s for this entity.</td></tr>
-<tr class=override><td><code>.getObstaclesFor(range, context)</code></td>
+<tr class=override><td><code>.getObstaclesFor(<br>&nbsp; <u>range</u>, <u>v</u>, <u>context</u>)</code></td>
   <td>Returns a list of <code>Shape</code>s within <code>range</code>.</td></tr>
-<tr class=override><td><code>.getFencesFor(range, context)</code></td>
+<tr class=override><td><code>.getFencesFor(<br>&nbsp; <u>range</u>, <u>v</u>, <u>context</u>)</code></td>
   <td>Returns a list of bounding rectangles that limits the entity within.</td></tr>
-<tr class=override><td><code>.collidedWith(entity)</code></td>
+<tr class=override><td><code>.collidedWith(<u>entity</u>)</code></td>
   <td>Invoked when the entity collides another entity.</td></tr>
-<tr class=override><td><code>.renderExtra(ctx)</code></td>
-  <td>Draws extra objects around the entity sprite.</td></tr>
+<tr class=override><td><code>.renderExtra(<u>ctx</u>)</code></td>
+  <td>Draws extra effects for the entity.</td></tr>
 </table>
 
 <a name="SpriteLayer"><h3>SpriteLayer (<code>sprite.ts</code>)</h3></a>
