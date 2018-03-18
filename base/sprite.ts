@@ -3,6 +3,12 @@
 /// <reference path="task.ts" />
 
 
+/** SpriteFunc */
+interface SpriteFunc {
+    (sprite: Sprite): boolean;
+}
+
+
 /** Object that has a size and rotation and draws itself on screen.
  *  It can also interact with mouse/touch.
  */
@@ -32,14 +38,18 @@ class Sprite {
 	return null as Vec2;
     }
 
-    /** Returns true if the sprite can respond to mouse event. */
+    /** Returns true if the sprite can respond to mouse event. 
+     * @param p Mouse pointer.
+     */
     mouseSelectable(p: Vec2): boolean {
         if (!this.isVisible()) return false;
         let bounds = this.getBounds();
 	return (bounds !== null && bounds.containsPt(p));
     }
 
-    /** Returns the bounds of the sprite at a given pos. */
+    /** Returns the bounds of the sprite at a given pos. 
+     * @param pos Location.
+     */
     getBounds(pos: Vec2=null): Rect {
 	let skin = this.getSkin();
 	if (skin === null) return null;
@@ -50,7 +60,9 @@ class Sprite {
 	return skin.getBounds().add(pos);
     }
 
-    /** Renders itself in the given context. */
+    /** Renders itself in the given context. 
+     * @param ctx Rendering context.
+     */
     render(ctx: CanvasRenderingContext2D) {
 	ctx.save();
 	this.setupContext(ctx);
@@ -58,6 +70,9 @@ class Sprite {
 	ctx.restore();
     }
 
+    /** Prepares the context for drawing. 
+     * @param ctx Rendering context.
+     */
     setupContext(ctx: CanvasRenderingContext2D) {
 	let pos = this.getPos();
 	if (pos !== null) {
@@ -70,7 +85,9 @@ class Sprite {
 	ctx.globalAlpha = this.alpha;
     }
 
-    /** Renders its image. */
+    /** Renders its image.
+     * @param ctx Rendering context.
+     */
     renderImage(ctx: CanvasRenderingContext2D) {
 	let skin = this.getSkin();
 	if (skin !== null) {
@@ -92,6 +109,10 @@ class FixedSprite extends Sprite {
     /** Sprite position. */
     pos: Vec2;
 
+    /** Creates a fixed sprite.
+     * @param skin ImageSource.
+     * @param pos Location.
+     */
     constructor(skin: ImageSource=null, pos: Vec2=null) {
 	super();
 	this.skin = skin;
@@ -119,63 +140,89 @@ class FixedSprite extends Sprite {
 }
 
 
-//  Widget
-//
+/** Task that has one or more Sprites.
+ */
 class Widget extends Task {
 
+    /** List to which this widget belongs (assigned by World). */
     layer: SpriteLayer = null;
 
+    /** Invoked when the task is started. */
     init() {
         super.init();
 	this.layer.add(this);
     }
 
+    /** Invoked when the task is stopped. */
     cleanup() {
 	this.layer.remove(this);
 	super.cleanup();
     }
 
+    /** Returns a list of Sprites that are owned by this widget. */
     getSprites(): Sprite[] {
 	return [];
     }
 }
 
 
-//  SpriteLayer
-//
-interface SpriteFunc {
-    (sprite: Sprite): boolean;
-}
-class SpriteLayer {
+/** Widget that has exactly one Sprite.
+ */
+class SingleWidget extends Widget {
 
-    sprites: Sprite[] = [];
-    widgets: Widget[] = [];
+    /** Single sprite */
+    sprite: Sprite;
 
-    toString() {
-	return ('<SpriteLayer: sprites='+this.sprites+'>');
+    /** Creates a Widget with a single sprite.
+     * @param sprite Sprite.
+     */
+    constructor(sprite: Sprite) {
+        super();
+        this.sprite = sprite;
     }
 
+    /** Returns a list of Sprites that are owned by this widget. */
+    getSprites(): Sprite[] {
+	return [this.sprite];
+    }    
+}
+
+
+/** Single layer of Sprites that are displayed.
+ */
+class SpriteLayer {
+
+    /** List of widgets. */
+    widgets: Widget[] = [];
+
+    constructor() {
+        this.init();
+    }
+    
+    toString() {
+	return ('<SpriteLayer: widgets='+this.widgets+'>');
+    }
+
+    /** Empties the widget list. */
     init() {
-	this.sprites = [];
 	this.widgets = [];
     }
 
-    add(obj: Sprite|Widget) {
-        if (obj instanceof Sprite) {
-	    this.sprites.push(obj);
-        } else if (obj instanceof Widget) {
-            this.widgets.push(obj);
-        }
+    /** Add a new Widget to the list.
+     * @param widget Widget to add.
+     */
+    add(widget: Widget) {
+        this.widgets.push(widget);
     }
 
-    remove(obj: Sprite|Widget) {
-        if (obj instanceof Sprite) {
-	    removeElement(this.sprites, obj);
-        } else if (obj instanceof Widget) {
-	    removeElement(this.widgets, obj);
-        }
+    /** Remove an existing Widget from the list.
+     * @param task Task to remove.
+     */
+    remove(widget: Widget) {
+	removeElement(this.widgets, widget);
     }
 
+    /** Returns a list of all Sprites contained. */
     getSprites(): Sprite[] {
 	let sprites = [];
 	for (let widget of this.widgets) {
@@ -183,12 +230,13 @@ class SpriteLayer {
 		sprites.push(sprite);
 	    }
 	}
-	for (let sprite of this.sprites) {
-	    sprites.push(sprite);
-	}
 	return sprites;
     }
 
+    /** Applies a given function to each sprite in the list.
+     * @param f Function to apply.
+     * @param window Window to limit the area.
+     */
     apply(f: SpriteFunc, window: Rect=null): Sprite {
 	for (let widget of this.widgets) {
 	    for (let sprite of widget.getSprites()) {
@@ -201,18 +249,13 @@ class SpriteLayer {
 	        }
 	    }
 	}
-	for (let sprite of this.sprites) {
-	    let bounds = sprite.getBounds()
-	    if (window === null || bounds === null ||
-                bounds.overlaps(window)) {
-                if (f(sprite)) {
-		    return sprite;
-                }
-	    }
-	}
         return null;
     }
 
+    /** Renders itself in the given context. 
+     * @param ctx Rendering context.
+     * @param window Window to limit the area.
+     */
     render(ctx: CanvasRenderingContext2D, window: Rect=null) {
         this.apply((sprite: Sprite) => {
 	    if (sprite.isVisible()) {

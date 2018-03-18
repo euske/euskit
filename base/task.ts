@@ -146,19 +146,25 @@ class SoundTask extends Task {
 	this.soundEnd = soundEnd;
     }
 
+    /** Invoked when the task is started. */
     init() {
 	super.init();
+        // Start playing.
 	this.sound.currentTime = this.soundStart;
 	this.sound.play();
     }
 
+    /** Invoked when the task is stopped. */
     cleanup() {
+        // Stop playing.
 	this.sound.pause();
 	super.cleanup();
     }
 
+    /** Invoked at every frame while the task is running. */
     tick() {
 	super.tick();
+        // Check if the playing is finished.
 	if (0 < this.soundEnd && this.soundEnd <= this.sound.currentTime) {
 	    this.stop();
 	} else if (this.sound.ended) {
@@ -190,6 +196,11 @@ class ParallelTaskList extends Task implements TaskList {
     /** If true, this task is stopped when the list becomes empty. */
     stopWhenEmpty: boolean = true;
 
+    constructor() {
+	super();
+	this.init();
+    }
+    
     toString() {
 	return ('<ParalellTaskList: tasks='+this.tasks+'>');
     }
