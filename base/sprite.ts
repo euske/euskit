@@ -34,7 +34,9 @@ class Sprite {
 
     /** Returns true if the sprite can respond to mouse event. */
     mouseSelectable(p: Vec2): boolean {
-	return this.isVisible() && this.getBounds().containsPt(p);
+        if (!this.isVisible()) return false;
+        let bounds = this.getBounds();
+	return (bounds !== null && bounds.containsPt(p));
     }
 
     /** Returns the bounds of the sprite at a given pos. */
@@ -98,6 +100,11 @@ class FixedSprite extends Sprite {
 
     toString() {
 	return '<FixedSprite: '+this.skin+'>';
+    }
+
+    /** Returns true if the sprite is visible. */
+    isVisible(): boolean {
+        return this.visible;
     }
 
     /** Returns the image source of the sprite. */

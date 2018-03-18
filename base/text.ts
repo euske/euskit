@@ -349,12 +349,18 @@ class BannerBox extends Widget {
     sprite: FixedSprite;
     interval: number = 0;
 
-    constructor(frame: Rect, font: Font, lines: string[], lineSpace=4) {
+    constructor(frame: Rect, font: Font, lines: string[]=null, lineSpace=4) {
 	super();
 	this.textbox = new TextBox(frame, font);
 	this.textbox.lineSpace = lineSpace;
-	this.textbox.putText(lines, 'center', 'center');
 	this.sprite = new FixedSprite(this.textbox);
+        if (lines !== null) {
+            this.putText(lines);
+        }
+    }
+
+    putText(lines: string[]) {
+        this.textbox.putText(lines, 'center', 'center');
     }
 
     getSprites(): Sprite[] {
@@ -378,11 +384,14 @@ class BannerBox extends Widget {
 //
 class TextParticle extends BannerBox {
 
-    movement: Vec2 = null;
+    movement: Vec2;
 
-    constructor(pos: Vec2, frame: Rect, font: Font, lines: string[], lineSpace=4) {
-	super(frame, font, lines, lineSpace);
+    constructor(pos: Vec2, font: Font, text: string, borderWidth=1) {
+        let size = font.getSize(text);
+        let frame = new Vec2().expand(size.x+borderWidth*2, size.y+borderWidth*2);
+	super(frame, font, [text], 0);
 	this.sprite.pos = pos;
+        this.movement = null;
     }
 
     update() {

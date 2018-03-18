@@ -276,6 +276,7 @@ class SequentialTaskList extends Task implements TaskList {
      * @param task Task to add.
      */
     add(task: Task) {
+        task.parent = this;
 	this.tasks.push(task);
     }
 
