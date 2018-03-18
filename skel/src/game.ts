@@ -34,8 +34,8 @@ class Player extends Entity {
 	this.usermove = new Vec2();
     }
 
-    update() {
-	super.update();
+    tick() {
+	super.tick();
 	this.moveIfPossible(this.usermove);
     }
 
@@ -66,8 +66,8 @@ class Game extends GameScene {
 	this.updateScore();
     }
 
-    update() {
-	super.update();
+    tick() {
+	super.tick();
     }
 
     onDirChanged(v: Vec2) {

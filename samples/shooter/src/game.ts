@@ -60,8 +60,8 @@ class Player extends Entity {
 	this.collider = this.skin.getBounds();
     }
 
-    update() {
-	super.update();
+    tick() {
+	super.tick();
 	this.moveIfPossible(this.usermove);
 	if (this.firing) {
 	    if (this.nextfire == 0) {
@@ -153,8 +153,8 @@ class Enemy2 extends EnemyBase {
 	this.movement = new Vec2(-rnd(1,4), 0);
     }
 
-    update() {
-	super.update();
+    tick() {
+	super.tick();
 	// Move wiggly vertically.
 	if (rnd(4) == 0) {
 	    this.movement.y = rnd(5)-2;
@@ -189,8 +189,8 @@ class Shooter extends GameScene {
 	this.updateScore();
     }
 
-    update() {
-	super.update();
+    tick() {
+	super.tick();
 	(this.stars.skin as StarImageSource).move(new Vec2(-4, 0));
 	// Spawn an enemy at a random interval.
 	if (this.nextenemy == 0) {

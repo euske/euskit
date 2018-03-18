@@ -140,8 +140,8 @@ class Player extends PlatformerEntity implements WorldObject {
 	return super.getObstaclesFor(range, v, context);
     }
 
-    update() {
-	super.update();
+    tick() {
+	super.tick();
 	let v = this.usermove;
 	if (!this.holding) {
 	    v = new Vec2(v.x, 0);
@@ -197,8 +197,8 @@ class Monster extends PlanningEntity implements WorldObject {
 	this.collider = skin.getBounds();
     }
 
-    update() {
-	super.update();
+    tick() {
+	super.tick();
 	let goal = this.grid.coord2grid(this.target.pos);
 	if (this.runner instanceof PlatformerActionRunner) {
 	    if (!this.runner.goal.equals(goal)) {
@@ -314,8 +314,8 @@ class Game extends GameScene {
 	});
     }
 
-    update() {
-	super.update();
+    tick() {
+	super.tick();
 	this.world.setCenter(this.tilemap.bounds,
 			     this.player.pos.expand(80,80));
     }

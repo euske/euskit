@@ -85,6 +85,9 @@ class App {
     init(scene: Scene) {
 	removeChildren(this.elem, 'div');
 	this.setMusic();
+        if (this.scene !== null) {
+            this.scene.cleanup();
+        }
 	this.scene = scene;
 	this.scene.init();
     }

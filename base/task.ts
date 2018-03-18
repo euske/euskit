@@ -97,16 +97,10 @@ class Task {
 
     /** Invoked at every frame while the task is running. */
     tick() {
-	this.update();
 	if (this.lifetime <= this.getTime()) {
 	    this.stop();
 	}
     }
-
-    update() {
-	// [OVERRIDE]
-    }
-
 }
 
 
@@ -158,18 +152,18 @@ class SoundTask extends Task {
 	this.sound.play();
     }
 
-    update() {
-	super.update();
+    cleanup() {
+	this.sound.pause();
+	super.cleanup();
+    }
+
+    tick() {
+	super.tick();
 	if (0 < this.soundEnd && this.soundEnd <= this.sound.currentTime) {
 	    this.stop();
 	} else if (this.sound.ended) {
 	    this.stop();
 	}
-    }
-
-    stop() {
-	this.sound.pause();
-	super.stop();
     }
 }
 

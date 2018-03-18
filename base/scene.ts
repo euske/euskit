@@ -232,11 +232,11 @@ class Scene {
 	// [OVERRIDE]
     }
 
-    tick() {
-	this.update()
+    cleanup() {
+	// [OVERRIDE]
     }
 
-    update() {
+    tick() {
 	// [OVERRIDE]
     }
 

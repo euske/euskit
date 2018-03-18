@@ -34,8 +34,8 @@ class Blinker extends Entity {
 	this.skin = entity.skin;
     }
 
-    update() {
-        super.update();
+    tick() {
+        super.tick();
         this.visible = (phase(this.getTime(), this.interval) == 0);
     }
 }
@@ -55,8 +55,8 @@ class Player extends Entity {
 	this.collider = this.skin.getBounds();
     }
 
-    update() {
-	super.update();
+    tick() {
+	super.tick();
 	this.moveIfPossible(this.usermove);
     }
 
@@ -183,8 +183,8 @@ class Racing extends GameScene {
 	APP.setMusic('music', 0, 19.1);
     }
 
-    update() {
-	super.update();
+    tick() {
+	super.tick();
 	if (this.player.isRunning()) {
 	    let b = this.player.getCollider().move(0, this.track.offset) as Rect;
 	    if (this.track.isFloor(b)) {

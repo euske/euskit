@@ -370,8 +370,8 @@ class Player extends Entity3d {
 	this._jumpend = jumpend;
     }
 
-    update() {
-	super.update();
+    tick() {
+	super.tick();
 	this.moveIfPossible3(this.usermove3);
 	this.fall();
 	if (this._jumpt < this._jumpend) {

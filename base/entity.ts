@@ -159,8 +159,8 @@ class Projectile extends Entity {
     movement: Vec2 = new Vec2();
     frame: Rect = null;
 
-    update() {
-	super.update();
+    tick() {
+	super.tick();
 	if (this.movement !== null) {
 	    this.movePos(this.movement);
 	    if (this.frame !== null) {
@@ -222,8 +222,8 @@ class PhysicalEntity extends Entity {
 	this._jumpend = jumpend;
     }
 
-    update() {
-	super.update();
+    tick() {
+	super.tick();
 	this.fall(this._jumpt);
 	if (this.isJumping()) {
 	    this._jumpt++;

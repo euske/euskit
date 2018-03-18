@@ -371,8 +371,8 @@ class BannerBox extends Widget {
 	return sprites;
     }
 
-    update() {
-	super.update();
+    tick() {
+	super.tick();
 	if (0 < this.interval) {
 	    this.sprite.visible = (phase(this.getTime(), this.interval) != 0);
 	}
@@ -394,8 +394,8 @@ class TextParticle extends BannerBox {
         this.movement = null;
     }
 
-    update() {
-	super.update();
+    tick() {
+	super.tick();
         if (this.movement !== null) {
             this.sprite.pos = this.sprite.pos.add(this.movement);
         }
@@ -470,8 +470,8 @@ class DisplayTask extends TextTask {
 	this.text = this.dialog.textbox.wrapLines(this.text, this.font)
     }
 
-    update() {
-	super.update();
+    tick() {
+	super.tick();
 	if (this.text.length <= this._index) {
 	    this.stop();
 	} else if (this.speed === 0) {
