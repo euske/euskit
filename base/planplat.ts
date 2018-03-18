@@ -336,7 +336,7 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 	this.runner = runner;
 	if (this.runner !== null) {
 	    this.runner.stopped.subscribe(() => { this.runner = null; });
-	    this.taskList.add(this.runner);
+	    this.parent.add(this.runner);
 	}
     }
 

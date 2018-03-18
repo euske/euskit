@@ -173,14 +173,14 @@ class Entity extends Widget {
 	return super.chain(task, signal);
     }
 
-    started(taskList: TaskList) {
-	super.started(taskList);
+    init() {
+	super.init();
 	this.field.addEntity(this);
     }
 
-    stop() {
+    cleanup() {
 	this.field.removeEntity(this);
-	super.stop();
+	super.cleanup();
     }
 
     getCollider(pos: Vec2=null) {

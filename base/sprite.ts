@@ -12,6 +12,7 @@ class Sprite {
     scale: Vec2 = new Vec2(1, 1);
     /** Image rotation (in radian). */
     rotation: number = 0;
+    /** Image alpha (0.0: transparent, 1.0: opaque). */
     alpha: number = 1.0;
 
     /** Returns true if the sprite is visible. */
@@ -124,14 +125,14 @@ class Widget extends Task {
 	return super.chain(task, signal);
     }
 
-    started(taskList: TaskList) {
-        super.started(taskList);
+    init() {
+        super.init();
 	this.layer.add(this);
     }
 
-    stop() {
+    cleanup() {
 	this.layer.remove(this);
-	super.stop();
+	super.cleanup();
     }
 
     getSprites(): Sprite[] {
