@@ -5,26 +5,61 @@
 /// <reference path="entity.ts" />
 
 
-//  Camera
+//  World
 //
-class Camera {
+class World extends ParallelTaskList {
 
     mouseFocus: Sprite = null;
     mouseActive: Sprite = null;
     mousedown: Signal;
     mouseup: Signal;
-
-    layers: SpriteLayer[] = [];
     window: Rect;
 
+    field: EntityField;
+    layers: SpriteLayer[];
+    layer0: SpriteLayer;
+
     constructor(window: Rect) {
+        super();
 	this.mousedown = new Signal(this);
 	this.mouseup = new Signal(this);
 	this.window = window.copy();
+        this.init();
     }
 
     toString() {
-	return '<Camera: '+this.window+'>';
+	return '<World: '+this.window+'>';
+    }
+
+    init() {
+        super.init();
+	this.field = new EntityField();
+        this.layers = [];
+	this.layer0 = this.newLayer();
+    }
+
+    tick() {
+	super.tick();
+	this.field.tick();
+    }
+
+    add(task: Task, layer: SpriteLayer=null, field: EntityField=null) {
+	if (task instanceof Widget) {
+	    task.layer = (layer !== null)? layer : this.layer0;
+	}
+	if (task instanceof Entity) {
+	    task.field = (field !== null)? field : this.field;
+	}
+	super.add(task);
+    }
+
+    render(ctx: CanvasRenderingContext2D) {
+	ctx.save();
+	ctx.translate(-this.window.x, -this.window.y);
+        for (let layer of this.layers) {
+            layer.render(ctx, this.window);
+        }
+	ctx.restore();
     }
 
     newLayer(): SpriteLayer {
@@ -54,15 +89,6 @@ class Camera {
 	}
 	this.window.x = clamp(0, this.window.x, bounds.width-this.window.width);
 	this.window.y = clamp(0, this.window.y, bounds.height-this.window.height);
-    }
-
-    render(ctx: CanvasRenderingContext2D) {
-	ctx.save();
-	ctx.translate(-this.window.x, -this.window.y);
-        for (let layer of this.layers) {
-            layer.render(ctx, this.window);
-        }
-	ctx.restore();
     }
 
     findSpriteAt(p: Vec2) {
@@ -233,52 +259,39 @@ class HTMLScene extends Scene {
 //
 class GameScene extends Scene {
 
-    tasklist: ParallelTaskList = null;
-    field: EntityField = null;
-    camera: Camera = null;
-    layer: SpriteLayer = null;
+    world: World = null;
 
     init() {
 	super.init();
-	this.tasklist = new ParallelTaskList();
-	this.field = new EntityField();
-        this.camera = new Camera(this.screen);
-	this.layer = this.camera.newLayer();
+        this.world = new World(this.screen);
     }
 
     tick() {
 	super.tick();
-	this.tasklist.tick();
-	this.field.tick();
+	this.world.tick();
     }
 
     render(ctx: CanvasRenderingContext2D) {
 	super.render(ctx);
-	this.camera.render(ctx);
+	this.world.render(ctx);
     }
 
     add(task: Task, layer: SpriteLayer=null, field: EntityField=null) {
-	if (task instanceof Widget) {
-	    task.layer = (layer !== null)? layer : this.layer;
-	}
-	if (task instanceof Entity) {
-	    task.field = (field !== null)? field : this.field;
-	}
-	this.tasklist.add(task);
+	this.world.add(task, layer, field);
     }
 
     onMouseDown(p: Vec2, button: number) {
 	super.onMouseDown(p, button);
-	this.camera.onMouseDown(p, button);
+	this.world.onMouseDown(p, button);
     }
 
     onMouseUp(p: Vec2, button: number) {
 	super.onMouseUp(p, button);
-	this.camera.onMouseUp(p, button);
+	this.world.onMouseUp(p, button);
     }
 
     onMouseMove(p: Vec2) {
 	super.onMouseMove(p);
-	this.camera.onMouseMove(p);
+	this.world.onMouseMove(p);
     }
 }

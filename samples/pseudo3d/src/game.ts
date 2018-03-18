@@ -157,12 +157,12 @@ class Entity3d extends Entity {
 }
 
 
-//  Camera3
+//  World3
 //
 interface SpriteDictionary {
     [index: string]: Sprite[];
 }
-class Camera3 extends Camera {
+class World3 extends World {
 
     tilemap: TileMap = null;
     tiles: SpriteSheet = null;
@@ -327,7 +327,7 @@ class Player extends Entity3d {
     }
 
     getObstaclesFor3(range: Box, v: Vec3, context: string) {
-	let window = this.scene.camera3.window;
+	let window = this.scene.world3.window;
 	let tilemap = this.scene.tilemap;
 	let ts = tilemap.tilesize;
 	let bs = new Vec3(ts, ts, ts);
@@ -379,7 +379,7 @@ class Player extends Entity3d {
 	} else {
 	    this._jumpt = Infinity;
 	}
-	let window = this.scene.camera3.window;
+	let window = this.scene.world3.window;
 	if (!window.overlaps(this.getCollider())) {
 	    this.stop();
 	}
@@ -408,10 +408,7 @@ class Player extends Entity3d {
 class Game extends Scene {
 
     tilemap: TileMap;
-    tasklist: ParallelTaskList;
-    field: EntityField;
-    layer: SpriteLayer;
-    camera3: Camera3;
+    world3: World3;
     player: Player;
     score: number;
     speed: Vec2;
@@ -422,12 +419,9 @@ class Game extends Scene {
 	this.tilemap = new TileMap(32, 12, 7, ROWS.map(
 	    (c:number) => { return new Int32Array(12).fill(c); }
 	));
-	this.tasklist = new ParallelTaskList();
-	this.field = new EntityField();
-	this.camera3 = new Camera3(this.tilemap.bounds);
-	this.camera3.tilemap = this.tilemap;
-	this.camera3.tiles = TILES;
-	this.layer = this.camera3.newLayer();
+	this.world3 = new World3(this.tilemap.bounds);
+	this.world3.tilemap = this.tilemap;
+	this.world3.tiles = TILES;
 	this.score = 0;
 	this.speed = new Vec2(2, 0);
 	this.player = new Player(this, this.screen.center());
@@ -451,19 +445,12 @@ class Game extends Scene {
     }
 
     add(task: Task) {
-    	this.tasklist.add(task);
-	if (task instanceof Widget) {
-	    task.layer = this.layer;
-	}
-	if (task instanceof Entity) {
-	    task.field = this.field;
-	}
+        this.world3.add(task);
     }
 
     tick() {
 	super.tick();
-	this.tasklist.tick();
-	this.field.tick();
+	this.world3.tick();
 	this.moveAll(this.speed);
     }
 
@@ -492,23 +479,23 @@ class Game extends Scene {
 	fillRect(ctx, this.screen);
 	super.render(ctx);
 	ctx.save();
-	ctx.translate(0, (this.screen.height-this.camera3.window.height)/2);
-	this.camera3.render(ctx);
+	ctx.translate(0, (this.screen.height-this.world3.window.height)/2);
+	this.world3.render(ctx);
 	ctx.restore();
     }
 
     moveAll(v: Vec2) {
-	this.camera3.moveCenter(v);
+	this.world3.moveCenter(v);
 	let ts = this.tilemap.tilesize;
-	let window = this.camera3.window;
+	let window = this.world3.window;
 	let x0 = int(window.x/ts);
 	let y0 = int(window.y/ts);
 	if (x0 !== 0 || y0 !== 0) {
 	    // warp all the tiles and characters.
 	    this.shiftTiles(x0, y0);
 	    let vw = new Vec2(-x0*ts, -y0*ts);
-	    this.camera3.moveCenter(vw);
-	    this.field.moveAll(vw);
+	    this.world3.moveCenter(vw);
+	    this.world3.field.moveAll(vw);
 	}
 	if (this.player.isRunning()) {
 	    this.player.moveIfPossible3(new Vec3(v.x, v.y, 0), 'fall');

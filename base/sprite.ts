@@ -155,7 +155,7 @@ class SpriteLayer {
 	return ('<SpriteLayer: sprites='+this.sprites+'>');
     }
 
-    clear() {
+    init() {
 	this.sprites = [];
 	this.widgets = [];
     }

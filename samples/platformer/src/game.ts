@@ -316,8 +316,8 @@ class Game extends GameScene {
 
     update() {
 	super.update();
-	this.camera.setCenter(this.tilemap.bounds,
-			      this.player.pos.expand(80,80));
+	this.world.setCenter(this.tilemap.bounds,
+			     this.player.pos.expand(80,80));
     }
 
     onDirChanged(v: Vec2) {
@@ -350,11 +350,11 @@ class Game extends GameScene {
 	fillRect(ctx, this.screen);
 	// Render the background tiles.
 	this.tilemap.renderWindowFromBottomLeft(
-	    ctx, this.camera.window,
+	    ctx, this.world.window,
 	    (x,y,c) => { return (c != T.BLOCK)? TILES.get(T.BACKGROUND) : null; });
 	// Render the map tiles.
 	this.tilemap.renderWindowFromBottomLeft(
-	    ctx, this.camera.window,
+	    ctx, this.world.window,
 	    (x,y,c) => { return (c == T.BLOCK || c == T.LADDER)? TILES.get(c) : null; });
 	super.render(ctx);
 	// Render the planmap.
