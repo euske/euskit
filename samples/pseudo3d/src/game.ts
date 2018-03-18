@@ -495,7 +495,7 @@ class Game extends Scene {
 	    this.shiftTiles(x0, y0);
 	    let vw = new Vec2(-x0*ts, -y0*ts);
 	    this.world3.moveCenter(vw);
-	    this.world3.field.moveAll(vw);
+	    this.world3.moveAll(vw);
 	}
 	if (this.player.isRunning()) {
 	    this.player.moveIfPossible3(new Vec3(v.x, v.y, 0), 'fall');

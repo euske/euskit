@@ -15,7 +15,7 @@ class World extends ParallelTaskList {
     mouseup: Signal;
     window: Rect;
 
-    field: EntityField;
+    entities: Entity[];
     layers: SpriteLayer[];
     layer0: SpriteLayer;
 
@@ -33,22 +33,22 @@ class World extends ParallelTaskList {
 
     init() {
         super.init();
-	this.field = new EntityField();
+	this.entities = [];
         this.layers = [];
 	this.layer0 = this.newLayer();
     }
 
     tick() {
 	super.tick();
-	this.field.tick();
+	this.checkEntityCollisions();
     }
 
-    add(task: Task, layer: SpriteLayer=null, field: EntityField=null) {
+    add(task: Task, layer: SpriteLayer=null) {
 	if (task instanceof Widget) {
 	    task.layer = (layer !== null)? layer : this.layer0;
 	}
 	if (task instanceof Entity) {
-	    task.field = (field !== null)? field : this.field;
+	    task.world = this;
 	}
 	super.add(task);
     }
@@ -128,6 +128,88 @@ class World extends ParallelTaskList {
 	if (this.mouseActive === null) {
 	    this.mouseFocus = this.findSpriteAt(p);
 	}
+    }
+
+    addEntity(entity: Entity) {
+	this.entities.push(entity);
+    }
+
+    removeEntity(entity: Entity) {
+	removeElement(this.entities, entity);
+    }
+
+    moveAll(v: Vec2) {
+	for (let entity of this.entities) {
+	    if (!entity.isRunning()) continue;
+	    entity.movePos(v);
+	}
+    }
+
+    checkEntityCollisions() {
+	this.checkEntityPairs(
+	    (e0:Entity, e1:Entity) => {
+		e0.collidedWith(e1);
+		e1.collidedWith(e0);
+	    });
+    }
+
+    checkEntityPairs(f: (e0:Entity, e1:Entity)=>void) {
+	for (let i = 0; i < this.entities.length; i++) {
+	    let entity0 = this.entities[i];
+	    if (entity0.isRunning()) {
+		let collider0 = entity0.getCollider();
+		if (collider0 !== null) {
+		    let a = this.findEntities(
+			(e:Entity) => {
+			    let collider1 = e.getCollider();
+			    return (entity0 !== e &&
+				    collider1 !== null &&
+				    collider0.overlaps(collider1));
+			},
+			this.entities.slice(i+1));
+		    for (let e of a) {
+			f(entity0, e);
+		    }
+		}
+	    }
+	}
+    }
+
+    findEntities(f: (e:Entity)=>boolean, entities: Entity[]=null) {
+	if (entities === null) {
+	    entities = this.entities;
+	}
+	let a:Entity[] = [];
+	for (let entity1 of entities) {
+	    if (entity1.isRunning() && f(entity1)) {
+		a.push(entity1);
+	    }
+	}
+	return a;
+    }
+
+    hasEntity(f: (e:Entity)=>boolean, collider0: Collider) {
+	for (let entity1 of this.entities) {
+	    if (entity1.isRunning() && f(entity1)) {
+		let collider1 = entity1.getCollider();
+		if (collider1 !== null && collider0.overlaps(collider1)) {
+		    return true;
+		}
+	    }
+	}
+	return false;
+    }
+
+    filterEntities(f: (e:Entity)=>boolean) {
+	let a:Entity[] = [];
+	for (let entity1 of this.entities) {
+	    if (entity1.isRunning() && !f(entity1)) {
+		a.push(entity1);
+	    }
+	}
+        for (let entity1 of a) {
+            entity1.stop();
+        }
     }
 }
 
@@ -276,8 +358,8 @@ class GameScene extends Scene {
 	this.world.render(ctx);
     }
 
-    add(task: Task, layer: SpriteLayer=null, field: EntityField=null) {
-	this.world.add(task, layer, field);
+    add(task: Task, layer: SpriteLayer=null) {
+	this.world.add(task, layer);
     }
 
     onMouseDown(p: Vec2, button: number) {
