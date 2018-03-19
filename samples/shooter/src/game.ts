@@ -24,11 +24,18 @@ addInitHook(() => {
 //  Bullet
 //
 class Bullet extends Projectile {
+    
     constructor(pos: Vec2) {
 	super(pos);
 	let bounds = new Rect(-4, -1, 8, 2);
 	this.skin = new RectImageSource('white', bounds)
 	this.collider = bounds;
+	this.movement = new Vec2(8, 0);
+    }
+    
+    init() {
+        super.init();
+	this.frame = this.world.area;
     }
 }
 
@@ -65,8 +72,6 @@ class Player extends Entity {
 	    if (this.nextfire == 0) {
 		// Shoot a bullet at a certain interval.
 		var bullet = new Bullet(this.pos);
-		bullet.movement = new Vec2(8, 0);
-		bullet.frame = this.world.area;
 		this.world.add(bullet);
 		APP.playSound('pew');
 		this.nextfire = 4;
