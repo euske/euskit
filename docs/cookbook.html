@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<style>
+h1 { border-bottom: 4pt solid; }
+h2 { border-bottom: 2pt solid; }
+h3 { border-bottom: 1pt solid; }
+table { border-collapse: collapse; }
+td { padding: 2px; }
+a { font-weight: bold; }
+code { font-size: 120%; font-weight: bold; }
+</style>
+<title>Euskit Recipe Book</title>
+</head>
+<body>
+<h1><a href="https://github.com/euske/euskit">Euskit</a> Recipe Book</h1>
+
+<h2>Basic Player Control</h2>
+<blockquote><pre>
+class Game extends GameScene {
+    player: Player;
+    init() {
+	super.init();
+	this.player = new Player(this.world.area.center());
+	this.add(this.player);
+    }
+    onDirChanged(v: Vec2) {
+	this.player.setMove(v);
+    }
+}
+
+class Player extends Entity {
+    usermove: Vec2 = new Vec2();
+    constructor(pos: Vec2) {
+	super(pos);
+	this.skin = new RectImageSource('green', new Rect(-10,-10,20,20));
+	this.collider = this.skin.getBounds();
+    }
+    tick() {
+	super.tick();
+	this.moveIfPossible(this.usermove);
+    }
+    setMove(v: Vec2) {
+	this.usermove = v;
+    }
+    getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
+	return [this.world.area];
+    }
+}
+</pre></blockquote>
+
+<h2>Firing Bullet</h2>
+<blockquote><pre>
+class Bullet extends Projectile {
+    constructor(pos: Vec2) {
+	super(pos);
+	let bounds = new Rect(-2, -2, 4, 4);
+	this.skin = new RectImageSource('white', bounds)
+	this.collider = bounds;
+	this.movement = new Vec2(8, 0);
+    }
+    init() {
+        super.init();
+	this.frame = this.world.area;
+    }
+}
+
+class Player extends Entity {
+    ...
+    fire() {
+        var bullet = new Bullet(this.pos);
+        this.world.add(bullet);
+    }
+}
+</pre></blockquote>
+
+<h2>Show Explosion Effect</h2>
+<blockquote><pre>
+class Explosion extends Entity {
+    constructor(pos: Vec2) {
+	super(pos);
+	this.skin = new RectImageSource('yellow, new Rect(-10,-10,20,20));
+	this.lifetime = 0.5;
+    }
+}
+
+class Player extends Entity {
+    ...
+    die() {
+        this.chain(new Explosion(this.pos));
+        this.stop();
+    }
+}
+</pre></blockquote>
+
+<h2>Create TileMap</h2>
+<blockquote><pre>
+class Game extends GameScene {
+    ...
+    init() {
+	const MAP = [
+	    "0010010000",
+	    "0222022002",
+            ...
+            "0000010030",
+        ];
+        this.tilemap = new TileMap(16, 10, 10, MAP.map(
+            (v:string) =&gt; { return str2array(v); }
+        ));
+	let p = this.tilemap.findTile((c:number) =&gt; { return c == 3; });
+	this.player = new Player(this, this.tilemap.map2coord(p).center());
+    }
+    render(ctx: CanvasRenderingContext2D) {
+        super.render(ctx);
+	this.tilemap.renderWindowFromBottomLeft(
+	    ctx, this.world.window,
+	    (x,y,c) =&gt; { return TILES.get(c); });
+    }
+}
+</pre></blockquote>
+
+<h2>Collision with TileMap</h2>
+<blockquote><pre>
+class Player extends Entity {
+    tilemap: TileMap;
+    getObstaclesFor(range: Rect, v: Vec2, context=null as string): Rect[] {
+	let f = ((c:number) =&gt; { return (c == 1 || c == 3); });
+	return this.tilemap.getTileRects(f, range);
+    }
+}
+</pre></blockquote>
+
+<h2>Collision with Other Entities</h2>
+<blockquote><pre>
+class Player extends Entity {
+    getObstaclesFor(range: Rect, v: Vec2, context=null as string): Rect[] {
+        let entities = this.world.findEntities((e:Entity) =&gt; {
+            let collider = e.getCollider();
+            return (collider !== null &amp;&amp; collider.overlaps(range));
+        });
+        return entities.map((e:Entity) =&gt; { return e.getCollider(); });
+    }
+}
+</pre></blockquote>
+
+<h2>Draw Rectangle</h2>
+<blockquote><pre>
+ctx.strokeStyle = 'white';
+ctx.lineWidth = 2;
+strokeRect(ctx, rect);
+</pre></blockquote>
+
+<h2>Schedule Delayed Action</h2>
+<blockquote><pre>
+let task = new DelayTask(2, () =&gt; { log("foo"); });
+this.add(task);
+</pre></blockquote>
+
+<h2>Display Text</h2>
+<blockquote><pre>
+let glyphs = APP.images['font'];
+let font = new Font(glyphs, 'white');
+let textbox = new TextBox(new Rect(0, 0, 300, 200), font);
+textbox.borderWidth = 2;
+textbox.borderColor = 'white';
+textbox.clear();
+textbox.putText(['HELLO', 'WORLD'], 'center', 'center');
+textbox.render(ctx);
+</pre></blockquote>
+
+<h2>Blinking Banner</h2>
+<blockquote><pre>
+let banner = new BannerBox(
+    this.screen, font, 
+    ['COLLECT ALL TEH THINGS!']);
+banner.lifetime = 2.0;
+banner.interval = 0.5;
+this.add(banner);
+</pre></blockquote>
+
+<h2>Text Particle</h2>
+<blockquote><pre>
+let yay = new TextParticle(entity.pos, font, 'YAY!');
+yay.movement = new Vec2(0,-4);
+yay.lifetime = 1.0;
+this.world.add(yay);
+</pre></blockquote>
+
+<h2>Typewriter Effect</h2>
+<blockquote><pre>
+let textbox = new TextBox(new Rect(0, 0, 300, 200), font);
+let dialog = new DialogBox(textbox);
+// this.world.add(dialog);
+dialog.addDisplay('Hello, this is a test.', 12);
+</pre></blockquote>
+
+<h2>Menu Selection</h2>
+<blockquote><pre>
+let glyphs = APP.images['font'];
+let font = new Font(glyphs, 'white');
+let invfont = new InvertedFont(glyphs, 'white');
+let textbox = new TextBox(new Rect(0, 0, 300, 200), font);
+let dialog = new DialogBox(textbox, invfont);
+// this.world.add(dialog);
+dialog.addDisplay('What to do?');
+let menu = this.dialogBox.addMenu();
+menu.addItem(new Vec2(20,20), 'Foo');
+menu.addItem(new Vec2(20,30), 'Bar');
+menu.addItem(new Vec2(20,40), 'Bzzz');
+menu.selected.subscribe((value) =&gt; {
+    log(value);
+});
+</pre></blockquote>
