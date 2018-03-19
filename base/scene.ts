@@ -11,8 +11,8 @@ class World extends ParallelTaskList {
 
     mouseFocus: Sprite = null;
     mouseActive: Sprite = null;
-    mousedown: Signal;
-    mouseup: Signal;
+    mouseDown: Signal;
+    mouseUp: Signal;
 
     area: Rect;
     window: Rect;
@@ -22,8 +22,8 @@ class World extends ParallelTaskList {
 
     constructor(area: Rect) {
         super();
-	this.mousedown = new Signal(this);
-	this.mouseup = new Signal(this);
+	this.mouseDown = new Signal(this);
+	this.mouseUp = new Signal(this);
 	this.area = area.copy();
         this.init();
     }
@@ -111,7 +111,7 @@ class World extends ParallelTaskList {
 	    this.mouseFocus = this.findSpriteAt(p);
 	    this.mouseActive = this.mouseFocus;
 	    if (this.mouseActive !== null) {
-		this.mousedown.fire(this.mouseActive, p);
+		this.mouseDown.fire(this.mouseActive, p);
 	    }
 	}
     }
@@ -120,7 +120,7 @@ class World extends ParallelTaskList {
 	if (button == 0) {
 	    this.mouseFocus = this.findSpriteAt(p);
 	    if (this.mouseActive !== null) {
-		this.mouseup.fire(this.mouseActive, p);
+		this.mouseUp.fire(this.mouseActive, p);
 	    }
 	    this.mouseActive = null;
 	}
