@@ -13,26 +13,28 @@ class World extends ParallelTaskList {
     mouseActive: Sprite = null;
     mousedown: Signal;
     mouseup: Signal;
-    window: Rect;
 
+    area: Rect;
+    window: Rect;
     entities: Entity[];
     layers: SpriteLayer[];
     layer0: SpriteLayer;
 
-    constructor(window: Rect) {
+    constructor(area: Rect) {
         super();
 	this.mousedown = new Signal(this);
 	this.mouseup = new Signal(this);
-	this.window = window.copy();
+	this.area = area.copy();
         this.init();
     }
 
     toString() {
-	return '<World: '+this.window+'>';
+	return '<World: '+this.area+'>';
     }
 
     init() {
         super.init();
+        this.window = this.area.copy();
 	this.entities = [];
         this.layers = [];
 	this.layer0 = this.newLayer();

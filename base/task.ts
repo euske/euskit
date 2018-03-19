@@ -196,11 +196,6 @@ class ParallelTaskList extends Task implements TaskList {
     /** If true, this task is stopped when the list becomes empty. */
     stopWhenEmpty: boolean = true;
 
-    constructor() {
-	super();
-	this.init();
-    }
-    
     toString() {
 	return ('<ParalellTaskList: tasks='+this.tasks+'>');
     }
@@ -259,7 +254,7 @@ class ParallelTaskList extends Task implements TaskList {
 class SequentialTaskList extends Task implements TaskList {
 
     /** List of current tasks. */
-    tasks: Task[];
+    tasks: Task[] = null;
     /** If true, this task is stopped when the list becomes empty. */
     stopWhenEmpty: boolean = true;
 
@@ -268,13 +263,15 @@ class SequentialTaskList extends Task implements TaskList {
      */
     constructor(tasks: Task[]=null) {
 	super();
-	this.tasks = (tasks !== null)? tasks : [];
+	this.tasks = tasks;
     }
 
     /** Empties the task list. */
     init() {
         super.init();
-	this.tasks = [];
+        if (this.tasks === null) {
+	    this.tasks = [];
+        }
     }
 
     /** Add a new Task to the list.

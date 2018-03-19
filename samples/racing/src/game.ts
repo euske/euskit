@@ -45,12 +45,10 @@ class Blinker extends Entity {
 //
 class Player extends Entity {
 
-    scene: Racing;
     usermove: Vec2 = new Vec2();
 
-    constructor(scene: Racing, pos: Vec2) {
+    constructor(pos: Vec2) {
 	super(pos);
-	this.scene = scene;
 	this.skin = SPRITES.get(0, 0, 1, 1, new Vec2(8,8));
 	this.collider = this.skin.getBounds();
     }
@@ -66,7 +64,7 @@ class Player extends Entity {
 
     getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
 	// Restrict its position within the screen.
-	return [this.scene.screen];
+	return [this.world.area];
     }
 }
 
@@ -172,7 +170,7 @@ class Racing extends GameScene {
     init() {
 	super.init();
 
-	this.player = new Player(this, this.screen.center());
+	this.player = new Player(this.world.area.center());
 	this.add(this.player);
 
 	this.track = new Track(int(this.screen.width/16),

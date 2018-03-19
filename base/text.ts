@@ -797,7 +797,7 @@ class DialogBox extends Widget {
 	return task;
     }
 
-    addDisplay(text: string, speed=16,
+    addDisplay(text: string, speed=-1,
 	       sound: string=null, font: Font=null) {
 	let task = new DisplayTask(this, text);
 	task.speed = (0 <= speed)? speed : this.speed;

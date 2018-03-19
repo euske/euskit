@@ -48,14 +48,12 @@ class Explosion extends Entity {
 //
 class Player extends Entity {
 
-    scene: Shooter;
     usermove: Vec2 = new Vec2();
     firing: boolean = false;
     nextfire: number = 0;	// Firing counter
 
-    constructor(scene: Shooter, pos: Vec2) {
+    constructor(pos: Vec2) {
 	super(pos);
-	this.scene = scene;
 	this.skin = SPRITES.get(0);
 	this.collider = this.skin.getBounds();
     }
@@ -68,8 +66,8 @@ class Player extends Entity {
 		// Shoot a bullet at a certain interval.
 		var bullet = new Bullet(this.pos);
 		bullet.movement = new Vec2(8, 0);
-		bullet.frame = this.scene.screen;
-		this.scene.add(bullet);
+		bullet.frame = this.world.area;
+		this.world.add(bullet);
 		APP.playSound('pew');
 		this.nextfire = 4;
 	    }
@@ -91,7 +89,7 @@ class Player extends Entity {
 
     getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
 	// Restrict its position within the screen.
-	return [this.scene.screen];
+	return [this.world.area];
     }
 
     collidedWith(entity: Entity) {
@@ -112,10 +110,14 @@ class EnemyBase extends Projectile {
 
     killed: Signal;
 
-    constructor(scene: Shooter, pos: Vec2) {
+    constructor(pos: Vec2) {
 	super(pos);
-	this.frame = scene.screen;
 	this.killed = new Signal(this);
+    }
+
+    init() {
+        super.init();
+	this.frame = this.world.area;
     }
 
     collidedWith(entity: Entity) {
@@ -133,8 +135,8 @@ class EnemyBase extends Projectile {
 //
 class Enemy1 extends EnemyBase {
 
-    constructor(scene: Shooter, pos: Vec2) {
-	super(scene, pos);
+    constructor(pos: Vec2) {
+	super(pos);
 	this.skin = SPRITES.get(1);
 	this.collider = this.skin.getBounds();
 	this.movement = new Vec2(-rnd(1,8), rnd(3)-1);
@@ -146,8 +148,8 @@ class Enemy1 extends EnemyBase {
 //
 class Enemy2 extends EnemyBase {
 
-    constructor(scene: Shooter, pos: Vec2) {
-	super(scene, pos);
+    constructor(pos: Vec2) {
+	super(pos);
 	this.skin = SPRITES.get(2);
 	this.collider = this.skin.getBounds();
 	this.movement = new Vec2(-rnd(1,4), 0);
@@ -180,7 +182,7 @@ class Shooter extends GameScene {
 
     init() {
 	super.init();
-	this.player = new Player(this, this.screen.center());
+	this.player = new Player(this.world.area.center());
 	this.player.chain(new DelayTask(2, () => { this.init(); }));
 	this.add(this.player);
 	this.stars = new FixedSprite(new StarImageSource(this.screen, 100));
@@ -194,12 +196,13 @@ class Shooter extends GameScene {
 	(this.stars.skin as StarImageSource).move(new Vec2(-4, 0));
 	// Spawn an enemy at a random interval.
 	if (this.nextenemy == 0) {
-	    let pos = new Vec2(this.screen.width, rnd(this.screen.height));
+            let area = this.world.area;
+	    let pos = new Vec2(area.width, rnd(area.height));
 	    let enemy:EnemyBase;
 	    if (rnd(2) == 0) {
-		enemy = new Enemy1(this, pos);
+		enemy = new Enemy1(pos);
 	    } else {
-		enemy = new Enemy2(this, pos);
+		enemy = new Enemy2(pos);
 	    }
 	    // Increase the score when it's killed.
 	    enemy.killed.subscribe(() => { this.score++; this.updateScore(); });

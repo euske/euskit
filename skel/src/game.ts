@@ -23,12 +23,10 @@ addInitHook(() => {
 //
 class Player extends Entity {
 
-    scene: Game;
     usermove: Vec2;
 
-    constructor(scene: Game, pos: Vec2) {
+    constructor(pos: Vec2) {
 	super(pos);
-	this.scene = scene;
 	this.skin = SPRITES.get(0);
 	this.collider = this.skin.getBounds();
 	this.usermove = new Vec2();
@@ -44,7 +42,7 @@ class Player extends Entity {
     }
 
     getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
-	return [this.scene.screen];
+	return [this.world.area];
     }
 }
 
@@ -60,7 +58,7 @@ class Game extends GameScene {
     init() {
 	super.init();
 	this.scoreBox = new TextBox(this.screen.inflate(-8,-8), FONT);
-	this.player = new Player(this, this.screen.center());
+	this.player = new Player(this.world.area.center());
 	this.add(this.player);
 	this.score = 0;
 	this.updateScore();

@@ -41,18 +41,6 @@ addInitHook(() => {
 });
 
 
-//  WorldObject
-//
-class WorldObject {
-
-    scene: Game;
-
-    getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
-	return [this.scene.screen];
-    }
-
-}
-
 function findShadowPos(tilemap: TileMap, pos: Vec2) {
     let rect = tilemap.coord2map(pos);
     let p = new Vec2(rect.x, rect.y);
@@ -105,7 +93,7 @@ class ShadowSprite extends EntitySprite {
 
 //  Player
 //
-class Player extends PlatformerEntity implements WorldObject {
+class Player extends PlatformerEntity {
 
     scene: Game;
     usermove: Vec2 = new Vec2();
@@ -140,6 +128,10 @@ class Player extends PlatformerEntity implements WorldObject {
 	return super.getObstaclesFor(range, v, context);
     }
 
+    getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
+	return [this.world.area];
+    }
+
     tick() {
 	super.tick();
 	let v = this.usermove;
@@ -149,7 +141,8 @@ class Player extends PlatformerEntity implements WorldObject {
 	    v = new Vec2(v.x, lowerbound(0, v.y));
 	}
 	this.moveIfPossible(v);
-	(this.sprite as ShadowSprite).shadowPos = findShadowPos(this.tilemap, this.pos);
+        let shadowPos = findShadowPos(this.tilemap, this.pos);
+	(this.sprite as ShadowSprite).shadowPos = shadowPos;
     }
 
     setJump(jumpend: number) {
@@ -172,16 +165,20 @@ class Player extends PlatformerEntity implements WorldObject {
 	if (entity instanceof Thingy) {
 	    APP.playSound('pick');
 	    entity.stop();
-	    this.picked.fire(entity);
+	    let yay = new Projectile(this.pos.move(0,-16));
+	    yay.skin = SPRITES.get(S.YAY);
+	    yay.movement = new Vec2(0,-4);
+	    yay.lifetime = 0.5;
+	    this.world.add(yay);
+	    this.picked.fire();
 	}
     }
 }
-applyMixins(Player, [WorldObject]);
 
 
 //  Monster
 //
-class Monster extends PlanningEntity implements WorldObject {
+class Monster extends PlanningEntity {
 
     scene: Game;
     target: Entity;
@@ -212,7 +209,8 @@ class Monster extends PlanningEntity implements WorldObject {
 		this.setRunner(new PlatformerActionRunner(this, action, goal));
 	    }
 	}
-	(this.sprite as ShadowSprite).shadowPos = findShadowPos(this.tilemap, this.pos);
+        let shadowPos = findShadowPos(this.tilemap, this.pos);
+	(this.sprite as ShadowSprite).shadowPos = shadowPos;
     }
 
     setAction(action: PlanAction) {
@@ -221,8 +219,11 @@ class Monster extends PlanningEntity implements WorldObject {
 	    log("setAction: "+action);
         }
     }
+    
+    getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
+	return [this.world.area];
+    }
 }
-applyMixins(Monster, [WorldObject]);
 
 
 //  Thingy
@@ -258,9 +259,12 @@ class Game extends GameScene {
 	    return (0 <= t && t <= 6)? -8 : vy+2;
 	});
 	this.physics.maxspeed = new Vec2(16, 16);
-	this.physics.isObstacle = ((c:number) => { return c == T.BLOCK; });
-	this.physics.isGrabbable = ((c:number) => { return c == T.LADDER; });
-	this.physics.isStoppable = ((c:number) => { return c == T.BLOCK || c == T.LADDER; });
+	this.physics.isObstacle =
+            ((c:number) => { return c == T.BLOCK; });
+	this.physics.isGrabbable =
+            ((c:number) => { return c == T.LADDER; });
+	this.physics.isStoppable =
+            ((c:number) => { return c == T.BLOCK || c == T.LADDER; });
 
 	const MAP = [
 	    "00000000000000300000",
@@ -331,11 +335,6 @@ class Game extends GameScene {
     }
 
     onPicked(entity: Entity) {
-	let yay = new Projectile(entity.pos.move(0,-16));
-	yay.skin = SPRITES.get(S.YAY);
-	yay.movement = new Vec2(0,-4);
-	yay.lifetime = 0.5;
-	this.add(yay);
 	this.thingies--;
 	if (this.thingies == 0) {
 	    this.add(new DelayTask(2, () => {
@@ -351,11 +350,15 @@ class Game extends GameScene {
 	// Render the background tiles.
 	this.tilemap.renderWindowFromBottomLeft(
 	    ctx, this.world.window,
-	    (x,y,c) => { return (c != T.BLOCK)? TILES.get(T.BACKGROUND) : null; });
+	    (x,y,c) => {
+                return (c != T.BLOCK)? TILES.get(T.BACKGROUND) : null;
+            });
 	// Render the map tiles.
 	this.tilemap.renderWindowFromBottomLeft(
 	    ctx, this.world.window,
-	    (x,y,c) => { return (c == T.BLOCK || c == T.LADDER)? TILES.get(c) : null; });
+	    (x,y,c) => {
+                return (c == T.BLOCK || c == T.LADDER)? TILES.get(c) : null;
+            });
 	super.render(ctx);
 	// Render the planmap.
 	if (this.debug) {

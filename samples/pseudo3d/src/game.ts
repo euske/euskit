@@ -72,11 +72,13 @@ class EntitySprite3d extends EntitySprite {
 //
 class Entity3d extends Entity {
 
+    world3: World3 = null;
+    
+    z: number = 0;
     sprite3: EntitySprite3d;
     shadow: HTMLImageSource = null;
     depth: number = 0;
 
-    z: number = 0;
     velocity3: Vec3 = new Vec3();
     maxspeed3: Vec3 = new Vec3();
 
@@ -166,6 +168,13 @@ class World3 extends World {
 
     tilemap: TileMap = null;
     tiles: SpriteSheet = null;
+
+    add(task: Task, layer: SpriteLayer=null) {
+	if (task instanceof Entity3d) {
+	    task.world3 = this;
+	}
+	super.add(task, layer);
+    }
 
     render(ctx: CanvasRenderingContext2D) {
 	let ts = this.tilemap.tilesize;
@@ -274,7 +283,7 @@ addInitHook(() => {
 //
 class Thingy extends Entity3d {
 
-    constructor(scene: Game, pos: Vec2) {
+    constructor(pos: Vec2) {
 	super(pos);
 	this.skin = SPRITES.get(S.THINGY);
 	this.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
@@ -288,7 +297,7 @@ class Thingy extends Entity3d {
 //
 class Player extends Entity3d {
 
-    scene: Game;
+    tilemap: TileMap;
     picked: Signal;
 
     jumpfunc3: (vz:number, t:number) => number;
@@ -297,14 +306,14 @@ class Player extends Entity3d {
     _jumpt: number;
     _jumpend: number;
 
-    constructor(scene: Game, pos: Vec2) {
+    constructor(tilemap: TileMap, pos: Vec2) {
 	super(pos);
-	this.scene = scene;
+	this.tilemap = tilemap;
 	this.picked = new Signal(this);
 	this.skin = SPRITES.get(S.PLAYER);
 	this.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
 	this.collider = this.sprite3.getBounds(new Vec2()).inflate(-4, -4);
-	this.depth = scene.tilemap.tilesize;
+	this.depth = this.tilemap.tilesize;
 	this.maxspeed3 = new Vec3(16, 16, 16);
 	this.jumpfunc3 = (vz:number,t:number) => {
 	    return (0<=t && t<=7)? 8 : vz-2;
@@ -313,23 +322,21 @@ class Player extends Entity3d {
     }
 
     isFloating(): boolean {
-	return (this.scene.tilemap.tilesize/2 < this.z);
+	return (this.tilemap.tilesize/2 < this.z);
     }
 
     getShadowPos(): Vec3 {
-	let tilemap = this.scene.tilemap;
 	if (this.isFloating() &&
-	    tilemap.findTileByCoord(isBlock, this.sprite.getBounds())) {
-	    return new Vec3(this.pos.x, this.pos.y, tilemap.tilesize);
+	    this.tilemap.findTileByCoord(isBlock, this.sprite.getBounds())) {
+	    return new Vec3(this.pos.x, this.pos.y, this.tilemap.tilesize);
 	} else {
 	    return new Vec3(this.pos.x, this.pos.y, 0);
 	}
     }
 
     getObstaclesFor3(range: Box, v: Vec3, context: string) {
-	let window = this.scene.world3.window;
-	let tilemap = this.scene.tilemap;
-	let ts = tilemap.tilesize;
+	let window = this.world3.window;
+	let ts = this.tilemap.tilesize;
 	let bs = new Vec3(ts, ts, ts);
 	let ws = new Vec3(ts, ts, Infinity);
 	let boxes = [new Box(new Vec3(window.x1()-ts,0,0),
@@ -344,7 +351,7 @@ class Player extends Entity3d {
 	}
 	let area = new Rect(range.origin.x, range.origin.y,
 			    range.size.x, range.size.y);
-	tilemap.apply(f, tilemap.coord2map(area));
+	this.tilemap.apply(f, this.tilemap.coord2map(area));
 	return boxes;
     }
 
@@ -379,7 +386,7 @@ class Player extends Entity3d {
 	} else {
 	    this._jumpt = Infinity;
 	}
-	let window = this.scene.world3.window;
+	let window = this.world3.window;
 	if (!window.overlaps(this.getCollider())) {
 	    this.stop();
 	}
@@ -397,6 +404,11 @@ class Player extends Entity3d {
 	if (entity instanceof Thingy) {
 	    APP.playSound('pick');
 	    entity.stop();
+	    let yay = new Projectile(this.pos.move(0,-16));
+	    yay.skin = SPRITES.get(S.YAY);
+	    yay.movement = new Vec2(0,-4);
+	    yay.lifetime = 0.5;
+	    this.world.add(yay);
 	    this.picked.fire();
 	}
     }
@@ -424,7 +436,7 @@ class Game extends Scene {
 	this.world3.tiles = TILES;
 	this.score = 0;
 	this.speed = new Vec2(2, 0);
-	this.player = new Player(this, this.screen.center());
+	this.player = new Player(this.tilemap, this.world3.area.center());
 	this.player.picked.subscribe((entity:Entity) => {
 	    this.onPicked(entity);
 	});
@@ -465,11 +477,6 @@ class Game extends Scene {
     }
 
     onPicked(entity: Entity) {
-	let yay = new Projectile(entity.pos.move(0,-16));
-	yay.skin = SPRITES.get(S.YAY);
-	yay.movement = new Vec2(0,-4);
-	yay.lifetime = 0.5;
-	this.add(yay);
 	this.score += 1;
 	this.speed.x += 1;
     }
@@ -521,7 +528,7 @@ class Game extends Scene {
 		let y = rnd(1, this.tilemap.height-1);
 		let p = new Vec2(x+this.tilemap.width, y);
 		let rect = this.tilemap.map2coord(p);
-		this.add(new Thingy(this, rect.center()));
+		this.add(new Thingy(rect.center()));
 		this.tilemap.set(x, y, T.NONE);
 	    }
 	}
