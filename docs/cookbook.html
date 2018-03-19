@@ -10,6 +10,8 @@ table { border-collapse: collapse; }
 td { padding: 2px; }
 a { font-weight: bold; }
 code { font-size: 120%; font-weight: bold; }
+blockquote { background: #eeeeee; }
+.comment { color: green; }
 </style>
 <title>Euskit Recipe Book</title>
 </head>
@@ -23,7 +25,7 @@ class Game extends GameScene {
     init() {
 	super.init();
 	this.player = new Player(this.world.area.center());
-	this.add(this.player);
+	this.world.add(this.player);
     }
     onDirChanged(v: Vec2) {
 	this.player.setMove(v);
@@ -73,6 +75,25 @@ class Player extends Entity {
         this.world.add(bullet);
     }
 }
+</pre></blockquote>
+
+<h2>Signal Subscription/Firing</h2>
+<blockquote><pre>
+class Player extends Entity {
+    happened: Signal;
+    constructor(pos: Vec2) {
+        super(pos);
+        this.happened = new Signal(this);
+    }
+    somethingHappened() {
+        this.happened.fire('holy!');
+    }
+}
+
+let player = new Player();
+player.happened.subscribe((e:Entity, value:string) =&gt; {
+    log(value);
+});
 </pre></blockquote>
 
 <h2>Show Explosion Effect</h2>
@@ -154,7 +175,7 @@ strokeRect(ctx, rect);
 <h2>Schedule Delayed Action</h2>
 <blockquote><pre>
 let task = new DelayTask(2, () =&gt; { log("foo"); });
-this.add(task);
+this.world.add(task);
 </pre></blockquote>
 
 <h2>Display Text</h2>
@@ -176,7 +197,7 @@ let banner = new BannerBox(
     ['COLLECT ALL TEH THINGS!']);
 banner.lifetime = 2.0;
 banner.interval = 0.5;
-this.add(banner);
+this.world.add(banner);
 </pre></blockquote>
 
 <h2>Text Particle</h2>
@@ -191,7 +212,7 @@ this.world.add(yay);
 <blockquote><pre>
 let textbox = new TextBox(new Rect(0, 0, 300, 200), font);
 let dialog = new DialogBox(textbox);
-// this.world.add(dialog);
+<span class=comment>// this.world.add(dialog);</span>
 dialog.addDisplay('Hello, this is a test.', 12);
 </pre></blockquote>
 
@@ -202,7 +223,7 @@ let font = new Font(glyphs, 'white');
 let invfont = new InvertedFont(glyphs, 'white');
 let textbox = new TextBox(new Rect(0, 0, 300, 200), font);
 let dialog = new DialogBox(textbox, invfont);
-// this.world.add(dialog);
+<span class=comment>// this.world.add(dialog);</span>
 dialog.addDisplay('What to do?');
 let menu = this.dialogBox.addMenu();
 menu.addItem(new Vec2(20,20), 'Foo');
@@ -211,4 +232,24 @@ menu.addItem(new Vec2(20,40), 'Bzzz');
 menu.selected.subscribe((value) =&gt; {
     log(value);
 });
+</pre></blockquote>
+
+<h2>Mouse/Touchscreen Control</h2>
+<blockquote><pre>
+class Button extends Entity {
+    constructor(pos: Vec2) {
+	super(pos);
+	this.skin = new RectImageSource('white', new Rect(-10,-10,20,20));
+    }
+}
+class Game extends GameScene {
+    init() {
+        this.world.add(new Button(new Vec2(100,100)));
+        this.world.mouseDown.subscribe((world:World, sprite:Sprite) =&gt; {
+            if (sprite instanceof EntitySprite) {
+                log(sprite.entity);
+            }
+        }
+    }
+}
 </pre></blockquote>
