@@ -13,41 +13,47 @@ code { font-size: 120%; font-weight: bold; }
 blockquote { background: #eeeeee; }
 .comment { color: green; }
 </style>
-<title>Euskit Recipe Book</title>
+<title>Euskit Cheat Sheet</title>
 </head>
 <body>
-<h1><a href="https://github.com/euske/euskit">Euskit</a> Recipe Book</h1>
+<h1><a href="https://github.com/euske/euskit">Euskit</a> Cheat Sheet</h1>
 
 <h2>Basic Player Control</h2>
 <blockquote><pre>
-class Game extends GameScene {
-    player: Player;
-    init() {
-	super.init();
-	this.player = new Player(this.world.area.center());
-	this.world.add(this.player);
-    }
-    onDirChanged(v: Vec2) {
-	this.player.setMove(v);
-    }
-}
-
 class Player extends Entity {
-    usermove: Vec2 = new Vec2();
+    usermove: Vec2 = new Vec2();  <span class=comment>// Current direction.</span>
     constructor(pos: Vec2) {
 	super(pos);
+        <span class=comment>// Configure the Player's skin and collider.</span>
 	this.skin = new RectImageSource('green', new Rect(-10,-10,20,20));
 	this.collider = this.skin.getBounds();
     }
     tick() {
 	super.tick();
+        <span class=comment>// Change the position.</span>
 	this.moveIfPossible(this.usermove);
     }
     setMove(v: Vec2) {
+        <span class=comment>// Set the current direction.</span>
 	this.usermove = v;
     }
     getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
+        <span class=comment>// Restrict move within the world bounds.</span>
 	return [this.world.area];
+    }
+}
+
+class Game extends GameScene {
+    player: Player;
+    init() {
+	super.init();
+        <span class=comment>// Place a player at the center of the world.</span>
+	this.player = new Player(this.world.area.center());
+	this.world.add(this.player);
+    }
+    onDirChanged(v: Vec2) {
+        <span class=comment>// Set the player's motion.</span>
+	this.player.setMove(v);
     }
 }
 </pre></blockquote>
