@@ -21,25 +21,22 @@ blockquote { background: #eeeeee; }
 <h2>Basic Player Control</h2>
 <blockquote><pre>
 class Player extends Entity {
-    usermove: Vec2 = new Vec2();  <span class=comment>// Current direction.</span>
+    usermove: Vec2;  <span class=comment>// Current direction.</span>
     constructor(pos: Vec2) {
 	super(pos);
         <span class=comment>// Configure the Player's skin and collider.</span>
 	this.skin = new RectImageSource('green', new Rect(-10,-10,20,20));
 	this.collider = this.skin.getBounds();
     }
+    init() {
+        super.init();
+        <span class=comment>// Initialize the direction.</span>
+	this.usermove = new Vec2();
+    }        
     tick() {
 	super.tick();
         <span class=comment>// Change the position.</span>
 	this.moveIfPossible(this.usermove);
-    }
-    setMove(v: Vec2) {
-        <span class=comment>// Set the current direction.</span>
-	this.usermove = v;
-    }
-    getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
-        <span class=comment>// Restrict move within the world bounds.</span>
-	return [this.world.area];
     }
 }
 
@@ -52,8 +49,8 @@ class Game extends GameScene {
 	this.world.add(this.player);
     }
     onDirChanged(v: Vec2) {
-        <span class=comment>// Set the player's motion.</span>
-	this.player.setMove(v);
+        <span class=comment>// When the input changed, change the player's direction.</span>
+	this.player.usermove = v;
     }
 }
 </pre></blockquote>
@@ -147,6 +144,15 @@ class Game extends GameScene {
 }
 </pre></blockquote>
 
+<h2>Restrict Entity within Boundary</h2>
+<blockquote><pre>
+class Player extends Entity {
+    getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
+	return [this.world.area];
+    }
+}
+</pre></blockquote>
+
 <h2>Collision with TileMap</h2>
 <blockquote><pre>
 class Player extends Entity {
@@ -162,11 +168,8 @@ class Player extends Entity {
 <blockquote><pre>
 class Player extends Entity {
     getObstaclesFor(range: Rect, v: Vec2, context=null as string): Rect[] {
-        let entities = this.world.findEntities((e:Entity) =&gt; {
-            let collider = e.getCollider();
-            return (collider !== null &amp;&amp; collider.overlaps(range));
-        });
-        return entities.map((e:Entity) =&gt; { return e.getCollider(); });
+	let f = ((e:Entity) =&gt; { return (e instanceof Enemy); });
+        return this.world.getEntityColliders(f, range);
     }
 }
 </pre></blockquote>
