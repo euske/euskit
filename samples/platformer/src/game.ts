@@ -337,10 +337,13 @@ class Game extends GameScene {
     onPicked(entity: Entity) {
 	this.thingies--;
 	if (this.thingies == 0) {
-	    this.add(new DelayTask(2, () => {
+            let task = new Task();
+            task.lifetime = 2;
+            task.stopped.subscribe(() => {
 		APP.lockKeys();
 		this.changeScene(new Ending());
-	    }));
+	    });
+	    this.add(task);
 	}
     }
 

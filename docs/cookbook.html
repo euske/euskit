@@ -64,7 +64,7 @@ class Player extends Entity {
 }
 </pre></blockquote>
 
-<h2>Firing Bullet</h2>
+<h2>Spawn Another Entity</h2>
 <blockquote><pre>
 class Bullet extends Projectile {
     constructor(pos: Vec2) {
@@ -83,7 +83,7 @@ class Bullet extends Projectile {
 class Player extends Entity {
     ...
     fire() {
-        var bullet = new Bullet(this.pos);
+        let bullet = new Bullet(this.pos);
         this.world.add(bullet);
     }
 }
@@ -91,7 +91,9 @@ class Player extends Entity {
 
 <h2>Schedule Delayed Action</h2>
 <blockquote><pre>
-let task = new DelayTask(2, () =&gt; { log("foo"); });
+let task = new Task();
+task.lifetime = 2;
+task.stopped.subscribe(() =&gt; { log("foo"); });
 this.world.add(task);
 </pre></blockquote>
 
@@ -112,6 +114,19 @@ let player = new Player();
 player.happened.subscribe((e:Entity, value:string) =&gt; {
     log(value);
 });
+</pre></blockquote>
+
+<h2>Change Scene</h2>
+<blockquote><pre>
+class Game extends GameScene {
+    ...
+    gameover() {
+        <span class=comment>// Block input for a second.</span>
+        APP.lockKeys();
+        <span class=comment>// Transition to another scene object.</span>
+        this.changeScene(new GameOver());
+    }
+}
 </pre></blockquote>
 
 <h2>Show Explosion Effect</h2>

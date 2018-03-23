@@ -104,26 +104,6 @@ class Task {
 }
 
 
-/** Task that does something after a specified
- *  amount of time.
- */
-class DelayTask extends Task {
-
-    /** Constructor.
-     * @param delay Number of seconds to delay.
-     * @param proc Function to be executed after
-     *        the time has passed.
-     */
-    constructor(delay: number, proc: ()=>void=null) {
-	super();
-	this.lifetime = delay;
-	if (proc !== null) {
-	    this.stopped.subscribe(proc);
-	}
-    }
-}
-
-
 /** Task that plays a sound.
  */
 class SoundTask extends Task {

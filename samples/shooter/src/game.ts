@@ -188,7 +188,10 @@ class Shooter extends GameScene {
     init() {
 	super.init();
 	this.player = new Player(this.world.area.center());
-	this.player.chain(new DelayTask(2, () => { this.init(); }));
+        let task = new Task();
+        task.lifetime = 2;
+        task.stopped.subscribe(() => { this.init(); });
+	this.player.chain(task);
 	this.add(this.player);
 	this.stars = new FixedSprite(new StarImageSource(this.screen, 100));
 	this.nextenemy = 0;
