@@ -55,6 +55,15 @@ class Game extends GameScene {
 }
 </pre></blockquote>
 
+<h2>Restrict Entity within Bounds</h2>
+<blockquote><pre>
+class Player extends Entity {
+    getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
+	return [this.world.area];
+    }
+}
+</pre></blockquote>
+
 <h2>Firing Bullet</h2>
 <blockquote><pre>
 class Bullet extends Projectile {
@@ -78,6 +87,12 @@ class Player extends Entity {
         this.world.add(bullet);
     }
 }
+</pre></blockquote>
+
+<h2>Schedule Delayed Action</h2>
+<blockquote><pre>
+let task = new DelayTask(2, () =&gt; { log("foo"); });
+this.world.add(task);
 </pre></blockquote>
 
 <h2>Signal Subscription/Firing</h2>
@@ -144,15 +159,6 @@ class Game extends GameScene {
 }
 </pre></blockquote>
 
-<h2>Restrict Entity within Boundary</h2>
-<blockquote><pre>
-class Player extends Entity {
-    getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
-	return [this.world.area];
-    }
-}
-</pre></blockquote>
-
 <h2>Collision with TileMap</h2>
 <blockquote><pre>
 class Player extends Entity {
@@ -179,12 +185,6 @@ class Player extends Entity {
 ctx.strokeStyle = 'white';
 ctx.lineWidth = 2;
 strokeRect(ctx, rect);
-</pre></blockquote>
-
-<h2>Schedule Delayed Action</h2>
-<blockquote><pre>
-let task = new DelayTask(2, () =&gt; { log("foo"); });
-this.world.add(task);
 </pre></blockquote>
 
 <h2>Display Text</h2>
