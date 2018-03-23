@@ -3,12 +3,6 @@
 /// <reference path="task.ts" />
 
 
-/** SpriteFunc */
-interface SpriteFunc {
-    (sprite: Sprite): boolean;
-}
-
-
 /** Object that has a size and rotation and draws itself on screen.
  *  It can also interact with mouse/touch.
  */
@@ -237,7 +231,7 @@ class SpriteLayer {
      * @param f Function to apply.
      * @param window Window to limit the area.
      */
-    apply(f: SpriteFunc, window: Rect=null): Sprite {
+    apply(f: (s:Sprite)=>boolean, window: Rect=null): Sprite {
 	for (let widget of this.widgets) {
 	    for (let sprite of widget.getSprites()) {
 		let bounds = sprite.getBounds()

@@ -176,19 +176,17 @@ class Projectile extends Entity {
 
 //  PhysicsConfig
 //
-interface JumpFunc {
-    (vy:number, t:number): number;
-}
 class PhysicsConfig {
 
-    jumpfunc: JumpFunc = ((vy:number, t:number) => {
-	return (0 <= t && t <= 5)? -4 : vy+1;
-    });
+    jumpfunc: (vy:number,t:number)=>number =
+        ((vy:number, t:number) => {
+	    return (0 <= t && t <= 5)? -4 : vy+1;
+        });
     maxspeed: Vec2 = new Vec2(6,6);
 
-    isObstacle: TileFunc = ((c:number) => { return false; });
-    isGrabbable: TileFunc = ((c:number) => { return false; });
-    isStoppable: TileFunc = ((c:number) => { return false; });
+    isObstacle: (c:number)=>boolean = ((c:number) => { return false; });
+    isGrabbable: (c:number)=>boolean = ((c:number) => { return false; });
+    isStoppable: (c:number)=>boolean = ((c:number) => { return false; });
 }
 
 
@@ -278,7 +276,7 @@ class PlatformerEntity extends PhysicalEntity {
 	this.tilemap = tilemap;
     }
 
-    hasTile(f: TileFunc, pos: Vec2=null) {
+    hasTile(f: (c:number)=>boolean, pos: Vec2=null) {
 	let range = this.getCollider(pos).getAABB();
 	return (this.tilemap.findTileByCoord(f, range) !== null);
     }

@@ -5,15 +5,6 @@
 
 //  TileMap
 //
-interface TileFunc {
-    (c: number): boolean;
-}
-interface TilePosFunc {
-    (x: number, y: number, c: number): boolean;
-}
-interface TilePosTileFunc {
-    (x: number, y: number, c: number): ImageSource;
-}
 interface RangeMapMap {
     [index: string]: RangeMap;
 }
@@ -109,7 +100,7 @@ class TileMap {
 	}
     }
 
-    apply(f: TilePosFunc, rect: Rect=null): Vec2 {
+    apply(f: (x:number,y:number,c:number)=>boolean, rect: Rect=null): Vec2 {
 	if (rect === null) {
 	    rect = new Rect(0, 0, this.width, this.height);
 	}
@@ -147,19 +138,19 @@ class TileMap {
 	}
     }
 
-    findTile(f0: TileFunc, rect: Rect=null): Vec2 {
+    findTile(f0: (c:number)=>boolean, rect: Rect=null): Vec2 {
 	return this.apply((x,y,c)=>{return f0(c);}, rect);
     }
 
-    findTileByCoord(f0: TileFunc, range: Rect): Rect {
+    findTileByCoord(f0: (c:number)=>boolean, range: Rect): Rect {
 	let p = this.apply((x,y,c)=>{return f0(c);}, this.coord2map(range));
 	return (p === null)? null : this.map2coord(p);
     }
 
-    getTileRects(f0: TileFunc, range:Rect): Rect[] {
+    getTileRects(f0: (c:number)=>boolean, range:Rect): Rect[] {
 	let ts = this.tilesize;
 	let rects = [] as Rect[];
-	function f(x:number, y:number, c:number) {
+	let f = (x:number, y:number, c:number) => {
 	    if (f0(c)) {
 		rects.push(new Rect(x*ts, y*ts, ts, ts));
 	    }
@@ -169,7 +160,7 @@ class TileMap {
 	return rects;
     }
 
-    getRangeMap(key:string, f: TileFunc): RangeMap {
+    getRangeMap(key:string, f: (c:number)=>boolean): RangeMap {
 	let map = this._rangemap[key];
 	if (map === undefined) {
 	    map = new RangeMap(this, f);
@@ -180,7 +171,7 @@ class TileMap {
 
     renderFromBottomLeft(
 	ctx: CanvasRenderingContext2D,
-	ft: TilePosTileFunc,
+	ft: (x:number,y:number,c:number)=>ImageSource,
 	x0=0, y0=0, w=0, h=0) {
 	// Align the pos to the bottom left corner.
 	let ts = this.tilesize;
@@ -205,7 +196,7 @@ class TileMap {
 
     renderFromTopRight(
 	ctx: CanvasRenderingContext2D,
-	ft: TilePosTileFunc,
+	ft: (x:number,y:number,c:number)=>ImageSource,
 	x0=0, y0=0, w=0, h=0) {
 	// Align the pos to the bottom left corner.
 	let ts = this.tilesize;
@@ -232,7 +223,7 @@ class TileMap {
     renderWindowFromBottomLeft(
 	ctx: CanvasRenderingContext2D,
 	window: Rect,
-	ft: TilePosTileFunc) {
+	ft: (x:number,y:number,c:number)=>ImageSource) {
 	let ts = this.tilesize;
 	let x0 = Math.floor(window.x/ts);
 	let y0 = Math.floor(window.y/ts);
@@ -249,7 +240,7 @@ class TileMap {
     renderWindowFromTopRight(
 	ctx: CanvasRenderingContext2D,
 	window: Rect,
-	ft: TilePosTileFunc) {
+	ft: (x:number,y:number,c:number)=>ImageSource) {
 	let ts = this.tilesize;
 	let x0 = Math.floor(window.x/ts);
 	let y0 = Math.floor(window.y/ts);
@@ -274,7 +265,7 @@ class RangeMap {
 
     private _data: Int32Array[];
 
-    constructor(tilemap: TileMap, f: TileFunc) {
+    constructor(tilemap: TileMap, f: (c:number)=>boolean) {
 	let data = new Array(tilemap.height+1);
 	let row0 = new Int32Array(tilemap.width+1);
 	for (let x = 0; x < tilemap.width; x++) {

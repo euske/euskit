@@ -341,7 +341,7 @@ class Player extends Entity3d {
 	let ws = new Vec3(ts, ts, Infinity);
 	let boxes = [new Box(new Vec3(window.x1()-ts,0,0),
 			     new Vec3(ts, window.height, Infinity))];
-	function f(x:number, y:number, c:number) {
+	let f = (x:number, y:number, c:number) => {
 	    if (isBlock(c)) {
 		boxes.push(new Box(new Vec3(x*ts, y*ts, 0), bs));
 	    } else if (isWall(c)) {
