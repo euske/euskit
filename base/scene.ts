@@ -87,20 +87,20 @@ class World extends ParallelTaskList {
 	this.window = this.window.add(v);
     }
 
-    setCenter(bounds: Rect, rect: Rect) {
-	if (this.window.width < rect.width) {
-	    this.window.x = (rect.width-this.window.width)/2;
-	} else if (rect.x < this.window.x) {
-	    this.window.x = rect.x;
-	} else if (this.window.x+this.window.width < rect.x+rect.width) {
-	    this.window.x = rect.x+rect.width - this.window.width;
+    setCenter(bounds: Rect, target: Rect) {
+	if (this.window.width < target.width) {
+	    this.window.x = (target.width-this.window.width)/2;
+	} else if (target.x < this.window.x) {
+	    this.window.x = target.x;
+	} else if (this.window.x+this.window.width < target.x+target.width) {
+	    this.window.x = target.x+target.width - this.window.width;
 	}
-	if (this.window.height < rect.height) {
-	    this.window.y = (rect.height-this.window.height)/2;
-	} else if (rect.y < this.window.y) {
-	    this.window.y = rect.y;
-	} else if (this.window.y+this.window.height < rect.y+rect.height) {
-	    this.window.y = rect.y+rect.height - this.window.height;
+	if (this.window.height < target.height) {
+	    this.window.y = (target.height-this.window.height)/2;
+	} else if (target.y < this.window.y) {
+	    this.window.y = target.y;
+	} else if (this.window.y+this.window.height < target.y+target.height) {
+	    this.window.y = target.y+target.height - this.window.height;
 	}
 	this.window.x = clamp(0, this.window.x, bounds.width-this.window.width);
 	this.window.y = clamp(0, this.window.y, bounds.height-this.window.height);
