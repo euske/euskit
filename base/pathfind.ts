@@ -266,3 +266,165 @@ class ActionRunner extends Task {
 	return action;
     }
 }
+
+
+//  WalkerActor
+//
+interface WalkerActor extends PlanActor {
+    canMoveTo(p: Vec2): boolean;
+    moveToward(p: Vec2): void;
+    isCloseTo(p: Vec2): boolean;
+}
+
+//  WalkerAction
+//
+class WalkerAction extends PlanAction {
+    toString() {
+	return ('<WalkerAction('+this.p.x+','+this.p.y+'): cost='+this.cost+'>');
+    }
+    getColor(): string { return null; }
+}
+class WalkerWalkAction extends WalkerAction {
+    toString() {
+	return ('<WalkerWalkAction('+this.p.x+','+this.p.y+'): cost='+this.cost+'>');
+    }
+    getColor(): string { return 'white'; }
+}
+
+//  WalkerPlanMap
+//
+class WalkerPlanMap extends PlanMap {
+
+    grid: GridConfig;
+    obstacle: RangeMap;
+
+    constructor(grid: GridConfig, obstacle: RangeMap) {
+	super();
+	this.grid = grid;
+	this.obstacle = obstacle;
+    }
+
+    expand(actor: WalkerActor, range: Rect,
+	   prev: WalkerAction, start: Vec2=null) {
+	let p0 = prev.p;
+	let cost0 = prev.cost;
+	// assert(range.containsPt(p0));
+
+	// try walking.
+        for (let i = 0; i < 4; i++) {
+            let d = new Vec2(1,0).rot90(i);
+	    let p1 = p0.add(d);
+	    if (range.containsPt(p1) &&
+	        actor.canMoveTo(p1)) {
+	        this.addAction(start, new WalkerWalkAction(
+		    p1, prev, cost0+1, null));
+	    }
+        }
+    }
+}
+
+//  WalkerActionRunner
+//
+class WalkerActionRunner extends ActionRunner {
+
+    goal: Vec2;
+
+    constructor(actor: WalkerActor, action: PlanAction,
+		goal: Vec2, timeout=Infinity) {
+	super(actor, action, timeout);
+	this.goal = goal;
+    }
+
+    execute(action: PlanAction): PlanAction {
+	let actor = this.actor as WalkerActor;;
+
+	if (action instanceof WalkerWalkAction) {
+	    let dst = action.next.p;
+	    actor.moveToward(dst);
+	    if (actor.isCloseTo(dst)) {
+		return action.next;
+	    }
+	}
+	return super.execute(action);
+    }
+}
+
+
+//  WalkerEntity
+//
+class WalkerEntity extends TileMapEntity implements WalkerActor {
+
+    grid: GridConfig;
+    speed: Vec2;
+    gridbox: Rect;
+    planmap: WalkerPlanMap;
+    allowance: number;
+
+    runner: ActionRunner = null;
+
+    constructor(tilemap: TileMap, isObstacle: (c:number)=>boolean,
+		grid: GridConfig, speed: Vec2, hitbox: Rect,
+		pos: Vec2, allowance=0) {
+	super(tilemap, isObstacle, pos);
+	this.grid = grid;
+        this.speed = speed;
+	let gs = grid.gridsize;
+	this.gridbox = new Rect(
+	    0, 0,
+	    Math.ceil(hitbox.width/gs)*gs,
+	    Math.ceil(hitbox.height/gs)*gs);
+	let obstacle = this.tilemap.getRangeMap('obstacle', this.isObstacle);
+	this.planmap = new WalkerPlanMap(this.grid, obstacle);
+	this.allowance = (allowance !== 0)? allowance : grid.gridsize/2;
+    }
+
+    buildPlan(goal: Vec2, start: Vec2=null, size=0, maxcost=20) {
+	start = (start !== null)? start : this.getGridPos();
+	let range = (size == 0)? this.tilemap.bounds : goal.inflate(size, size);
+	range = this.grid.clip(range);
+	return this.planmap.build(this, goal, range, start, maxcost) as WalkerAction;
+    }
+
+    setRunner(runner: ActionRunner) {
+	if (this.runner !== null) {
+	    this.runner.stop();
+	}
+	this.runner = runner;
+	if (this.runner !== null) {
+	    this.runner.stopped.subscribe(() => { this.runner = null; });
+	    this.parent.add(this.runner);
+	}
+    }
+
+    setAction(action: PlanAction) {
+	// [OVERRIDE]
+    }
+
+    // WalkerActor methods
+
+    canMoveTo(p: Vec2) {
+	let hitbox = this.getGridBoxAt(p);
+	return !this.planmap.obstacle.exists(this.tilemap.coord2map(hitbox));
+    }
+
+    moveToward(p: Vec2) {
+	let p0 = this.pos;
+	let p1 = this.getGridBoxAt(p).center();
+	let v = p1.sub(p0);
+	let speed = this.speed;
+	v.x = clamp(-speed.x, v.x, +speed.x);
+	v.y = clamp(-speed.y, v.y, +speed.y);
+	this.moveIfPossible(v);
+    }
+
+    isCloseTo(p: Vec2) {
+	return this.grid.grid2coord(p).distance(this.pos) < this.allowance;
+    }
+
+    getGridPos() {
+	return this.grid.coord2grid(this.pos);
+    }
+    getGridBoxAt(p: Vec2) {
+	return this.grid.grid2coord(p).expand(this.gridbox.width, this.gridbox.height);
+    }
+}
