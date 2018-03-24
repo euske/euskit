@@ -199,12 +199,9 @@ class PlatformerPlanMap extends PlanMap {
 
 //  PointSet
 //
-interface PointMap {
-    [index: string]: Vec2;
-}
 class PointSet {
 
-    pts: PointMap = {};
+    pts: { [index:string]:Vec2 } = {};
 
     add(p: Vec2) {
 	this.pts[p.x+','+p.y] = p;

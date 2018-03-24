@@ -7,13 +7,13 @@
 /** Initial gap of lame-encded MP3 files */
 const MP3_GAP = 0.025;
 
-interface ImageAsset {
+type ImageAsset = {
     [index: string]: HTMLImageElement;
 }
-interface AudioAsset {
+type AudioAsset = {
     [index: string]: HTMLAudioElement;
 }
-interface TextAsset {
+type TextAsset = {
     [index: string]: HTMLDivElement;
 }
 
@@ -337,12 +337,9 @@ class App {
 
 
 //  Global hook.
-interface InitHook {
-    (): any;
-}
-var HOOKS: InitHook[] = [];
+var HOOKS: (()=>any)[] = [];
 // addInitHook: adds an initialization hoook.
-function addInitHook(hook: InitHook) {
+function addInitHook(hook: ()=>any) {
     HOOKS.push(hook);
 }
 

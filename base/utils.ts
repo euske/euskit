@@ -204,9 +204,6 @@ function getEdgeyContext(canvas: HTMLCanvasElement): CanvasRenderingContext2D
 /** Creates a 2D array from an image. */
 function image2array(img: HTMLImageElement, header=0): Int32Array[]
 {
-    interface ColorMap {
-	[index:number]: number;
-    }
     let width = img.width;
     let height = img.height;
     let canvas = createCanvas(width, height);
@@ -214,7 +211,7 @@ function image2array(img: HTMLImageElement, header=0): Int32Array[]
     ctx.drawImage(img, 0, 0);
     let data = ctx.getImageData(0, 0, width, height).data;
     let i = 0;
-    let c2v:ColorMap = null;
+    let c2v: { [index:number]: number } = null;
     if (0 < header) {
 	c2v = {}
 	for (let y = 0; y < header; y++) {

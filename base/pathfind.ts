@@ -112,9 +112,6 @@ class NullAction extends PlanAction {
 
 //  PlanMap
 //
-interface PlanActionMap {
-    [index: string]: PlanAction;
-}
 class PlanActionEntry {
     action: PlanAction;
     total: number;
@@ -125,7 +122,7 @@ class PlanActionEntry {
 }
 class PlanMap {
 
-    private _map: PlanActionMap = {};
+    private _map:  { [index:string]: PlanAction } = {};
     private _queue: PlanActionEntry[] = [];
     private _goal: Vec2 = null;   // for debugging
     private _start: Vec2 = null;  // for debugging

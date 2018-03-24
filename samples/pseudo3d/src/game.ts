@@ -73,7 +73,7 @@ class EntitySprite3d extends EntitySprite {
 class Entity3d extends Entity {
 
     world3: World3 = null;
-    
+
     z: number = 0;
     sprite3: EntitySprite3d;
     shadow: HTMLImageSource = null;
@@ -161,9 +161,6 @@ class Entity3d extends Entity {
 
 //  World3
 //
-interface SpriteDictionary {
-    [index: string]: Sprite[];
-}
 class World3 extends World {
 
     tilemap: TileMap = null;
@@ -181,7 +178,7 @@ class World3 extends World {
 	let window = this.window;
 
 	// Set the drawing order.
-	let sprites = {} as SpriteDictionary;
+	let sprites: { [index:string]: Sprite[] } = {};
         for (let layer of this.layers) {
 	    for (let sprite of layer.getSprites()) {
 		if (sprite.isVisible()) {

@@ -5,9 +5,6 @@
 
 //  TileMap
 //
-interface RangeMapMap {
-    [index: string]: RangeMap;
-}
 class TileMap {
 
     tilesize: number;
@@ -16,7 +13,7 @@ class TileMap {
     bounds: Rect;
     map: Int32Array[];
 
-    private _rangemap: RangeMapMap = {};
+    private _rangemap: { [index:string]: RangeMap } = {};
 
     constructor(tilesize: number, width: number, height: number,
 		map: Int32Array[]=null) {
