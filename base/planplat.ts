@@ -292,6 +292,131 @@ class PlatformerCaps {
 }
 
 
+//  PlatformerActionRunner
+//
+class PlatformerActionRunner extends ActionRunner {
+
+    goal: Vec2;
+
+    constructor(actor: PlatformerActor, action: PlanAction,
+		goal: Vec2, timeout=Infinity) {
+	super(actor, action, timeout);
+	this.goal = goal;
+    }
+
+    execute(action: PlanAction): PlanAction {
+	let actor = this.actor as PlatformerActor;;
+	let cur = actor.getGridPos();
+
+	// Get a micro-level (greedy) plan.
+	if (action instanceof PlatformerWalkAction ||
+	    action instanceof PlatformerClimbAction) {
+	    let dst = action.next.p;
+	    actor.moveToward(dst);
+	    if (actor.isCloseTo(dst)) {
+		return action.next;
+	    }
+
+	} else if (action instanceof PlatformerFallAction) {
+	    let dst = action.next.p;
+	    let path = this.findSimplePath(cur, dst);
+	    for (let i = 0; i < path.length; i++) {
+		let r0 = actor.getGridBoxAt(path[i]);
+		let r1 = actor.getGridBox();
+		let v = new Vec2(r0.x-r1.x, r0.y-r1.y);
+		if (actor.canMove(v)) {
+		    actor.moveToward(path[i]);
+		    break;
+		}
+	    }
+	    if (actor.isCloseTo(dst)) {
+		return action.next;
+	    }
+
+	} else if (action instanceof PlatformerJumpAction) {
+	    let dst = action.next.p;
+	    if (actor.canJump() && actor.canFall() &&
+		actor.isClearedFor(dst)) {
+		actor.jumpToward(dst);
+		// once you leap, the action is considered finished.
+		return new PlatformerFallAction(
+		    dst, action.next, action.next.cost, null);
+	    } else {
+		// not landed, holding something, or has no clearance.
+		actor.moveToward(cur);
+	    }
+
+	}
+
+	return super.execute(action);
+    }
+
+    // findSimplePath(x0, y0, x1, x1, cb):
+    //   returns a list of points that a character can proceed without being blocked.
+    //   returns null if no such path exists. This function takes O(w*h).
+    //   Note: this returns only a straightforward path without any detour.
+    findSimplePath(p0: Vec2, p1: Vec2) {
+
+	class PathEntry {
+	    p: Vec2;
+	    d: number;
+	    next: PathEntry;
+	    constructor(p: Vec2, d: number, next:PathEntry) {
+		this.p = p.copy();
+		this.d = d;
+		this.next = next;
+	    }
+	}
+
+	let a:PathEntry[][] = []
+	let w = Math.abs(p1.x-p0.x);
+	let h = Math.abs(p1.y-p0.y);
+	let vx = (p0.x <= p1.x)? +1 : -1;
+	let vy = (p0.y <= p1.y)? +1 : -1;
+	let actor = this.actor as PlatformerActor;
+
+	for (let dy = 0; dy <= h; dy++) {
+	    a.push([]);
+	    // y: y0...y1
+	    let y = p0.y+dy*vy;
+	    for (let dx = 0; dx <= w; dx++) {
+		// x: x0...x1
+		let x = p0.x+dx*vx;
+		// for each point, compare the cost of (x-1,y) and (x,y-1).
+		let p = new Vec2(x, y);
+		let d:number;
+		let e:PathEntry = null;	// the closest neighbor (if exists).
+		if (dx === 0 && dy === 0) {
+		    d = 0;
+		} else {
+		    d = Infinity;
+		    if (actor.canMoveTo(p)) {
+			if (0 < dx && a[dy][dx-1].d < d) {
+			    e = a[dy][dx-1];
+			    d = e.d+1;
+			}
+			if (0 < dy && a[dy-1][dx].d < d) {
+			    e = a[dy-1][dx];
+			    d = e.d+1;
+			}
+		    }
+		}
+		// populate a[dy][dx].
+		a[dy].push(new PathEntry(p, d, e));
+	    }
+	}
+	// trace them in a reverse order: from goal to start.
+	let r:Vec2[] = [];
+	let e = a[h][w];
+	while (e !== null) {
+	    r.push(e.p);
+	    e = e.next;
+	}
+	return r;
+    }
+}
+
+
 //  PlanningEntity
 //
 class PlanningEntity extends PlatformerEntity implements PlatformerActor {
@@ -465,130 +590,5 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 	let y1 = Math.max(hb0.y1(), hb1.y1());
 	let rect = new Rect(x0, y0, x1-x0, y1-y0);
 	return !this.planmap.obstacle.exists(this.tilemap.coord2map(rect));
-    }
-}
-
-
-//  PlatformerActionRunner
-//
-class PlatformerActionRunner extends ActionRunner {
-
-    goal: Vec2;
-
-    constructor(actor: PlatformerActor, action: PlanAction,
-		goal: Vec2, timeout=Infinity) {
-	super(actor, action, timeout);
-	this.goal = goal;
-    }
-
-    execute(action: PlanAction): PlanAction {
-	let actor = this.actor as PlatformerActor;;
-	let cur = actor.getGridPos();
-
-	// Get a micro-level (greedy) plan.
-	if (action instanceof PlatformerWalkAction ||
-	    action instanceof PlatformerClimbAction) {
-	    let dst = action.next.p;
-	    actor.moveToward(dst);
-	    if (actor.isCloseTo(dst)) {
-		return action.next;
-	    }
-
-	} else if (action instanceof PlatformerFallAction) {
-	    let dst = action.next.p;
-	    let path = this.findSimplePath(cur, dst);
-	    for (let i = 0; i < path.length; i++) {
-		let r0 = actor.getGridBoxAt(path[i]);
-		let r1 = actor.getGridBox();
-		let v = new Vec2(r0.x-r1.x, r0.y-r1.y);
-		if (actor.canMove(v)) {
-		    actor.moveToward(path[i]);
-		    break;
-		}
-	    }
-	    if (actor.isCloseTo(dst)) {
-		return action.next;
-	    }
-
-	} else if (action instanceof PlatformerJumpAction) {
-	    let dst = action.next.p;
-	    if (actor.canJump() && actor.canFall() &&
-		actor.isClearedFor(dst)) {
-		actor.jumpToward(dst);
-		// once you leap, the action is considered finished.
-		return new PlatformerFallAction(
-		    dst, action.next, action.next.cost, null);
-	    } else {
-		// not landed, holding something, or has no clearance.
-		actor.moveToward(cur);
-	    }
-
-	}
-
-	return super.execute(action);
-    }
-
-    // findSimplePath(x0, y0, x1, x1, cb):
-    //   returns a list of points that a character can proceed without being blocked.
-    //   returns null if no such path exists. This function takes O(w*h).
-    //   Note: this returns only a straightforward path without any detour.
-    findSimplePath(p0: Vec2, p1: Vec2) {
-
-	class PathEntry {
-	    p: Vec2;
-	    d: number;
-	    next: PathEntry;
-	    constructor(p: Vec2, d: number, next:PathEntry) {
-		this.p = p.copy();
-		this.d = d;
-		this.next = next;
-	    }
-	}
-
-	let a:PathEntry[][] = []
-	let w = Math.abs(p1.x-p0.x);
-	let h = Math.abs(p1.y-p0.y);
-	let vx = (p0.x <= p1.x)? +1 : -1;
-	let vy = (p0.y <= p1.y)? +1 : -1;
-	let actor = this.actor as PlatformerActor;
-
-	for (let dy = 0; dy <= h; dy++) {
-	    a.push([]);
-	    // y: y0...y1
-	    let y = p0.y+dy*vy;
-	    for (let dx = 0; dx <= w; dx++) {
-		// x: x0...x1
-		let x = p0.x+dx*vx;
-		// for each point, compare the cost of (x-1,y) and (x,y-1).
-		let p = new Vec2(x, y);
-		let d:number;
-		let e:PathEntry = null;	// the closest neighbor (if exists).
-		if (dx === 0 && dy === 0) {
-		    d = 0;
-		} else {
-		    d = Infinity;
-		    if (actor.canMoveTo(p)) {
-			if (0 < dx && a[dy][dx-1].d < d) {
-			    e = a[dy][dx-1];
-			    d = e.d+1;
-			}
-			if (0 < dy && a[dy-1][dx].d < d) {
-			    e = a[dy-1][dx];
-			    d = e.d+1;
-			}
-		    }
-		}
-		// populate a[dy][dx].
-		a[dy].push(new PathEntry(p, d, e));
-	    }
-	}
-	// trace them in a reverse order: from goal to start.
-	let r:Vec2[] = [];
-	let e = a[h][w];
-	while (e !== null) {
-	    r.push(e.p);
-	    e = e.next;
-	}
-	return r;
     }
 }

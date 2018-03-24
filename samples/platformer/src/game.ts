@@ -121,7 +121,7 @@ class Player extends PlatformerEntity {
 	return !(this.holding && this.hasLadder());
     }
 
-    getObstaclesFor(range: Rect, v: Vec2, context=null as string): Rect[] {
+    getObstaclesFor(range: Rect, v: Vec2, context: string): Rect[] {
 	if (!this.holding) {
 	    return this.tilemap.getTileRects(this.physics.isObstacle, range);
 	}
@@ -219,7 +219,7 @@ class Monster extends PlanningEntity {
 	    log("setAction: "+action);
         }
     }
-    
+
     getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
 	return [this.world.area];
     }

@@ -174,6 +174,25 @@ class Projectile extends Entity {
 }
 
 
+//  TileMapEntity
+//
+class TileMapEntity extends Entity {
+
+    tilemap: TileMap;
+    isObstacle: (c:number)=>boolean;
+
+    constructor(tilemap: TileMap, isObstacle: (c:number)=>boolean, pos: Vec2) {
+	super(pos);
+	this.tilemap = tilemap;
+	this.isObstacle = isObstacle;
+    }
+
+    getObstaclesFor(range: Rect, v: Vec2, context: string): Rect[] {
+	return this.tilemap.getTileRects(this.isObstacle, range);
+    }
+}
+
+
 //  PhysicsConfig
 //
 class PhysicsConfig {
@@ -281,7 +300,7 @@ class PlatformerEntity extends PhysicalEntity {
 	return (this.tilemap.findTileByCoord(f, range) !== null);
     }
 
-    getObstaclesFor(range: Rect, v: Vec2, context=null as string): Rect[] {
+    getObstaclesFor(range: Rect, v: Vec2, context: string): Rect[] {
 	let f = ((context == 'fall')?
 		 this.physics.isStoppable :
 		 this.physics.isObstacle);
