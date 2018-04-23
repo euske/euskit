@@ -79,8 +79,8 @@ class TileMap {
 	    let y1 = Math.ceil((rect.y+rect.height)/ts);
 	    return new Rect(x0, y0, x1-x0, y1-y0);
 	} else {
-	    let x = int(rect.x/ts);
-	    let y = int(rect.y/ts);
+	    let x = Math.floor(rect.x/ts);
+	    let y = Math.floor(rect.y/ts);
 	    return new Rect(x, y, 1, 1);
 	}
     }
@@ -91,7 +91,7 @@ class TileMap {
 	    return new Rect(rect.x*ts, rect.y*ts, ts, ts);
 	} else if (rect instanceof Rect) {
 	    return new Rect(rect.x*ts, rect.y*ts,
-				 rect.width*ts, rect.height*ts);
+			    rect.width*ts, rect.height*ts);
 	} else {
 	    return null;
 	}

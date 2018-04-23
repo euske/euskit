@@ -70,9 +70,11 @@ class Font {
 	text: string, x: number, y: number) {
 	for (let i = 0; i < text.length; i++) {
 	    let c = text.charCodeAt(i)-32;
-	    ctx.drawImage(glyphs,
-			  c*csize, 0, csize, glyphs.height,
-			  x+this.width*i, y, this.width, this.height);
+            if (0 <= c) {
+	        ctx.drawImage(glyphs,
+			      c*csize, 0, csize, glyphs.height,
+			      x+this.width*i, y, this.width, this.height);
+            }
 	}
     }
 }

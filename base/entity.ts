@@ -262,6 +262,10 @@ class PhysicalEntity extends Entity {
 	    this._landed = landed;
 	} else {
 	    this.velocity = new Vec2();
+	    if (!this._landed) {
+		this.landed.fire();
+	    }
+	    this._landed = true;
 	}
     }
 
