@@ -192,7 +192,7 @@ class PlanMap {
 
     build(actor: PlanActor, goal: Vec2, range: Rect,
 	  start: Vec2=null, maxcost=Infinity): PlanAction {
-	//log("build: goal="+goal+", start="+start+", range="+range+", maxcost="+maxcost);
+	//info("build: goal="+goal+", start="+start+", range="+range+", maxcost="+maxcost);
 	this._map = {};
 	this._queue = [];
 	this._goal = goal;

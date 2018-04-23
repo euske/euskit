@@ -3,15 +3,10 @@
  */
 
 /** Alias of window.console.log() */
-const log = window.console.log.bind(window.console);
-
-/** Raises an exception if the condition is not met. */
-function assert(x: boolean, msg="assertion error")
-{
-    if (!x) {
-	throw new Error(msg);
-    }
-}
+const debug = window.console.debug.bind(window.console);
+const info = window.console.info.bind(window.console);
+const error = window.console.error.bind(window.console);
+const assert = window.console.assert.bind(window.console);
 
 /** Creates a mixin class. */
 function applyMixins(derivedCtor: any, baseCtors: any[]) {

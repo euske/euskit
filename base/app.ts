@@ -451,14 +451,14 @@ function main<T extends Scene>(
     }
 
     function focus(e: FocusEvent) {
-	log("app.focus");
+	info("app.focus");
 	if (!app.active) {
 	    app.focus();
 	}
     }
 
     function blur(e: FocusEvent) {
-	log("app.blur");
+	info("app.blur");
 	if (app.active) {
 	    app.blur();
 	}
@@ -477,7 +477,7 @@ function main<T extends Scene>(
     }
 
     function resize(e: Event) {
-	log("app.resize");
+	info("app.resize");
 	let bounds = elem.getBoundingClientRect();
 	// Center the canvas.
 	let cw = bounds.width, ch = bounds.height;

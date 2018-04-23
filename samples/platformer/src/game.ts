@@ -216,7 +216,7 @@ class Monster extends PlanningEntity {
     setAction(action: PlanAction) {
 	super.setAction(action);
         if (action !== null && !(action instanceof NullAction)) {
-	    log("setAction: "+action);
+	    info("setAction: "+action);
         }
     }
 
