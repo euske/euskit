@@ -32,7 +32,7 @@ class Player extends Entity {
         super.init();
         <span class=comment>// Initialize the direction.</span>
 	this.usermove = new Vec2();
-    }        
+    }
     tick() {
 	super.tick();
         <span class=comment>// Change the position.</span>
@@ -93,7 +93,7 @@ class Player extends Entity {
 <blockquote><pre>
 let task = new Task();
 task.lifetime = 2;
-task.stopped.subscribe(() =&gt; { log("foo"); });
+task.stopped.subscribe(() =&gt; { info("foo"); });
 this.world.add(task);
 </pre></blockquote>
 
@@ -112,7 +112,7 @@ class Player extends Entity {
 
 let player = new Player();
 player.happened.subscribe((e:Entity, value:string) =&gt; {
-    log(value);
+    info(value);
 });
 </pre></blockquote>
 
@@ -217,7 +217,7 @@ textbox.render(ctx);
 <h2>Blinking Banner</h2>
 <blockquote><pre>
 let banner = new BannerBox(
-    this.screen, font, 
+    this.screen, font,
     ['COLLECT ALL TEH THINGS!']);
 banner.lifetime = 2.0;
 banner.interval = 0.5;
@@ -254,7 +254,7 @@ menu.addItem(new Vec2(20,20), 'Foo');
 menu.addItem(new Vec2(20,30), 'Bar');
 menu.addItem(new Vec2(20,40), 'Bzzz');
 menu.selected.subscribe((value) =&gt; {
-    log(value);
+    info(value);
 });
 </pre></blockquote>
 
@@ -271,8 +271,35 @@ class Game extends GameScene {
         this.world.add(new Button(new Vec2(100,100)));
         this.world.mouseDown.subscribe((world:World, sprite:Sprite) =&gt; {
             if (sprite instanceof EntitySprite) {
-                log(sprite.entity);
+                info(sprite.entity);
             }
+        }
+    }
+}
+</pre></blockquote>
+
+<h2>Text Button</h2>
+<blockquote><pre>
+class TextButton extends Entity {
+    constructor(frame: Rect, text: string) {
+        super(frame.center());
+        frame = frame.move(-this.pos.x, -this.pos.y);
+        let textbox = new TextBox(frame, font);
+        textbox.putText([text], 'center', 'center');
+        this.skin = textbox;
+        this.collider = frame;
+    }
+    isFocused() {
+        return (this.world !== null &amp;&amp;
+                this.sprite !== null &amp;&amp;
+                this.world.mouseFocus === this.sprite);
+    }
+    renderExtra(ctx: CanvasRenderingContext2D) {
+        if (this.isFocused()) {
+            let rect = this.skin.getBounds();
+	    ctx.strokeStyle = 'white';
+	    ctx.lineWidth = 2;
+	    strokeRect(ctx, rect.inflate(4,4));
         }
     }
 }
