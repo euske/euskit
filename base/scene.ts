@@ -44,6 +44,7 @@ class World extends ParallelTaskList {
 	if (task instanceof Entity) {
 	    task.world = this;
             this.entities.push(task);
+            this.sortEntitiesByOrder();
 	}
 	super.add(task);
     }
@@ -81,7 +82,7 @@ class World extends ParallelTaskList {
             let collider = entity.getCollider();
             if (collider instanceof Rect) {
                 if (collider.containsPt(p)) {
-                    if (found === null || entity.depth < found.depth) {
+                    if (found === null || entity.order < found.order) {
                         found = entity;
                     }
                 }
@@ -145,6 +146,10 @@ class World extends ParallelTaskList {
             if (entity.pos === null) continue;
 	    entity.movePos(v);
 	}
+    }
+
+    sortEntitiesByOrder() {
+        this.entities.sort((a:Entity, b:Entity) => { return a.order-b.order; });
     }
 
     applyEntities(f: (e:Entity)=>boolean, collider0: Collider=null): Entity {

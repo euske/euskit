@@ -13,8 +13,11 @@ class Entity extends Task {
 
     pos: Vec2;
     collider: Collider = null;
-    depth: number = 0;
+    order: number = 0;
     visible: boolean = true;
+    rotation: number = 0;
+    scale: Vec2 = null;
+    alpha: number = 1.0;
     sprites: ImageSource[] = [];
 
     constructor(pos: Vec2) {
@@ -31,6 +34,13 @@ class Entity extends Task {
         if (this.pos !== null) {
             ctx.translate(this.pos.x, this.pos.y);
         }
+        if (this.rotation) {
+	    ctx.rotate(this.rotation);
+        }
+        if (this.scale !== null) {
+	    ctx.scale(this.scale.x, this.scale.y);
+        }
+	ctx.globalAlpha = this.alpha;
         for (let sprite of this.sprites) {
             sprite.render(ctx);
         }
