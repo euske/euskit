@@ -1,7 +1,6 @@
 /// <reference path="utils.ts" />
 /// <reference path="geom.ts" />
 /// <reference path="task.ts" />
-/// <reference path="sprite.ts" />
 /// <reference path="entity.ts" />
 
 
@@ -9,16 +8,14 @@
 //
 class World extends ParallelTaskList {
 
-    mouseFocus: Sprite = null;
-    mouseActive: Sprite = null;
+    mouseFocus: Entity = null;
+    mouseActive: Entity = null;
     mouseDown: Signal;
     mouseUp: Signal;
 
     area: Rect;
     window: Rect;
     entities: Entity[];
-    layers: SpriteLayer[];
-    layer0: SpriteLayer;
 
     constructor(area: Rect) {
         super();
@@ -36,8 +33,6 @@ class World extends ParallelTaskList {
         super.init();
         this.window = this.area.copy();
 	this.entities = [];
-        this.layers = [];
-	this.layer0 = this.newLayer();
     }
 
     tick() {
@@ -45,42 +40,54 @@ class World extends ParallelTaskList {
 	this.checkEntityCollisions();
     }
 
-    add(task: Task, layer: SpriteLayer=null) {
-	if (task instanceof Widget) {
-	    task.layer = (layer !== null)? layer : this.layer0;
-	}
+    add(task: Task) {
 	if (task instanceof Entity) {
 	    task.world = this;
+            this.entities.push(task);
 	}
 	super.add(task);
+    }
+
+    remove(task: Task) {
+	if (task instanceof Entity) {
+	    removeElement(this.entities, task);
+        }
+	super.remove(task);
     }
 
     render(ctx: CanvasRenderingContext2D) {
 	ctx.save();
 	ctx.translate(-this.window.x, -this.window.y);
-        for (let layer of this.layers) {
-            layer.render(ctx, this.window);
+        for (let entity of this.entities) {
+	    if (!entity.isRunning()) continue;
+            if (!entity.visible) continue;
+            if (entity.pos === null) continue;
+            entity.render(ctx);
         }
 	ctx.restore();
+        for (let entity of this.entities) {
+	    if (!entity.isRunning()) continue;
+            if (!entity.visible) continue;
+            if (entity.pos !== null) continue;
+            entity.render(ctx);
+        }
     }
 
-    newLayer(): SpriteLayer {
-        let layer = new SpriteLayer();
-        this.layers.push(layer);
-        return layer;
-    }
-
-    findSpriteAt(p: Vec2): Sprite {
-	// check in the reversed order.
-        let f = ((sprite: Sprite) => { return sprite.mouseSelectable(p); });
-        for (let i = this.layers.length; 0 < i; i--) {
-            let layer = this.layers[i-1];
-            let sprite = layer.apply(f);
-            if (sprite !== null) {
-                return sprite;
+    findEntityAt(p: Vec2): Entity {
+        let found: Entity = null;
+        for (let entity of this.entities) {
+	    if (!entity.isRunning()) continue;
+            if (!entity.visible) continue;
+            let collider = entity.getCollider();
+            if (collider instanceof Rect) {
+                if (collider.containsPt(p)) {
+                    if (found === null || entity.depth < found.depth) {
+                        found = entity;
+                    }
+                }
             }
         }
-	return null;
+	return found;
     }
 
     moveCenter(v: Vec2) {
@@ -108,7 +115,7 @@ class World extends ParallelTaskList {
 
     onMouseDown(p: Vec2, button: number) {
 	if (button == 0) {
-	    this.mouseFocus = this.findSpriteAt(p);
+	    this.mouseFocus = this.findEntityAt(p);
 	    this.mouseActive = this.mouseFocus;
 	    if (this.mouseActive !== null) {
 		this.mouseDown.fire(this.mouseActive, p);
@@ -118,7 +125,7 @@ class World extends ParallelTaskList {
 
     onMouseUp(p: Vec2, button: number) {
 	if (button == 0) {
-	    this.mouseFocus = this.findSpriteAt(p);
+	    this.mouseFocus = this.findEntityAt(p);
 	    if (this.mouseActive !== null) {
 		this.mouseUp.fire(this.mouseActive, p);
 	    }
@@ -128,21 +135,14 @@ class World extends ParallelTaskList {
 
     onMouseMove(p: Vec2) {
 	if (this.mouseActive === null) {
-	    this.mouseFocus = this.findSpriteAt(p);
+	    this.mouseFocus = this.findEntityAt(p);
 	}
-    }
-
-    addEntity(entity: Entity) {
-	this.entities.push(entity);
-    }
-
-    removeEntity(entity: Entity) {
-	removeElement(this.entities, entity);
     }
 
     moveAll(v: Vec2) {
 	for (let entity of this.entities) {
 	    if (!entity.isRunning()) continue;
+            if (entity.pos === null) continue;
 	    entity.movePos(v);
 	}
     }
@@ -345,8 +345,12 @@ class GameScene extends Scene {
 	this.world.render(ctx);
     }
 
-    add(task: Task, layer: SpriteLayer=null) {
-	this.world.add(task, layer);
+    add(task: Task) {
+	this.world.add(task);
+    }
+
+    remove(task: Task) {
+	this.world.remove(task);
     }
 
     onMouseDown(p: Vec2, button: number) {

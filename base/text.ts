@@ -2,7 +2,7 @@
 /// <reference path="geom.ts" />
 /// <reference path="task.ts" />
 /// <reference path="imgsrc.ts" />
-/// <reference path="sprite.ts" />
+/// <reference path="entity.ts" />
 
 
 function makeGlyphs(src: HTMLImageElement, color: string=null,
@@ -345,17 +345,16 @@ class TextBox implements ImageSource {
 
 //  BannerBox
 //
-class BannerBox extends Widget {
+class BannerBox extends Entity {
 
     textbox: TextBox;
-    sprite: FixedSprite;
     interval: number = 0;
 
     constructor(frame: Rect, font: Font, lines: string[]=null, lineSpace=4) {
-	super();
+	super(null);
 	this.textbox = new TextBox(frame, font);
 	this.textbox.lineSpace = lineSpace;
-	this.sprite = new FixedSprite(this.textbox);
+        this.sprites = [this.textbox];
         if (lines !== null) {
             this.putText(lines);
         }
@@ -365,18 +364,10 @@ class BannerBox extends Widget {
         this.textbox.putText(lines, 'center', 'center');
     }
 
-    getSprites(): Sprite[] {
-	let sprites = super.getSprites();
-	if (this.sprite !== null) {
-	    sprites.push(this.sprite);
-	}
-	return sprites;
-    }
-
     tick() {
 	super.tick();
 	if (0 < this.interval) {
-	    this.sprite.visible = (phase(this.getTime(), this.interval) != 0);
+	    this.visible = (phase(this.getTime(), this.interval) != 0);
 	}
     }
 }
@@ -392,14 +383,14 @@ class TextParticle extends BannerBox {
         let size = font.getSize(text);
         let frame = new Vec2().expand(size.x+borderWidth*2, size.y+borderWidth*2);
 	super(frame, font, [text], 0);
-	this.sprite.pos = pos;
+	this.pos = pos;
         this.movement = null;
     }
 
     tick() {
 	super.tick();
         if (this.movement !== null) {
-            this.sprite.pos = this.sprite.pos.add(this.movement);
+            this.movePos(this.movement);
         }
     }
 }
@@ -677,10 +668,9 @@ class WaitTask extends TextTask {
 
 //  DialogBox
 //
-class DialogBox extends Widget {
+class DialogBox extends Entity {
 
     textbox: TextBox;
-    sprite: FixedSprite;
     hiFont: Font;
     speed: number = 0;
     autoHide: boolean = false;
@@ -688,8 +678,8 @@ class DialogBox extends Widget {
     queue: TextTask[] = [];
 
     constructor(textbox: TextBox, hiFont: Font=null) {
-	super();
-        this.sprite = new FixedSprite(textbox);
+	super(new Vec2());
+        this.sprites = [textbox];
 	this.textbox = textbox;
 	this.hiFont = hiFont;
     }
@@ -697,12 +687,6 @@ class DialogBox extends Widget {
     clear() {
 	this.textbox.clear();
 	this.queue = [];
-    }
-
-    getSprites(): Sprite[] {
-	let sprites = super.getSprites();
-	sprites.push(this.sprite);
-	return sprites;
     }
 
     tick() {
@@ -721,7 +705,7 @@ class DialogBox extends Widget {
 	    this.remove(task);
 	}
 	if (this.autoHide && task === null) {
-	    this.sprite.visible = false;
+	    this.visible = false;
 	}
     }
 
@@ -782,14 +766,14 @@ class DialogBox extends Widget {
 	    this.queue.push(task);
         }
 	if (this.autoHide) {
-	    this.sprite.visible = true;
+	    this.visible = true;
 	}
     }
 
     remove(task: TextTask) {
 	removeElement(this.queue, task);
 	if (this.autoHide && this.queue.length == 0) {
-	    this.sprite.visible = false;
+	    this.visible = false;
 	}
     }
 

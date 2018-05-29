@@ -2,76 +2,39 @@
 /// <reference path="geom.ts" />
 /// <reference path="task.ts" />
 /// <reference path="imgsrc.ts" />
-/// <reference path="sprite.ts" />
 /// <reference path="tilemap.ts" />
 
 
-/** Sprite that is tied to an Entity.
+/** Entity: a thing that can interact with other things.
  */
-class EntitySprite extends Sprite {
-
-    /** Entity that this sprite belongs to. */
-    entity: Entity;
-
-    constructor(entity: Entity) {
-	super();
-	this.entity = entity;
-    }
-
-    /** Returns true if the sprite is visible. */
-    isVisible(): boolean {
-        return this.entity.visible;
-    }
-
-    /** Returns the image source of the sprite. */
-    getSkin(): ImageSource {
-	return this.entity.skin;
-    }
-
-    /** Returns the position of the sprite. */
-    getPos(): Vec2 {
-	return this.entity.pos;
-    }
-
-    /** Renders its image. */
-    renderImage(ctx: CanvasRenderingContext2D) {
-	super.renderImage(ctx);
-	this.entity.renderExtra(ctx);
-    }
-}
-
-
-//  Entity
-//  A character that can interact with other characters.
-//
-class Entity extends Widget {
+class Entity extends Task {
 
     world: World = null;
 
     pos: Vec2;
-    sprite: Sprite;
-    visible: boolean = true;
-    skin: ImageSource = null;
     collider: Collider = null;
+    depth: number = 0;
+    visible: boolean = true;
+    sprites: ImageSource[] = [];
 
     constructor(pos: Vec2) {
 	super();
 	this.pos = (pos !== null)? pos.copy() : pos;
-	this.sprite = new EntitySprite(this);
     }
 
     toString() {
 	return '<Entity: '+this.pos+'>';
     }
 
-    init() {
-	super.init();
-	this.world.addEntity(this);
-    }
-
-    cleanup() {
-	this.world.removeEntity(this);
-	super.cleanup();
+    render(ctx: CanvasRenderingContext2D) {
+        ctx.save();
+        if (this.pos !== null) {
+            ctx.translate(this.pos.x, this.pos.y);
+        }
+        for (let sprite of this.sprites) {
+            sprite.render(ctx);
+        }
+        ctx.restore();
     }
 
     getCollider(pos: Vec2=null) {
@@ -123,14 +86,6 @@ class Entity extends Widget {
 	return v;
     }
 
-    getSprites(): Sprite[] {
-	let sprites = super.getSprites();
-	if (this.sprite !== null) {
-	    sprites.push(this.sprite);
-	}
-	return sprites;
-    }
-
     getObstaclesFor(range: Rect, v: Vec2, context: string): Collider[] {
 	// [OVERRIDE]
 	return null;
@@ -144,11 +99,6 @@ class Entity extends Widget {
     collidedWith(entity: Entity) {
 	// [OVERRIDE]
     }
-
-    renderExtra(ctx: CanvasRenderingContext2D) {
-	// [OVERRIDE]
-    }
-
 }
 
 

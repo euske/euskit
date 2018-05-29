@@ -1,6 +1,6 @@
 /// <reference path="../../../base/utils.ts" />
 /// <reference path="../../../base/geom.ts" />
-/// <reference path="../../../base/sprite.ts" />
+/// <reference path="../../../base/imgsrc.ts" />
 /// <reference path="../../../base/entity.ts" />
 /// <reference path="../../../base/text.ts" />
 /// <reference path="../../../base/scene.ts" />
@@ -25,45 +25,34 @@ function getContact3(hitbox: Box, v: Vec3, obstacles: Box[])
 }
 
 
-//  EntitySprite3d
+//  ShadowSprite3
 //
-class EntitySprite3d extends EntitySprite {
+class ShadowSprite3 implements ImageSource {
 
-    constructor(entity: Entity3d) {
-	super(entity);
+    shadow: HTMLImageSource;
+    dz: number = 0;
+
+    constructor() {
+	this.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
     }
 
-    isFloating(): boolean {
-	return (this.entity as Entity3d).isFloating();
+    getBounds(): Rect {
+        return this.shadow.getBounds();
     }
 
-    render3(ctx: CanvasRenderingContext2D) {
-	let entity3 = this.entity as Entity3d;
-	let pos = entity3.getPos3();
-	ctx.save();
-	let shadow = entity3.shadow;
-	let shadowPos = entity3.getShadowPos();
-	if (shadow !== null && shadowPos !== null) {
-	    // Render the shadow first.
-	    let srcRect = shadow.srcRect;
-	    let dstRect = shadow.getBounds();
-	    let d = (pos.z-shadowPos.z)/4;
-	    if (d*2 <= dstRect.width && d*2 <= dstRect.height) {
-		ctx.drawImage(
-		    shadow.image,
-		    srcRect.x, srcRect.y, srcRect.width, srcRect.height,
-		    dstRect.x+shadowPos.x+d,
-		    dstRect.y+shadowPos.y+d-shadowPos.z/2,
-		    dstRect.width-d*2, dstRect.height-d*2);
-	    }
+    render(ctx: CanvasRenderingContext2D) {
+	let shadow = this.shadow;
+	let srcRect = shadow.srcRect;
+	let dstRect = shadow.getBounds();
+	let d = this.dz/4;
+	if (d*2 <= dstRect.width && d*2 <= dstRect.height) {
+	    ctx.drawImage(
+		shadow.image,
+		srcRect.x, srcRect.y, srcRect.width, srcRect.height,
+		dstRect.x+d,
+		dstRect.y+d+this.dz/2,
+		dstRect.width-d*2, dstRect.height-d*2);
 	}
-	ctx.translate(int(pos.x), int(pos.y)-pos.z/2);
-	if (this.rotation) {
-	    ctx.rotate(this.rotation);
-	}
-	ctx.scale(this.scale.x, this.scale.y);
-	this.renderImage(ctx);
-	ctx.restore();
     }
 }
 
@@ -73,20 +62,13 @@ class EntitySprite3d extends EntitySprite {
 class Entity3d extends Entity {
 
     world3: World3 = null;
+    shadow3: ShadowSprite3 = null;
 
     z: number = 0;
-    sprite3: EntitySprite3d;
-    shadow: HTMLImageSource = null;
     depth: number = 0;
 
     velocity3: Vec3 = new Vec3();
     maxspeed3: Vec3 = new Vec3();
-
-    constructor(pos: Vec2) {
-	super(pos);
-	this.sprite3 = new EntitySprite3d(this);
-	this.sprite = this.sprite3;
-    }
 
     getPos3() {
 	return new Vec3(this.pos.x, this.pos.y, this.z);
@@ -97,11 +79,6 @@ class Entity3d extends Entity {
 	return false;
     }
 
-    getShadowPos(): Vec3 {
-	// [OVERRIDE]
-	return null as Vec3;
-    }
-
     movePos3(v: Vec3) {
 	this.pos = this.pos.move(v.x, v.y);
 	this.z += v.z;
@@ -110,7 +87,7 @@ class Entity3d extends Entity {
     getCollider3(pos3: Vec3=null) {
 	let pos = (pos3 !== null)? new Vec2(pos3.x, pos3.y) : this.pos;
 	let z = (pos3 !== null)? pos3.z : this.z;
-	let bounds = this.sprite3.getBounds(pos);
+	let bounds = this.getCollider(pos).getAABB();
 	return new Box(
 	    new Vec3(bounds.x, bounds.y, z),
 	    new Vec3(bounds.width, bounds.height, this.depth));
@@ -156,6 +133,23 @@ class Entity3d extends Entity {
 	this.movePos3(v);
 	return v;
     }
+
+    render(ctx: CanvasRenderingContext2D) {
+        // [DISABLED]
+    }
+
+    render3(ctx: CanvasRenderingContext2D, floating: boolean) {
+	if (this.isFloating() != floating) return;
+        ctx.save();
+	ctx.translate(this.pos.x, this.pos.y-this.z/2);
+        if (this.shadow3 !== null) {
+            this.shadow3.render(ctx);
+        }
+        for (let sprite of this.sprites) {
+            sprite.render(ctx);
+        }
+        ctx.restore();
+    }
 }
 
 
@@ -165,12 +159,26 @@ class World3 extends World {
 
     tilemap: TileMap = null;
     tiles: SpriteSheet = null;
+    entities3: Entity3d[];
 
-    add(task: Task, layer: SpriteLayer=null) {
+    init() {
+        super.init();
+	this.entities3 = [];
+    }
+
+    add(task: Task) {
+	super.add(task);
 	if (task instanceof Entity3d) {
 	    task.world3 = this;
+            this.entities3.push(task);
 	}
-	super.add(task, layer);
+    }
+
+    remove(task: Task) {
+	if (task instanceof Entity) {
+	    removeElement(this.entities3, task);
+        }
+	super.remove(task);
     }
 
     render(ctx: CanvasRenderingContext2D) {
@@ -178,73 +186,56 @@ class World3 extends World {
 	let window = this.window;
 
 	// Set the drawing order.
-	let sprites: { [index:string]: Sprite[] } = {};
-        for (let layer of this.layers) {
-	    for (let sprite of layer.getSprites()) {
-		if (sprite.isVisible()) {
-		    let bounds = sprite.getBounds();
-		    if (bounds !== null && bounds.overlapsRect(window)) {
-		        let x = int((bounds.x+bounds.width/2)/ts);
-		        let y = int((bounds.y+bounds.height/2)/ts);
-		        let k = x+','+y;
-		        if (!sprites.hasOwnProperty(k)) {
-			    sprites[k] = [];
-		        }
-		        sprites[k].push(sprite);
-		    }
-	        }
+	let ents: { [index:string]: Entity3d[] } = {};
+	for (let entity3 of this.entities3) {
+	    if (!entity3.isRunning()) continue;
+	    if (!entity3.visible) continue;
+	    let pos = entity3.pos;
+	    if (pos !== null) {
+		let x = int(pos.x/ts);
+		let y = int(pos.y/ts);
+		let k = x+','+y;
+		if (!ents.hasOwnProperty(k)) {
+		    ents[k] = [];
+		}
+		ents[k].push(entity3);
             }
 	}
 
-	// Draw the tilemap.
 	ctx.save();
 	ctx.translate(-ts, 0);
+        // Render the background tiles.
 	this.tilemap.renderWindowFromTopRight(
 	    ctx, window,
 	    (x,y,c) => { return (c == 0)? this.tiles.get(c) : null; });
+        // Render the tiles and landed objects.
 	this.tilemap.renderWindowFromTopRight(
 	    ctx, window,
 	    (x,y,c) => {
-		ctx.save();
 		let k = x+','+y;
-		if (sprites.hasOwnProperty(k)) {
-		    for (let sprite of sprites[k]) {
-			if (sprite instanceof EntitySprite3d) {
-			    if (!sprite.isFloating()) {
-				sprite.render3(ctx);
-			    }
-			} else {
-			    sprite.render(ctx);
-			}
+		if (ents.hasOwnProperty(k)) {
+		    for (let entity3 of ents[k]) {
+			entity3.render3(ctx, false);
 		    }
 		}
-		ctx.restore();
 		return (c == 0)? null : this.tiles.get(c);
 	    });
-	ctx.restore();
-
-	// Draw floating objects.
-        for (let layer of this.layers) {
-	    for (let sprite of layer.getSprites()) {
-	        if (sprite.isVisible()) {
-		    let bounds = sprite.getBounds();
-		    if (bounds === null) {
-		        sprite.render(ctx);
-		    } else if (bounds.overlaps(window)) {
-		        ctx.save();
-		        ctx.translate(-ts-window.x, -window.y);
-		        if (sprite instanceof EntitySprite3d) {
-			    if (sprite.isFloating()) {
-			        sprite.render3(ctx);
-			    }
-		        } else {
-			    sprite.render(ctx);
-		        }
-		        ctx.restore();
+        // Render the floating objects.
+	this.tilemap.renderWindowFromTopRight(
+	    ctx, window,
+	    (x,y,c) => {
+		let k = x+','+y;
+		if (ents.hasOwnProperty(k)) {
+		    for (let entity3 of ents[k]) {
+			entity3.render3(ctx, true);
 		    }
-	        }
-            }
-	}
+		}
+		return null;
+	    });
+        ctx.restore();
+
+	// Draw ordinary 2D objects.
+        super.render(ctx);
     }
 }
 
@@ -282,9 +273,10 @@ class Thingy extends Entity3d {
 
     constructor(pos: Vec2) {
 	super(pos);
-	this.skin = SPRITES.get(S.THINGY);
-	this.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
-	this.collider = this.sprite3.getBounds(new Vec2()).inflate(-4, -4);
+        let sprite = SPRITES.get(S.THINGY);
+	this.sprites = [sprite];
+	this.collider = sprite.getBounds().inflate(-4, -4);
+        this.shadow3 = new ShadowSprite3();
 	this.z = 4;
     }
 }
@@ -307,10 +299,11 @@ class Player extends Entity3d {
 	super(pos);
 	this.tilemap = tilemap;
 	this.picked = new Signal(this);
-	this.skin = SPRITES.get(S.PLAYER);
-	this.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
-	this.collider = this.sprite3.getBounds(new Vec2()).inflate(-4, -4);
+	let sprite = SPRITES.get(S.PLAYER);
+	this.sprites = [sprite];
+	this.collider = sprite.getBounds().inflate(-4, -4);
 	this.depth = this.tilemap.tilesize;
+        this.shadow3 = new ShadowSprite3();
 	this.maxspeed3 = new Vec3(16, 16, 16);
 	this.jumpfunc3 = (vz:number,t:number) => {
 	    return (0<=t && t<=7)? 8 : vz-2;
@@ -320,15 +313,6 @@ class Player extends Entity3d {
 
     isFloating(): boolean {
 	return (this.tilemap.tilesize/2 < this.z);
-    }
-
-    getShadowPos(): Vec3 {
-	if (this.isFloating() &&
-	    this.tilemap.findTileByCoord(isBlock, this.sprite.getBounds())) {
-	    return new Vec3(this.pos.x, this.pos.y, this.tilemap.tilesize);
-	} else {
-	    return new Vec3(this.pos.x, this.pos.y, 0);
-	}
     }
 
     getObstaclesFor3(range: Box, v: Vec3, context: string) {
@@ -383,6 +367,12 @@ class Player extends Entity3d {
 	} else {
 	    this._jumpt = Infinity;
 	}
+        let z0 = 0;
+	if (this.isFloating() &&
+	    this.tilemap.findTileByCoord(isBlock, this.getCollider().getAABB())) {
+            z0 = this.tilemap.tilesize/2;
+        }
+	this.shadow3.dz = this.z - z0;
 	let window = this.world3.window;
 	if (!window.overlaps(this.getCollider())) {
 	    this.stop();
@@ -402,7 +392,7 @@ class Player extends Entity3d {
 	    APP.playSound('pick');
 	    entity.stop();
 	    let yay = new Projectile(this.pos.move(0,-16));
-	    yay.skin = SPRITES.get(S.YAY);
+	    yay.sprites = [SPRITES.get(S.YAY)];
 	    yay.movement = new Vec2(0,-4);
 	    yay.lifetime = 0.5;
 	    this.world.add(yay);

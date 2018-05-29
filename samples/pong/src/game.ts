@@ -25,7 +25,7 @@ class Paddle extends Entity {
 	// Initializes the position and shape.
 	super(screen.anchor('s').move(0,-20));
 	let bounds = new Rect(-20,-5,40,10);
-	this.skin = new RectImageSource('green', bounds);
+	this.sprites = [new RectImageSource('green', bounds)];
 	this.collider = bounds;
 	this.screen = screen;
 	this.vx = 0;
@@ -54,7 +54,7 @@ class Ball extends Entity {
 	// Initializes the position and shape.
 	super(screen.center());
 	let bounds = new Rect(-5,-5,10,10);
-	this.skin = new OvalImageSource('white', bounds);
+	this.sprites = [new OvalImageSource('white', bounds)];
 	this.collider = bounds;
 	this.screen = screen;
 	this.v = new Vec2(rnd(2)*8-4, -4);

@@ -63,8 +63,9 @@ class Player extends Entity {
 	super(pos);
         this.goaled = new Signal(this);
         this.tilemap = tilemap;
-	this.skin = new RectImageSource('#0f0', new Rect(-8,-8,16,16));
-	this.collider = this.skin.getBounds();
+        let sprite = new RectImageSource('#0f0', new Rect(-8,-8,16,16));
+	this.sprites = [sprite];
+	this.collider = sprite.getBounds();
 	this.usermove = new Vec2();
         this.prevmove = this.usermove;
     }
@@ -105,12 +106,12 @@ class Enemy extends WalkerEntity {
 
     constructor(tilemap: TileMap, target: Entity, pos: Vec2) {
         let grid = new GridConfig(tilemap);
-        let skin = new RectImageSource('#f80', new Rect(-8,-8,16,16));
+        let sprite = new RectImageSource('#f80', new Rect(-8,-8,16,16));
         let speed = new Vec2(2,2);
         let allowance = 4;
-	super(tilemap, isObstacle, grid, speed, skin.getBounds(), pos, allowance);
-	this.skin = skin;
-	this.collider = this.skin.getBounds();
+	super(tilemap, isObstacle, grid, speed, sprite.getBounds(), pos, allowance);
+	this.sprites = [sprite];
+	this.collider = sprite.getBounds();
         this.target = target;
     }
 

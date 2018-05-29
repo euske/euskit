@@ -31,7 +31,7 @@ class Blinker extends Entity {
 
     constructor(entity: Entity) {
 	super(entity.pos);
-	this.skin = entity.skin;
+	this.sprites = entity.sprites;
     }
 
     tick() {
@@ -49,8 +49,9 @@ class Player extends Entity {
 
     constructor(pos: Vec2) {
 	super(pos);
-	this.skin = SPRITES.get(0, 0, 1, 1, new Vec2(8,8));
-	this.collider = this.skin.getBounds();
+        let sprite = SPRITES.get(0, 0, 1, 1, new Vec2(8,8));
+	this.sprites = [sprite]
+	this.collider = sprite.getBounds();
     }
 
     tick() {

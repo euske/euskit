@@ -55,19 +55,21 @@ function findShadowPos(tilemap: TileMap, pos: Vec2) {
 
 
 //  ShadowSprite
-//  An EntitySprite with shadow.
 //
-class ShadowSprite extends EntitySprite {
+class ShadowSprite implements ImageSource {
 
     shadow: HTMLImageSource;
     shadowPos: Vec2 = null;
 
-    constructor(entity: Entity) {
-	super(entity);
+    constructor() {
 	this.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
     }
 
-    renderImage(ctx: CanvasRenderingContext2D) {
+    getBounds(): Rect {
+        return this.shadow.getBounds();
+    }
+
+    render(ctx: CanvasRenderingContext2D) {
 	let shadow = this.shadow;
 	let pos = this.shadowPos;
 	if (pos !== null) {
@@ -86,7 +88,6 @@ class ShadowSprite extends EntitySprite {
 	    }
 	    ctx.restore();
 	}
-	super.renderImage(ctx);
     }
 }
 
@@ -96,15 +97,16 @@ class ShadowSprite extends EntitySprite {
 class Player extends PlatformerEntity {
 
     scene: Game;
+    shadow: ShadowSprite = new ShadowSprite();
     usermove: Vec2 = new Vec2();
     holding: boolean = true;
     picked: Signal;
 
     constructor(scene: Game, pos: Vec2) {
 	super(scene.tilemap, scene.physics, pos);
-	this.sprite = new ShadowSprite(this);
-	this.skin = SPRITES.get(S.PLAYER);
-	this.collider = this.skin.getBounds();
+        let sprite = SPRITES.get(S.PLAYER);
+	this.sprites = [this.shadow, sprite];
+	this.collider = sprite.getBounds();
 	this.scene = scene;
 	this.picked = new Signal(this);
 	// Release a ladder when jumping.
@@ -141,8 +143,7 @@ class Player extends PlatformerEntity {
 	    v = new Vec2(v.x, lowerbound(0, v.y));
 	}
 	this.moveIfPossible(v);
-        let shadowPos = findShadowPos(this.tilemap, this.pos);
-	(this.sprite as ShadowSprite).shadowPos = shadowPos;
+	this.shadow.shadowPos = findShadowPos(this.tilemap, this.pos);
     }
 
     setJump(jumpend: number) {
@@ -166,7 +167,7 @@ class Player extends PlatformerEntity {
 	    APP.playSound('pick');
 	    entity.stop();
 	    let yay = new Projectile(this.pos.move(0,-16));
-	    yay.skin = SPRITES.get(S.YAY);
+	    yay.sprites = [SPRITES.get(S.YAY)];
 	    yay.movement = new Vec2(0,-4);
 	    yay.lifetime = 0.5;
 	    this.world.add(yay);
@@ -182,16 +183,18 @@ class Monster extends PlanningEntity {
 
     scene: Game;
     target: Entity;
+    shadow: ShadowSprite;
 
-    constructor(scene: Game, pos: Vec2) {
-	let skin = SPRITES.get(S.MONSTER);
+    constructor(scene: Game, pos: Vec2, target: Entity) {
+	let sprite = SPRITES.get(S.MONSTER);
 	super(scene.tilemap, scene.physics,
-	      scene.grid, scene.caps, skin.getBounds(),
+	      scene.grid, scene.caps, sprite.getBounds(),
 	      pos, 4);
 	this.scene = scene;
-	this.sprite = new ShadowSprite(this);
-	this.skin = skin;
-	this.collider = skin.getBounds();
+        this.target = target;
+        this.shadow = new ShadowSprite();
+	this.sprites = [sprite];
+	this.collider = sprite.getBounds();
     }
 
     tick() {
@@ -209,8 +212,7 @@ class Monster extends PlanningEntity {
 		this.setRunner(new PlatformerActionRunner(this, action, goal));
 	    }
 	}
-        let shadowPos = findShadowPos(this.tilemap, this.pos);
-	(this.sprite as ShadowSprite).shadowPos = shadowPos;
+	this.shadow.shadowPos = findShadowPos(this.tilemap, this.pos);
     }
 
     setAction(action: PlanAction) {
@@ -232,8 +234,9 @@ class Thingy extends Entity {
 
     constructor(pos: Vec2) {
 	super(pos);
-	this.skin = SPRITES.get(S.THINGY);
-	this.collider = this.skin.getBounds().inflate(-4, -4);
+	let sprite = SPRITES.get(S.THINGY);
+        this.sprites = [sprite];
+	this.collider = sprite.getBounds().inflate(-4, -4);
     }
 }
 
@@ -308,8 +311,7 @@ class Game extends GameScene {
 		this.thingies++;
 		break;
 	    case T.ENEMY:
-		let monster = new Monster(this, rect.center());
-		monster.target = this.player;
+		let monster = new Monster(this, rect.center(), this.player);
 		this.add(monster);
 		this.watch = monster;
 		break;

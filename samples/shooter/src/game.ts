@@ -24,15 +24,15 @@ addInitHook(() => {
 //  Bullet
 //
 class Bullet extends Projectile {
-    
+
     constructor(pos: Vec2) {
 	super(pos);
 	let bounds = new Rect(-4, -1, 8, 2);
-	this.skin = new RectImageSource('white', bounds)
+	this.sprites = [new RectImageSource('white', bounds)];
 	this.collider = bounds;
 	this.movement = new Vec2(8, 0);
     }
-    
+
     init() {
         super.init();
 	this.frame = this.world.area;
@@ -45,7 +45,7 @@ class Bullet extends Projectile {
 class Explosion extends Entity {
     constructor(pos: Vec2) {
 	super(pos);
-	this.skin = SPRITES.get(4);
+	this.sprites = [SPRITES.get(4)];
 	this.lifetime = 0.2;
     }
 }
@@ -61,8 +61,9 @@ class Player extends Entity {
 
     constructor(pos: Vec2) {
 	super(pos);
-	this.skin = SPRITES.get(0);
-	this.collider = this.skin.getBounds();
+        let sprite = SPRITES.get(0);
+	this.sprites = [sprite];
+	this.collider = sprite.getBounds();
     }
 
     tick() {
@@ -142,8 +143,9 @@ class Enemy1 extends EnemyBase {
 
     constructor(pos: Vec2) {
 	super(pos);
-	this.skin = SPRITES.get(1);
-	this.collider = this.skin.getBounds();
+        let sprite = SPRITES.get(1);
+	this.sprites = [sprite];
+	this.collider = sprite.getBounds();
 	this.movement = new Vec2(-rnd(1,8), rnd(3)-1);
     }
 }
@@ -155,8 +157,9 @@ class Enemy2 extends EnemyBase {
 
     constructor(pos: Vec2) {
 	super(pos);
-	this.skin = SPRITES.get(2);
-	this.collider = this.skin.getBounds();
+	let sprite = SPRITES.get(2);
+        this.sprites = [sprite];
+	this.collider = sprite.getBounds();
 	this.movement = new Vec2(-rnd(1,4), 0);
     }
 
@@ -175,7 +178,7 @@ class Enemy2 extends EnemyBase {
 class Shooter extends GameScene {
 
     player: Player;
-    stars: FixedSprite;
+    stars: StarImageSource;
     nextenemy: number;		// Enemy spawning counter.
     score: number;
     scoreBox: TextBox;
@@ -193,7 +196,7 @@ class Shooter extends GameScene {
         task.stopped.subscribe(() => { this.init(); });
 	this.player.chain(task);
 	this.add(this.player);
-	this.stars = new FixedSprite(new StarImageSource(this.screen, 100));
+	this.stars = new StarImageSource(this.screen, 100);
 	this.nextenemy = 0;
 	this.score = 0;
 	this.updateScore();
@@ -201,7 +204,7 @@ class Shooter extends GameScene {
 
     tick() {
 	super.tick();
-	(this.stars.skin as StarImageSource).move(new Vec2(-4, 0));
+	this.stars.move(new Vec2(-4, 0));
 	// Spawn an enemy at a random interval.
 	if (this.nextenemy == 0) {
             let area = this.world.area;

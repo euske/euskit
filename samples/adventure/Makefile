@@ -11,7 +11,6 @@ BASES= \
 	$(BASEDIR)/pathfind.ts \
 	$(BASEDIR)/planplat.ts \
 	$(BASEDIR)/scene.ts \
-	$(BASEDIR)/sprite.ts \
 	$(BASEDIR)/task.ts \
 	$(BASEDIR)/text.ts \
 	$(BASEDIR)/tilemap.ts \
