@@ -1,7 +1,7 @@
 /// <reference path="../../../base/utils.ts" />
 /// <reference path="../../../base/geom.ts" />
+/// <reference path="../../../base/sprite.ts" />
 /// <reference path="../../../base/entity.ts" />
-/// <reference path="../../../base/text.ts" />
 /// <reference path="../../../base/scene.ts" />
 /// <reference path="../../../base/app.ts" />
 
@@ -25,7 +25,7 @@ class Paddle extends Entity {
 	// Initializes the position and shape.
 	super(screen.anchor('s').move(0,-20));
 	let bounds = new Rect(-20,-5,40,10);
-	this.sprites = [new RectImageSource('green', bounds)];
+	this.sprites = [new RectSprite('green', bounds)];
 	this.collider = bounds;
 	this.screen = screen;
 	this.vx = 0;
@@ -54,7 +54,7 @@ class Ball extends Entity {
 	// Initializes the position and shape.
 	super(screen.center());
 	let bounds = new Rect(-5,-5,10,10);
-	this.sprites = [new OvalImageSource('white', bounds)];
+	this.sprites = [new OvalSprite('white', bounds)];
 	this.collider = bounds;
 	this.screen = screen;
 	this.v = new Vec2(rnd(2)*8-4, -4);

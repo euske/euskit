@@ -1,5 +1,6 @@
 /// <reference path="../../../base/utils.ts" />
 /// <reference path="../../../base/geom.ts" />
+/// <reference path="../../../base/sprite.ts" />
 /// <reference path="../../../base/entity.ts" />
 /// <reference path="../../../base/text.ts" />
 /// <reference path="../../../base/scene.ts" />
@@ -28,7 +29,7 @@ class Bullet extends Projectile {
     constructor(pos: Vec2) {
 	super(pos);
 	let bounds = new Rect(-4, -1, 8, 2);
-	this.sprites = [new RectImageSource('white', bounds)];
+	this.sprites = [new RectSprite('white', bounds)];
 	this.collider = bounds;
 	this.movement = new Vec2(8, 0);
     }
@@ -178,7 +179,7 @@ class Enemy2 extends EnemyBase {
 class Shooter extends GameScene {
 
     player: Player;
-    stars: StarImageSource;
+    stars: StarSprite;
     nextenemy: number;		// Enemy spawning counter.
     score: number;
     scoreBox: TextBox;
@@ -196,7 +197,7 @@ class Shooter extends GameScene {
         task.stopped.subscribe(() => { this.init(); });
 	this.player.chain(task);
 	this.add(this.player);
-	this.stars = new StarImageSource(this.screen, 100);
+	this.stars = new StarSprite(this.screen, 100);
 	this.nextenemy = 0;
 	this.score = 0;
 	this.updateScore();

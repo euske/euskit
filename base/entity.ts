@@ -18,7 +18,7 @@ class Entity extends Task {
     rotation: number = 0;
     scale: Vec2 = null;
     alpha: number = 1.0;
-    sprites: ImageSource[] = [];
+    sprites: Sprite[] = [];
 
     constructor(pos: Vec2) {
 	super();

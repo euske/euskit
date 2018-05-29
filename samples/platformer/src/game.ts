@@ -1,5 +1,6 @@
 /// <reference path="../../../base/utils.ts" />
 /// <reference path="../../../base/geom.ts" />
+/// <reference path="../../../base/sprite.ts" />
 /// <reference path="../../../base/entity.ts" />
 /// <reference path="../../../base/text.ts" />
 /// <reference path="../../../base/scene.ts" />
@@ -56,13 +57,13 @@ function findShadowPos(tilemap: TileMap, pos: Vec2) {
 
 //  ShadowSprite
 //
-class ShadowSprite implements ImageSource {
+class ShadowSprite implements Sprite {
 
-    shadow: HTMLImageSource;
+    shadow: HTMLSprite;
     shadowPos: Vec2 = null;
 
     constructor() {
-	this.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
+	this.shadow = SPRITES.get(S.SHADOW) as HTMLSprite;
     }
 
     getBounds(): Rect {

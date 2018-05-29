@@ -1,5 +1,6 @@
 /// <reference path="../../../base/utils.ts" />
 /// <reference path="../../../base/geom.ts" />
+/// <reference path="../../../base/sprite.ts" />
 /// <reference path="../../../base/entity.ts" />
 /// <reference path="../../../base/tilemap.ts" />
 /// <reference path="../../../base/pathfind.ts" />
@@ -10,8 +11,8 @@
 //
 const TILES = [
     null,                       // 0
-    new RectImageSource('white', new Rect(0,0,16,16)),  // 1
-    new RectImageSource('yellow', new Rect(0,0,16,16)), // 2
+    new RectSprite('white', new Rect(0,0,16,16)),  // 1
+    new RectSprite('yellow', new Rect(0,0,16,16)), // 2
 ];
 let isObstacle = ((c:number) => { return c == 1; });
 let isGoal = ((c:number) => { return c == 2; });
@@ -62,7 +63,7 @@ class Player extends Entity {
 	super(pos);
         this.goaled = new Signal(this);
         this.tilemap = tilemap;
-        let sprite = new RectImageSource('#0f0', new Rect(-8,-8,16,16));
+        let sprite = new RectSprite('#0f0', new Rect(-8,-8,16,16));
 	this.sprites = [sprite];
 	this.collider = sprite.getBounds();
 	this.usermove = new Vec2();
@@ -105,7 +106,7 @@ class Enemy extends WalkerEntity {
 
     constructor(tilemap: TileMap, target: Entity, pos: Vec2) {
         let grid = new GridConfig(tilemap);
-        let sprite = new RectImageSource('#f80', new Rect(-8,-8,16,16));
+        let sprite = new RectSprite('#f80', new Rect(-8,-8,16,16));
         let speed = new Vec2(2,2);
         let allowance = 4;
 	super(tilemap, isObstacle, grid, speed, sprite.getBounds(), pos, allowance);

@@ -140,7 +140,7 @@ class TextSegment {
 
 //  TextBox
 //
-class TextBox implements ImageSource {
+class TextBox implements Sprite {
 
     frame: Rect;
     font: Font;

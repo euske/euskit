@@ -1,5 +1,6 @@
 /// <reference path="../../../base/utils.ts" />
 /// <reference path="../../../base/geom.ts" />
+/// <reference path="../../../base/sprite.ts" />
 /// <reference path="../../../base/entity.ts" />
 /// <reference path="../../../base/text.ts" />
 /// <reference path="../../../base/scene.ts" />
@@ -26,13 +27,13 @@ function getContact3(hitbox: Box, v: Vec3, obstacles: Box[])
 
 //  ShadowSprite3
 //
-class ShadowSprite3 implements ImageSource {
+class ShadowSprite3 implements Sprite {
 
-    shadow: HTMLImageSource;
+    shadow: HTMLSprite;
     dz: number = 0;
 
     constructor() {
-	this.shadow = SPRITES.get(S.SHADOW) as HTMLImageSource;
+	this.shadow = SPRITES.get(S.SHADOW) as HTMLSprite;
     }
 
     getBounds(): Rect {

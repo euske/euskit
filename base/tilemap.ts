@@ -168,7 +168,7 @@ class TileMap {
 
     renderFromBottomLeft(
 	ctx: CanvasRenderingContext2D,
-	ft: (x:number,y:number,c:number)=>ImageSource,
+	ft: (x:number,y:number,c:number)=>Sprite,
 	x0=0, y0=0, w=0, h=0) {
 	// Align the pos to the bottom left corner.
 	let ts = this.tilesize;
@@ -193,7 +193,7 @@ class TileMap {
 
     renderFromTopRight(
 	ctx: CanvasRenderingContext2D,
-	ft: (x:number,y:number,c:number)=>ImageSource,
+	ft: (x:number,y:number,c:number)=>Sprite,
 	x0=0, y0=0, w=0, h=0) {
 	// Align the pos to the bottom left corner.
 	let ts = this.tilesize;
@@ -220,7 +220,7 @@ class TileMap {
     renderWindowFromBottomLeft(
 	ctx: CanvasRenderingContext2D,
 	window: Rect,
-	ft: (x:number,y:number,c:number)=>ImageSource) {
+	ft: (x:number,y:number,c:number)=>Sprite) {
 	let ts = this.tilesize;
 	let x0 = Math.floor(window.x/ts);
 	let y0 = Math.floor(window.y/ts);
@@ -237,7 +237,7 @@ class TileMap {
     renderWindowFromTopRight(
 	ctx: CanvasRenderingContext2D,
 	window: Rect,
-	ft: (x:number,y:number,c:number)=>ImageSource) {
+	ft: (x:number,y:number,c:number)=>Sprite) {
 	let ts = this.tilesize;
 	let x0 = Math.floor(window.x/ts);
 	let y0 = Math.floor(window.y/ts);

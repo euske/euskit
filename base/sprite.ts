@@ -5,7 +5,7 @@
 /** Abstract image obejct that is placed at (0, 0).
  *  render() is responsible to draw the image.
  */
-interface ImageSource {
+interface Sprite {
 
     /** Returns the bounds of the image at (0, 0). */
     getBounds(): Rect;
@@ -15,10 +15,10 @@ interface ImageSource {
 }
 
 
-/** ImageSource that is a solid filled rectangle.
+/** Sprite that is a solid filled rectangle.
  *  Typically used as placeholders.
  */
-class RectImageSource implements ImageSource {
+class RectSprite implements Sprite {
 
     /** Fill color. */
     color: string;
@@ -45,9 +45,9 @@ class RectImageSource implements ImageSource {
 }
 
 
-/** ImageSource that is a solid filled oval.
+/** Sprite that is a solid filled oval.
  */
-class OvalImageSource implements ImageSource {
+class OvalSprite implements Sprite {
 
     /** Fill color. */
     color: string;
@@ -80,9 +80,9 @@ class OvalImageSource implements ImageSource {
 }
 
 
-/** ImageSource that uses a canvas object.
+/** Sprite that uses a canvas object.
  */
-class CanvasImageSource implements ImageSource {
+class CanvasSprite implements Sprite {
 
     /** Source image. */
     canvas: HTMLCanvasElement;
@@ -120,9 +120,9 @@ class CanvasImageSource implements ImageSource {
 }
 
 
-/** ImageSource that uses a (part of) HTML <img> element.
+/** Sprite that uses a (part of) HTML <img> element.
  */
-class HTMLImageSource implements ImageSource {
+class HTMLSprite implements Sprite {
 
     /** Source image. */
     image: HTMLImageElement;
@@ -160,19 +160,19 @@ class HTMLImageSource implements ImageSource {
 }
 
 
-/** ImageSource that consists of tiled images.
+/** Sprite that consists of tiled images.
  *  A image is displayed repeatedly to fill up the specified bounds.
  */
-class TiledImageSource implements ImageSource {
+class TiledSprite implements Sprite {
 
     /** Image source to be tiled. */
-    sprite: ImageSource;
+    sprite: Sprite;
     /** Bounds to fill. */
     bounds: Rect;
     /** Image offset. */
     offset: Vec2;
 
-    constructor(sprite: ImageSource, bounds: Rect, offset: Vec2=null) {
+    constructor(sprite: Sprite, bounds: Rect, offset: Vec2=null) {
 	this.sprite = sprite;
 	this.bounds = bounds;
 	this.offset = (offset !== null)? offset : new Vec2();
@@ -210,7 +210,7 @@ class TiledImageSource implements ImageSource {
 
 /** Internal object that represents a star. */
 class Star {
-    sprite: ImageSource;
+    sprite: Sprite;
     z: number;
     s: number;
     p: Vec2;
@@ -221,31 +221,31 @@ class Star {
 }
 
 
-/** ImageSource for "star flowing" effects.
+/** Sprite for "star flowing" effects.
  *  A image is scattered across the area with a varied depth.
  */
-class StarImageSource implements ImageSource {
+class StarSprite implements Sprite {
 
     /** Bounds to fill. */
     bounds: Rect;
     /** Maximum depth of stars. */
     maxdepth: number;
     /** Image source to be used as a single star. */
-    imgsrcs: ImageSource[];
+    sprites: Sprite[];
 
     private _stars: Star[] = [];
 
     constructor(bounds: Rect, nstars: number,
-		maxdepth=3, imgsrcs: ImageSource[]=null) {
+		maxdepth=3, sprites: Sprite[]=null) {
 	this.bounds = bounds
 	this.maxdepth = maxdepth;
-	if (imgsrcs === null) {
-	    imgsrcs = [new RectImageSource('white', new Rect(0,0,1,1))];
+	if (sprites === null) {
+	    sprites = [new RectSprite('white', new Rect(0,0,1,1))];
 	}
-	this.imgsrcs = imgsrcs;
+	this.sprites = sprites;
 	for (let i = 0; i < nstars; i++) {
 	    let star = new Star();
-	    star.sprite = choice(imgsrcs);
+	    star.sprite = choice(sprites);
 	    star.init(this.maxdepth);
 	    star.p = this.bounds.rndPt();
 	    this._stars.push(star);
@@ -286,41 +286,41 @@ class StarImageSource implements ImageSource {
 }
 
 
-/** Object that stores multiple ImageSource objects.
- *  Each cell on the grid represents an individual ImageSource.
+/** Object that stores multiple Sprite objects.
+ *  Each cell on the grid represents an individual Sprite.
  */
 class SpriteSheet {
 
     constructor() {
     }
 
-    /** Returns an ImageSource at the given cell. */
-    get(x:number, y=0, w=1, h=1, origin: Vec2=null): ImageSource {
-	return null as ImageSource;
+    /** Returns an Sprite at the given cell. */
+    get(x:number, y=0, w=1, h=1, origin: Vec2=null): Sprite {
+	return null as Sprite;
     }
 }
 
 
-/** Array of ImageSources.
+/** Array of Sprites.
  */
 class ArraySpriteSheet extends SpriteSheet {
 
-    imgsrcs: ImageSource[];
+    sprites: Sprite[];
 
-    constructor(imgsrcs: ImageSource[]) {
+    constructor(sprites: Sprite[]) {
 	super();
-	this.imgsrcs = imgsrcs;
+	this.sprites = sprites;
     }
 
-    /** Returns an ImageSource at the given cell. */
-    get(x:number, y=0, w=1, h=1, origin: Vec2=null): ImageSource {
-	if (x < 0 || this.imgsrcs.length <= x || y != 0) return null;
-	return this.imgsrcs[x];
+    /** Returns an Sprite at the given cell. */
+    get(x:number, y=0, w=1, h=1, origin: Vec2=null): Sprite {
+	if (x < 0 || this.sprites.length <= x || y != 0) return null;
+	return this.sprites[x];
     }
 
-    /** Sets an ImageSource at the given cell. */
-    set(i:number, sprite:ImageSource) {
-	this.imgsrcs[i] = sprite;
+    /** Sets an Sprite at the given cell. */
+    set(i:number, sprite:Sprite) {
+	this.sprites[i] = sprite;
     }
 }
 
@@ -333,7 +333,7 @@ class ImageSpriteSheet extends SpriteSheet {
     image: HTMLImageElement;
     /** Size of each cell. */
     size: Vec2;
-    /** Origin of each ImageSource. */
+    /** Origin of each Sprite. */
     origin: Vec2;
 
     constructor(image: HTMLImageElement, size: Vec2, origin: Vec2=null) {
@@ -343,8 +343,8 @@ class ImageSpriteSheet extends SpriteSheet {
 	this.origin = origin;
     }
 
-    /** Returns an ImageSource at the given cell. */
-    get(x:number, y=0, w=1, h=1, origin: Vec2=null): ImageSource {
+    /** Returns an Sprite at the given cell. */
+    get(x:number, y=0, w=1, h=1, origin: Vec2=null): Sprite {
 	if (origin === null) {
 	    origin = this.origin;
 	    if (origin === null) {
@@ -357,6 +357,6 @@ class ImageSpriteSheet extends SpriteSheet {
 	let dstRect = new Rect(
             -origin.x, -origin.y,
             w*this.size.x, h*this.size.y);
-	return new HTMLImageSource(this.image, srcRect, dstRect);
+	return new HTMLSprite(this.image, srcRect, dstRect);
     }
 }
