@@ -1,6 +1,5 @@
 /// <reference path="../../../base/utils.ts" />
 /// <reference path="../../../base/geom.ts" />
-/// <reference path="../../../base/imgsrc.ts" />
 /// <reference path="../../../base/entity.ts" />
 /// <reference path="../../../base/text.ts" />
 /// <reference path="../../../base/scene.ts" />

@@ -166,14 +166,14 @@ class HTMLImageSource implements ImageSource {
 class TiledImageSource implements ImageSource {
 
     /** Image source to be tiled. */
-    imgsrc: ImageSource;
+    sprite: ImageSource;
     /** Bounds to fill. */
     bounds: Rect;
     /** Image offset. */
     offset: Vec2;
 
-    constructor(imgsrc: ImageSource, bounds: Rect, offset: Vec2=null) {
-	this.imgsrc = imgsrc;
+    constructor(sprite: ImageSource, bounds: Rect, offset: Vec2=null) {
+	this.sprite = sprite;
 	this.bounds = bounds;
 	this.offset = (offset !== null)? offset : new Vec2();
     }
@@ -190,7 +190,7 @@ class TiledImageSource implements ImageSource {
 	ctx.beginPath();
 	ctx.rect(0, 0, this.bounds.width, this.bounds.height);
 	ctx.clip();
-	let dstRect = this.imgsrc.getBounds();
+	let dstRect = this.sprite.getBounds();
 	let w = dstRect.width;
 	let h = dstRect.height;
 	let dx0 = int(Math.floor(this.offset.x/w)*w - this.offset.x);
@@ -199,7 +199,7 @@ class TiledImageSource implements ImageSource {
 	    for (let dx = dx0; dx < this.bounds.width; dx += w) {
 		ctx.save();
 		ctx.translate(dx, dy);
-		this.imgsrc.render(ctx);
+		this.sprite.render(ctx);
 		ctx.restore();
 	    }
 	}
@@ -210,7 +210,7 @@ class TiledImageSource implements ImageSource {
 
 /** Internal object that represents a star. */
 class Star {
-    imgsrc: ImageSource;
+    sprite: ImageSource;
     z: number;
     s: number;
     p: Vec2;
@@ -245,7 +245,7 @@ class StarImageSource implements ImageSource {
 	this.imgsrcs = imgsrcs;
 	for (let i = 0; i < nstars; i++) {
 	    let star = new Star();
-	    star.imgsrc = choice(imgsrcs);
+	    star.sprite = choice(imgsrcs);
 	    star.init(this.maxdepth);
 	    star.p = this.bounds.rndPt();
 	    this._stars.push(star);
@@ -265,7 +265,7 @@ class StarImageSource implements ImageSource {
 	    ctx.save();
 	    ctx.translate(star.p.x, star.p.y);
 	    ctx.scale(star.s, star.s);
-	    star.imgsrc.render(ctx);
+	    star.sprite.render(ctx);
 	    ctx.restore();
 	}
 	ctx.restore();
@@ -319,8 +319,8 @@ class ArraySpriteSheet extends SpriteSheet {
     }
 
     /** Sets an ImageSource at the given cell. */
-    set(i:number, imgsrc:ImageSource) {
-	this.imgsrcs[i] = imgsrc;
+    set(i:number, sprite:ImageSource) {
+	this.imgsrcs[i] = sprite;
     }
 }
 

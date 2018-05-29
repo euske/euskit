@@ -11,7 +11,7 @@ BASES= \
 	$(BASEDIR)/app.ts \
 	$(BASEDIR)/entity.ts \
 	$(BASEDIR)/geom.ts \
-	$(BASEDIR)/imgsrc.ts \
+	$(BASEDIR)/sprite.ts \
 	$(BASEDIR)/pathfind.ts \
 	$(BASEDIR)/planplat.ts \
 	$(BASEDIR)/scene.ts \

@@ -1,6 +1,6 @@
 /// <reference path="utils.ts" />
 /// <reference path="geom.ts" />
-/// <reference path="imgsrc.ts" />
+/// <reference path="sprite.ts" />
 
 
 //  TileMap
@@ -180,11 +180,11 @@ class TileMap {
 	    for (let dx = 0; dx < w; dx++) {
 		let x = x0+dx;
 		let c = this.get(x, y);
-		let imgsrc = ft(x, y, c);
-		if (imgsrc !== null) {
+		let sprite = ft(x, y, c);
+		if (sprite !== null) {
 		    ctx.save();
 		    ctx.translate(ts*dx, ts*dy);
-		    imgsrc.render(ctx);
+		    sprite.render(ctx);
 		    ctx.restore();
 		}
 	    }
@@ -205,11 +205,11 @@ class TileMap {
 	    for (let dx = w-1; 0 <= dx; dx--) {
 		let x = x0+dx;
 		let c = this.get(x, y);
-		let imgsrc = ft(x, y, c);
-		if (imgsrc !== null) {
+		let sprite = ft(x, y, c);
+		if (sprite !== null) {
 		    ctx.save();
 		    ctx.translate(ts*dx, ts*dy);
-		    imgsrc.render(ctx);
+		    sprite.render(ctx);
 		    ctx.restore();
 		}
 	    }

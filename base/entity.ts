@@ -1,7 +1,7 @@
 /// <reference path="utils.ts" />
 /// <reference path="geom.ts" />
 /// <reference path="task.ts" />
-/// <reference path="imgsrc.ts" />
+/// <reference path="sprite.ts" />
 /// <reference path="tilemap.ts" />
 
 
