@@ -39,12 +39,9 @@ body { margin: 0; padding: 0; }
 
 <div class=list>
 <div class=head>Basic Objects:</div>
-<a href="#ImageSource">ImageSource</a>,
-<a href="#Sprite">Sprite</a>
+<a href="#Sprite">Sprite</a>,
 <a href="#Task">Task</a>,
-<a href="#Widget">Widget</a>,
 <a href="#Entity">Entity</a>,
-<a href="#SpriteLayer">SpriteLayer</a>,
 <a href="#World">World</a>,
 <a href="#Scene">Scene</a>,
 <a href="#App">App</a>
@@ -165,13 +162,11 @@ body { margin: 0; padding: 0; }
     Resource management (images and sounds) and event loop.<br>
     <a href="#Scene"><code>Scene</code></a>:
     Game state management and event handling.<br>
-    <a href="#World"><code>World</code></a>:
-    Stack of layers to be rendered.<br>
     <a href="#Entity"><code>Entity</code></a>:
     In-game character.<br>
     <a href="#Sprite"><code>Sprite</code></a>:
     Graphical object to be shown.<br>
-    <a href="#SpriteLayer"><code>SpriteLayer</code></a>:
+    <a href="#World"><code>World</code></a>:
     Container where Sprites are placed in.<br>
   </div>
 </div>
@@ -179,58 +174,28 @@ body { margin: 0; padding: 0; }
 
 <a name="basic-objects"><h2>Basic Objects</h2></a>
 
-<a name="ImageSource"><h3>ImageSource (<code>imgsrc.ts</code>)</h3></a>
-<p>
-An <code>ImageSource</code> is an abstract object to render something on screen.
-<table border>
-<tr class=ctor><td><code>new RectImageSource(<u>color</u>, <u>dstRect</u>)</code></td>
-  <td>ImageSource with a filled rectangle.</td></tr>
-<tr class=ctor><td><code>new OvalImageSource(<u>color</u>, <u>dstRect</u>)</code></td>
-  <td>ImageSource with a filled oval.</td></tr>
-<tr class=ctor><td><code>new CanvasImageSource(<br>&nbsp; <u>canvas</u>, <u>srcRect</u>=null, <u>dstRect</u>=null)</code></td>
-  <td>ImageSource that refers to a portion of
-    <code>&lt;canvas&gt;</code> element.</td></tr>
-<tr class=ctor><td><code>new HTMLImageSource(<br>&nbsp; <u>image</u>, <u>srcRect</u>=null, <u>dstRect</u>=null)</code></td>
-  <td>ImageSource that refers to a portion of
-    <code>&lt;img&gt;</code> element.</td></tr>
-<tr class=ctor><td><code>new TiledImageSource(<br>&nbsp; <u>imgsrc</u>, <u>bounds</u>, <u>offset</u>=null)</code></td>
-  <td>ImageSource that is composed of another ImageSource.</td></tr>
-<tr class=ctor><td><code>new StarImageSource(<br>&nbsp; <u>bounds</u>, <u>nstars</u>, <u>maxdepth</u>=3, <u>imgsrcs</u>=null)</code></td>
-  <td>ImageSource that can be used for "star flowing" effects.</td></tr>
-<tr><td><code>.getBounds()</code></td>
-  <td>Returns the bounds rectangle of the ImageSource.</td></tr>
-<tr><td><code>.render(<u>ctx</u>)</code></td>
-  <td>Renders the image at (0, 0) in the given Context.</td></tr>
-</table>
-
 <a name="Sprite"><h3>Sprite (<code>sprite.ts</code>)</h3></a>
 <p>
 A <code>Sprite</code> is something to be displayed.
-It has a location, rotation and scale. Typically it does not move by itself.
-A <code>Scene</code> or <code>Entity</code> is responsible to change its position.
 <table border>
-<tr class=ctor><td><code>new FixedSprite(<br>&nbsp; <u>imgsrc</u>=null, <u>pos</u>=null)</code></td>
-  <td>Sprite with a fixed <code>ImageSource</code> and position.</td></tr>
-<tr class=ctor><td><code>new EntitySprite(<u>entity</u>)</code></td>
-  <td>Sprite that belongs to an <code>Entity</code>.</td></tr>
-<tr><td><code>.scale</code></td>
-  <td>Vector for the scale of the sprite image.</td></tr>
-<tr><td><code>.rotation</code></td>
-  <td>Rotation of the sprite image (in radian).</td></tr>
-<tr><td><code>.isVisible()</code></td>
-  <td><code>true</code> if the sprite is visible.</td></tr>
-<tr><td><code>.getBounds(<u>pos</u>=null)</code></td>
-  <td>Returns the bounds for the given <code>pos</code>.</td></tr>
+<tr class=ctor><td><code>new RectSprite(<u>color</u>, <u>dstRect</u>)</code></td>
+  <td>Sprite with a filled rectangle.</td></tr>
+<tr class=ctor><td><code>new OvalSprite(<u>color</u>, <u>dstRect</u>)</code></td>
+  <td>Sprite with a filled oval.</td></tr>
+<tr class=ctor><td><code>new CanvasSprite(<br>&nbsp; <u>canvas</u>, <u>srcRect</u>=null, <u>dstRect</u>=null)</code></td>
+  <td>Sprite that refers to a portion of
+    <code>&lt;canvas&gt;</code> element.</td></tr>
+<tr class=ctor><td><code>new HTMLSprite(<br>&nbsp; <u>image</u>, <u>srcRect</u>=null, <u>dstRect</u>=null)</code></td>
+  <td>Sprite that refers to a portion of
+    <code>&lt;img&gt;</code> element.</td></tr>
+<tr class=ctor><td><code>new TiledSprite(<br>&nbsp; <u>sprite</u>, <u>bounds</u>, <u>offset</u>=null)</code></td>
+  <td>Sprite that is composed of another Sprite.</td></tr>
+<tr class=ctor><td><code>new StarSprite(<br>&nbsp; <u>bounds</u>, <u>nstars</u>, <u>maxdepth</u>=3, <u>sprites</u>=null)</code></td>
+  <td>Sprite that can be used for "star flowing" effects.</td></tr>
+<tr><td><code>.getBounds()</code></td>
+  <td>Returns the bounds rectangle of the Sprite.</td></tr>
 <tr><td><code>.render(<u>ctx</u>)</code></td>
-  <td>Draws the sprite at the given position.</td></tr>
-<tr class=override><td><code>.getSkin()</code></td>
-  <td>Returns the <code>ImageSource</code> of the sprite's content.</td></tr>
-<tr class=override><td><code>.getPos()</code></td>
-  <td>Returns the position of the sprite.</td></tr>
-<tr class=override><td><code>.mouseSelectable(<u>p</u>)</code></td>
-  <td>Returns <code>true</code> if the sprite can be focused for the given position.</td></tr>
-<tr class=override><td><code>.renderImage(<u>ctx</u>)</code></td>
-  <td>Draws the actual image of the sprite.</td></tr>
+  <td>Renders the image at (0, 0) in the given Context.</td></tr>
 </table>
 
 <a name="Task"><h3>Task (<code>task.ts</code>)</h3></a>
@@ -270,20 +235,7 @@ and managed by <code>TaskList</code>.
   <td>Invoked at every frame while the task is running.</td></tr>
 </table>
 
-<a name="Widget"><h3>Widget : <a href="#Task">Task</a> (<code>entity.ts</code>)</h3></a>
-<p>
-A <code>Widget</code> is a task that belongs to a <code>SpriteLayer</code> and
-has some visual aspect.
-<table border>
-<tr class=ctor><td><code>new Widget()</code></td>
-  <td>Creates a new empty widget.</td></tr>
-<tr class=ctor><td><code>new SingleWidget(<u>sprite</u>)</code></td>
-  <td>Creates a widget with a single sprite.</td></tr>
-<tr class=override><td><code>.getSprites()</code></td>
-  <td>Returns the list of sprites owned by this widget.</td></tr>
-</table>
-
-<a name="Entity"><h3>Entity : <a href="#Widget">Widget</a> (<code>entity.ts</code>)</h3></a>
+<a name="Entity"><h3>Entity : <a href="#Task">Task</a> (<code>entity.ts</code>)</h3></a>
 <p>
 An <code>Entity</code> is a main object for game characters.
 Each Entity has its own process, <code>Collider</code> and one or more
@@ -293,14 +245,16 @@ Sprites. Each Entity can moves on its own.
   <td>Creates a new entity at a given position.</td></tr>
 <tr><td><code>.pos</code></td>
   <td>Entity position.</td></tr>
-<tr><td><code>.sprite</code></td>
-  <td><code>Sprite</code> that belongs to this entity.</td></tr>
 <tr><td><code>.visible</code></td>
   <td><code>true</code> if the entity sprite is visible.</td></tr>
-<tr><td><code>.skin</code></td>
-  <td><code>ImageSource</code> that is used for the sprite.</td></tr>
+<tr><td><code>.sprites</code></td>
+  <td><code>Sprite</code>s that belongs to this entity.</td></tr>
 <tr><td><code>.collider</code></td>
   <td><code>Rect</code>/<code>Circle</code> for the entity's collider.</td></tr>
+<tr><td><code>.scale</code></td>
+  <td>Vector for the scale of the sprite.</td></tr>
+<tr><td><code>.rotation</code></td>
+  <td>Rotation of the sprite (in radian).</td></tr>
 <tr><td><code>.getCollider(<u>pos</u>=null)</code></td>
   <td>Returns the collider for the given <code>pos</code>.</td></tr>
 <tr><td><code>.canMove(<u>v</u>, <u>context</u>=null)</code></td>
@@ -321,12 +275,12 @@ Sprites. Each Entity can moves on its own.
   <td>Draws extra effects for the entity.</td></tr>
 </table>
 
-<a name="SpriteLayer"><h3>SpriteLayer (<code>sprite.ts</code>)</h3></a>
+<a name="World"><h3>World (<code>scene.ts</code>)</h3></a>
 <p>
-A <code>SpriteLayer</code> contains a set of objects that can be rendered
+A <code>World</code> contains a set of objects that can be rendered
 at once and interact each other.
 <table border>
-<tr class=ctor><td><code>new SpriteLayer()</code></td>
+<tr class=ctor><td><code>new World()</code></td>
   <td>Creates a new layer.</td></tr>
 <tr><td><code>.time</code></td>
   <td>The current time of the layer (in seconds).</td></tr>
@@ -472,8 +426,8 @@ Suitable for backgrounds.
 <table border>
 <tr class=ctor><td><code>new TiledSprite(bounds)</code></td>
   <td>Creates a new sprite.</td></tr>
-<tr class=inherited><td><code>.imgsrc</code></td>
-  <td>A <code>ImageSource</code> for the sprite's content.</td></tr>
+<tr class=inherited><td><code>.sprite</code></td>
+  <td>A <code>Sprite</code> for the sprite's content.</td></tr>
 <tr><td><code>.offset</code></td>
   <td>The offset of the image (in <code>Vec2</code>).</td></tr>
 </table>
@@ -485,8 +439,8 @@ Suitable for space-y backgrounds.
 <table border>
 <tr class=ctor><td><code>new StarSprite(<br>&nbsp; bounds, nstars,<br>&nbsp; <em>[maxdepth]</em>)</code></td>
   <td>Creates a new sprite.</td></tr>
-<tr class=inherited><td><code>.imgsrc</code></td>
-  <td>A <code>ImageSource</code> for each star's content.</td></tr>
+<tr class=inherited><td><code>.sprite</code></td>
+  <td>A <code>Sprite</code> for each star's content.</td></tr>
 <tr><td><code>.bounds</code></td>
   <td>The bounds of all stars.</td></tr>
 <tr><td><code>.velocity</code></td>
@@ -503,8 +457,8 @@ Suitable for bullets or obstacles.
 <table border>
 <tr class=ctor><td><code>new Projectile(pos)</code></td>
   <td>Creates a new projectile.</td></tr>
-<tr class=inherited><td><code>.imgsrc</code></td>
-  <td>A <code>ImageSource</code> for the entity's content.</td></tr>
+<tr class=inherited><td><code>.sprite</code></td>
+  <td>A <code>Sprite</code> for the entity's content.</td></tr>
 <tr><td><code>.movement</code></td>
   <td>The velocity of the object.</td></tr>
 <tr><td><code>.frame</code></td>
@@ -528,8 +482,6 @@ Suitable for charcters or objects that can jump or fall.
   <td>A <code>Signal</code> that is signaled when the entity stops.</td></tr>
 <tr class=inherited><td><code>.bounds</code></td>
   <td>A <code>Rect</code> for the entity's size and position.</td></tr>
-<tr class=inherited><td><code>.imgsrc</code></td>
-  <td>A <code>ImageSource</code> for the entity's content.</td></tr>
 <tr class=inherited><td><code>.visible</code></td>
   <td><code>true</code> if the entity is visible.</td></tr>
 <tr class=inherited><td><code>.zOrder</code></td>
@@ -595,8 +547,6 @@ Suitable for tile-based platformer games.
   <td>A <code>Signal</code> that is signaled when the entity stops.</td></tr>
 <tr class=inherited><td><code>.bounds</code></td>
   <td>A <code>Rect</code> for the entity's size and position.</td></tr>
-<tr class=inherited><td><code>.imgsrc</code></td>
-  <td>A <code>ImageSource</code> for the entity's content.</td></tr>
 <tr class=inherited><td><code>.visible</code></td>
   <td><code>true</code> if the entity is visible.</td></tr>
 <tr class=inherited><td><code>.zOrder</code></td>
@@ -757,9 +707,9 @@ A <code>Font</code> represents a monospace bitmap font.
   <td>Draws the text at a given location.</td></tr>
 </table>
 
-<a name="TextBox"><h3>TextBox : <a href="#ImageSource">ImageSource</a> (<code>text.ts</code>)</h3></a>
+<a name="TextBox"><h3>TextBox : <a href="#Sprite">Sprite</a> (<code>text.ts</code>)</h3></a>
 <p>
-A type of <code>ImageSource</code> represents a text display.
+A type of <code>Sprite</code> represents a text display.
 <table border>
 <tr class=ctor><td><code>new Text(<u>frame</u>, <u>font</u>=null)</code></td>
   <td>TextBox with a given frame and font.</td></tr>
@@ -1401,16 +1351,16 @@ and not explicitly created by a user.
   <td><code>true</code> if a specific tile exists within the given area.</td></tr>
 </table>
 
-<a name="SpriteSheet"><h3>SpriteSheet (<code>imgsrc.ts</code>)</h3></a>
+<a name="SpriteSheet"><h3>SpriteSheet (<code>sprite.ts</code>)</h3></a>
 <p>
-A set of <code>ImageSource</code> objects indexed by a number.
+A set of <code>Sprite</code> objects indexed by a number.
 <table border>
 <tr class=ctor><td><code>new ImageSpriteSheet(image, size, <em>[origin]</em>)</code></td>
   <td>Creates a <code>SpriteSheet</code> from <code>&lt;img&gt;</code>.</td></tr>
-<tr class=ctor><td><code>new ArraySpriteSheet(imgsrcs)</code></td>
-  <td>Creates a <code>SpriteSheet</code> from an array of <code>ImageSource</code>s.</td></tr>
+<tr class=ctor><td><code>new ArraySpriteSheet(sprites)</code></td>
+  <td>Creates a <code>SpriteSheet</code> from an array of <code>Sprite</code>s.</td></tr>
 <tr><td><code>.get(i, <em>[j, [w, [h, [origin]]]]</em>)</code></td>
-  <td>Returns the <code>i,j</code>-th <code>ImageSource</code>.</td></tr>
+  <td>Returns the <code>i,j</code>-th <code>Sprite</code>.</td></tr>
 </table>
 
 <a name="PhysicsConfig"><h3>PhysicsConfig (<code>entity.ts</code>)</h3></a>
@@ -1560,7 +1510,7 @@ Manages a list of <code>Task</code>s that run sequentially.
   <td>Draws a rectangle.</td></tr>
 <tr><td><code>ellipse(<u>ctx</u>, <u>cx</u>, <u>cy</u>, <u>rx</u>, <u>ry</u>)</code></td>
   <td>Draws an ellipse at (cx, cy).</td></tr>
-<tr><td><code>drawImageScaled(<br>&nbsp; <u>ctx</u>, <u>imgsrc</u>,<br>&nbsp; <u>sx</u>, <u>sy</u>, <u>sw</u>, <u>sh</u>,<br>&nbsp; <u>dx</u>, <u>dy</u>, <u>dw</u>, <u>dh</u>)</code></td>
+<tr><td><code>drawImageScaled(<br>&nbsp; <u>ctx</u>, <u>img</u>,<br>&nbsp; <u>sx</u>, <u>sy</u>, <u>sw</u>, <u>sh</u>,<br>&nbsp; <u>dx</u>, <u>dy</u>, <u>dw</u>, <u>dh</u>)</code></td>
   <td>Draws a flipped image.</td></tr>
 <tr><td><code>getKeySym(<u>keycode</u>)</code></td>
   <td>Returns the <code>KeySym</code> for <code>keyCode</code>.</td></tr>
