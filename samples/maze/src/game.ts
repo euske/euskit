@@ -164,7 +164,7 @@ class Game extends GameScene {
     tick() {
 	super.tick();
         let target = this.player.getCollider() as Rect
-        this.world.setCenter(this.tilemap.bounds, target.inflate(96,96));
+        this.world.setCenter(target.inflate(96,96), this.tilemap.bounds);
     }
 
     onDirChanged(v: Vec2) {

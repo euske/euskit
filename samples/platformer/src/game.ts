@@ -323,8 +323,9 @@ class Game extends GameScene {
 
     tick() {
 	super.tick();
-	this.world.setCenter(this.tilemap.bounds,
-			     this.player.pos.expand(80,80));
+	this.world.setCenter(
+            this.player.pos.expand(80,80),
+            this.tilemap.bounds);
     }
 
     onDirChanged(v: Vec2) {

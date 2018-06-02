@@ -92,7 +92,7 @@ class World extends ParallelTaskList {
 	this.window = this.window.add(v);
     }
 
-    setCenter(bounds: Rect, target: Rect) {
+    setCenter(target: Rect, bounds: Rect=null) {
 	if (this.window.width < target.width) {
 	    this.window.x = (target.width-this.window.width)/2;
 	} else if (target.x < this.window.x) {
@@ -107,8 +107,9 @@ class World extends ParallelTaskList {
 	} else if (this.window.y+this.window.height < target.y+target.height) {
 	    this.window.y = target.y+target.height - this.window.height;
 	}
-	this.window.x = clamp(0, this.window.x, bounds.width-this.window.width);
-	this.window.y = clamp(0, this.window.y, bounds.height-this.window.height);
+        if (bounds !== null) {
+            this.window = this.window.clamp(bounds);
+        }
     }
 
     onMouseDown(p: Vec2, button: number) {
@@ -303,7 +304,7 @@ class HTMLScene extends Scene {
 	e.style.background = 'white';
 	e.style.border = 'solid black 2px';
 	e.innerHTML = this.text;
-	e.onmousedown = ((e) => { scene.change(); });
+	e.onmousedown = ((e) => { scene.onChanged(); });
     }
 
     render(ctx: CanvasRenderingContext2D) {
@@ -311,16 +312,16 @@ class HTMLScene extends Scene {
 	fillRect(ctx, this.screen);
     }
 
-    change() {
+    onChanged() {
 	// [OVERRIDE]
     }
 
     onMouseDown(p: Vec2, button: number) {
-	this.change();
+	this.onChanged();
     }
 
     onKeyDown(key: number) {
-	this.change();
+	this.onChanged();
     }
 
 }
