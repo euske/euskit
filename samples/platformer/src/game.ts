@@ -162,8 +162,8 @@ class Player extends PlatformerEntity {
 	}
     }
 
-    collidedWith(entity: Entity) {
-	super.collidedWith(entity);
+    onCollided(entity: Entity) {
+	super.onCollided(entity);
 	if (entity instanceof Thingy) {
 	    APP.playSound('pick');
 	    entity.stop();

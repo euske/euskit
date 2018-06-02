@@ -386,7 +386,7 @@ class Player extends Entity3d {
 	}
     }
 
-    collidedWith(entity: Entity) {
+    onCollided(entity: Entity) {
 	if (entity instanceof Thingy) {
 	    APP.playSound('pick');
 	    entity.stop();

@@ -178,8 +178,8 @@ class World extends ParallelTaskList {
     checkEntityCollisions() {
 	this.applyEntityPairs(
 	    (e0:Entity, e1:Entity) => {
-		e0.collidedWith(e1);
-		e1.collidedWith(e0);
+		e0.onCollided(e1);
+		e1.onCollided(e0);
 	    });
     }
 

@@ -109,7 +109,7 @@ class Entity extends Task {
 	return null;
     }
 
-    collidedWith(entity: Entity) {
+    onCollided(entity: Entity) {
 	// [OVERRIDE]
     }
 }

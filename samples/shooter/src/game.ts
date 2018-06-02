@@ -99,7 +99,7 @@ class Player extends Entity {
 	return [this.world.area];
     }
 
-    collidedWith(entity: Entity) {
+    onCollided(entity: Entity) {
 	if (entity instanceof EnemyBase) {
 	    APP.playSound('explosion');
 	    this.chain(new Explosion(this.pos));
@@ -127,7 +127,7 @@ class EnemyBase extends Projectile {
 	this.frame = this.world.area;
     }
 
-    collidedWith(entity: Entity) {
+    onCollided(entity: Entity) {
 	if (entity instanceof Bullet) {
 	    APP.playSound('explosion');
 	    this.stop();

@@ -90,7 +90,7 @@ class Player extends Entity {
 	return this.tilemap.getTileRects(isObstacle, range);
     }
 
-    collidedWith(entity: Entity) {
+    onCollided(entity: Entity) {
         if (entity instanceof Enemy) {
             APP.playSound('beep');
         }

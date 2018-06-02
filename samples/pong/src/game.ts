@@ -76,7 +76,7 @@ class Ball extends Entity {
 	this.pos = this.pos.add(this.v);
     }
 
-    collidedWith(entity: Entity) {
+    onCollided(entity: Entity) {
 	// Bounces when hit the paddle.
 	if (entity instanceof Paddle) {
 	    APP.playSound('beep');
