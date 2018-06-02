@@ -35,9 +35,10 @@ class Blinker extends Entity {
 	this.sprites = entity.sprites;
     }
 
-    tick() {
-        super.tick();
-        this.visible = (phase(this.getTime(), this.interval) == 0);
+    isVisible() {
+        return (this.isRunning() &&
+	        ((this.interval <= 0) ||
+	         (phase(this.getTime(), this.interval) != 0)));
     }
 }
 

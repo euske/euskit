@@ -364,11 +364,10 @@ class BannerBox extends Entity {
         this.textbox.putText(lines, 'center', 'center');
     }
 
-    tick() {
-	super.tick();
-	if (0 < this.interval) {
-	    this.visible = (phase(this.getTime(), this.interval) != 0);
-	}
+    isVisible() {
+        return (this.isRunning() &&
+	        ((this.interval <= 0) ||
+	         (phase(this.getTime(), this.interval) != 0)));
     }
 }
 
@@ -684,6 +683,10 @@ class DialogBox extends Entity {
 	this.hiFont = hiFont;
     }
 
+    isVisible() {
+	return (!this.autoHide || 0 < this.queue.length);
+    }
+
     clear() {
 	this.textbox.clear();
 	this.queue = [];
@@ -703,9 +706,6 @@ class DialogBox extends Entity {
 		break;
 	    }
 	    this.remove(task);
-	}
-	if (this.autoHide && task === null) {
-	    this.visible = false;
 	}
     }
 
@@ -765,16 +765,10 @@ class DialogBox extends Entity {
         if (task instanceof TextTask) {
 	    this.queue.push(task);
         }
-	if (this.autoHide) {
-	    this.visible = true;
-	}
     }
 
     remove(task: TextTask) {
 	removeElement(this.queue, task);
-	if (this.autoHide && this.queue.length == 0) {
-	    this.visible = false;
-	}
     }
 
     addPause(duration: number) {

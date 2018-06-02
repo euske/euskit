@@ -14,7 +14,6 @@ class Entity extends Task {
     pos: Vec2;
     collider: Collider = null;
     order: number = 0;
-    visible: boolean = true;
     rotation: number = 0;
     scale: Vec2 = null;
     alpha: number = 1.0;
@@ -27,6 +26,10 @@ class Entity extends Task {
 
     toString() {
 	return '<Entity: '+this.pos+'>';
+    }
+
+    isVisible() {
+        return this.isRunning();
     }
 
     render(ctx: CanvasRenderingContext2D) {

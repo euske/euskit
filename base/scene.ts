@@ -60,15 +60,13 @@ class World extends ParallelTaskList {
 	ctx.save();
 	ctx.translate(-this.window.x, -this.window.y);
         for (let entity of this.entities) {
-	    if (!entity.isRunning()) continue;
-            if (!entity.visible) continue;
+	    if (!entity.isVisible()) continue;
             if (entity.pos === null) continue;
             entity.render(ctx);
         }
 	ctx.restore();
         for (let entity of this.entities) {
-	    if (!entity.isRunning()) continue;
-            if (!entity.visible) continue;
+	    if (!entity.isVisible()) continue;
             if (entity.pos !== null) continue;
             entity.render(ctx);
         }
@@ -77,8 +75,7 @@ class World extends ParallelTaskList {
     findEntityAt(p: Vec2): Entity {
         let found: Entity = null;
         for (let entity of this.entities) {
-	    if (!entity.isRunning()) continue;
-            if (!entity.visible) continue;
+	    if (!entity.isVisible()) continue;
             let collider = entity.getCollider();
             if (collider instanceof Rect) {
                 if (collider.containsPt(p)) {

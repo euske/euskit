@@ -188,8 +188,7 @@ class World3 extends World {
 	// Set the drawing order.
 	let ents: { [index:string]: Entity3d[] } = {};
 	for (let entity3 of this.entities3) {
-	    if (!entity3.isRunning()) continue;
-	    if (!entity3.visible) continue;
+	    if (!entity3.isVisible()) continue;
 	    let pos = entity3.pos;
 	    if (pos !== null) {
 		let x = int(pos.x/ts);
