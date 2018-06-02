@@ -24,25 +24,6 @@ addInitHook(() => {
 });
 
 
-//  Blinker
-//
-class Blinker extends Entity {
-
-    interval: number = 1.0;
-
-    constructor(entity: Entity) {
-	super(entity.pos);
-	this.sprites = entity.sprites;
-    }
-
-    isVisible() {
-        return (this.isRunning() &&
-	        ((this.interval <= 0) ||
-	         (phase(this.getTime(), this.interval) != 0)));
-    }
-}
-
-
 //  Player
 //
 class Player extends Entity {
