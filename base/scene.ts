@@ -112,6 +112,14 @@ class World extends ParallelTaskList {
         }
     }
 
+    moveAll(v: Vec2) {
+	for (let entity of this.entities) {
+	    if (!entity.isRunning()) continue;
+            if (entity.pos === null) continue;
+	    entity.movePos(v);
+	}
+    }
+
     onMouseDown(p: Vec2, button: number) {
 	if (button == 0) {
 	    this.mouseFocus = this.findEntityAt(p);
@@ -138,28 +146,22 @@ class World extends ParallelTaskList {
 	}
     }
 
-    moveAll(v: Vec2) {
-	for (let entity of this.entities) {
-	    if (!entity.isRunning()) continue;
-            if (entity.pos === null) continue;
-	    entity.movePos(v);
-	}
-    }
-
-    sortEntitiesByOrder() {
-        this.entities.sort((a:Entity, b:Entity) => { return a.order-b.order; });
-    }
-
     applyEntities(f: (e:Entity)=>boolean, collider0: Collider=null): Entity {
 	for (let entity1 of this.entities) {
 	    if (!entity1.isRunning()) continue;
-	    let collider1 = entity1.getCollider();
-            if (collider1 !== null && !collider1.overlaps(collider0)) continue;
+            if (collider0 !== null) {
+	        let collider1 = entity1.getCollider();
+                if (collider1 !== null && !collider1.overlaps(collider0)) continue;
+            }
             if (f(entity1)) {
                 return entity1;
             }
 	}
 	return null;
+    }
+
+    sortEntitiesByOrder() {
+        this.entities.sort((a:Entity, b:Entity) => { return a.order-b.order; });
     }
 
     getEntityColliders(f0: (e:Entity)=>boolean, range: Collider) {
@@ -174,6 +176,7 @@ class World extends ParallelTaskList {
             return false;
         }
         this.applyEntities(f, range);
+        return a;
     }
 
     checkEntityCollisions() {

@@ -13,11 +13,11 @@ class Entity extends Task {
 
     pos: Vec2;
     collider: Collider = null;
+    sprites: Sprite[] = [];
     order: number = 0;
     rotation: number = 0;
     scale: Vec2 = null;
     alpha: number = 1.0;
-    sprites: Sprite[] = [];
 
     constructor(pos: Vec2) {
 	super();

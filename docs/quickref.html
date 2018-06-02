@@ -14,7 +14,7 @@ body { margin: 0; padding: 0; }
 .code { border: 1px solid; padding: 0.2em; background: #eeeeee; }
 .ctor { background: #ccffcc; }
 .inherited { background: #cccccc; }
-.override { background: #ffffcc; }
+.event { background: #ffffcc; }
 .nav { position: fixed; top: 0; left: 0; width: 20%; }
 .main { position: absolute; top: 0; left: 20%; width: 80%; }
 .list { margin-top: 1em; }
@@ -34,21 +34,21 @@ body { margin: 0; padding: 0; }
 <div class=legend><b>Legend:</b>
 <span class=ctor><code>ctor</code></span>,
 <span class=inherited><code>inherited</code></span>,
-<span class=override><code>override</code></span>
+<span class=event><code>event</code></span>
 </div>
 
 <div class=list>
-<div class=head>Basic Objects:</div>
-<a href="#Sprite">Sprite</a>,
+<div class=head>Basic Classes:</div>
+<a href="#App">App</a>,
+<a href="#Scene">Scene</a>,
+<a href="#World">World</a>,
 <a href="#Task">Task</a>,
 <a href="#Entity">Entity</a>,
-<a href="#World">World</a>,
-<a href="#Scene">Scene</a>,
-<a href="#App">App</a>
+<a href="#Sprite">Sprite</a>
 </div>
 
 <div class=list>
-<div class=head>Specialized Objects:</div>
+<div class=head>Specialized Classes:</div>
 <a href="#Projectile">Projectile</a>,
 <a href="#TiledSprite">TiledSprite</a>,
 <a href="#FlowSprite">FlowSprite</a>,
@@ -101,8 +101,6 @@ body { margin: 0; padding: 0; }
 <a href="#PhysicsConfig">PhysicsConfig</a>,
 <a href="#TaskList">TaskList</a>,
 <a href="#TaskQueue">TaskQueue</a>,
-<a href="#EntityWorld">EntityWorld</a>,
-<a href="#SpriteLayer">SpriteLayer</a>
 </div>
 
 <div class=list>
@@ -123,25 +121,22 @@ body { margin: 0; padding: 0; }
 <h1>API Quick Reference</h1>
 
 <a name="big-picture"><h2>Big Picture</h2></a>
-<div style="position:relative; margin:0; padding:0; height:10em;">
+<div style="position:relative; margin:0; padding:0; height:9em;">
 <div style="position:absolute; margin:0; top:0; left:0;">
   <svg xmlns="http://www.w3.org/2000/svg"
        xmlns:xlink="http://www.w3.org/1999/xlink"
-       version="1.1" width="250" height="160">
+       version="1.1" width="250" height="140">
     <g transform="translate(1.5,1.5)">
       <g fill="none" stroke="black" stroke-width="1">
 	<line x1="140" y1="12" x2="55" y2="100" />
 	<line x1="140" y1="12" x2="175" y2="100" />
 	<ellipse cx="140" cy="12" rx="20" ry="12" fill="white" />
-	<rect x="0" y="55" width="110" height="96" fill="white" />
-	<rect x="120" y="55" width="110" height="96" fill="white" />
-	<rect x="6" y="72" width="96" height="72" fill="white" />
-	<rect x="18" y="80" width="80" height="40" fill="white" />
-	<rect x="14" y="84" width="80" height="40" fill="white" />
-	<rect x="10" y="88" width="80" height="40" fill="white" />
-	<rect x="30" y="110" width="16" height="16" />
-	<rect x="33" y="113" width="10" height="10" />
-	<line x1="45" y1="102" x2="38" y2="118" />
+	<rect x="0" y="55" width="110" height="80" fill="white" />
+	<rect x="120" y="55" width="110" height="80" fill="white" />
+	<rect x="10" y="68" width="80" height="50" fill="white" />
+	<rect x="30" y="90" width="16" height="16" />
+	<rect x="33" y="93" width="10" height="10" />
+	<line x1="45" y1="82" x2="38" y2="98" />
       </g>
       <g style="font-size: 75%;">
 	<text x="140" y="15" text-anchor="middle">App</text>
@@ -149,10 +144,9 @@ body { margin: 0; padding: 0; }
 	<text x="55" y="52" text-anchor="middle">Scene</text>
 	<text x="175" y="52" text-anchor="middle">Scene</text>
 	<text x="240" y="100" text-anchor="begin">...</text>
-	<text x="55" y="70" text-anchor="middle">World</text>
-	<text x="45" y="102" text-anchor="begin">Sprite</text>
-	<text x="48" y="122" text-anchor="begin">Entity</text>
-	<text x="10" y="140" text-anchor="begin">SpriteLayer</text>
+	<text x="45" y="82" text-anchor="begin">Sprite</text>
+	<text x="48" y="102" text-anchor="begin">Entity</text>
+	<text x="55" y="130" text-anchor="middle">World</text>
       </g>
     </g>
   </svg>
@@ -162,212 +156,26 @@ body { margin: 0; padding: 0; }
     Resource management (images and sounds) and event loop.<br>
     <a href="#Scene"><code>Scene</code></a>:
     Game state management and event handling.<br>
+    <a href="#World"><code>World</code></a>:
+    Container where Entities are placed in.<br>
     <a href="#Entity"><code>Entity</code></a>:
     In-game character.<br>
     <a href="#Sprite"><code>Sprite</code></a>:
     Graphical object to be shown.<br>
-    <a href="#World"><code>World</code></a>:
-    Container where Sprites are placed in.<br>
   </div>
 </div>
 
 
-<a name="basic-objects"><h2>Basic Objects</h2></a>
-
-<a name="Sprite"><h3>Sprite (<code>sprite.ts</code>)</h3></a>
-<p>
-A <code>Sprite</code> is something to be displayed.
-<table border>
-<tr class=ctor><td><code>new RectSprite(<u>color</u>, <u>dstRect</u>)</code></td>
-  <td>Sprite with a filled rectangle.</td></tr>
-<tr class=ctor><td><code>new OvalSprite(<u>color</u>, <u>dstRect</u>)</code></td>
-  <td>Sprite with a filled oval.</td></tr>
-<tr class=ctor><td><code>new CanvasSprite(<br>&nbsp; <u>canvas</u>, <u>srcRect</u>=null, <u>dstRect</u>=null)</code></td>
-  <td>Sprite that refers to a portion of
-    <code>&lt;canvas&gt;</code> element.</td></tr>
-<tr class=ctor><td><code>new HTMLSprite(<br>&nbsp; <u>image</u>, <u>srcRect</u>=null, <u>dstRect</u>=null)</code></td>
-  <td>Sprite that refers to a portion of
-    <code>&lt;img&gt;</code> element.</td></tr>
-<tr class=ctor><td><code>new TiledSprite(<br>&nbsp; <u>sprite</u>, <u>bounds</u>, <u>offset</u>=null)</code></td>
-  <td>Sprite that is composed of another Sprite.</td></tr>
-<tr class=ctor><td><code>new StarSprite(<br>&nbsp; <u>bounds</u>, <u>nstars</u>, <u>maxdepth</u>=3, <u>sprites</u>=null)</code></td>
-  <td>Sprite that can be used for "star flowing" effects.</td></tr>
-<tr><td><code>.getBounds()</code></td>
-  <td>Returns the bounds rectangle of the Sprite.</td></tr>
-<tr><td><code>.render(<u>ctx</u>)</code></td>
-  <td>Renders the image at (0, 0) in the given Context.</td></tr>
-</table>
-
-<a name="Task"><h3>Task (<code>task.ts</code>)</h3></a>
-<p>
-A <code>Task</code> is an independent object that runs by itself
-and managed by <code>TaskList</code>.
-<table border>
-<tr class=ctor><td><code>new Task()</code></td>
-  <td>Creates a new empty task.</td></tr>
-<tr class=ctor><td><code>new DelayTask(<br>&nbsp; <u>delay</u>, <u>proc</u>=null)</code></td>
-  <td>Task that waits a certain amount and then execute the given function.</td></tr>
-<tr class=ctor><td><code>new SoundTask(<br>&nbsp; <u>sound</u>, <u>soundStart</u>=MP3_GAP, <u>soundEnd</u>=0)</code></td>
-  <td>Task that plays a sound.</td></tr>
-<tr><td><code>.parent</code></td>
-  <td><code>TaskList</code> that the task belongs to.</td></tr>
-<tr><td><code>.state</code></td>
-  <td>Either one of <code>Scheduled</code>, <code>Running</code> or <code>Finished</code>.</td>
-<tr><td><code>.lifetime</code></td>
-  <td>Duration that the task can run.</td></tr>
-<tr><td><code>.startTime</code></td>
-  <td>Time the task started.</td></tr>
-<tr><td><code>.stopped</code></td>
-  <td>Signal fired when the task stops.</td></tr>
-<tr><td><code>.getTime()</code></td>
-  <td>Elapsed time since the task has started (in seconds).</td></tr>
-<tr><td><code>.isRunning()</code></td>
-  <td>True if the task is in running state.</td></tr>
-<tr><td><code>.stop()</code></td>
-  <td>Terminates the task.</td></tr>
-<tr><td><code>.chain(next)</code></td>
-  <td>Schedules another task.</td></tr>
-<tr><td><code>.init()</code></td>
-  <td>Invoked when the task is started.</td></tr>
-<tr><td><code>.cleanup()</code></td>
-  <td>Invoked when the task is stopped.</td></tr>
-<tr class=override><td><code>.tick()</code></td>
-  <td>Invoked at every frame while the task is running.</td></tr>
-</table>
-
-<a name="Entity"><h3>Entity : <a href="#Task">Task</a> (<code>entity.ts</code>)</h3></a>
-<p>
-An <code>Entity</code> is a main object for game characters.
-Each Entity has its own process, <code>Collider</code> and one or more
-Sprites. Each Entity can moves on its own.
-<table border>
-<tr class=ctor><td><code>new Entity(<u>pos</u>)</code></td>
-  <td>Creates a new entity at a given position.</td></tr>
-<tr><td><code>.pos</code></td>
-  <td>Entity position.</td></tr>
-<tr><td><code>.visible</code></td>
-  <td><code>true</code> if the entity sprite is visible.</td></tr>
-<tr><td><code>.sprites</code></td>
-  <td><code>Sprite</code>s that belongs to this entity.</td></tr>
-<tr><td><code>.collider</code></td>
-  <td><code>Rect</code>/<code>Circle</code> for the entity's collider.</td></tr>
-<tr><td><code>.scale</code></td>
-  <td>Vector for the scale of the sprite.</td></tr>
-<tr><td><code>.rotation</code></td>
-  <td>Rotation of the sprite (in radian).</td></tr>
-<tr><td><code>.getCollider(<u>pos</u>=null)</code></td>
-  <td>Returns the collider for the given <code>pos</code>.</td></tr>
-<tr><td><code>.canMove(<u>v</u>, <u>context</u>=null)</code></td>
-  <td><code>true</code> if the entity is movable toward <code>v</code>.</td></tr>
-<tr><td><code>.getMove(<u>pos</u>, <u>v</u>, <u>context</u>=null)</code></td>
-  <td>Trims the vector <code>v</code> so that it doesn't collide.</td></tr>
-<tr><td><code>.movePos(<u>v</u>)</code></td>
-  <td>Moves the entity by <code>v</code>.</td></tr>
-<tr><td><code>.moveIfPossible(<u>v</u>, <u>context</u>=null)</code></td>
-  <td>Moves the entity by <code>v</code> without colliding obstacles.</td></tr>
-<tr class=override><td><code>.getObstaclesFor(<br>&nbsp; <u>range</u>, <u>v</u>, <u>context</u>)</code></td>
-  <td>Returns a list of <code>Shape</code>s within <code>range</code>.</td></tr>
-<tr class=override><td><code>.getFencesFor(<br>&nbsp; <u>range</u>, <u>v</u>, <u>context</u>)</code></td>
-  <td>Returns a list of bounding rectangles that limits the entity within.</td></tr>
-<tr class=override><td><code>.collidedWith(<u>entity</u>)</code></td>
-  <td>Invoked when the entity collides another entity.</td></tr>
-<tr class=override><td><code>.renderExtra(<u>ctx</u>)</code></td>
-  <td>Draws extra effects for the entity.</td></tr>
-</table>
-
-<a name="World"><h3>World (<code>scene.ts</code>)</h3></a>
-<p>
-A <code>World</code> contains a set of objects that can be rendered
-at once and interact each other.
-<table border>
-<tr class=ctor><td><code>new World()</code></td>
-  <td>Creates a new layer.</td></tr>
-<tr><td><code>.time</code></td>
-  <td>The current time of the layer (in seconds).</td></tr>
-<tr><td><code>.tasks</code></td>
-  <td>A list of <code>Task</code>s that belong to the layer.</td></tr>
-<tr><td><code>.sprites</code></td>
-  <td>A list of <code>Sprite</code>s that belong to the layer.</td></tr>
-<tr><td><code>.entities</code></td>
-  <td>A list of <code>Entity</code>s that belong to the layer.</td></tr>
-<tr><td><code>.addTask(task)</code></td>
-  <td>Adds a <code>Task</code> to the list.</td></tr>
-<tr><td><code>.addSprite(sprite)</code></td>
-  <td>Adds a <code>Sprite</code> to the list.</td></tr>
-<tr><td><code>.removeSprite(sprite)</code></td>
-  <td>Removes a <code>Sprite</code> from the list.</td></tr>
-<tr><td><code>.addEntity(entity)</code></td>
-  <td>Adds an <code>Entity</code> to the list.</td></tr>
-<tr><td><code>.removeEntity(sprite)</code></td>
-  <td>Removes an <code>Entity</code> from the list.</td></tr>
-<tr><td><code>.moveAll(v)</code></td>
-  <td>Moves all the sprites by <code>v</code>.</td></tr>
-<tr><td><code>.findEntities(f, <em>[entities]</em>)</code></td>
-  <td>Returns a list of entities specified by function <code>f</code>.</td></tr>
-<tr><td><code>.findSpriteAt(p)</code></td>
-  <td>Returns a Sprite that is located at <code>p</code>.</td></tr>
-<tr><td><code>.onMouseDown(p, button)</code></td>
-  <td>Invoked when a mouse button is pressed.
-<tr><td><code>.onMouseUp(p, button)</code></td>
-  <td>Invoked when a mouse button is released.
-<tr><td><code>.onMouseMove(p)</code></td>
-  <td>Invoked when a mouse pointer is moved.
-<tr class=override><td><code>.init()</code></td>
-  <td>Invoked when the layer is initialized.</td></tr>
-<tr class=override><td><code>.tick(t)</code></td>
-  <td>Invoked for every frame.</td></tr>
-<tr class=override><td><code>.render(ctx, bx, by)</code></td>
-  <td>Draws all the sprites at the location (<code>bx</code>, <code>by</code>).</td></tr>
-</table>
-
-<a name="Scene"><h3>Scene (<code>scene.ts</code>)</h3></a>
-<p>
-A <code>Scene</code> can be thought of a mini-app or "mode" within the App.
-It's pretty much an event handler that manages the in-game states.
-This is primarily what a Euskit user will write. Euskit supports
-multiple Scenes, but it's possible to create an entire game with just
-one Scene.
-<table border>
-<tr class=ctor><td><code>new Scene()</code></td>
-  <td>Creates a new scene.</td></tr>
-<tr><td><code>.screen</code></td>
-  <td>The canvas rectangle.</td></tr>
-<tr><td><code>.changeScene(scene)</code></td>
-  <td>Signals the <code>App</code> to switch to a scene.</td></tr>
-<tr class=override><td><code>.init()</code></td>
-  <td>Initializes the scene.</td></tr>
-<tr class=override><td><code>.tick(t)</code></td>
-  <td>Invoked for every frame.</td></tr>
-<tr class=override><td><code>.render(ctx, bx, by)</code></td>
-  <td>Draws the scene at the location (<code>bx</code>, <code>by</code>).</td></tr>
-<tr class=override><td><code>.onDirChanged(v)</code></td>
-  <td>Invoked when a directional input is changed.</td></tr>
-<tr class=override><td><code>.onButtonPressed(keySym)</code></td>
-  <td>Invoked when the button state is pressed.</td></tr>
-<tr class=override><td><code>.onButtonReleased(keySym)</code></td>
-  <td>Invoked when the button state is released.</td></tr>
-<tr class=override><td><code>.onKeyDown(keyCode)</code></td>
-  <td>Invoked when a key is pressed.</td></tr>
-<tr class=override><td><code>.onKeyUp(keyCode)</code></td>
-  <td>Invoked when a key is released.</td></tr>
-<tr class=override><td><code>.onKeyPress(charCode)</code></td>
-  <td>Invoked when a character is typed.</td></tr>
-<tr class=override><td><code>.onMouseDown(p, button)</code></td>
-  <td>Invoked when a mouse button is pressed.</td></tr>
-<tr class=override><td><code>.onMouseUp(p, button)</code></td>
-  <td>Invoked when a mouse button is released.</td></tr>
-<tr class=override><td><code>.onMouseMove(p)</code></td>
-  <td>Invoked when a mouse pointer is moved.</td></tr>
-</table>
+<a name="basic-classes"><h2>Basic Classes</h2></a>
 
 <a name="App"><h3>App (<code>app.ts</code>)</h3></a>
 <p>
-Every game has exactly one <code>App</code> object.
+Every game has <u>exactly one</u> <code>App</code> object.
 It does the basic pluming and resource management; it has
-an event loop and connect all the external parts (i.e. a browser)
-to the game. Typically, you don't have to change this part.
+an event loop and connect the game with all the external parts (i.e. a browser).
+Typically, you don't have to change this class.
 <table border>
-<tr class=ctor><td><code>new App(size, framerate, elem)</code></td>
+<tr class=ctor><td><code>new App(<u>size</u>, <u>framerate</u>, <u>elem</u>)</code></td>
   <td>Creates a new app with given HTML5 resources.</td></tr>
 <tr><td><code>.size</code></td>
   <td>The canvas size.</td></tr>
@@ -399,14 +207,14 @@ to the game. Typically, you don't have to change this part.
   <td>The current position of the mouse pointer.</td></tr>
 <tr><td><code>.mouseButton</code></td>
   <td>The current state of the mouse button.</td></tr>
-
-<tr><td><code>.addElement(bounds)</code></td>
+<tr><td><code>.addElement(<u>bounds</u>)</code></td>
   <td>Adds a new <code>&lt;div&gt;</code> element to the canvas.</td></tr>
-<tr><td><code>.removeElement(elem)</code></td>
+<tr><td><code>.removeElement(<u>elem</u>)</code></td>
   <td>Removes the element from the canvas.</td></tr>
 <tr><td><code>.lockKeys(<u>t</u>=1)</code></td>
-  <td>Blocks keyboard input for the given duration.</td></tr>
-<tr><td><code>.setMusic(<br>&nbsp; <u>name</u>=null, <u>start</u>=0, <u>end</u>=0)</code></td>
+  <td>Blocks keyboard input for the given duration to prevent accidental input
+    (at a game over screen, etc.).</td></tr>
+<tr><td><code>.setMusic(<br>&nbsp; <u>name</u>=null, <br>&nbsp; <u>start</u>=0, <u>end</u>=0)</code></td>
   <td>Starts playing the music. When <code>null</code> is given, stops playing.</td></tr>
 <tr><td><code>.playSound(<u>name</u>, <u>start</u>=0)</code></td>
   <td>Plays the specified sound.</td></tr>
@@ -416,6 +224,188 @@ to the game. Typically, you don't have to change this part.
   <td>Queues a function that is to be executed at the end of the frame.</td></tr>
 </table>
 
+<a name="Scene"><h3>Scene (<code>scene.ts</code>)</h3></a>
+<p>
+A <code>Scene</code> can be thought of a mini-app or "mode" within the App.
+It's an event handler of its own that manages the in-game states.
+This is primarily what consists of the main game logic. Euskit supports
+multiple Scenes, but it's possible to create an entire game with just
+one Scene.
+<table border>
+<tr class=ctor><td><code>new Scene()</code></td>
+  <td>Creates a new scene.</td></tr>
+<tr><td><code>.screen</code></td>
+  <td>The canvas rectangle.</td></tr>
+<tr><td><code>.changeScene(<u>scene</u>)</code></td>
+  <td>Signals the <code>App</code> to switch to a scene.</td></tr>
+<tr><td><code>.init()</code></td>
+  <td>Initializes the scene.</td></tr>
+<tr><td><code>.tick()</code></td>
+  <td>Invoked for every frame.</td></tr>
+<tr><td><code>.render(<u>ctx</u>)</code></td>
+  <td>Displays the scene.</td></tr>
+<tr><td><code>.onDirChanged(<u>v</u>)</code></td>
+  <td>Invoked when a directional input is changed.</td></tr>
+<tr><td><code>.onButtonPressed(<u>keySym</u>)</code></td>
+  <td>Invoked when the button state is pressed.</td></tr>
+<tr><td><code>.onButtonReleased(<u>keySym</u>)</code></td>
+  <td>Invoked when the button state is released.</td></tr>
+<tr><td><code>.onKeyDown(<u>keyCode</u>)</code></td>
+  <td>Invoked when a key is pressed.</td></tr>
+<tr><td><code>.onKeyUp(<u>keyCode</u>)</code></td>
+  <td>Invoked when a key is released.</td></tr>
+<tr><td><code>.onKeyPress(<u>charCode</u>)</code></td>
+  <td>Invoked when a character is typed.</td></tr>
+<tr><td><code>.onMouseDown(<u>p</u>, <u>button</u>)</code></td>
+  <td>Invoked when a mouse button is pressed.</td></tr>
+<tr><td><code>.onMouseUp(<u>p</u>, <u>button</u>)</code></td>
+  <td>Invoked when a mouse button is released.</td></tr>
+<tr><td><code>.onMouseMove(<u>p</u>)</code></td>
+  <td>Invoked when a mouse pointer is moved.</td></tr>
+<tr><td><code>.onFocus()</code></td>
+  <td>Invoked when the window is focused.</td></tr>
+<tr><td><code>.onBlue()</code></td>
+  <td>Invoked when the focus is lost.</td></tr>
+</table>
+
+<a name="World"><h3>World (<code>scene.ts</code>)</h3></a>
+<p>
+A <code>World</code> is a stage for <code>Entity</code>s
+that are rendered and can interact with each other.
+<table border>
+<tr class=ctor><td><code>new World()</code></td>
+  <td>Creates a new world.</td></tr>
+<tr><td><code>.area</code></td>
+  <td>The entire area where entities can move around.</td></tr>
+<tr><td><code>.window</code></td>
+  <td>The visible part of the world that is rendered.</td></tr>
+<tr><td><code>.entities</code></td>
+  <td>A list of the <code>Entity</code>s.</td></tr>
+<tr><td><code>.add(<u>entity</u>)</code></td>
+  <td>Adds an <code>Entity</code> to the world.</td></tr>
+<tr><td><code>.remove(<u>entity</u>)</code></td>
+  <td>Removes an <code>Entity</code> from the world.</td></tr>
+<tr><td><code>.render(<u>ctx</u>)</code></td>
+  <td>Render the whole world.</td></tr>
+<tr><td><code>.findEntityAt(<u>p</u>)</code></td>
+  <td>Returns a Entity that is located at <code>p</code>.</td></tr>
+<tr><td><code>.moveCenter(<u>v</u>)</code></td>
+  <td>Moves the center of the window by <code>v</code>.</td></tr>
+<tr><td><code>.setCenter(<u>target</u>, <br>&nbsp; <u>bounds</u>=null)</code></td>
+  <td>Moves the window to cover <code>target</code>, but not exceeding <code>bounds</code>.</td></tr>
+<tr><td><code>.moveAll(v)</code></td>
+  <td>Moves all the sprites by <code>v</code>.</td></tr>
+<tr><td><code>.applyEntities(<br>&nbsp; <u>(e:Entity)=&gt;boolean</u>, <br>&nbsp; <u>collider</u>=null)</code></td>
+  <td>Apply the function to each Entity <code>e</code> that overlaps with <code>collider</code> (if given).</td></tr>
+<tr><td><code>.onMouseDown(<u>p</u>, <u>button</u>)</code></td>
+  <td>Invoked when a mouse button is pressed.
+<tr><td><code>.onMouseUp(<u>p</u>, <u>button</u>)</code></td>
+  <td>Invoked when a mouse button is released.
+<tr><td><code>.onMouseMove(<u>p</u>)</code></td>
+  <td>Invoked when a mouse pointer is moved.
+</table>
+
+<a name="Task"><h3>Task (<code>task.ts</code>)</h3></a>
+<p>
+A <code>Task</code> is an abstract class of <code>Entity</code>.
+<table border>
+<tr class=ctor><td><code>new Task()</code></td>
+  <td>Creates a new empty task.</td></tr>
+<tr class=ctor><td><code>new DelayTask(<br>&nbsp; <u>delay</u>, <u>proc</u>=null)</code></td>
+  <td>Task that waits a certain amount and then execute the given function.</td></tr>
+<tr class=ctor><td><code>new SoundTask(<br>&nbsp; <u>sound</u>, <u>soundStart</u>=MP3_GAP, <br>&nbsp; <u>soundEnd</u>=0)</code></td>
+  <td>Task that plays a sound.</td></tr>
+<tr class=event><td><code>.stopped</code></td>
+  <td>Signal fired when the task stops.</td></tr>
+<tr><td><code>.parent</code></td>
+  <td><code>TaskList</code> that the task belongs to.</td></tr>
+<tr><td><code>.lifetime</code></td>
+  <td>Duration that the task can run.</td></tr>
+<tr><td><code>.startTime</code></td>
+  <td>Time the task started.</td></tr>
+<tr><td><code>.getTime()</code></td>
+  <td>Elapsed time since the task has started (in seconds).</td></tr>
+<tr><td><code>.isRunning()</code></td>
+  <td>True if the task is in running state.</td></tr>
+<tr><td><code>.stop()</code></td>
+  <td>Terminates the task.</td></tr>
+<tr><td><code>.chain(<u>task</u>, <br>&nbsp; <u>signal</u>=null)</code></td>
+  <td>Schedules another task to be started when this task stops.</td></tr>
+<tr><td><code>.init()</code></td>
+  <td>Invoked when the task is started.</td></tr>
+<tr><td><code>.cleanup()</code></td>
+  <td>Invoked when the task is stopped.</td></tr>
+<tr><td><code>.tick()</code></td>
+  <td>Invoked at every frame while the task is running.</td></tr>
+</table>
+
+<a name="Entity"><h3>Entity : <a href="#Task">Task</a> (<code>entity.ts</code>)</h3></a>
+<p>
+An <code>Entity</code> is a main object for game characters.
+Each Entity is a <code>Task</code> and has a <code>Collider</code> and one or more
+Sprites.
+<table border>
+<tr class=ctor><td><code>new Entity(<u>pos</u>)</code></td>
+  <td>Creates a new entity at a given position.</td></tr>
+<tr><td><code>.pos</code></td>
+  <td>Entity position.</td></tr>
+<tr><td><code>.collider</code></td>
+  <td><code>Rect</code>/<code>Circle</code> for the entity's collider.</td></tr>
+<tr><td><code>.sprites</code></td>
+  <td><code>Sprite</code>s that belongs to this entity.</td></tr>
+<tr><td><code>.order</code></td>
+  <td>Order of the entity being rendered.</td></tr>
+<tr><td><code>.rotation</code></td>
+  <td>Rotation of the sprite (in radian).</td></tr>
+<tr><td><code>.scale</code></td>
+  <td>Vector for the scale of the sprite.</td></tr>
+<tr><td><code>.alpha</code></td>
+  <td>Alpha value of the sprite.</td></tr>
+<tr><td><code>.isVisible()</code></td>
+  <td>Returns <code>true</code> if the entity sprite is visible.</td></tr>
+<tr><td><code>.render(<u>ctx</u>)</code></td>
+  <td>Render the entity.</td></tr>
+<tr><td><code>.getCollider(<u>pos</u>=null)</code></td>
+  <td>Returns the collider for the given <code>pos</code>.</td></tr>
+<tr><td><code>.canMove(<u>v</u>, <u>context</u>=null)</code></td>
+  <td><code>true</code> if the entity is movable toward <code>v</code>.</td></tr>
+<tr><td><code>.getMove(<u>pos</u>, <u>v</u>, <u>context</u>=null)</code></td>
+  <td>Trims the vector <code>v</code> so that it doesn't collide.</td></tr>
+<tr><td><code>.movePos(<u>v</u>)</code></td>
+  <td>Moves the entity by <code>v</code>.</td></tr>
+<tr><td><code>.moveIfPossible(<u>v</u>, <u>context</u>=null)</code></td>
+  <td>Moves the entity by <code>v</code> without colliding obstacles.</td></tr>
+<tr><td><code>.getObstaclesFor(<br>&nbsp; <u>range</u>, <u>v</u>, <u>context</u>)</code></td>
+  <td>Returns a list of <code>Shape</code>s within <code>range</code>.</td></tr>
+<tr><td><code>.getFencesFor(<br>&nbsp; <u>range</u>, <u>v</u>, <u>context</u>)</code></td>
+  <td>Returns a list of bounding rectangles that limits the entity within.</td></tr>
+<tr><td><code>.onCollided(<u>entity</u>)</code></td>
+  <td>Invoked when the entity collides another entity.</td></tr>
+</table>
+
+<a name="Sprite"><h3>Sprite (<code>sprite.ts</code>)</h3></a>
+<p>
+A <code>Sprite</code> is something to be displayed.
+<table border>
+<tr class=ctor><td><code>new RectSprite(<u>color</u>, <u>dstRect</u>)</code></td>
+  <td>Sprite with a filled rectangle.</td></tr>
+<tr class=ctor><td><code>new OvalSprite(<u>color</u>, <u>dstRect</u>)</code></td>
+  <td>Sprite with a filled oval.</td></tr>
+<tr class=ctor><td><code>new CanvasSprite(<br>&nbsp; <u>canvas</u>, <u>srcRect</u>=null, <u>dstRect</u>=null)</code></td>
+  <td>Sprite that refers to a portion of
+    <code>&lt;canvas&gt;</code> element.</td></tr>
+<tr class=ctor><td><code>new HTMLSprite(<br>&nbsp; <u>image</u>, <u>srcRect</u>=null, <u>dstRect</u>=null)</code></td>
+  <td>Sprite that refers to a portion of
+    <code>&lt;img&gt;</code> element.</td></tr>
+<tr class=ctor><td><code>new TiledSprite(<br>&nbsp; <u>sprite</u>, <u>bounds</u>, <u>offset</u>=null)</code></td>
+  <td>Sprite that is composed of another Sprite.</td></tr>
+<tr class=ctor><td><code>new StarSprite(<br>&nbsp; <u>bounds</u>, <u>nstars</u>, <u>maxdepth</u>=3, <u>sprites</u>=null)</code></td>
+  <td>Sprite that can be used for "star flowing" effects.</td></tr>
+<tr><td><code>.getBounds()</code></td>
+  <td>Returns the bounds rectangle of the Sprite.</td></tr>
+<tr><td><code>.render(<u>ctx</u>)</code></td>
+  <td>Renders the image at (0, 0) in the given Context.</td></tr>
+</table>
 
 <a name="specialized-objects"><h2>Specialized Objects</h2></a>
 
