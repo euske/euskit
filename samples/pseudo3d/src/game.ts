@@ -390,12 +390,7 @@ class Player extends Entity3d {
 	if (entity instanceof Thingy) {
 	    APP.playSound('pick');
 	    entity.stop();
-	    let yay = new Projectile(this.pos.move(0,-16));
-	    yay.sprites = [SPRITES.get(S.YAY)];
-	    yay.movement = new Vec2(0,-4);
-	    yay.lifetime = 0.5;
-	    this.world.add(yay);
-	    this.picked.fire();
+	    this.picked.fire(entity);
 	}
     }
 }
@@ -403,7 +398,7 @@ class Player extends Entity3d {
 
 //  Game
 //
-class Game extends Scene {
+class Game extends GameScene {
 
     tilemap: TileMap;
     world3: World3;
@@ -423,7 +418,7 @@ class Game extends Scene {
 	this.score = 0;
 	this.speed = new Vec2(2, 0);
 	this.player = new Player(this.tilemap, this.world3.area.center());
-	this.player.picked.subscribe((entity:Entity) => {
+	this.player.picked.subscribe((player:Entity, entity:Entity) => {
 	    this.onPicked(entity);
 	});
 	this.player.stopped.subscribe(() => {
@@ -439,7 +434,7 @@ class Game extends Scene {
 	    ['GET ALL TEH DAMN THINGIES!']);
 	banner.lifetime = 2.0;
 	banner.interval = 0.5;
-	this.add(banner);
+	this.world.add(banner);
     }
 
     add(task: Task) {
@@ -465,16 +460,21 @@ class Game extends Scene {
     onPicked(entity: Entity) {
 	this.score += 1;
 	this.speed.x += 1;
+	let yay = new Projectile(this.player.pos.move(-32,-16));
+	yay.sprites = [SPRITES.get(S.YAY)];
+	yay.movement = new Vec2(0,-4);
+	yay.lifetime = 0.5;
+	this.world.add(yay);
     }
 
     render(ctx: CanvasRenderingContext2D) {
 	ctx.fillStyle = 'rgb(0,128,224)';
 	fillRect(ctx, this.screen);
-	super.render(ctx);
 	ctx.save();
 	ctx.translate(0, (this.screen.height-this.world3.window.height)/2);
 	this.world3.render(ctx);
 	ctx.restore();
+	super.render(ctx);
     }
 
     moveAll(v: Vec2) {

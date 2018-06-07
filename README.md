@@ -26,12 +26,6 @@ Documents
 
 Prerequisites
 -------------
- * TypeScript compiler
- * GNU Make
+ * TypeScript
+ * (Optional) GNU Make
  * (Optional) TypeDoc http://typedoc.org/
-
-How to Build Samples
---------------------
-
-    $ make
-    (then open samples/index.html)
