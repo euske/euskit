@@ -135,8 +135,8 @@ class Player extends PlatformerEntity {
 	return [this.world.area];
     }
 
-    tick() {
-	super.tick();
+    onTick() {
+	super.onTick();
 	let v = this.usermove;
 	if (!this.holding) {
 	    v = new Vec2(v.x, 0);
@@ -198,8 +198,8 @@ class Monster extends PlanningEntity {
 	this.collider = sprite.getBounds();
     }
 
-    tick() {
-	super.tick();
+    onTick() {
+	super.onTick();
 	let goal = this.grid.coord2grid(this.target.pos);
 	if (this.runner instanceof PlatformerActionRunner) {
 	    if (!this.runner.goal.equals(goal)) {
@@ -256,8 +256,8 @@ class Game extends GameScene {
     debug: boolean = false;
     watch: PlanningEntity = null;
 
-    init() {
-	super.init();
+    onStart() {
+	super.onStart();
 	this.physics = new PhysicsConfig();
 	this.physics.jumpfunc = ((vy:number, t:number) => {
 	    return (0 <= t && t <= 6)? -8 : vy+2;
@@ -321,8 +321,8 @@ class Game extends GameScene {
 	});
     }
 
-    tick() {
-	super.tick();
+    onTick() {
+	super.onTick();
 	this.world.setCenter(
             this.player.pos.expand(80,80),
             this.tilemap.bounds);

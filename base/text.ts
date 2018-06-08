@@ -386,8 +386,8 @@ class TextParticle extends BannerBox {
         this.movement = null;
     }
 
-    tick() {
-	super.tick();
+    onTick() {
+	super.onTick();
         if (this.movement !== null) {
             this.movePos(this.movement);
         }
@@ -457,13 +457,13 @@ class DisplayTask extends TextTask {
 	this.font = dialog.textbox.font;
     }
 
-    init() {
-	super.init();
+    onStart() {
+	super.onStart();
 	this.text = this.dialog.textbox.wrapLines(this.text, this.font)
     }
 
-    tick() {
-	super.tick();
+    onTick() {
+	super.onTick();
 	if (this.text.length <= this._index) {
 	    this.stop();
 	} else if (this.speed === 0) {
@@ -537,8 +537,8 @@ class MenuTask extends TextTask {
 	return item;
     }
 
-    init() {
-	super.init();
+    onStart() {
+	super.onStart();
 	for (let item of this.items) {
 	    item.seg = this.dialog.textbox.addSegment(item.pos, item.text);
 	}
@@ -692,17 +692,17 @@ class DialogBox extends Entity {
 	this.queue = [];
     }
 
-    tick() {
-	super.tick();
+    onTick() {
+	super.onTick();
 	let task:TextTask = null;
 	while (true) {
 	    task = this.getCurrentTask();
 	    if (task === null) break;
 	    if (task.isScheduled()) {
-		task.init();
+		task.onStart();
 	    }
 	    if (task.isRunning()) {
-		task.tick();
+		task.onTick();
 		break;
 	    }
 	    this.remove(task);
@@ -748,7 +748,7 @@ class DialogBox extends Entity {
 	    let task = this.getCurrentTask();
 	    if (task === null) break;
 	    if (task.isScheduled()) {
-		task.init();
+		task.onStart();
 	    }
 	    task.ff();
 	    if (task.isRunning()) break;

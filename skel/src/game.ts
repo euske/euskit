@@ -33,8 +33,8 @@ class Player extends Entity {
 	this.usermove = new Vec2();
     }
 
-    tick() {
-	super.tick();
+    onTick() {
+	super.onTick();
 	this.moveIfPossible(this.usermove);
     }
 
@@ -56,8 +56,8 @@ class Game extends GameScene {
     scoreBox: TextBox;
     score: number;
 
-    init() {
-	super.init();
+    onStart() {
+	super.onStart();
 	this.scoreBox = new TextBox(this.screen.inflate(-8,-8), FONT);
 	this.player = new Player(this.world.area.center());
 	this.add(this.player);
@@ -65,8 +65,8 @@ class Game extends GameScene {
 	this.updateScore();
     }
 
-    tick() {
-	super.tick();
+    onTick() {
+	super.onTick();
     }
 
     onDirChanged(v: Vec2) {

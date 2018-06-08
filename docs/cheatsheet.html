@@ -29,13 +29,13 @@ class Player extends Entity {
         this.sprites = [sprite];
 	this.collider = sprite.getBounds();
     }
-    init() {
-        super.init();
+    onStart() {
+        super.onStart();
         <span class=comment>// Initialize the direction.</span>
 	this.usermove = new Vec2();
     }
-    tick() {
-	super.tick();
+    onTick() {
+	super.onTick();
         <span class=comment>// Change the position.</span>
 	this.moveIfPossible(this.usermove);
     }
@@ -43,8 +43,8 @@ class Player extends Entity {
 
 class Game extends GameScene {
     player: Player;
-    init() {
-	super.init();
+    onStart() {
+	super.onStart();
         <span class=comment>// Place a player at the center of the world.</span>
 	this.player = new Player(this.world.area.center());
 	this.world.add(this.player);
@@ -76,8 +76,8 @@ class Bullet extends Projectile {
 	this.collider = bounds;
 	this.movement = new Vec2(8, 0);
     }
-    init() {
-        super.init();
+    onStart() {
+        super.onStart();
 	this.frame = this.world.area;
     }
 }
@@ -154,7 +154,7 @@ class Player extends Entity {
 <blockquote><pre>
 class Game extends GameScene {
     ...
-    init() {
+    onStart() {
 	const MAP = [
 	    "0010010000",
 	    "0222022002",
@@ -269,7 +269,7 @@ class Button extends Entity {
     }
 }
 class Game extends GameScene {
-    init() {
+    onStart() {
         this.world.add(new Button(new Vec2(100,100)));
         this.world.mouseDown.subscribe((world:World, entity:Entity) =&gt; {
             info(entity);

@@ -238,9 +238,11 @@ one Scene.
   <td>The canvas rectangle.</td></tr>
 <tr><td><code>.changeScene(<u>scene</u>)</code></td>
   <td>Signals the <code>App</code> to switch to a scene.</td></tr>
-<tr><td><code>.init()</code></td>
+<tr><td><code>.onStart()</code></td>
   <td>Initializes the scene.</td></tr>
-<tr><td><code>.tick()</code></td>
+<tr><td><code>.onStop()</code></td>
+  <td>Cleanup the scene.</td></tr>
+<tr><td><code>.onTick()</code></td>
   <td>Invoked for every frame.</td></tr>
 <tr><td><code>.render(<u>ctx</u>)</code></td>
   <td>Displays the scene.</td></tr>
@@ -331,11 +333,11 @@ A <code>Task</code> is an abstract class of <code>Entity</code>.
   <td>Terminates the task.</td></tr>
 <tr><td><code>.chain(<u>task</u>, <br>&nbsp; <u>signal</u>=null)</code></td>
   <td>Schedules another task to be started when this task stops.</td></tr>
-<tr><td><code>.init()</code></td>
+<tr><td><code>.onStart()</code></td>
   <td>Invoked when the task is started.</td></tr>
-<tr><td><code>.cleanup()</code></td>
+<tr><td><code>.onStop()</code></td>
   <td>Invoked when the task is stopped.</td></tr>
-<tr><td><code>.tick()</code></td>
+<tr><td><code>.onTick()</code></td>
   <td>Invoked at every frame while the task is running.</td></tr>
 </table>
 
@@ -598,9 +600,9 @@ Only shows the objects within the window.
   <td>A list of <code>Entity</code>s that belong to the layer.</td></tr>
 <tr><td><code>.window</code></td>
   <td>A <code>Rect</code> that specifies the window.</td></tr>
-<tr class=override><td><code>.init()</code></td>
+<tr class=override><td><code>.onStart()</code></td>
   <td>Invoked when the layer is initialized.</td></tr>
-<tr class=override><td><code>.tick(t)</code></td>
+<tr class=override><td><code>.onTick(t)</code></td>
   <td>Invoked for every frame.</td></tr>
 <tr class=inherited><td><code>.render(ctx, bx, by)</code></td>
   <td>Draws all the sprites at the location (<code>bx</code>, <code>by</code>).</td></tr>
@@ -635,9 +637,9 @@ a few convenient methods.
   <td>Adds a <code>Task</code>/<code>Sprite</code>/<code>Entity</code> to the list.</td></tr>
 <tr class=inherited><td><code>.changeScene(scene)</code></td>
   <td>Signals the <code>App</code> to switch to a scene.</td></tr>
-<tr class=override><td><code>.init()</code></td>
+<tr class=override><td><code>.onStart()</code></td>
   <td>Initializes the scene.</td></tr>
-<tr class=override><td><code>.tick(t)</code></td>
+<tr class=override><td><code>.onTick(t)</code></td>
   <td>Invoked for every frame.</td></tr>
 <tr class=override><td><code>.render(ctx, bx, by)</code></td>
   <td>Draws the scene at the location (<code>bx</code>, <code>by</code>).</td></tr>
@@ -1378,9 +1380,9 @@ Manages a list of <code>Task</code>s.
   <td>Tasklist that runs given tasks parallelly.</td></tr>
 <tr class=ctor><td><code>new SequentialTaskList()</code></td>
   <td>Tasklist that runs given tasks sequentially.</td></tr>
-<tr><td><code>.init()</code></td>
+<tr><td><code>.onStart()</code></td>
   <td>Initializes the task list.</td></tr>
-<tr><td><code>.tick()</code></td>
+<tr><td><code>.onTick()</code></td>
   <td>Invoked at every frame. Update the current tasks.</td></tr>
 <tr><td><code>.add(task)</code></td>
   <td>Adds a task to the list.</td></tr>
@@ -1404,7 +1406,7 @@ Manages a list of <code>Task</code>s that run sequentially.
   <td>Removes a task from the list.</td></tr>
 <tr><td><code>.clear()</code></td>
   <td>Empties the task list.</td></tr>
-<tr><td><code>.tick()</code></td>
+<tr><td><code>.onTick()</code></td>
   <td>Invoked at every frame. Update the current tasks.</td></tr>
 </table>
 

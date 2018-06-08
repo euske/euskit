@@ -44,13 +44,13 @@ class Tweener extends Animator {
     srcpos: Vec2 = null;
     dstpos: Vec2 = null;
 
-    init() {
-	super.init();
+    onStart() {
+	super.onStart();
 	this.srcpos = this.entity.pos.copy();
     }
 
-    tick() {
-	super.tick();
+    onTick() {
+	super.onTick();
 	if (this.srcpos !== null && this.dstpos !== null) {
 	    let t = this.getTime() / this.lifetime;
 	    this.entity.pos = this.getPos(t);

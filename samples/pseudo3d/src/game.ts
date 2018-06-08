@@ -161,8 +161,8 @@ class World3 extends World {
     tiles: SpriteSheet = null;
     entities3: Entity3d[];
 
-    init() {
-        super.init();
+    reset() {
+        super.reset();
 	this.entities3 = [];
     }
 
@@ -357,8 +357,8 @@ class Player extends Entity3d {
 	this._jumpend = jumpend;
     }
 
-    tick() {
-	super.tick();
+    onTick() {
+	super.onTick();
 	this.moveIfPossible3(this.usermove3);
 	this.fall();
 	if (this._jumpt < this._jumpend) {
@@ -406,8 +406,8 @@ class Game extends GameScene {
     score: number;
     speed: Vec2;
 
-    init() {
-	super.init();
+    onStart() {
+	super.onStart();
 	let ROWS = [T.WALL,0,0,0,0,0,T.WALL];
 	this.tilemap = new TileMap(32, 12, 7, ROWS.map(
 	    (c:number) => { return new Int32Array(12).fill(c); }
@@ -441,9 +441,9 @@ class Game extends GameScene {
         this.world3.add(task);
     }
 
-    tick() {
-	super.tick();
-	this.world3.tick();
+    onTick() {
+	super.onTick();
+	this.world3.onTick();
 	this.moveAll(this.speed);
     }
 

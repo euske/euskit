@@ -9,7 +9,7 @@ enum TaskState {
 
 
 /** Object that represents a continuous process.
- *  tick() method is invoked at every frame.
+ *  onTick() method is invoked at every frame.
  */
 class Task {
 
@@ -53,7 +53,7 @@ class Task {
     }
 
     /** Invoked when the task is started. */
-    init() {
+    onStart() {
 	if (this.state == TaskState.Scheduled) {
 	    this.state = TaskState.Running;
 	    this.startTime = getTime();
@@ -61,11 +61,11 @@ class Task {
     }
 
     /** Invoked when the task is stopped. */
-    cleanup() {
+    onStop() {
     }
 
     /** Invoked at every frame while the task is running. */
-    tick() {
+    onTick() {
 	if (this.lifetime <= this.getTime()) {
 	    this.stop();
 	}
@@ -127,23 +127,23 @@ class SoundTask extends Task {
     }
 
     /** Invoked when the task is started. */
-    init() {
-	super.init();
+    onStart() {
+	super.onStart();
         // Start playing.
 	this.sound.currentTime = this.soundStart;
 	this.sound.play();
     }
 
     /** Invoked when the task is stopped. */
-    cleanup() {
+    onStop() {
         // Stop playing.
 	this.sound.pause();
-	super.cleanup();
+	super.onStop();
     }
 
     /** Invoked at every frame while the task is running. */
-    tick() {
-	super.tick();
+    onTick() {
+	super.onTick();
         // Check if the playing is finished.
 	if (0 < this.soundEnd && this.soundEnd <= this.sound.currentTime) {
 	    this.stop();
@@ -181,19 +181,19 @@ class ParallelTaskList extends Task implements TaskList {
     }
 
     /** Empties the task list. */
-    init() {
-        super.init();
+    onStart() {
+        super.onStart();
 	this.tasks = [];
     }
 
     /** Invoked at every frame. Update the current tasks. */
-    tick() {
+    onTick() {
 	for (let task of this.tasks) {
 	    if (task.isScheduled()) {
-		task.init();
+		task.onStart();
 	    }
 	    if (task.isRunning()) {
-		task.tick();
+		task.onTick();
 	    }
 	}
 
@@ -222,7 +222,7 @@ class ParallelTaskList extends Task implements TaskList {
      */
     remove(task: Task) {
 	if (!task.isScheduled()) {
-            task.cleanup();
+            task.onStop();
         }
 	removeElement(this.tasks, task);
     }
@@ -247,8 +247,8 @@ class SequentialTaskList extends Task implements TaskList {
     }
 
     /** Empties the task list. */
-    init() {
-        super.init();
+    onStart() {
+        super.onStart();
         if (this.tasks === null) {
 	    this.tasks = [];
         }
@@ -276,17 +276,17 @@ class SequentialTaskList extends Task implements TaskList {
     }
 
     /** Invoked at every frame. Update the current tasks. */
-    tick() {
+    onTick() {
 	let task:Task = null;
 	while (true) {
 	    task = this.getCurrentTask();
 	    if (task === null) break;
             // Starts the next task.
 	    if (task.isScheduled()) {
-		task.init();
+		task.onStart();
 	    }
 	    if (task.isRunning()) {
-		task.tick();
+		task.onTick();
 		break;
 	    }
             // Finishes the current task.

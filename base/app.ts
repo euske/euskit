@@ -86,10 +86,10 @@ class App {
 	removeChildren(this.elem, 'div');
 	this.setMusic();
         if (this.scene !== null) {
-            this.scene.cleanup();
+            this.scene.onStop();
         }
 	this.scene = scene;
-	this.scene.init();
+	this.scene.onStart();
     }
 
     post(msg: Action) {
@@ -282,7 +282,7 @@ class App {
     }
 
     tick() {
-	this.scene.tick();
+	this.scene.onTick();
 	if (0 < this._keylock && this._keylock < getTime()) {
 	    this._keylock = 0;
 	}

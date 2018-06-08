@@ -34,8 +34,8 @@ class Bullet extends Projectile {
 	this.movement = new Vec2(8, 0);
     }
 
-    init() {
-        super.init();
+    onStart() {
+        super.onStart();
 	this.frame = this.world.area;
     }
 }
@@ -67,8 +67,8 @@ class Player extends Entity {
 	this.collider = sprite.getBounds();
     }
 
-    tick() {
-	super.tick();
+    onTick() {
+	super.onTick();
 	this.moveIfPossible(this.usermove);
 	if (this.firing) {
 	    if (this.nextfire == 0) {
@@ -122,8 +122,8 @@ class EnemyBase extends Projectile {
 	this.killed = new Signal(this);
     }
 
-    init() {
-        super.init();
+    onStart() {
+        super.onStart();
 	this.frame = this.world.area;
     }
 
@@ -164,8 +164,8 @@ class Enemy2 extends EnemyBase {
 	this.movement = new Vec2(-rnd(1,4), 0);
     }
 
-    tick() {
-	super.tick();
+    onTick() {
+	super.onTick();
 	// Move wiggly vertically.
 	if (rnd(4) == 0) {
 	    this.movement.y = rnd(5)-2;
@@ -189,12 +189,12 @@ class Shooter extends GameScene {
 	this.scoreBox = new TextBox(this.screen.inflate(-8,-8), FONT);
     }
 
-    init() {
-	super.init();
+    onStart() {
+	super.onStart();
 	this.player = new Player(this.world.area.center());
         let task = new Task();
         task.lifetime = 2;
-        task.stopped.subscribe(() => { this.init(); });
+        task.stopped.subscribe(() => { this.reset(); });
 	this.player.chain(task);
 	this.add(this.player);
 	this.stars = new StarSprite(this.screen, 100);
@@ -203,8 +203,8 @@ class Shooter extends GameScene {
 	this.updateScore();
     }
 
-    tick() {
-	super.tick();
+    onTick() {
+	super.onTick();
 	this.stars.move(new Vec2(-4, 0));
 	// Spawn an enemy at a random interval.
 	if (this.nextenemy == 0) {

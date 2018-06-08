@@ -31,8 +31,8 @@ class Paddle extends Entity {
 	this.vx = 0;
     }
 
-    tick() {
-        super.tick();
+    onTick() {
+        super.onTick();
 	// Updates the position.
 	let pos = this.pos.move(this.vx*4, 0);
 	let bounds = this.getCollider(pos).getAABB();
@@ -60,8 +60,8 @@ class Ball extends Entity {
 	this.v = new Vec2(rnd(2)*8-4, -4);
     }
 
-    tick() {
-        super.tick();
+    onTick() {
+        super.onTick();
 	// Updates the position.
 	let pos = this.pos.add(this.v);
 	let bounds = this.getCollider(pos).getAABB();
@@ -93,8 +93,8 @@ class Pong extends GameScene {
     paddle: Paddle;
     ball: Ball;
 
-    init() {
-	super.init();
+    onStart() {
+	super.onStart();
 	// Places the objects.
 	this.paddle = new Paddle(this.screen);
 	this.add(this.paddle);
@@ -102,11 +102,11 @@ class Pong extends GameScene {
 	this.add(this.ball);
     }
 
-    tick() {
-	super.tick();
+    onTick() {
+	super.onTick();
 	// Restarts when the ball goes out of screen.
 	if (this.screen.height < this.ball.pos.y) {
-	    this.init();
+	    this.reset();
 	}
     }
 

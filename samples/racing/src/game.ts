@@ -37,8 +37,8 @@ class Player extends Entity {
 	this.collider = sprite.getBounds();
     }
 
-    tick() {
-	super.tick();
+    onTick() {
+	super.onTick();
 	this.moveIfPossible(this.usermove);
     }
 
@@ -151,8 +151,8 @@ class Racing extends GameScene {
 	this.highScore = -1;
     }
 
-    init() {
-	super.init();
+    onStart() {
+	super.onStart();
 
 	this.player = new Player(this.world.area.center());
 	this.add(this.player);
@@ -165,8 +165,8 @@ class Racing extends GameScene {
 	APP.setMusic('music', 0, 19.1);
     }
 
-    tick() {
-	super.tick();
+    onTick() {
+	super.onTick();
 	if (this.player.isRunning()) {
 	    let b = this.player.getCollider().move(0, this.track.offset) as Rect;
 	    if (this.track.isFloor(b)) {
@@ -178,7 +178,7 @@ class Racing extends GameScene {
                 let blinker = new Blinker(this.player);
 		blinker.interval = 0.2;
 		blinker.lifetime = 1.0;
-		blinker.stopped.subscribe(() => { this.init(); });
+		blinker.stopped.subscribe(() => { this.reset(); });
 		this.player.chain(blinker);
                 this.player.stop();
 		APP.setMusic();

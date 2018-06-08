@@ -243,8 +243,8 @@ class ActionRunner extends Task {
 	return ('<ActionRunner: actor='+this.actor+', action='+this.action+'>');
     }
 
-    tick() {
-        super.tick();
+    onTick() {
+        super.onTick();
 	let action = this.action;
 	if (action !== null) {
 	    action = this.execute(action);

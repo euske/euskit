@@ -43,13 +43,13 @@ class PictureScene extends GameScene {
 	this.dialogBox = new DialogBox(textbox, HIFONT);
     }
 
-    init() {
-	super.init();
+    onStart() {
+	super.onStart();
 	this.add(this.dialogBox);
     }
 
-    tick() {
-	super.tick();
+    onTick() {
+	super.onTick();
 	if (this.alpha < 1.0) {
 	    this.alpha = upperbound(1.0, this.alpha+0.05);
 	}
@@ -114,8 +114,8 @@ class Scene1 extends PictureScene {
 	super();
 	this.image1 = APP.images['scene1'];
     }
-    init() {
-	super.init();
+    onStart() {
+	super.onStart();
 	this.dialogBox.addDisplay(
 	    'It was a perfect sunny day. '+
 	    'I was driving a sleepy countryside.', 10);
@@ -136,8 +136,8 @@ class Scene2 extends PictureScene {
 	super();
 	this.image1 = APP.images['scene2'];
     }
-    init() {
-	super.init();
+    onStart() {
+	super.onStart();
 	this.dialogBox.addDisplay(
 	    'I was fed up with cities. The beauty of '+
 	    'a city makes everyone anonymous.', 10);
@@ -158,8 +158,8 @@ class Scene3 extends PictureScene {
 	super();
 	this.image1 = APP.images['scene3'];
     }
-    init() {
-	super.init();
+    onStart() {
+	super.onStart();
 	this.dialogBox.addDisplay(
 	    'But eventually, people can\'t really '+
 	    'forget about their loved ones.', 10);
@@ -178,8 +178,8 @@ class Scene3 extends PictureScene {
 //
 class Adventure extends Scene {
 
-    init() {
-	super.init();
+    onStart() {
+	super.onStart();
 	this.changeScene(new Scene1());
     }
 }

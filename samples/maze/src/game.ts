@@ -70,8 +70,8 @@ class Player extends Entity {
         this.prevmove = this.usermove;
     }
 
-    tick() {
-	super.tick();
+    onTick() {
+	super.onTick();
         if (!this.usermove.isZero()) {
             let v = this.moveIfPossible(this.usermove);
             if (v.isZero()) {
@@ -115,8 +115,8 @@ class Enemy extends WalkerEntity {
         this.target = target;
     }
 
-    tick() {
-	super.tick();
+    onTick() {
+	super.onTick();
         let start = this.grid.coord2grid(this.pos);
 	let goal = this.grid.coord2grid(this.target.pos);
 	if (this.runner instanceof WalkerActionRunner) {
@@ -142,8 +142,8 @@ class Game extends GameScene {
     tilemap: TileMap;
     player: Player;
 
-    init() {
-	super.init();
+    onStart() {
+	super.onStart();
         this.tilemap = new TileMap(16, 39, 29);
         this.tilemap.fill(1);
         makeMaze(this.tilemap, 0, 0.1);
@@ -161,8 +161,8 @@ class Game extends GameScene {
         }
     }
 
-    tick() {
-	super.tick();
+    onTick() {
+	super.onTick();
         let target = this.player.getCollider() as Rect
         this.world.setCenter(target.inflate(96,96), this.tilemap.bounds);
     }
@@ -186,8 +186,8 @@ class GoalScene extends HTMLScene {
         super('<strong>Goal!</strong>')
     }
 
-    init() {
-        super.init();
+    onStart() {
+        super.onStart();
         APP.lockKeys();
         APP.playSound('goal');
     }

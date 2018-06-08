@@ -22,21 +22,20 @@ class World extends ParallelTaskList {
 	this.mouseDown = new Signal(this);
 	this.mouseUp = new Signal(this);
 	this.area = area.copy();
-        this.init();
+        this.reset();
     }
 
     toString() {
 	return '<World: '+this.area+'>';
     }
 
-    init() {
-        super.init();
+    reset() {
         this.window = this.area.copy();
 	this.entities = [];
     }
 
-    tick() {
-	super.tick();
+    onTick() {
+	super.onTick();
 	this.checkEntityCollisions();
     }
 
@@ -221,15 +220,20 @@ class Scene {
 	APP.post(() => { APP.init(scene); });
     }
 
-    init() {
+    reset() {
+        this.onStop();
+        this.onStart();
+    }
+
+    onStart() {
 	// [OVERRIDE]
     }
 
-    cleanup() {
+    onStop() {
 	// [OVERRIDE]
     }
 
-    tick() {
+    onTick() {
 	// [OVERRIDE]
     }
 
@@ -294,8 +298,8 @@ class HTMLScene extends Scene {
 	this.text = text;
     }
 
-    init() {
-	super.init();
+    onStart() {
+	super.onStart();
 	let scene = this;
 	let bounds = APP.elem.getBoundingClientRect();
 	let e = APP.addElement(
@@ -336,14 +340,14 @@ class GameScene extends Scene {
 
     world: World = null;
 
-    init() {
-	super.init();
+    onStart() {
+	super.onStart();
         this.world = new World(this.screen);
     }
 
-    tick() {
-	super.tick();
-	this.world.tick();
+    onTick() {
+	super.onTick();
+	this.world.onTick();
     }
 
     render(ctx: CanvasRenderingContext2D) {
