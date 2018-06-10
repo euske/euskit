@@ -34,9 +34,8 @@ class Bullet extends Projectile {
 	this.movement = new Vec2(8, 0);
     }
 
-    onStart() {
-        super.onStart();
-	this.frame = this.world.area;
+    getFrame() {
+	return this.world.area;
     }
 }
 
@@ -122,9 +121,8 @@ class EnemyBase extends Projectile {
 	this.killed = new Signal(this);
     }
 
-    onStart() {
-        super.onStart();
-	this.frame = this.world.area;
+    getFrame() {
+	return this.world.area;
     }
 
     onCollided(entity: Entity) {

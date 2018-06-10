@@ -50,6 +50,10 @@ class Entity extends Task {
         ctx.restore();
     }
 
+    movePos(v: Vec2) {
+	this.pos = this.pos.add(v);
+    }
+
     getCollider(pos: Vec2=null) {
 	if (this.collider === null) return null;
 	if (pos === null) {
@@ -89,10 +93,6 @@ class Entity extends Task {
 			hitbox1.y-hitbox0.y);
     }
 
-    movePos(v: Vec2) {
-	this.pos = this.pos.add(v);
-    }
-
     moveIfPossible(v: Vec2, context=null as string) {
 	v = this.getMove(this.pos, v, context);
 	this.movePos(v);
@@ -119,20 +119,25 @@ class Entity extends Task {
 //
 class Projectile extends Entity {
 
-    movement: Vec2 = new Vec2();
-    frame: Rect = null;
+    movement: Vec2 = null;
 
     onTick() {
 	super.onTick();
 	if (this.movement !== null) {
 	    this.movePos(this.movement);
-	    if (this.frame !== null) {
+            let frame = this.getFrame();
+	    if (frame !== null) {
 		let collider = this.getCollider();
-		if (collider !== null && !collider.overlaps(this.frame)) {
+		if (collider !== null && !collider.overlaps(frame)) {
 		    this.stop();
 		}
 	    }
 	}
+    }
+
+    getFrame(): Rect {
+        // [OVERRIDE]
+        return null;
     }
 }
 
