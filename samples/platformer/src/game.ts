@@ -175,7 +175,7 @@ class Player extends PlatformerEntity {
 	if (entity instanceof Thingy) {
 	    APP.playSound('pick');
 	    entity.stop();
-	    let yay = new Projectile(this.pos.move(0,-16));
+	    let yay = new Particle(this.pos.move(0,-16));
 	    yay.sprites = [SPRITES.get(S.YAY)];
 	    yay.movement = new Vec2(0,-4);
 	    yay.lifetime = 0.5;

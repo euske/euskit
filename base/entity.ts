@@ -115,9 +115,9 @@ class Entity extends Task {
 }
 
 
-//  Projectile
+//  Particle
 //
-class Projectile extends Entity {
+class Particle extends Entity {
 
     movement: Vec2 = null;
 

@@ -24,7 +24,7 @@ addInitHook(() => {
 
 //  Bullet
 //
-class Bullet extends Projectile {
+class Bullet extends Particle {
 
     constructor(pos: Vec2) {
 	super(pos);
@@ -112,7 +112,7 @@ class Player extends Entity {
 //  This class has the common methods for all enemies.
 //  They can be mixed in with applyMixins().
 //
-class EnemyBase extends Projectile {
+class EnemyBase extends Particle {
 
     killed: Signal;
 

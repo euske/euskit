@@ -460,7 +460,7 @@ class Game extends GameScene {
     onPicked(entity: Entity) {
 	this.score += 1;
 	this.speed.x += 1;
-	let yay = new Projectile(this.player.pos.move(-32,-16));
+	let yay = new Particle(this.player.pos.move(-32,-16));
 	yay.sprites = [SPRITES.get(S.YAY)];
 	yay.movement = new Vec2(0,-4);
 	yay.lifetime = 0.5;
