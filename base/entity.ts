@@ -155,6 +155,11 @@ class TileMapEntity extends Entity {
 	this.isObstacle = isObstacle;
     }
 
+    hasTile(f: (c:number)=>boolean, pos: Vec2=null) {
+	let range = this.getCollider(pos).getAABB();
+	return (this.tilemap.findTileByCoord(f, range) !== null);
+    }
+
     getObstaclesFor(range: Rect, v: Vec2, context: string): Rect[] {
 	return this.tilemap.getTileRects(this.isObstacle, range);
     }
@@ -182,8 +187,6 @@ class PhysicsConfig {
 class PhysicalEntity extends Entity {
 
     physics: PhysicsConfig;
-    jumped: Signal;
-    landed: Signal;
     velocity: Vec2 = new Vec2();
 
     protected _jumpt: number = Infinity;
@@ -193,18 +196,6 @@ class PhysicalEntity extends Entity {
     constructor(physics: PhysicsConfig, pos: Vec2) {
 	super(pos);
 	this.physics = physics;
-	this.jumped = new Signal(this);
-	this.landed = new Signal(this);
-    }
-
-    setJump(jumpend: number) {
-	if (0 < jumpend) {
-	    if (this.canJump()) {
-		this.jumped.fire();
-		this._jumpt = 0;
-	    }
-	}
-	this._jumpend = jumpend;
     }
 
     onTick() {
@@ -217,6 +208,16 @@ class PhysicalEntity extends Entity {
 	}
     }
 
+    setJump(jumpend: number) {
+	if (0 < jumpend) {
+	    if (this.canJump()) {
+		this._jumpt = 0;
+		this.onJumped();
+	    }
+	}
+	this._jumpend = jumpend;
+    }
+
     fall(t: number) {
 	if (this.canFall()) {
 	    let vy = this.physics.jumpfunc(this.velocity.y, t);
@@ -225,24 +226,16 @@ class PhysicalEntity extends Entity {
 	    this.velocity = v.clamp(this.physics.maxspeed);
 	    let landed = (0 < vy && this.velocity.y == 0);
 	    if (!this._landed && landed) {
-		this.landed.fire();
+		this.onLanded();
 	    }
 	    this._landed = landed;
 	} else {
 	    this.velocity = new Vec2();
 	    if (!this._landed) {
-		this.landed.fire();
+		this.onLanded();
 	    }
 	    this._landed = true;
 	}
-    }
-
-    isLanded() {
-	return this._landed;
-    }
-
-    isJumping() {
-	return (this._jumpt < this._jumpend);
     }
 
     canJump() {
@@ -253,6 +246,21 @@ class PhysicalEntity extends Entity {
 	return true;
     }
 
+    isJumping() {
+	return (this._jumpt < this._jumpend);
+    }
+
+    isLanded() {
+	return this._landed;
+    }
+
+    onJumped() {
+	// [OVERRIDE]
+    }
+
+    onLanded() {
+	// [OVERRIDE]
+    }
 }
 
 

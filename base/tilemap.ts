@@ -166,6 +166,11 @@ class TileMap {
 	return map;
     }
 
+    render(ctx: CanvasRenderingContext2D, sprites: SpriteSheet) {
+        this.renderFromBottomLeft(
+            ctx, (x,y,c) => { return sprites.get(c); });
+    }
+
     renderFromBottomLeft(
 	ctx: CanvasRenderingContext2D,
 	ft: (x:number,y:number,c:number)=>Sprite,
@@ -216,6 +221,13 @@ class TileMap {
 	}
     }
 
+
+    renderWindow(
+        ctx: CanvasRenderingContext2D,
+        window:Rect, sprites: SpriteSheet) {
+        this.renderWindowFromBottomLeft(
+            ctx, window, (x,y,c) => { return sprites.get(c); });
+    }
 
     renderWindowFromBottomLeft(
 	ctx: CanvasRenderingContext2D,

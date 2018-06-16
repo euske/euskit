@@ -163,7 +163,7 @@ class World extends ParallelTaskList {
         this.entities.sort((a:Entity, b:Entity) => { return a.order-b.order; });
     }
 
-    getEntityColliders(f0: (e:Entity)=>boolean, range: Collider) {
+    getEntityColliders(f0: (e:Entity)=>boolean, range: Collider=null) {
         let a = [] as Collider[];
         let f = (entity: Entity) => {
             if (f0(entity)) {

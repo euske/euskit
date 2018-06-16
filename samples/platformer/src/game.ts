@@ -110,10 +110,18 @@ class Player extends PlatformerEntity {
 	this.collider = sprite.getBounds();
 	this.scene = scene;
 	this.picked = new Signal(this);
+    }
+
+    onJumped() {
+        super.onJumped();
 	// Release a ladder when jumping.
-	this.jumped.subscribe(() => { this.holding = false; });
+        this.holding = false;
+    }
+
+    onLanded() {
+        super.onLanded();
 	// Grab a ladder when landed.
-	this.landed.subscribe(() => { this.holding = true; });
+        this.holding = true;
     }
 
     hasLadder() {
