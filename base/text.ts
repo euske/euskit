@@ -150,7 +150,8 @@ class TextBox implements Sprite {
     background: string = null;
     borderColor: string = null;
     borderWidth: number = 2;
-    segments: TextSegment[] = [];
+
+    protected _segments: TextSegment[] = [];
 
     constructor(frame: Rect, font: Font=null) {
 	this.frame = frame.copy();
@@ -159,17 +160,6 @@ class TextBox implements Sprite {
 
     toString() {
 	return '<TextBox: '+this.frame+'>';
-    }
-
-    getSize(lines: string[], font: Font=null) {
-	font = (font !== null)? font : this.font;
-	let w = 0, h = 0;
-	for (let i = 0; i < lines.length; i++) {
-	    let size = font.getSize(lines[i]);
-	    w = Math.max(w, size.x);
-	    h = h+size.y+this.lineSpace;
-	}
-	return new Vec2(w, h-this.lineSpace);
     }
 
     getBounds() {
@@ -193,7 +183,7 @@ class TextBox implements Sprite {
 	    ctx.lineWidth = b;
 	    ctx.strokeRect(-b, -b, this.frame.width+b*2, this.frame.height+b*2);
 	}
-	for (let seg of this.segments) {
+	for (let seg of this._segments) {
 	    seg.font.renderString(ctx, seg.text,
 				  this.padding+seg.bounds.x, this.padding+seg.bounds.y);
 	}
@@ -201,11 +191,11 @@ class TextBox implements Sprite {
     }
 
     clear() {
-	this.segments = [];
+	this._segments = [];
     }
 
     add(seg: TextSegment) {
-	this.segments.push(seg);
+	this._segments.push(seg);
     }
 
     addSegment(p: Vec2, text: string, font: Font=null) {
@@ -219,19 +209,30 @@ class TextBox implements Sprite {
 	font = (font !== null)? font : this.font;
 	let height = this.frame.height-this.padding*2;
 	let y = 0;
-	if (this.segments.length !== 0) {
-	    y = this.segments[this.segments.length-1].bounds.y1()+this.lineSpace;
+	if (this._segments.length !== 0) {
+	    y = this._segments[this._segments.length-1].bounds.y1()+this.lineSpace;
 	}
 	let newseg = this.addSegment(new Vec2(0, y), '', font);
 	let dy = newseg.bounds.y1() - height;
 	if (0 < dy) {
 	    // scrolling.
-	    this.segments = this.segments.filter((seg) => {
+	    this._segments = this._segments.filter((seg) => {
 		seg.bounds.y -= dy;
 		return 0 <= seg.bounds.y;
 	    });
 	}
 	return newseg;
+    }
+
+    getSize(lines: string[], font: Font=null) {
+	font = (font !== null)? font : this.font;
+	let w = 0, h = 0;
+	for (let i = 0; i < lines.length; i++) {
+	    let size = font.getSize(lines[i]);
+	    w = Math.max(w, size.x);
+	    h = h+size.y+this.lineSpace;
+	}
+	return new Vec2(w, h-this.lineSpace);
     }
 
     addText(text: string, font: Font=null) {
@@ -249,8 +250,8 @@ class TextBox implements Sprite {
 	    }
 	    let s = text.substring(i, j);
 	    let size = font.getSize(s);
-	    let last = ((this.segments.length === 0)? null :
-			this.segments[this.segments.length-1]);
+	    let last = ((this._segments.length === 0)? null :
+			this._segments[this._segments.length-1]);
 	    if (last === null || width < last.bounds.x1()+size.x) {
 		last = this.addNewline(font);
 	    } else if (last.font !== font) {
@@ -294,8 +295,8 @@ class TextBox implements Sprite {
     }
 
     wrapLines(text: string, font: Font=null, header: string=null) {
-	let x = ((this.segments.length === 0)? 0 :
-		 this.segments[this.segments.length-1].bounds.x1());
+	let x = ((this._segments.length === 0)? 0 :
+		 this._segments[this._segments.length-1].bounds.x1());
 	let a = this.splitWords(x, text, font, header);
 	let s = '';
 	for (let i = 0; i < a.length; i++) {
@@ -335,7 +336,7 @@ class TextBox implements Sprite {
 		break;
 	    }
 	    let bounds = new Rect(x, y, size.x, size.y);
-	    this.segments.push({bounds:bounds, text:text, font:font});
+	    this._segments.push({bounds:bounds, text:text, font:font});
 	    y += size.y+this.lineSpace;
 	}
     }
@@ -360,8 +361,8 @@ class BannerBox extends Entity {
         }
     }
 
-    putText(lines: string[]) {
-        this.textbox.putText(lines, 'center', 'center');
+    putText(lines: string[], halign='center', valign='center') {
+        this.textbox.putText(lines, halign, valign);
     }
 
     isVisible() {
@@ -634,7 +635,6 @@ class MenuTask extends TextTask {
     }
 }
 
-
 class WaitTask extends TextTask {
 
     ended: Signal;
@@ -674,7 +674,8 @@ class DialogBox extends Entity {
     speed: number = 0;
     autoHide: boolean = false;
     sound: string = null;
-    queue: TextTask[] = [];
+
+    protected _tasks: TextTask[] = [];
 
     constructor(textbox: TextBox, hiFont: Font=null) {
 	super(new Vec2());
@@ -684,12 +685,12 @@ class DialogBox extends Entity {
     }
 
     isVisible() {
-	return (!this.autoHide || 0 < this.queue.length);
+	return (!this.autoHide || 0 < this._tasks.length);
     }
 
     clear() {
 	this.textbox.clear();
-	this.queue = [];
+	this._tasks = [];
     }
 
     onTick() {
@@ -757,18 +758,18 @@ class DialogBox extends Entity {
     }
 
     getCurrentTask() {
-	return (0 < this.queue.length)? this.queue[0] : null;
+	return (0 < this._tasks.length)? this._tasks[0] : null;
     }
 
     add(task: Task) {
         task.parent = this;
         if (task instanceof TextTask) {
-	    this.queue.push(task);
+	    this._tasks.push(task);
         }
     }
 
     remove(task: TextTask) {
-	removeElement(this.queue, task);
+	removeElement(this._tasks, task);
     }
 
     addPause(duration: number) {
