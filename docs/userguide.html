@@ -53,6 +53,8 @@ $ <strong>./tools/setup.sh /path/to/project</strong>
 <pre>
 &gt; <strong>tsc</strong>
 </pre>
+
+<li> Open the <code>index.html</code> file.
 </ol>
 
 <h2>Big Picture</h2>
@@ -89,35 +91,35 @@ Here are the things you need to make a game with Euskit:
   </svg>
 </div>
   <div style="position:absolute; left: 270px; top: 0px; margin:0; line-height: 120%;">
-    <a href="#App"><code>App</code></a>:
+    <code>App</code>:
     Resource management and event loop.<br>
-    <a href="#Scene"><code>Scene</code></a>:
+    <code>Scene</code>:
     Game state management and event handling.<br>
-    <a href="#World"><code>World</code></a>:
+    <code>World</code>:
     Container where Entities are placed in.<br>
-    <a href="#Entity"><code>Entity</code></a>:
+    <code>Entity</code>:
     In-game character.<br>
-    <a href="#Sprite"><code>Sprite</code></a>:
+    <code>Sprite</code>:
     Graphical object to be shown.<br>
   </div>
 </div>
 
 <h3>Key Concepts</h3>
 <dl>
-  <dt> App
+  <dt> <a href="quickref.html#App">App</a>
   <dd class=p>
     Every game has exactly one <code>App</code> object.  It does the
     basic pluming and resource management (images and sounds); it has
     an event loop and connect all the external parts (i.e. a browser)
     to the game. Typically, you don't have to change this part.
-  <dt> Scene
+  <dt> <a href="quickref.html#Scene">Scene</a>
   <dd class=p>
     A <code>Scene</code> can be thought of a mini-app or "mode" within the App.
     It's pretty much an event handler that manages the in-game states.
     This is primarily what a Euskit user will write. Euskit supports
     multiple Scenes, but it's possible to create an entire game with just
     one Scene.
-  <dt> Entity
+  <dt> <a href="quickref.html#Entity">Entity</a>
   <dd class=p>
     An <code>Entity</code> is a bit like a GameObject in Unity.
     (Unlike Unity, however, Euskit uses a traditional hierarchical model
@@ -126,28 +128,30 @@ Here are the things you need to make a game with Euskit:
     <code>Sprite</code>s.
     Once you place an Entity in the game world, it moves on its own.
     A <code>Rect</code> is typically used for <code>Collider</code> in 2D games.
-  <dt> World
+  <dt> <a href="quickref.html#World">World</a>
   <dd class=p>
     A <code>World</code> is where <code>Entity</code>s belong to.
     It is basically a container that manages the state of each <code>Entity</code>
     and performs basic collision handling.
-  <dt> Sprite
+  <dt> <a href="quickref.html#Sprite">Sprite</a>
   <dd class=p>
     A <code>Sprite</code> is something to be displayed.
     It has a location, rotation and the reference to its content.
     Unlike some other engines, <code>Sprite</code> doesn't know how to move itself.
     It is just sitting at a certain location on screen. <code>Scene</code> or
     <code>Entity</code> is responsible to change/move its position.
-  <dt> Task
+  <dt> <a href="quickref.html#Task">Task</a>
   <dd class=p>
     Each <code>Entity</code> is a subclass of <code>Task</code>.
-    A <code>Task</code> is an independent object that runs by itself
-    and managed by <code>TaskList</code>.
-  <dt> Signal
+    A <code>Task</code> is an independent object that runs by itself.
+    It is often convenient to create a short-lived task for a delayed action
+    (see the <a href="cheatsheet.html#ScheduleDelayedAction">examples</a>).
+  <dt> <a href="quickref.html#Signal">Signal</a>
   <dd class=p>
     <code>Signal</code> is much like C# events, but it is renamed here
     to avoid confusing with HTML5 events. Unlike EventListener class in HTML5,
-    Each Signals are distinguished not by strings but by variables (see examples).
+    Each Signals are distinguished not by strings but by variables
+    (see the <a href="cheatsheet.html#SignalSubscriptionFiring">examples</a>).
 </dl>
 
 <h2>How To Make Games Like...</h2>

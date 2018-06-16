@@ -214,6 +214,8 @@ At each moment, exactly one <code>Scene</code> is responsible
 for all the user interaction. This is primarily what consists of
 a game logic. Euskit supports multiple <code>Scene</code>s,
 but it's possible to create an entire game with just one <code>Scene</code>.
+See <a href="cheatsheet.html#BasicPlayerControl">Basic Player Control</a>
+and <a href="cheatsheet.html#ChangeScene">Change Scene</a>.
 <table border>
 <tr class=ctor><td><code>new Scene()</code></td>
   <td>Creates a new scene.</td></tr>
@@ -263,6 +265,8 @@ but it's possible to create an entire game with just one <code>Scene</code>.
 <p>
 A <code>World</code> is a container of <code>Entity</code>s.
 The entities which belong here are rendered and their collision is detected.
+See <a href="cheatsheet.html#BasicPlayerControl">Basic Player Control</a>
+and <a href="cheatsheet.html#SpawnAnotherEntity">Spawn Another Entity</a>.
 <table border>
 <tr class=ctor><td><code>new World()</code></td>
   <td>Creates a new world.</td></tr>
@@ -345,6 +349,8 @@ A <code>Task</code> is a base class of <code>Entity</code>.
 An <code>Entity</code> is a main object for game characters.
 Each Entity is a <code>Task</code> and has a <code>Collider</code> and one or more
 Sprites.
+See <a href="cheatsheet.html#RestrictEntitywithinBounds">Restrict Entity within Bounds</a>
+and <a href="cheatsheet.html#SpawnAnotherEntity">Spawn Another Entity</a>.
 <table border>
 <tr class=ctor><td><code>new Entity(<u>pos</u>)</code></td>
   <td>Creates a new entity at a given position.</td></tr>
@@ -427,6 +433,7 @@ keeps moving towards a specific direction.
 <p>
 A <code>TileMapEntity</code> is an <code>Entity</code> that
 interacts with a <code>TileMap</code>.
+See <a href="cheatsheet.html#CreateTileMap">Create TileMap</a>.
 <table border>
 <tr class=ctor><td><code>new TileMapEntity(<br>&nbsp; <u>tilemap</u>, <br>&nbsp; <u>(e:Entity)=&gt;boolean</u>)</code></td>
   <td>Creates a new entity that interacts with a tilemap.</td></tr>
@@ -501,6 +508,7 @@ A <code>Font</code> represents a monospace bitmap font.
 <a name="TextBox"><h3>TextBox : <a href="#Sprite">Sprite</a> (<code>text.ts</code>)</h3></a>
 <p>
 A type of <code>Sprite</code> for a monospaced text.
+See <a href="cheatsheet.html#DisplayText">Display Text</a>.
 <table border>
 <tr class=ctor><td><code>new TextBox(<br>&nbsp; <u>frame</u>, <u>font</u>=null)</code></td>
   <td>TextBox with a given frame and font.</td></tr>
@@ -545,6 +553,8 @@ A type of <code>Sprite</code> for a monospaced text.
 <a name="DialogBox"><h3>DialogBox : <a href="#Entity">Entity</a> (<code>text.ts</code>)</h3></a>
 <p>
 This is a rather complex class for showing text dialog or menu.
+See <a href="cheatsheet.html#TypewriterEffect">Typewriter Effect</a> and
+<a href="cheatsheet.html#MenuSelection">Menu Selection</a>.
 <table border>
 <tr class=ctor><td><code>new DialogBox(<br>&nbsp; <u>textbox</u>, <u>hiFont</u>=null)</code></td>
   <td>Create a new DialogBox with a given highlight font.</td></tr>
@@ -565,6 +575,7 @@ This is a rather complex class for showing text dialog or menu.
 <a name="BannerBox"><h3>BannerBox : <a href="#Entity">Entity</a> (<code>text.ts</code>)</h3></a>
 <p>
 An <code>Entity</code> for showing text banners.
+See <a href="cheatsheet.html#BlinkingBanner">Blinking Banner</a>.
 <table border>
 <tr class=ctor><td><code>new BannerBox(<br>&nbsp; <u>frame</u>, <u>font</u>, <br>&nbsp; <u>lines</u>=null, <br>&nbsp; <u>lineSpace</u>=4)</code></td>
   <td>TextBox with a given frame and font.</td></tr>
@@ -617,6 +628,7 @@ TODO
 <p>
 A <code>Signal</code> represents an event that is attached to a
 certain object and other objects can get notified.
+See <a href="cheatsheet.html#SignalSubscriptionFiring">Signal Subscription/Firing</a>.
 <table border>
 <tr class=ctor><td><code>new Signal(<em>baseargs</em>, ...)</code></td>
   <td>New <code>Signal</code> object with given <code>baseargs</code>.</td></tr>
@@ -1127,6 +1139,7 @@ both as <code>Vec3</code>.
 <a name="TileMap"><h3>TileMap (<code><a href="https://github.com/euske/euskit/blob/master/base/tilemap.ts">tilemap.ts</a></code>)</h3></a>
 <p>
 A <code>TileMap</code> represents a two-dimensional array that holds map tiles.
+See <a href="cheatsheet.html#CreateTileMap">Create TileMap</a>
 <table border>
 <tr class=ctor><td><code>new TileMap(<br>&nbsp; <u>tilesize</u>, <u>width</u>, <u>height</u>, <br>&nbsp; <u>map</u>=null)</code></td>
   <td>New TileMap for a given size.</td></tr>

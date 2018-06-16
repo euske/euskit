@@ -18,7 +18,7 @@ blockquote { background: #eeeeee; }
 <body>
 <h1><a href="https://github.com/euske/euskit">Euskit</a> Cheat Sheet</h1>
 
-<h2>Basic Player Control</h2>
+<h2 id="BasicPlayerControl">Basic Player Control</h2>
 <blockquote><pre>
 class Player extends Entity {
     usermove: Vec2;  <span class=comment>// Current direction.</span>
@@ -56,7 +56,7 @@ class Game extends GameScene {
 }
 </pre></blockquote>
 
-<h2>Restrict Entity within Bounds</h2>
+<h2 id="RestrictEntitywithinBounds">Restrict Entity within Bounds</h2>
 <blockquote><pre>
 class Player extends Entity {
     getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
@@ -65,7 +65,7 @@ class Player extends Entity {
 }
 </pre></blockquote>
 
-<h2>Spawn Another Entity</h2>
+<h2 id="SpawnAnotherEntity">Spawn Another Entity</h2>
 <blockquote><pre>
 class Bullet extends Particle {
     constructor(pos: Vec2) {
@@ -90,7 +90,7 @@ class Player extends Entity {
 }
 </pre></blockquote>
 
-<h2>Schedule Delayed Action</h2>
+<h2 id="ScheduleDelayedAction">Schedule Delayed Action</h2>
 <blockquote><pre>
 let task = new Task();
 task.lifetime = 2;
@@ -98,7 +98,7 @@ task.stopped.subscribe(() =&gt; { info("foo"); });
 this.world.add(task);
 </pre></blockquote>
 
-<h2>Signal Subscription/Firing</h2>
+<h2 id="SignalSubscriptionFiring">Signal Subscription/Firing</h2>
 <blockquote><pre>
 class Player extends Entity {
     happened: Signal;
@@ -117,7 +117,7 @@ player.happened.subscribe((e:Entity, value:string) =&gt; {
 });
 </pre></blockquote>
 
-<h2>Change Scene</h2>
+<h2 id="ChangeScene">Change Scene</h2>
 <blockquote><pre>
 class Game extends GameScene {
     ...
@@ -130,7 +130,7 @@ class Game extends GameScene {
 }
 </pre></blockquote>
 
-<h2>Show Explosion Effect</h2>
+<h2 id="ShowExplosionEffect">Show Explosion Effect</h2>
 <blockquote><pre>
 class Explosion extends Entity {
     constructor(pos: Vec2) {
@@ -149,7 +149,7 @@ class Player extends Entity {
 }
 </pre></blockquote>
 
-<h2>Create TileMap</h2>
+<h2 id="CreateTileMap">Create TileMap</h2>
 <blockquote><pre>
 class Game extends GameScene {
     ...
@@ -175,7 +175,7 @@ class Game extends GameScene {
 }
 </pre></blockquote>
 
-<h2>Collision with TileMap</h2>
+<h2 id="CollisionwithTileMap">Collision with TileMap</h2>
 <blockquote><pre>
 class Player extends Entity {
     tilemap: TileMap;
@@ -186,7 +186,7 @@ class Player extends Entity {
 }
 </pre></blockquote>
 
-<h2>Collision with Other Entities</h2>
+<h2 id="CollisionwithOtherEntities">Collision with Other Entities</h2>
 <blockquote><pre>
 class Player extends Entity {
     getObstaclesFor(range: Rect, v: Vec2, context=null as string): Rect[] {
@@ -196,14 +196,14 @@ class Player extends Entity {
 }
 </pre></blockquote>
 
-<h2>Draw Rectangle</h2>
+<h2 id="DrawRectangle">Draw Rectangle</h2>
 <blockquote><pre>
 ctx.strokeStyle = 'white';
 ctx.lineWidth = 2;
 strokeRect(ctx, rect);
 </pre></blockquote>
 
-<h2>Display Text</h2>
+<h2 id="DisplayText">Display Text</h2>
 <blockquote><pre>
 let glyphs = APP.images['font'];
 let font = new Font(glyphs, 'white');
@@ -215,7 +215,7 @@ textbox.putText(['HELLO', 'WORLD'], 'center', 'center');
 textbox.render(ctx);
 </pre></blockquote>
 
-<h2>Blinking Banner</h2>
+<h2 id="BlinkingBanner">Blinking Banner</h2>
 <blockquote><pre>
 let banner = new BannerBox(
     this.screen, font,
@@ -225,7 +225,7 @@ banner.interval = 0.5;
 this.world.add(banner);
 </pre></blockquote>
 
-<h2>Text Particle</h2>
+<h2 id="TextParticle">Text Particle</h2>
 <blockquote><pre>
 let yay = new TextParticle(entity.pos, font, 'YAY!');
 yay.movement = new Vec2(0,-4);
@@ -233,7 +233,7 @@ yay.lifetime = 1.0;
 this.world.add(yay);
 </pre></blockquote>
 
-<h2>Typewriter Effect</h2>
+<h2 id="TypewriterEffect">Typewriter Effect</h2>
 <blockquote><pre>
 let textbox = new TextBox(new Rect(0, 0, 300, 200), font);
 let dialog = new DialogBox(textbox);
@@ -241,7 +241,7 @@ let dialog = new DialogBox(textbox);
 dialog.addDisplay('Hello, this is a test.', 12);
 </pre></blockquote>
 
-<h2>Menu Selection</h2>
+<h2 id="MenuSelection">Menu Selection</h2>
 <blockquote><pre>
 let glyphs = APP.images['font'];
 let font = new Font(glyphs, 'white');
@@ -259,7 +259,7 @@ menu.selected.subscribe((value) =&gt; {
 });
 </pre></blockquote>
 
-<h2>Mouse/Touchscreen Control</h2>
+<h2 id="MouseTouchscreenControl">Mouse/Touchscreen Control</h2>
 <blockquote><pre>
 class Button extends Entity {
     constructor(pos: Vec2) {
@@ -277,7 +277,7 @@ class Game extends GameScene {
 }
 </pre></blockquote>
 
-<h2>Text Button</h2>
+<h2 id="TextButton">Text Button</h2>
 <blockquote><pre>
 class TextButton extends Entity {
     constructor(frame: Rect, text: string) {
