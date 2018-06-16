@@ -8,11 +8,8 @@ h2 { border-bottom: 2pt solid; }
 h3 { border-bottom: 1pt solid; }
 table { border-collapse: collapse; }
 td { padding: 2px; }
-a { font-weight: bold; }
-code { font-size: 120%; font-weight: bold; }
+pre { background: #dddddd; border: 1px solid black; padding: 4px; }
 .p { width: 40em; }
-.inherited { background: #cccccc; }
-.overridable { background: #ccffcc; }
 </style>
 <title>Euskit User Guide</title>
 </head>
@@ -21,13 +18,42 @@ code { font-size: 120%; font-weight: bold; }
 
 <h2>Introduction</h2>
 <p class=p>
-Euskit (you-skit) is a game engine for HTML5/Web games. It is
+Euskit (pronounced <em>you-skit</em>) is a game engine for HTML5/Web games. It is
 specifically made for making retro-looking 2D games with pixel
 art. Growing up in 80s in Japan, those arcade games have always a
 special place in me. This is my attempt to headstart in several
 game jams that I participated. The engine is designed to be
 lightweight and self-contained in that it doesn't depend on any
 external library except TypeScript. It is licensed under MIT License.
+
+<h2>Getting Started</h2>
+<p>
+The following instruction applies both Windows and Unix (or Mac).
+<ol>
+<li> Install <a href="https://nodejs.org/">Node.js</a> and <a href="http://www.typescriptlang.org/">TypeScript</a>.
+<pre>
+&gt; <strong>npm install -g typescript</strong>
+</pre>
+
+<li> Copy the <code>skel</code> directory as your working directory:
+  <ul>
+  <li> <code>index.html</code> &nbsp; Main HTML file.
+  <li> <code>tsconfig.json</code> &nbsp; TypeScript compiler settings.
+  <li> <code>base/*.ts</code> &nbsp; Euskit base library code.
+  <li> <code>src/game.ts</code> &nbsp; Game source code.
+  <li> <code>assets/</code> &nbsp; Game assets.
+  </ul>
+<p>
+(On Unix, this can be also done by running the following script.)
+<pre>
+$ <strong>./tools/setup.sh /path/to/project</strong>
+</pre>
+
+<li> Run <code>tsc</code> at the working directory.
+<pre>
+&gt; <strong>tsc</strong>
+</pre>
+</ol>
 
 <h2>Big Picture</h2>
 <p>
@@ -36,21 +62,18 @@ Here are the things you need to make a game with Euskit:
 <div style="position:absolute; margin:0; top:0; left:0;">
   <svg xmlns="http://www.w3.org/2000/svg"
        xmlns:xlink="http://www.w3.org/1999/xlink"
-       version="1.1" width="250" height="150">
+       version="1.1" width="250" height="140">
     <g transform="translate(1.5,1.5)">
       <g fill="none" stroke="black" stroke-width="1">
 	<line x1="140" y1="12" x2="55" y2="100" />
 	<line x1="140" y1="12" x2="175" y2="100" />
 	<ellipse cx="140" cy="12" rx="20" ry="12" fill="white" />
-	<rect x="0" y="55" width="110" height="92" fill="white" />
-	<rect x="120" y="55" width="110" height="92" fill="white" />
-	<rect x="30" y="62" width="50" height="16" fill="white" />
-	<rect x="18" y="84" width="80" height="40" fill="white" />
-	<rect x="14" y="88" width="80" height="40" fill="white" />
-	<rect x="10" y="92" width="80" height="40" fill="white" />
-	<rect x="30" y="114" width="16" height="16" />
-	<rect x="33" y="117" width="10" height="10" />
-	<line x1="45" y1="106" x2="38" y2="122" />
+	<rect x="0" y="55" width="110" height="80" fill="white" />
+	<rect x="120" y="55" width="110" height="80" fill="white" />
+	<rect x="10" y="68" width="80" height="50" fill="white" />
+	<rect x="30" y="90" width="16" height="16" />
+	<rect x="33" y="93" width="10" height="10" />
+	<line x1="45" y1="82" x2="38" y2="98" />
       </g>
       <g style="font-size: 75%;">
 	<text x="140" y="15" text-anchor="middle">App</text>
@@ -58,27 +81,24 @@ Here are the things you need to make a game with Euskit:
 	<text x="55" y="52" text-anchor="middle">Scene</text>
 	<text x="175" y="52" text-anchor="middle">Scene</text>
 	<text x="240" y="100" text-anchor="begin">...</text>
-	<text x="55" y="74" text-anchor="middle">Camera</text>
-	<text x="45" y="106" text-anchor="begin">Sprite</text>
-	<text x="48" y="126" text-anchor="begin">Entity</text>
-	<text x="70" y="144" text-anchor="begin">Layer</text>
+	<text x="45" y="82" text-anchor="begin">Sprite</text>
+	<text x="48" y="102" text-anchor="begin">Entity</text>
+	<text x="55" y="130" text-anchor="middle">World</text>
       </g>
     </g>
   </svg>
 </div>
   <div style="position:absolute; left: 270px; top: 0px; margin:0; line-height: 120%;">
-    <a target="euskit-quickref" href="quickref.html#App"><code>App</code></a>:
-    Resource management (images and sounds) and event loop.<br>
-    <a target="euskit-quickref" href="quickref.html#Scene"><code>Scene</code></a>:
+    <a href="#App"><code>App</code></a>:
+    Resource management and event loop.<br>
+    <a href="#Scene"><code>Scene</code></a>:
     Game state management and event handling.<br>
-    <a target="euskit-quickref" href="quickref.html#Entity"><code>Entity</code></a>:
+    <a href="#World"><code>World</code></a>:
+    Container where Entities are placed in.<br>
+    <a href="#Entity"><code>Entity</code></a>:
     In-game character.<br>
-    <a target="euskit-quickref" href="quickref.html#Sprite"><code>Sprite</code></a>:
+    <a href="#Sprite"><code>Sprite</code></a>:
     Graphical object to be shown.<br>
-    <a target="euskit-quickref" href="quickref.html#Layer"><code>Layer</code></a>:
-    Container where Sprites are placed in.<br>
-    <a target="euskit-quickref" href="quickref.html#Camera"><code>Camera</code></a>:
-    Stack of layers to be rendered.<br>
   </div>
 </div>
 
@@ -86,8 +106,8 @@ Here are the things you need to make a game with Euskit:
 <dl>
   <dt> App
   <dd class=p>
-    Every game has exactly one <code>App</code> object.
-    It does the basic pluming and resource management; it has
+    Every game has exactly one <code>App</code> object.  It does the
+    basic pluming and resource management (images and sounds); it has
     an event loop and connect all the external parts (i.e. a browser)
     to the game. Typically, you don't have to change this part.
   <dt> Scene
@@ -106,11 +126,11 @@ Here are the things you need to make a game with Euskit:
     <code>Sprite</code>s.
     Once you place an Entity in the game world, it moves on its own.
     A <code>Rect</code> is typically used for <code>Collider</code> in 2D games.
-  <dt> Task
+  <dt> World
   <dd class=p>
-    Each <code>Entity</code> is a subclass of <code>Task</code>.
-    A <code>Task</code> is an independent object that runs by itself
-    and managed by <code>TaskList</code>.
+    A <code>World</code> is where <code>Entity</code>s belong to.
+    It is basically a container that manages the state of each <code>Entity</code>
+    and performs basic collision handling.
   <dt> Sprite
   <dd class=p>
     A <code>Sprite</code> is something to be displayed.
@@ -118,191 +138,24 @@ Here are the things you need to make a game with Euskit:
     Unlike some other engines, <code>Sprite</code> doesn't know how to move itself.
     It is just sitting at a certain location on screen. <code>Scene</code> or
     <code>Entity</code> is responsible to change/move its position.
-  <dt> World
-  <dd class=p> 
-  <dt> ImageSource
-  <dd class=p> 
+  <dt> Task
+  <dd class=p>
+    Each <code>Entity</code> is a subclass of <code>Task</code>.
+    A <code>Task</code> is an independent object that runs by itself
+    and managed by <code>TaskList</code>.
   <dt> Signal
-  <dd class=p> 
-
+  <dd class=p>
+    <code>Signal</code> is much like C# events, but it is renamed here
+    to avoid confusing with HTML5 events. Unlike EventListener class in HTML5,
+    Each Signals are distinguished not by strings but by variables (see examples).
 </dl>
 
-<h2>Basic Tasks</h2>
-<h3>Showing / Moving stuff</h3>
-<h3>Handling Collision</h3>
-<h3>Handling User Input</h3>
-<h3>State Management</h3>
+<h2>How To Make Games Like...</h2>
 
+<h3>1. Platformer</h3>
+<p>
+TODO
 
-<h2><a name="howtocreate">1. Project Lifecycle</a></h2>
-<ol>
-<li> Type the following command.
-All the necessary files and template code will be copied.
-<blockquote><pre>
-$ ./tools/setup.sh /path/to/project
-</pre></blockquote>
-<li> Here's the files in the new project directory:
-  <ul>
-  <li> <code>Makefile</code> &nbsp; Build file.
-  <li> <code>index.html</code> &nbsp; Game page.
-  <li> <code>tsconfig.json</code> &nbsp; TypeScript compiler settings.
-  <li> <code>tools/</code> &nbsp; Support tools (Python scripts).
-  <li> <code>base/*.ts</code> &nbsp; Euskit base library code.
-  <li> <code>src/game.ts</code> &nbsp; Game source code.
-  <li> <code>assets/</code> &nbsp; Game assets.
-  </ul>
-<li> Change the game code at <code>src/game.ts</code>.
-<li> Add/remove the game assets at <code>assets/</code>
-  and fix <code>index.html</code> accordingly.
-<li> Type <code>make</code> to build the game.
-<li> Open <code>index.html</code> to run the game.
-<li> When finished, upload the following files to a web server:
-  <ul>
-  <li> <code>index.html</code> &nbsp; Game page.
-  <li> <code>js/game.js</code> &nbsp; Generated JavaScritp code.
-  <li> <code>assets/</code> &nbsp; Game assets.
-  </ul>
-<li> Done!
-</ol>
-
-<h2><a name="objects">3. Basic Objects</a></h2>
-
-<ul>
-<li> Every game has exactly one top-level object, <code>App</code>.
-<li> The <code>App</code> object manages shared resources (such as images
-and sounds) and redirects the GUI events to its
-current <code>Scene</code>.
-<li> A <code>Scene</code> object responds to
-each event and interacts with the user. A game can have
-multiple <code>Scene</code>s (such as a title and cutscene screen) and
-there's always only one that is active.
-<li> Each <code>Scene</code> can
-contain zero or more <code>Layer</code>s.  This is
-where <code>Task</code>s, <code>Sprite</code>s
-and <code>Entity</code>s reside. Each of these objects can run
-independently and can be created or destroyed as
-needed.
-<li> A <code>Task</code> is just an independent process
-whose <code>update()</code> method is called at every frame.  A
-new <code>Task</code> can be created and added to a <code>Layer</code>
-at any time. When a Task dies because it is terminated externally or
-its speficied lifetime is passed, it is automatically removed from
-its <code>Layer</code>.
-<li> A <code>Sprite</code> is a visible
-<code>Task</code>. It has a position and its own rendering function
-<code>render()</code> and can be shown at a screen.
-<li> An <code>Entity</code> is a <code>Sprite</code> that has a
-physical extent. In Euskit, pure <code>Sprite</code>s are mostly used
-as particles or text labels, and <code>Entity</code>s are often used
-as a player or other characters in a game.
-</ul>
-
-<div style="position: relative;">
-  <svg xmlns="http://www.w3.org/2000/svg"
-       xmlns:xlink="http://www.w3.org/1999/xlink"
-       version="1.1" width="250" height="150">
-    <g transform="translate(1.5,1.5)">
-      <g fill="none" stroke="black" stroke-width="1">
-	<line x1="140" y1="12" x2="55" y2="100" />
-	<line x1="140" y1="12" x2="175" y2="100" />
-	<rect x="0" y="55" width="110" height="90" fill="white" />
-	<rect x="120" y="55" width="110" height="90" fill="white" />
-	<ellipse cx="140" cy="12" rx="20" ry="12" fill="white" />
-	<rect x="18" y="60" width="80" height="60" fill="white" />
-	<rect x="14" y="64" width="80" height="60" fill="white" />
-	<rect x="10" y="68" width="80" height="60" fill="white" />
-	<circle cx="20" cy="80" r="5" />
-	<rect x="70" y="90" width="16" height="16" />
-	<rect x="20" y="110" width="15" height="15" />
-      </g>
-      <g style="font-size: 75%;">
-	<text x="140" y="15" text-anchor="middle">App</text>
-	<text x="28" y="85" text-anchor="begin">Task</text>
-	<text x="68" y="102" text-anchor="end">Sprite</text>
-	<text x="38" y="122" text-anchor="begin">Entity</text>
-	<text x="70" y="140" text-anchor="begin">Layer</text>
-	<text x="55" y="52" text-anchor="middle">Scene</text>
-	<text x="175" y="52" text-anchor="middle">Scene</text>
-	<text x="240" y="100" text-anchor="begin">...</text>
-	<text x="165" y="15">Images, ...</text>
-      </g>
-    </g>
-  </svg>
-</div>
-
-<h3><a name="task">3.1. Task</a></h3>
-
-<blockquote><pre>
-let task = new Task();
-layer.addObject(task);
-task.lifetime = 1.0;
-task.die();
-task.died.subscribe((task) =&gt; { ... });
-</pre></blockquote>
-
-<blockquote><pre>
-class MyTask extends Task {
-    update() {
-        this.count--;
-        if (this.cont == 0) {
-            log("Boo!");
-            this.die();
-        }
-    }
-}
-</pre></blockquote>
-
-
-<h3><a name="sprite">3.2. Sprite</a></h3>
-
-<blockquote><pre>
-let sprite = new Sprite(pos);
-layer.addObject(sprite);
-sprite.pos = new Vec2(10,20);
-sprite.visible = false;
-sprite.zOrder = 1;
-sprite.scale = new Vec2(-1, 1);
-sprite.rotation = 1;
-sprite.movePos(v);
-</pre></blockquote>
-
-<blockquote><pre>
-class Particle extends Sprite {
-    render(ctx: CanvasRenderingContext2D, bx: number, by: number) {
-        ctx.fillStyle = 'red';
-        ctx.fillRect(bx+this.pos.x-5, by+this.pos.y-5, 10, 10);
-    }
-}
-</pre></blockquote>
-
-<h3><a name="entity">3.3. Entity</a></h3>
-
-<blockquote><pre>
-let entity = new Entity(pos);
-layer.addObject(entity);
-entity.collider = new Rect(-5,-5,10,10);
-entity.collider = new Circle(0,0,5);
-entity.isMovable(v);
-entity.getMove(pos, v, force);
-entity.moveIfPossible(v, force);
-</pre></blockquote>
-
-<blockquote><pre>
-class Player extends Entity {
-    collidedWith(entity: Entity) {
-        if (entity instanceof Enemy) {
-            this.die();
-        }
-    }
-}
-</pre></blockquote>
-
-<h2>4. Use Collision Detection</h2>
-
-<h2>5. Event System</h2>
-
-<h2>6. How To Make Games Like...</h2>
-
-<h3>6.1. Platformer</h3>
-
-<h3>6.2. Shooter</h3>
+<h3>2. Shooter</h3>
+<p>
+TODO
