@@ -13,14 +13,14 @@ u { font-weight: bold; }
 body { margin: 0; padding: 0; }
 .code { border: 1px solid; padding: 0.2em; background: #eeeeee; }
 .ctor { background: #ccffcc; }
-.inherited { background: #cccccc; }
 .event { background: #ffffcc; }
+.overridable { background: #cccccc; }
 .nav { position: fixed; top: 0; left: 0; width: 20%; }
 .main { position: absolute; top: 0; left: 20%; width: 80%; }
 .list { margin-top: 1em; }
 .list > .head { margin-bottom: 4px; font-weight: bold; background: #88ffff; }
 .navhead { font-size: 150%; font-weight: bold; }
-.legend { font-size: 80%; margin: 8px; }
+.legend { font-size: 80%; margin: 8px 0 8px; }
 </style>
 <title>Euskit Quick Reference</title>
 </head>
@@ -33,8 +33,8 @@ body { margin: 0; padding: 0; }
 
 <div class=legend><b>Legend:</b>
 <span class=ctor><code>ctor</code></span>,
-<span class=inherited><code>inherited</code></span>,
 <span class=event><code>event</code></span>
+<span class=overridable><code>overridable</code></span>,
 </div>
 
 <div class=list>
@@ -49,14 +49,10 @@ body { margin: 0; padding: 0; }
 
 <div class=list>
 <div class=head>Specialized Classes:</div>
-<a href="#Projectile">Projectile</a>,
-<a href="#TiledSprite">TiledSprite</a>,
-<a href="#FlowSprite">FlowSprite</a>,
+<a href="#Particle">Particle</a>,
+<a href="#TileMapEntity">TileMapEntity</a>,
 <a href="#PhysicalEntity">PhysicalEntity</a>,
-<a href="#PlatformerEntity">PlatformerEntity</a>,
-<a href="#ScrollLayer">ScrollLayer</a>,
-<a href="#GameScene">GameScene</a>,
-<a href="#HTMLScene">HTMLScene</a>
+<a href="#GameScene">GameScene</a>
 </div>
 
 <div class=list>
@@ -64,22 +60,9 @@ body { margin: 0; padding: 0; }
 <a href="#Font">Font</a>,
 <a href="#ShadowFont">ShadowFont</a>,
 <a href="#TextBox">TextBox</a>,
+<a href="#BannerBox">BannerBox</a>,
+<a href="#TextParticle">TextParticle</a>,
 <a href="#DialogBox">DialogBox</a>
-</div>
-
-<div class=list>
-<div class=head>Animation Library:</div>
-<a href="#Queue">Queue</a>
-</div>
-
-<div class=list>
-<div class=head>Pathfinding Library:</div>
-<a href="#PlanActor">PlanActor</a>,
-<a href="#PlanAction">PlanAction</a>,
-<a href="#PlanProfile">PlanProfile</a>,
-<a href="#PlanMap">PlanMap</a>,
-<a href="#PlanActionRunner">PlanActionRunner</a>,
-<a href="#PlanningEntity">PlanningEntity</a>
 </div>
 
 <div class=list>
@@ -178,11 +161,11 @@ Typically, you don't have to change this class.
 <tr class=ctor><td><code>new App(<u>size</u>, <u>framerate</u>, <u>elem</u>)</code></td>
   <td>Creates a new app with given HTML5 resources.</td></tr>
 <tr><td><code>.size</code></td>
-  <td>The canvas size.</td></tr>
+  <td>Canvas size.</td></tr>
 <tr><td><code>.framerate</code></td>
-  <td>The framerate.</td></tr>
+  <td>Frame rate.</td></tr>
 <tr><td><code>.elem</code></td>
-  <td>The HTML element where a canvas is embedded.</td></tr>
+  <td>HTML element where a canvas is embedded.</td></tr>
 <tr><td><code>.canvas</code></td>
   <td>The <code>&lt;canvas&gt;</code> element.</td></tr>
 <tr><td><code>.ctx</code></td>
@@ -196,26 +179,26 @@ Typically, you don't have to change this class.
 <tr><td><code>.labels</code></td>
   <td>Set of available <code>HTMLDivElement</code> objects.</td></tr>
 <tr><td><code>.scene</code></td>
-  <td>The current <code>Scene</code>.</td></tr>
+  <td>Current <code>Scene</code> object that is running.</td></tr>
 <tr><td><code>.active</code></td>
-  <td><code>true</code> if the game is running.</td></tr>
+  <td><code>true</code> if the game is not suspended.</td></tr>
 <tr><td><code>.keys[]</code></td>
-  <td>The states of the current keys.</td></tr>
+  <td>States of the current keys.</td></tr>
 <tr><td><code>.keyDir</code></td>
-  <td>The state of the current directional input.</td></tr>
+  <td>State of the current 2D input (arrow keys).</td></tr>
 <tr><td><code>.mousePos</code></td>
-  <td>The current position of the mouse pointer.</td></tr>
+  <td>Current position of the mouse pointer.</td></tr>
 <tr><td><code>.mouseButton</code></td>
-  <td>The current state of the mouse button.</td></tr>
+  <td>Current state of the mouse button.</td></tr>
 <tr><td><code>.addElement(<u>bounds</u>)</code></td>
   <td>Adds a new <code>&lt;div&gt;</code> element to the canvas.</td></tr>
 <tr><td><code>.removeElement(<u>elem</u>)</code></td>
   <td>Removes the element from the canvas.</td></tr>
 <tr><td><code>.lockKeys(<u>t</u>=1)</code></td>
-  <td>Blocks keyboard input for the given duration to prevent accidental input
-    (at a game over screen, etc.).</td></tr>
+  <td>Blocks the keyboard input to prevent accidental input
+    (in a scene transition).</td></tr>
 <tr><td><code>.setMusic(<br>&nbsp; <u>name</u>=null, <br>&nbsp; <u>start</u>=0, <u>end</u>=0)</code></td>
-  <td>Starts playing the music. When <code>null</code> is given, stops playing.</td></tr>
+  <td>Starts playing the music. When name is <code>null</code>, it stops music.</td></tr>
 <tr><td><code>.playSound(<u>name</u>, <u>start</u>=0)</code></td>
   <td>Plays the specified sound.</td></tr>
 <tr><td><code>.init(scene)</code></td>
@@ -226,96 +209,110 @@ Typically, you don't have to change this class.
 
 <a name="Scene"><h3>Scene (<code>scene.ts</code>)</h3></a>
 <p>
-A <code>Scene</code> can be thought of a mini-app or "mode" within the App.
-It's an event handler of its own that manages the in-game states.
-This is primarily what consists of the main game logic. Euskit supports
-multiple Scenes, but it's possible to create an entire game with just
-one Scene.
+A <code>Scene</code> is a mini-app or "mode" within the App.
+At each moment, exactly one <code>Scene</code> is responsible
+for all the user interaction. This is primarily what consists of
+a game logic. Euskit supports multiple <code>Scene</code>s,
+but it's possible to create an entire game with just one <code>Scene</code>.
 <table border>
 <tr class=ctor><td><code>new Scene()</code></td>
   <td>Creates a new scene.</td></tr>
+<tr class=ctor><td><code>new HTMLScene(<u>text</u>)</code></td>
+  <td>Creates a new scene with a static HTML text.</td></tr>
+<tr class=ctor><td><code>new GameScene()</code></td>
+  <td>Creates a new scene with a <code>World</code> object.</td></tr>
 <tr><td><code>.screen</code></td>
-  <td>The canvas rectangle.</td></tr>
+  <td>Canvas area <code>Rect</code> object.</td></tr>
+<tr><td><code>.reset()</code></td>
+  <td>Resets the scene to its initial state.</td></tr>
 <tr><td><code>.changeScene(<u>scene</u>)</code></td>
-  <td>Signals the <code>App</code> to switch to a scene.</td></tr>
-<tr><td><code>.onStart()</code></td>
-  <td>Initializes the scene.</td></tr>
-<tr><td><code>.onStop()</code></td>
-  <td>Cleanup the scene.</td></tr>
-<tr><td><code>.onTick()</code></td>
-  <td>Invoked for every frame.</td></tr>
+  <td>Signals to switch a scene.</td></tr>
 <tr><td><code>.render(<u>ctx</u>)</code></td>
   <td>Displays the scene.</td></tr>
-<tr><td><code>.onDirChanged(<u>v</u>)</code></td>
+<tr class=overridable><td><code>.onStart()</code></td>
+  <td>Invoked when the scene is started.</td></tr>
+<tr class=overridable><td><code>.onStop()</code></td>
+  <td>Invoked when the scene is finished.</td></tr>
+<tr class=overridable><td><code>.onTick()</code></td>
+  <td>Invoked for every frame.</td></tr>
+<tr class=overridable><td><code>.onDirChanged(<u>v</u>)</code></td>
   <td>Invoked when a directional input is changed.</td></tr>
-<tr><td><code>.onButtonPressed(<u>keySym</u>)</code></td>
+<tr class=overridable><td><code>.onButtonPressed(<u>keySym</u>)</code></td>
   <td>Invoked when the button state is pressed.</td></tr>
-<tr><td><code>.onButtonReleased(<u>keySym</u>)</code></td>
+<tr class=overridable><td><code>.onButtonReleased(<u>keySym</u>)</code></td>
   <td>Invoked when the button state is released.</td></tr>
-<tr><td><code>.onKeyDown(<u>keyCode</u>)</code></td>
+<tr class=overridable><td><code>.onKeyDown(<u>keyCode</u>)</code></td>
   <td>Invoked when a key is pressed.</td></tr>
-<tr><td><code>.onKeyUp(<u>keyCode</u>)</code></td>
+<tr class=overridable><td><code>.onKeyUp(<u>keyCode</u>)</code></td>
   <td>Invoked when a key is released.</td></tr>
-<tr><td><code>.onKeyPress(<u>charCode</u>)</code></td>
+<tr class=overridable><td><code>.onKeyPress(<u>charCode</u>)</code></td>
   <td>Invoked when a character is typed.</td></tr>
-<tr><td><code>.onMouseDown(<u>p</u>, <u>button</u>)</code></td>
+<tr class=overridable><td><code>.onMouseDown(<u>p</u>, <u>button</u>)</code></td>
   <td>Invoked when a mouse button is pressed.</td></tr>
-<tr><td><code>.onMouseUp(<u>p</u>, <u>button</u>)</code></td>
+<tr class=overridable><td><code>.onMouseUp(<u>p</u>, <u>button</u>)</code></td>
   <td>Invoked when a mouse button is released.</td></tr>
-<tr><td><code>.onMouseMove(<u>p</u>)</code></td>
+<tr class=overridable><td><code>.onMouseMove(<u>p</u>)</code></td>
   <td>Invoked when a mouse pointer is moved.</td></tr>
-<tr><td><code>.onFocus()</code></td>
+<tr class=overridable><td><code>.onFocus()</code></td>
   <td>Invoked when the window is focused.</td></tr>
-<tr><td><code>.onBlue()</code></td>
+<tr class=overridable><td><code>.onBlue()</code></td>
   <td>Invoked when the focus is lost.</td></tr>
 </table>
 
 <a name="World"><h3>World (<code>scene.ts</code>)</h3></a>
 <p>
-A <code>World</code> is a stage for <code>Entity</code>s
-that are rendered and can interact with each other.
+A <code>World</code> is a container of <code>Entity</code>s.
+The entities which belong here are rendered and their collision is detected.
 <table border>
 <tr class=ctor><td><code>new World()</code></td>
   <td>Creates a new world.</td></tr>
+<tr class=event><td><code>.mouseDown</code></td>
+  <td>Fired when a mouse is pressed on an <code>Entity</code>.</td></tr>
+<tr class=event><td><code>.mouseUp</code></td>
+  <td>Fired when a mouse is released on an <code>Entity</code>.</td></tr>
 <tr><td><code>.area</code></td>
-  <td>The entire area where entities can move around.</td></tr>
+  <td>Entire area where entities can move around.</td></tr>
 <tr><td><code>.window</code></td>
-  <td>The visible part of the world that is rendered.</td></tr>
+  <td>Visible part of the world that is rendered.</td></tr>
 <tr><td><code>.entities</code></td>
-  <td>A list of the <code>Entity</code>s.</td></tr>
+  <td>List of the <code>Entity</code>s that belong to this world.</td></tr>
+<tr><td><code>.mouseFocus</code></td>
+  <td>The <code>Entity</code> that has the mouse focus (<code>null</code> if none).</td></tr>
+<tr><td><code>.mouseActive</code></td>
+  <td>The <code>Entity</code> that is currently activated (<code>null</code> if none).</td></tr>
 <tr><td><code>.add(<u>entity</u>)</code></td>
-  <td>Adds an <code>Entity</code> to the world.</td></tr>
+  <td>Adds an <code>Entity</code> to this world.</td></tr>
 <tr><td><code>.remove(<u>entity</u>)</code></td>
-  <td>Removes an <code>Entity</code> from the world.</td></tr>
+  <td>Removes an <code>Entity</code> from this world.</td></tr>
 <tr><td><code>.render(<u>ctx</u>)</code></td>
-  <td>Render the whole world.</td></tr>
+  <td>Renders every <code>Entity</code>s in the world.</td></tr>
 <tr><td><code>.findEntityAt(<u>p</u>)</code></td>
-  <td>Returns a Entity that is located at <code>p</code>.</td></tr>
+  <td>Returns an Entity that overlaps with point <code>p</code>.</td></tr>
+<tr><td><code>.setCenter(<br>&nbsp; <u>target</u>, <br>&nbsp; <u>bounds</u>=null)</code></td>
+  <td>Moves the window to cover <code>target</code>, but not exceeding <code>bounds</code>.</td></tr>
 <tr><td><code>.moveCenter(<u>v</u>)</code></td>
   <td>Moves the center of the window by <code>v</code>.</td></tr>
-<tr><td><code>.setCenter(<u>target</u>, <br>&nbsp; <u>bounds</u>=null)</code></td>
-  <td>Moves the window to cover <code>target</code>, but not exceeding <code>bounds</code>.</td></tr>
 <tr><td><code>.moveAll(v)</code></td>
   <td>Moves all the sprites by <code>v</code>.</td></tr>
+<tr><td><code>.getEntityColliders(<br>&nbsp; <u>(e:Entity)=&gt;boolean</u>, <br>&nbsp; <u>collider</u>=null)</code></td>
+  <td>Returns a list of <code>Entity</code> colliders that overlaps with <code>range</code> (if given).</td></tr>
 <tr><td><code>.applyEntities(<br>&nbsp; <u>(e:Entity)=&gt;boolean</u>, <br>&nbsp; <u>collider</u>=null)</code></td>
-  <td>Apply the function to each Entity <code>e</code> that overlaps with <code>collider</code> (if given).</td></tr>
-<tr><td><code>.onMouseDown(<u>p</u>, <u>button</u>)</code></td>
+  <td>Applies the function to each Entity <code>e</code> that overlaps with <code>collider</code> (if given).</td></tr>
+<tr class=overridable><td><code>.onMouseDown(<u>p</u>, <u>button</u>)</code></td>
   <td>Invoked when a mouse button is pressed.
-<tr><td><code>.onMouseUp(<u>p</u>, <u>button</u>)</code></td>
+<tr class=overridable><td><code>.onMouseUp(<u>p</u>, <u>button</u>)</code></td>
   <td>Invoked when a mouse button is released.
-<tr><td><code>.onMouseMove(<u>p</u>)</code></td>
+<tr class=overridable><td><code>.onMouseMove(<u>p</u>)</code></td>
   <td>Invoked when a mouse pointer is moved.
 </table>
 
 <a name="Task"><h3>Task (<code>task.ts</code>)</h3></a>
 <p>
-A <code>Task</code> is an abstract class of <code>Entity</code>.
+A <code>Task</code> is a base class of <code>Entity</code>.
 <table border>
 <tr class=ctor><td><code>new Task()</code></td>
   <td>Creates a new empty task.</td></tr>
-<tr class=ctor><td><code>new DelayTask(<br>&nbsp; <u>delay</u>, <u>proc</u>=null)</code></td>
-  <td>Task that waits a certain amount and then execute the given function.</td></tr>
-<tr class=ctor><td><code>new SoundTask(<br>&nbsp; <u>sound</u>, <u>soundStart</u>=MP3_GAP, <br>&nbsp; <u>soundEnd</u>=0)</code></td>
+<tr class=ctor><td><code>new SoundTask(<br>&nbsp; <u>sound</u>, <br>&nbsp; <u>soundStart</u>=MP3_GAP, <br>&nbsp; <u>soundEnd</u>=0)</code></td>
   <td>Task that plays a sound.</td></tr>
 <tr class=event><td><code>.stopped</code></td>
   <td>Signal fired when the task stops.</td></tr>
@@ -327,17 +324,19 @@ A <code>Task</code> is an abstract class of <code>Entity</code>.
   <td>Time the task started.</td></tr>
 <tr><td><code>.getTime()</code></td>
   <td>Elapsed time since the task has started (in seconds).</td></tr>
+<tr><td><code>.isScheduled()</code></td>
+  <td>True if the task is going to start.</td></tr>
 <tr><td><code>.isRunning()</code></td>
   <td>True if the task is in running state.</td></tr>
 <tr><td><code>.stop()</code></td>
   <td>Terminates the task.</td></tr>
 <tr><td><code>.chain(<u>task</u>, <br>&nbsp; <u>signal</u>=null)</code></td>
   <td>Schedules another task to be started when this task stops.</td></tr>
-<tr><td><code>.onStart()</code></td>
+<tr class=overridable><td><code>.onStart()</code></td>
   <td>Invoked when the task is started.</td></tr>
-<tr><td><code>.onStop()</code></td>
+<tr class=overridable><td><code>.onStop()</code></td>
   <td>Invoked when the task is stopped.</td></tr>
-<tr><td><code>.onTick()</code></td>
+<tr class=overridable><td><code>.onTick()</code></td>
   <td>Invoked at every frame while the task is running.</td></tr>
 </table>
 
@@ -363,25 +362,25 @@ Sprites.
   <td>Vector for the scale of the sprite.</td></tr>
 <tr><td><code>.alpha</code></td>
   <td>Alpha value of the sprite.</td></tr>
-<tr><td><code>.isVisible()</code></td>
+<tr class=overridable><td><code>.isVisible()</code></td>
   <td>Returns <code>true</code> if the entity sprite is visible.</td></tr>
 <tr><td><code>.render(<u>ctx</u>)</code></td>
   <td>Render the entity.</td></tr>
 <tr><td><code>.getCollider(<u>pos</u>=null)</code></td>
   <td>Returns the collider for the given <code>pos</code>.</td></tr>
-<tr><td><code>.canMove(<u>v</u>, <u>context</u>=null)</code></td>
+<tr><td><code>.canMove(<u>v</u>, <br>&nbsp; <u>context</u>=null)</code></td>
   <td><code>true</code> if the entity is movable toward <code>v</code>.</td></tr>
-<tr><td><code>.getMove(<u>pos</u>, <u>v</u>, <u>context</u>=null)</code></td>
+<tr><td><code>.getMove(<u>pos</u>, <u>v</u>, <br>&nbsp; <u>context</u>=null)</code></td>
   <td>Trims the vector <code>v</code> so that it doesn't collide.</td></tr>
 <tr><td><code>.movePos(<u>v</u>)</code></td>
   <td>Moves the entity by <code>v</code>.</td></tr>
-<tr><td><code>.moveIfPossible(<u>v</u>, <u>context</u>=null)</code></td>
+<tr><td><code>.moveIfPossible(<u>v</u>, <br>&nbsp; <u>context</u>=null)</code></td>
   <td>Moves the entity by <code>v</code> without colliding obstacles.</td></tr>
 <tr><td><code>.getObstaclesFor(<br>&nbsp; <u>range</u>, <u>v</u>, <u>context</u>)</code></td>
   <td>Returns a list of <code>Shape</code>s within <code>range</code>.</td></tr>
 <tr><td><code>.getFencesFor(<br>&nbsp; <u>range</u>, <u>v</u>, <u>context</u>)</code></td>
   <td>Returns a list of bounding rectangles that limits the entity within.</td></tr>
-<tr><td><code>.onCollided(<u>entity</u>)</code></td>
+<tr class=overridable><td><code>.onCollided(<u>entity</u>)</code></td>
   <td>Invoked when the entity collides another entity.</td></tr>
 </table>
 
@@ -393,15 +392,15 @@ A <code>Sprite</code> is something to be displayed.
   <td>Sprite with a filled rectangle.</td></tr>
 <tr class=ctor><td><code>new OvalSprite(<u>color</u>, <u>dstRect</u>)</code></td>
   <td>Sprite with a filled oval.</td></tr>
-<tr class=ctor><td><code>new CanvasSprite(<br>&nbsp; <u>canvas</u>, <u>srcRect</u>=null, <u>dstRect</u>=null)</code></td>
+<tr class=ctor><td><code>new CanvasSprite(<br>&nbsp; <u>canvas</u>, <br>&nbsp; <u>srcRect</u>=null, <u>dstRect</u>=null)</code></td>
   <td>Sprite that refers to a portion of
     <code>&lt;canvas&gt;</code> element.</td></tr>
-<tr class=ctor><td><code>new HTMLSprite(<br>&nbsp; <u>image</u>, <u>srcRect</u>=null, <u>dstRect</u>=null)</code></td>
+<tr class=ctor><td><code>new HTMLSprite(<br>&nbsp; <u>image</u>, <br>&nbsp; <u>srcRect</u>=null, <u>dstRect</u>=null)</code></td>
   <td>Sprite that refers to a portion of
     <code>&lt;img&gt;</code> element.</td></tr>
-<tr class=ctor><td><code>new TiledSprite(<br>&nbsp; <u>sprite</u>, <u>bounds</u>, <u>offset</u>=null)</code></td>
+<tr class=ctor><td><code>new TiledSprite(<br>&nbsp; <u>sprite</u>, <u>bounds</u>, <br>&nbsp; <u>offset</u>=null)</code></td>
   <td>Sprite that is composed of another Sprite.</td></tr>
-<tr class=ctor><td><code>new StarSprite(<br>&nbsp; <u>bounds</u>, <u>nstars</u>, <u>maxdepth</u>=3, <u>sprites</u>=null)</code></td>
+<tr class=ctor><td><code>new StarSprite(<br>&nbsp; <u>bounds</u>, <u>nstars</u>, <br>&nbsp; <u>maxdepth</u>=3, <u>sprites</u>=null)</code></td>
   <td>Sprite that can be used for "star flowing" effects.</td></tr>
 <tr><td><code>.getBounds()</code></td>
   <td>Returns the bounds rectangle of the Sprite.</td></tr>
@@ -411,281 +410,81 @@ A <code>Sprite</code> is something to be displayed.
 
 <a name="specialized-objects"><h2>Specialized Objects</h2></a>
 
-<a name="TiledSprite"><h3>TiledSprite : <a href="#Sprite">Sprite</a> (<code>sprite.ts</code>)</h3></a>
+<a name="Particle"><h3>Particle : <a href="#Entity">Entity</a> (<code>entity.ts</code>)</h3></a>
 <p>
-A <code>Sprite</code> shows an image repeatedly within the bounds.
-Suitable for backgrounds.
-<table border>
-<tr class=ctor><td><code>new TiledSprite(bounds)</code></td>
-  <td>Creates a new sprite.</td></tr>
-<tr class=inherited><td><code>.sprite</code></td>
-  <td>A <code>Sprite</code> for the sprite's content.</td></tr>
-<tr><td><code>.offset</code></td>
-  <td>The offset of the image (in <code>Vec2</code>).</td></tr>
-</table>
-
-<a name="StarSprite"><h3>StarSprite : <a href="#Sprite">Sprite</a> (<code>sprite.ts</code>)</h3></a>
-<p>
-A <code>Sprite</code> that shows multiple parallaxed stars.
-Suitable for space-y backgrounds.
-<table border>
-<tr class=ctor><td><code>new StarSprite(<br>&nbsp; bounds, nstars,<br>&nbsp; <em>[maxdepth]</em>)</code></td>
-  <td>Creates a new sprite.</td></tr>
-<tr class=inherited><td><code>.sprite</code></td>
-  <td>A <code>Sprite</code> for each star's content.</td></tr>
-<tr><td><code>.bounds</code></td>
-  <td>The bounds of all stars.</td></tr>
-<tr><td><code>.velocity</code></td>
-  <td>The velocity of the star movement.</td></tr>
-<tr><td><code>.maxdepth</code></td>
-  <td>The maximum depth of stars.</td></tr>
-</table>
-
-<a name="Projectile"><h3>Projectile : <a href="#Entity">Entity</a> (<code>entity.ts</code>)</h3></a>
-<p>
-A <code>Projectile</code> is an <code>Entity</code> that
+A <code>Particle</code> is an <code>Entity</code> that
 keeps moving towards a specific direction.
-Suitable for bullets or obstacles.
 <table border>
-<tr class=ctor><td><code>new Projectile(pos)</code></td>
-  <td>Creates a new projectile.</td></tr>
-<tr class=inherited><td><code>.sprite</code></td>
-  <td>A <code>Sprite</code> for the entity's content.</td></tr>
+<tr class=ctor><td><code>new Particle(<u>pos</u>)</code></td>
+  <td>Creates a new particle that keeps moving.</td></tr>
 <tr><td><code>.movement</code></td>
-  <td>The velocity of the object.</td></tr>
-<tr><td><code>.frame</code></td>
-  <td>The rectangle where the object is kept alive within.</td></tr>
+  <td>Velocity of the object.</td></tr>
+<tr><td><code>.getFrame()</code></td>
+  <td>Returns the <code>Rect</code> where the entity is kept alive within.</td></tr>
+</table>
+
+<a name="TileMapEntity"><h3>TileMapEntity : <a href="#Entity">Entity</a> (<code>entity.ts</code>)</h3></a>
+<p>
+A <code>TileMapEntity</code> is an <code>Entity</code> that
+interacts with a <code>TileMap</code>.
+<table border>
+<tr class=ctor><td><code>new TileMapEntity(<br>&nbsp; <u>tilemap</u>, <br>&nbsp; <u>(e:Entity)=&gt;boolean</u>)</code></td>
+  <td>Creates a new entity that interacts with a tilemap.</td></tr>
+<tr><td><code>.tilemap</code></td>
+  <td>TileMap to be interacted with.</td></tr>
+<tr><td><code>.isObstacle</code></td>
+  <td>Function that identifies an obstacle.</td></tr>
 </table>
 
 <a name="PhysicalEntity"><h3>PhysicalEntity : <a href="#Entity">Entity</a> (<code>entity.ts</code>)</h3></a>
 <p>
 An <code>Entity</code> that is affected by gravity.
-Suitable for charcters or objects that can jump or fall.
 <table border>
-<tr class=ctor><td><code>new PhysicalEntity(pos)</code></td>
-  <td>Creates a new entity.</td></tr>
-<tr class=inherited><td><code>.alive</code></td>
-  <td><code>true</code> if the entity is alive.</td></tr>
-<tr class=inherited><td><code>.layer</code></td>
-  <td>A <code>SpriteLayer</code> that the entity belongs to.</td></tr>
-<tr class=inherited><td><code>.time</code></td>
-  <td>The elapsed time since the entity started.</td></tr>
-<tr class=inherited><td><code>.stopped</code></td>
-  <td>A <code>Signal</code> that is signaled when the entity stops.</td></tr>
-<tr class=inherited><td><code>.bounds</code></td>
-  <td>A <code>Rect</code> for the entity's size and position.</td></tr>
-<tr class=inherited><td><code>.visible</code></td>
-  <td><code>true</code> if the entity is visible.</td></tr>
-<tr class=inherited><td><code>.zOrder</code></td>
-  <td>The order that the entity is drawn to the screen.</td></tr>
-<tr class=inherited><td><code>.scale</code></td>
-  <td>A vector for the polarity of the entity image.</td></tr>
-<tr><td><code>.physics</code></td>
-  <td>The physics options.</td></tr>
-<tr><td><code>.velocity</code></td>
-  <td>A vector for the current velocity.</td></tr>
-<tr class=inherited><td><code>.stop()</code></td>
-  <td>Terminates the entity.</td></tr>
-<tr class=inherited><td><code>.movePos(v)</code></td>
-  <td>Moves the entity by <code>v</code>.</td></tr>
-<tr class=inherited><td><code>.collider</code></td>
-  <td>A <code>Rect</code>/<code>Circle</code> for the entity's collider.</td></tr>
-<tr class=override><td><code>.update()</code></td>
-  <td>Updates for the current frame.</td></tr>
-<tr class=override><td><code>.render(ctx, bx, by)</code></td>
-  <td>Draws the entity at the location (<code>bx</code>, <code>by</code>).</td></tr>
-<tr class=override><td><code>.collidedWith(entity)</code></td>
-  <td>Invoked when the entity collides another entity.</td></tr>
-<tr class=inherited><td><code>.moveIfPossible(v, <em>[context]</em>)</code></td>
-  <td>Moves the entity by <code>v</code> without colliding obstacles.</td></tr>
-<tr class=inherited><td><code>.isMovable(v)</code></td>
-  <td><code>true</code> if the entity is movable toward <code>v</code>.</td></tr>
-<tr class=inherited><td><code>.getMove(v)</code></td>
-  <td>Trims the vector <code>v</code> so that it doesn't collide.</td></tr>
-<tr class=override><td><code>.getObstaclesFor(range, context)</code></td>
-  <td>Returns a list of <code>Shape</code>s within <code>range</code>.</td></tr>
-<tr class=override><td><code>.getFencesFor(range, context)</code></td>
-  <td>Returns a list of bounding rectangles that limits the entity within.</td></tr>
-<tr><td><code>.setJumpFunc(function)</code></td>
-  <td>Sets the gravity function.</td></tr>
-<tr><td><code>.setJump(jumpend)</code></td>
+<tr class=ctor><td><code>new PhysicalEntity(<br>&nbsp; <u>physics</u>, <u>pos</u>)</code></td>
+  <td>Creates a new entity that is affected by gravity.</td></tr>
+<tr class=ctor><td><code>new PlatformerEntity(<br>&nbsp; <u>tilemap</u>, <u>physics</u>, <u>pos</u>)</code></td>
+  <td>Creates a new <code>PhysicalEntity</code> + <code>TileMapEntity</code>.</td></tr>
+<tr><td><code>.setJump(<u>jumpend</u>)</code></td>
   <td>Starts a jump maneuver that ends at <code>t=jumpend</code>.</td></tr>
-<tr class=override><td><code>.jump()</code></td>
-  <td>Invoked when the entity starts jumping.</td></tr>
 <tr><td><code>.fall()</code></td>
   <td>Invoked for every update.</td></tr>
+<tr><td><code>.isJumping()</code></td>
+  <td><code>true</code> if the entity is jumping.</td></tr>
 <tr><td><code>.isLanded()</code></td>
   <td><code>true</code> if the entity is landed on a platform.</td></tr>
-<tr class=override><td><code>.land()</code></td>
-  <td>Invoked when the entity is landed on a platform.</td></tr>
-<tr class=override><td><code>.isHolding()</code></td>
-  <td><code>true</code> if the entity is in a state that stops falling.</td></tr>
-</table>
-
-<a name="PlatformerEntity"><h3>PlatformerEntity : <a href="#PhysicalEntity">PhysicalEntity</a> (<code>entity.ts</code>)</h3></a>
-<p>
-A <code>PhysicalEntity</code> that interacts with a <code>TileMap</code>.
-Suitable for tile-based platformer games.
-<table border>
-<tr class=ctor><td><code>new PlatformerEntity(tilemap, pos)</code></td>
-  <td>Creates a new entity.</td></tr>
-<tr class=inherited><td><code>.alive</code></td>
-  <td><code>true</code> if the entity is alive.</td></tr>
-<tr class=inherited><td><code>.layer</code></td>
-  <td>A <code>SpriteLayer</code> that the entity belongs to.</td></tr>
-<tr class=inherited><td><code>.time</code></td>
-  <td>The elapsed time since the entity started.</td></tr>
-<tr class=inherited><td><code>.stopped</code></td>
-  <td>A <code>Signal</code> that is signaled when the entity stops.</td></tr>
-<tr class=inherited><td><code>.bounds</code></td>
-  <td>A <code>Rect</code> for the entity's size and position.</td></tr>
-<tr class=inherited><td><code>.visible</code></td>
-  <td><code>true</code> if the entity is visible.</td></tr>
-<tr class=inherited><td><code>.zOrder</code></td>
-  <td>The order that the entity is drawn to the screen.</td></tr>
-<tr class=inherited><td><code>.scale</code></td>
-  <td>A vector for the polarity of the entity image.</td></tr>
-<tr class=inherited><td><code>.physics</code></td>
-  <td>The physics options.</td></tr>
-<tr class=inherited><td><code>.velocity</code></td>
-  <td>A vector for the current velocity.</td></tr>
-<tr><td><code>.tilemap</code></td>
-  <td>A <code>TileMap</code> that interacts with the entity.</td></tr>
-<tr class=inherited><td><code>.stop()</code></td>
-  <td>Terminates the entity.</td></tr>
-<tr class=inherited><td><code>.movePos(v)</code></td>
-  <td>Moves the entity by <code>v</code>.</td></tr>
-<tr class=inherited><td><code>.collider</code></td>
-  <td>A <code>Rect</code>/<code>Circle</code> for the entity's collider.</td></tr>
-<tr class=override><td><code>.update()</code></td>
-  <td>Updates for the current frame.</td></tr>
-<tr class=override><td><code>.render(ctx, bx, by)</code></td>
-  <td>Draws the entity at the location (<code>bx</code>, <code>by</code>).</td></tr>
-<tr class=override><td><code>.collidedWith(entity)</code></td>
-  <td>Invoked when the entity collides another entity.</td></tr>
-<tr class=inherited><td><code>.moveIfPossible(v, <em>[context]</em>)</code></td>
-  <td>Moves the entity by <code>v</code> without colliding obstacles.</td></tr>
-<tr class=inherited><td><code>.isMovable(v)</code></td>
-  <td><code>true</code> if the entity is movable toward <code>v</code>.</td></tr>
-<tr class=inherited><td><code>.getMove(v)</code></td>
-  <td>Trims the vector <code>v</code> so that it doesn't collide.</td></tr>
-<tr class=override><td><code>.getFencesFor(range, context)</code></td>
-  <td>Returns a list of bounding rectangles that limits the entity within.</td></tr>
-<tr class=inherited><td><code>.setJumpFunc(function)</code></td>
-  <td>Sets the gravity function.</td></tr>
-<tr class=inherited><td><code>.setJump(jumpend)</code></td>
-  <td>Starts a jump maneuver that ends at <code>t=jumpend</code>.</td></tr>
-<tr class=override><td><code>.jump()</code></td>
+<tr class=overridable><td><code>.canJump()</code></td>
+  <td><code>true</code> if the entity can jump.</td></tr>
+<tr class=overridable><td><code>.canFall()</code></td>
+  <td><code>true</code> if the entity can fall.</td></tr>
+<tr class=overridable><td><code>.onJumped()</code></td>
   <td>Invoked when the entity starts jumping.</td></tr>
-<tr class=inherited><td><code>.fall()</code></td>
-  <td>Invoked for every update.</td></tr>
-<tr class=inherited><td><code>.isLanded()</code></td>
-  <td><code>true</code> if the entity is landed on a platform.</td></tr>
-<tr class=override><td><code>.land()</code></td>
-  <td>Invoked when the entity is landed on a platform.</td></tr>
-</table>
-
-<a name="ScrollLayer"><h3>ScrollLayer : <a href="#Layer">Layer</a> (<code>sprite.ts</code>)</h3></a>
-<p>
-A <code>Layer</code> that can scroll the displayed area.
-Only shows the objects within the window.
-<table border>
-<tr class=ctor><td><code>new ScrollLayer(window)</code></td>
-  <td>Creates a new layer.</td></tr>
-<tr class=inherited><td><code>.tasks</code></td>
-  <td>A list of <code>Task</code>s that belong to the layer.</td></tr>
-<tr class=inherited><td><code>.sprites</code></td>
-  <td>A list of <code>Sprite</code>s that belong to the layer.</td></tr>
-<tr class=inherited><td><code>.entities</code></td>
-  <td>A list of <code>Entity</code>s that belong to the layer.</td></tr>
-<tr><td><code>.window</code></td>
-  <td>A <code>Rect</code> that specifies the window.</td></tr>
-<tr class=override><td><code>.onStart()</code></td>
-  <td>Invoked when the layer is initialized.</td></tr>
-<tr class=override><td><code>.onTick(t)</code></td>
-  <td>Invoked for every frame.</td></tr>
-<tr class=inherited><td><code>.render(ctx, bx, by)</code></td>
-  <td>Draws all the sprites at the location (<code>bx</code>, <code>by</code>).</td></tr>
-<tr class=inherited><td><code>.moveAll(v)</code></td>
-  <td>Moves all the sprites by <code>v</code>.</td></tr>
-<tr><td><code>.moveCenter(v)</code></td>
-  <td>Moves the window by <code>v</code>.</td></tr>
-<tr><td><code>.setCenter(bounds, rect)</code></td>
-  <td>Centers the window around <code>rect</code>.</td></tr>
-<tr class=inherited><td><code>.addTask(task)</code></td>
-  <td>Adds a <code>Task</code>/<code>Sprite</code>/<code>Entity</code> to the list.</td></tr>
-<tr class=inherited><td><code>.findEntities(rect, <em>[entities, [f]]</em>)</code></td>
-  <td>Returns a list of entities that overlap <code>rect</code>.</td></tr>
+<tr class=overridable><td><code>.onLanded()</code></td>
+  <td>Invoked when the entity is landed.</td></tr>
 </table>
 
 <a name="GameScene"><h3>GameScene : <a href="#Scene">Scene</a> (<code>scene.ts</code>)</h3></a>
 <p>
-A <code>Scene</code> that has one <code>Layer</code> with
-a few convenient methods.
+A <code>Scene</code> that has a <code>World</code> and convenient methods.
 <table border>
-<tr class=ctor><td><code>new GameScene(app)</code></td>
+<tr class=ctor><td><code>new GameScene()</code></td>
   <td>Creates a new scene.</td></tr>
-<tr class=inherited><td><code>.app</code></td>
-  <td>The <code>App</code> object that the scene belongs to.</td></tr>
-<tr class=inherited><td><code>.screen</code></td>
-  <td>The canvas rectangle.</td></tr>
-<tr><td><code>.layer</code></td>
-  <td>A <code>Layer</code> for this scene.</td></tr>
-<tr><td><code>.entities</code></td>
-  <td>An alias to <code>layer.entities</code>.</td></tr>
-<tr><td><code>.addTask(task)</code></td>
-  <td>Adds a <code>Task</code>/<code>Sprite</code>/<code>Entity</code> to the list.</td></tr>
-<tr class=inherited><td><code>.changeScene(scene)</code></td>
-  <td>Signals the <code>App</code> to switch to a scene.</td></tr>
-<tr class=override><td><code>.onStart()</code></td>
-  <td>Initializes the scene.</td></tr>
-<tr class=override><td><code>.onTick(t)</code></td>
-  <td>Invoked for every frame.</td></tr>
-<tr class=override><td><code>.render(ctx, bx, by)</code></td>
-  <td>Draws the scene at the location (<code>bx</code>, <code>by</code>).</td></tr>
-<tr class=override><td><code>.setDir(v)</code></td>
-  <td>Invoked when a directional input is changed.</td></tr>
-<tr class=override><td><code>.setAction(action)</code></td>
-  <td>Invoked when the action key state is changed.</td></tr>
-<tr class=override><td><code>.setCancel(cancel)</code></td>
-  <td>Invoked when the cancel key state is changed.</td></tr>
-<tr class=override><td><code>.keydown(keyCode)</code></td>
-  <td>Invoked when a key is pressed.</td></tr>
-<tr class=override><td><code>.keyup(keyCode)</code></td>
-  <td>Invoked when a key is released.</td></tr>
-<tr class=override><td><code>.mousedown(x, y, button)</code></td>
-  <td>Invoked when a mouse button is pressed.</td></tr>
-<tr class=override><td><code>.mouseup(x, y, button)</code></td>
-  <td>Invoked when a mouse button is released.</td></tr>
-<tr class=override><td><code>.mousemove(x, y)</code></td>
-  <td>Invoked when a mouse pointer is moved.</td></tr>
-</table>
-
-<a name="HTMLScene"><h3>HTMLScene : <a href="#Scene">Scene</a> (<code>scene.ts</code>)</h3></a>
-<p>
-A <code>Scene</code> for a static HTML text.
-Suitable for game title or help screen, etc.
-<table border>
-<tr class=ctor><td><code>new HTMLScene(app, text)</code></td>
-  <td>Creates a new HTML scene.</td></tr>
-<tr><td><code>.text</code></td>
-  <td>A string to display.</td></tr>
-<tr class=inherited><td><code>.changeScene(scene)</code></td>
-  <td>Signals the <code>App</code> to switch to a scene.</td></tr>
-<tr class=override><td><code>.change()</code></td>
-  <td>Invoked when there's a mouse or keyboard input.</td></tr>
+<tr><td><code>.add(<u>entity</u>)</code></td>
+  <td>Adds an <code>Entity</code> to the world.</td></tr>
+<tr><td><code>.remove(<u>entity</u>)</code></td>
+  <td>Removes an <code>Entity</code> from the world.</td></tr>
 </table>
 
 <a name="text"><h2>Text Library</h2></a>
+
 <a name="Font"><h3>Font (<code>text.ts</code>)</h3></a>
 <p>
 A <code>Font</code> represents a monospace bitmap font.
 <table border>
-<tr class=ctor><td><code>new Font(glyphs, <u>color</u>=null, <u>scale</u>=1)</code></td>
+<tr class=ctor><td><code>new Font(<br>&nbsp; <u>glyphs</u>, <br>&nbsp; <u>color</u>=null, <u>scale</u>=1)</code></td>
   <td>Font with a given <code>glyphs</code>.</td></tr>
-<tr class=ctor><td><code>new InvertedFont(glyphs,<br>&nbsp; <u>color</u>=null, <u>scale</u>=1)</code></td>
+<tr class=ctor><td><code>new InvertedFont(<br>&nbsp; <u>glyphs</u>, <br>&nbsp; <u>color</u>=null, <u>scale</u>=1)</code></td>
   <td>Inverted Font.</td></tr>
-<tr class=ctor><td><code>new ShadowFont(glyphs,<br>&nbsp; <u>color</u>=null, <u>scale</u>=1,<br>&nbsp; <u>shadowColor</u>='black',<br>&nbsp; <u>shadowDist</u>=1</em>)</code></td>
+<tr class=ctor><td><code>new ShadowFont(<br>&nbsp; <u>glyphs</u>, <br>&nbsp; <u>color</u>=null, <u>scale</u>=1,<br>&nbsp; <u>shadowColor</u>='black',<br>&nbsp; <u>shadowDist</u>=1</em>)</code></td>
   <td>Font with shadow.</td></tr>
 <tr><td><code>.width</code></td>
   <td>Width of each character.</td></tr>
@@ -693,17 +492,17 @@ A <code>Font</code> represents a monospace bitmap font.
   <td>Height of each character.</td></tr>
 <tr><td><code>.background</code></td>
   <td>Background color (<code>null</code> for transparent).</td></tr>
-<tr><td><code>.getSize(text)</code></td>
+<tr><td><code>.getSize(<u>text</u>)</code></td>
   <td>Computes the pixel size for a given text.</td></tr>
-<tr><td><code>.renderString(ctx, text, x, y)</code></td>
+<tr><td><code>.renderString(<br>&nbsp; <u>ctx</u>, <u>text</u>, <u>x</u>, <u>y</u>)</code></td>
   <td>Draws the text at a given location.</td></tr>
 </table>
 
 <a name="TextBox"><h3>TextBox : <a href="#Sprite">Sprite</a> (<code>text.ts</code>)</h3></a>
 <p>
-A type of <code>Sprite</code> represents a text display.
+A type of <code>Sprite</code> for a monospaced text.
 <table border>
-<tr class=ctor><td><code>new Text(<u>frame</u>, <u>font</u>=null)</code></td>
+<tr class=ctor><td><code>new TextBox(<br>&nbsp; <u>frame</u>, <u>font</u>=null)</code></td>
   <td>TextBox with a given frame and font.</td></tr>
 <tr><td><code>.frame</code></td>
   <td>Area of text displayed.</td></tr>
@@ -721,39 +520,89 @@ A type of <code>Sprite</code> represents a text display.
   <td>Border color (<code>null</code> for no border).</td></tr>
 <tr><td><code>.borderWidth</code></td>
   <td>Border width.</td></tr>
-<tr><td><code>.getSize(lines, <u>font</u>=null)</code></td>
-  <td>Computes the pixel size for a given text.</td></tr>
 <tr><td><code>.getBounds()</code></td>
   <td>Returns the frame rectangle.</td></tr>
 <tr><td><code>.getInnerBounds()</code></td>
   <td>Returns the area that the actual text is displayed.</td></tr>
 <tr><td><code>.clear()</code></td>
   <td>Clears all the texts displayed.</td></tr>
-<tr><td><code>.addSegment(p, text, <u>font</u>=null)</code></td>
+<tr><td><code>.addSegment(<u>pt</u>, <br>&nbsp; <u>text</u>, <u>font</u>=null)</code></td>
   <td>Add a text segment at a given location.</td></tr>
-<tr><td><code>.addText(text, <u>font</u>=null)</code></td>
+<tr><td><code>.addText(<br>&nbsp; <u>text</u>, <u>font</u>=null)</code></td>
   <td>Append a text.</td></tr>
 <tr><td><code>.addNewline(<u>font</u>=null)</code></td>
   <td>Append a newline.</td></tr>
-<tr><td><code>.putText(lines,<br>&nbsp; <u>halign</u>='left', <u>valign</u>='top')</code></td>
+<tr><td><code>.putText(<u>lines</u>, <br>&nbsp; <u>halign</u>='left', <u>valign</u>='top')</code></td>
   <td>Layout the given lines.</td></tr>
+<tr><td><code>.getSize(<u>lines</u>, <br>&nbsp; <u>font</u>=null)</code></td>
+  <td>Computes the pixel size for a given text.</td></tr>
+<tr><td><code>.wrapLines(<u>text</u>, <br>&nbsp; <u>font</u>=null, <u>header</u>=null)</code></td>
+  <td>Split the text into lines that can fit the textbox.</td></tr>
 <tr><td><code>.render(ctx)</code></td>
   <td>Draws the text.</td></tr>
 </table>
 
-<a name="DialogBox"><h3>DialogBox : <a href="#TextBox">TextBox</a> (<code>text.ts</code>)</h3></a>
+<a name="DialogBox"><h3>DialogBox : <a href="#Entity">Entity</a> (<code>text.ts</code>)</h3></a>
+<p>
+This is a rather complex class for showing text dialog or menu.
+<table border>
+<tr class=ctor><td><code>new DialogBox(<br>&nbsp; <u>textbox</u>, <u>hiFont</u>=null)</code></td>
+  <td>Create a new DialogBox with a given highlight font.</td></tr>
+<tr><td><code>.addPause(<u>duration</u>)</code></td>
+  <td>Schedule a pause during a dialog.</td></tr>
+<tr><td><code>.addDisplay(<br>&nbsp; <u>text</u>, <u>speed</u>=-1, <br>&nbsp; <u>sound</u>=null, <br>&nbsp; <u>font</u>=null)</code></td>
+  <td>Schedule displaying text with a given speed, font and sound effect.</td></tr>
+<tr><td><code>.addMenu()</code></td>
+  <td>Schedule displaying a menu.</td></tr>
+<tr><td><code>.addWait()</code></td>
+  <td>Schedule waiting.</td></tr>
+<tr><td><code>.ff()</code></td>
+  <td>Fast-forward and show all the texts.</td></tr>
+<tr><td><code>.clear()</code></td>
+  <td>Clears all the texts and tasks.</td></tr>
+</table>
+
+<a name="BannerBox"><h3>BannerBox : <a href="#Entity">Entity</a> (<code>text.ts</code>)</h3></a>
+<p>
+An <code>Entity</code> for showing text banners.
+<table border>
+<tr class=ctor><td><code>new BannerBox(<br>&nbsp; <u>frame</u>, <u>font</u>, <br>&nbsp; <u>lines</u>=null, <br>&nbsp; <u>lineSpace</u>=4)</code></td>
+  <td>TextBox with a given frame and font.</td></tr>
+<tr><td><code>.interval</code></td>
+  <td>Blinking interval (0: no blinking).</td></tr>
+<tr><td><code>.putText(<u>lines</u>, <br>&nbsp; <u>halign</u>='center', <br>&nbsp; <u>valign</u>='center')</code></td>
+  <td>Layout the given lines.</td></tr>
+</table>
+
+<a name="TextParticle"><h3>TextParticle : <a href="#BannerBox">BannerBox</a> (<code>text.ts</code>)</h3></a>
+<p>
+A short-lived text particle.
+<table border>
+<tr class=ctor><td><code>new TextParticle(<br>&nbsp; <u>pos</u>, <u>font</u>, <u>text</u>, <br>&nbsp; <u>borderWidth</u>=1)</code></td>
+  <td>Creates a new text particle.</td></tr>
+<tr><td><code>.movement</code></td>
+  <td>Velocity of the object.</td></tr>
+</table>
 
 <a name="animation"><h2>Animation Library</h2></a>
 
-<a name="Animator"><h3>Animator (<code>animation.ts</code>)</h3></a>
+<p>
+TODO
+
+<a name="Animator"><h3>Animator : <a href="#Task">Task</a> (<code>animation.ts</code>)</h3></a>
+
+<a name="Blinker"><h3>Blinker : <a href="#Entity">Entity</a> (<code>animation.ts</code>)</h3></a>
+
 <a name="Tweener"><h3>Tweener : <a href="#Animator">Animator</a> (<code>animation.ts</code>)</h3></a>
 <a name="PolyTweener"><h3>PolyTweener : <a href="#Tweener">Tweener</a> (<code>animation.ts</code>)</h3></a>
 <a name="PolyTweenerIn"><h3>PolyTweenerIn : <a href="#PolyTweener">PolyTweener</a> (<code>animation.ts</code>)</h3></a>
 <a name="PolyTweenerOut"><h3>PolyTweenerOut : <a href="#PolyTweener">PolyTweener</a> (<code>animation.ts</code>)</h3></a>
 <a name="PolyTweenerInOut"><h3>PolyTweenerInOut : <a href="#PolyTweener">PolyTweener</a> (<code>animation.ts</code>)</h3></a>
-<a name="Blinker"><h3>Blinker : <a href="#Widget">Widget</a> (<code>animation.ts</code>)</h3></a>
 
 <a name="pathfinding"><h2>Pathfinding Library</h2></a>
+
+<p>
+TODO
 
 <a name="PlanActor"><h3>PlanActor (<code>planmap.ts</code>)</h3></a>
 <a name="PlanAction"><h3>PlanAction (<code>planmap.ts</code>)</h3></a>
@@ -761,7 +610,6 @@ A type of <code>Sprite</code> represents a text display.
 <a name="PlanMap"><h3>PlanMap (<code>planmap.ts</code>)</h3></a>
 <a name="PlanActionRunner"><h3>PlanActionRunner (<code>planrunner.ts</code>)</h3></a>
 <a name="PlanningEntity"><h3>PlanningEntity (<code>planrunner.ts</code>)</h3></a>
-
 
 <a name="utility-classes"><h2>Utility Classes</h2></a>
 
@@ -848,7 +696,7 @@ A <code>Vec2</code> represents two-dimensional vector that has (x, y) elements.
   <td>Creates a rotated vector in radian (clockwise...0&lt;<code>d</code>)</td></tr>
 <tr><td><code>.rot90(<u>d</u>)</code></td>
   <td>Creates a rotated vector by 90 degrees (clockwise...0&lt;<code>d</code>)</td></tr>
-<tr><td><code>.expand(<u>dw</u>, <u>dh</u>, <u>anchor</u>='c')</code></td>
+<tr><td><code>.expand(<br>&nbsp; <u>dw</u>, <u>dh</u>, <u>anchor</u>='c')</code></td>
   <td>Creates a <code>Rect</code> with the point as an anchor.</td></tr>
 </table>
 
@@ -917,7 +765,7 @@ that can be used for hit detection.
 
 <a name="Shape"><h3>Shape : <a href="#Collider">Collider</a> (<code>geom.ts</code>)</h3></a>
 <p>
-A <code>Shape</code> is an abstract class that has a clear boundary and
+A <code>Shape</code> is an abstract object that has a clear boundary and
 represents an enclosed shape.
 <table border>
 <tr><td><code>.isZero()</code></td>
@@ -1067,7 +915,7 @@ has its position (x, y) and size (width, height).
       </svg>
     </div>
   </td></tr>
-<tr><td><code>.expand(<u>dw</u>, <u>dh</u>, <u>anchor</u>='c')</code></td>
+<tr><td><code>.expand(<br>&nbsp; <u>dw</u>, <u>dh</u>, <u>anchor</u>='c')</code></td>
   <td>Creates an expanded rectangle by (<code>dw&times;2</code>, <code>dh&times;2</code>).
     <div style="margin-left:1em;">
       <svg xmlns="http://www.w3.org/2000/svg"
@@ -1109,7 +957,7 @@ has its position (x, y) and size (width, height).
       </svg>
     </div>
   </td></tr>
-<tr><td><code>.resize(<u>w</u>, <u>h</u>, <u>anchor</u>='c')</code></td>
+<tr><td><code>.resize(<br>&nbsp; <u>w</u>, <u>h</u>, <u>anchor</u>='c')</code></td>
   <td>Creates a resized rectangle.
     <div style="margin-left:1em;">
       <svg xmlns="http://www.w3.org/2000/svg"
@@ -1329,8 +1177,9 @@ A <code>TileMap</code> represents a two-dimensional array that holds map tiles.
 <a name="RangeMap"><h3>RangeMap (<code>tilemap.ts</code>)</h3></a>
 <p>
 A <code>RangeMap</code> is a partial copy of <code>TileMap</code>
-that allows range queries for specific tiles.
-Notice: This object is always returned by <code>TileMap.getRangeMap()</code> method
+that allows range queries for specific tiles.<br>
+<strong>Note:</strong>
+This object is always returned by <code>TileMap.getRangeMap()</code> method
 and not explicitly created by a user.
 <table border>
 <tr><td><code>.width</code></td>
@@ -1388,31 +1237,9 @@ Manages a list of <code>Task</code>s.
   <td>Adds a task to the list.</td></tr>
 <tr><td><code>.remove(task)</code></td>
   <td>Removes a task from the list.</td></tr>
-</table>
-
-<a name="TaskQueue"><h3>TaskQueue (<code>task.ts</code>)</h3></a>
-<p>
-Manages a list of <code>Task</code>s that run sequentially.
-<table border>
-<tr class=ctor><td><code>new TaskQueue()</code></td>
-  <td>Creates an empty task queue.</td></tr>
 <tr><td><code>.stopWhenEmpty</code></td>
   <td>Set <code>true</code> to automatically kill the queue when there's no <code>Task</code>.</td></tr>
-<tr><td><code>.getCurrentTask()</code></td>
-  <td>Returns a task that is currently running.</td></tr>
-<tr><td><code>.add(task)</code></td>
-  <td>Adds a task to the list.</td></tr>
-<tr><td><code>.remove(task)</code></td>
-  <td>Removes a task from the list.</td></tr>
-<tr><td><code>.clear()</code></td>
-  <td>Empties the task list.</td></tr>
-<tr><td><code>.onTick()</code></td>
-  <td>Invoked at every frame. Update the current tasks.</td></tr>
 </table>
-
-<a name="EntityWorld"><h3>EntityWorld (<code>entity.ts</code>)</h3></a>
-<a name="SpriteLayer"><h3>SpriteLayer (<code>sprite.ts</code>)</h3></a>
-
 
 <a name="functions"><h2>Functions</h2></a>
 

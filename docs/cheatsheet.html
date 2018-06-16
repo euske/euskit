@@ -67,7 +67,7 @@ class Player extends Entity {
 
 <h2>Spawn Another Entity</h2>
 <blockquote><pre>
-class Bullet extends Projectile {
+class Bullet extends Particle {
     constructor(pos: Vec2) {
 	super(pos);
 	let bounds = new Rect(-2, -2, 4, 4);
@@ -76,9 +76,8 @@ class Bullet extends Projectile {
 	this.collider = bounds;
 	this.movement = new Vec2(8, 0);
     }
-    onStart() {
-        super.onStart();
-	this.frame = this.world.area;
+    getFrame() {
+	return this.world.area;
     }
 }
 
