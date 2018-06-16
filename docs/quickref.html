@@ -151,7 +151,7 @@ body { margin: 0; padding: 0; }
 
 <a name="basic-classes"><h2>Basic Classes</h2></a>
 
-<a name="App"><h3>App (<code>app.ts</code>)</h3></a>
+<a name="App"><h3>App (<code><a href="https://github.com/euske/euskit/blob/master/base/app.ts">app.ts</a></code>)</h3></a>
 <p>
 Every game has <u>exactly one</u> <code>App</code> object.
 It does the basic pluming and resource management; it has
@@ -207,7 +207,7 @@ Typically, you don't have to change this class.
   <td>Queues a function that is to be executed at the end of the frame.</td></tr>
 </table>
 
-<a name="Scene"><h3>Scene (<code>scene.ts</code>)</h3></a>
+<a name="Scene"><h3>Scene (<code><a href="https://github.com/euske/euskit/blob/master/base/scene.ts">scene.ts</a></code>)</h3></a>
 <p>
 A <code>Scene</code> is a mini-app or "mode" within the App.
 At each moment, exactly one <code>Scene</code> is responsible
@@ -259,7 +259,7 @@ but it's possible to create an entire game with just one <code>Scene</code>.
   <td>Invoked when the focus is lost.</td></tr>
 </table>
 
-<a name="World"><h3>World (<code>scene.ts</code>)</h3></a>
+<a name="World"><h3>World (<code><a href="https://github.com/euske/euskit/blob/master/base/scene.ts">scene.ts</a></code>)</h3></a>
 <p>
 A <code>World</code> is a container of <code>Entity</code>s.
 The entities which belong here are rendered and their collision is detected.
@@ -306,7 +306,7 @@ The entities which belong here are rendered and their collision is detected.
   <td>Invoked when a mouse pointer is moved.
 </table>
 
-<a name="Task"><h3>Task (<code>task.ts</code>)</h3></a>
+<a name="Task"><h3>Task (<code><a href="https://github.com/euske/euskit/blob/master/base/task.ts">task.ts</a></code>)</h3></a>
 <p>
 A <code>Task</code> is a base class of <code>Entity</code>.
 <table border>
@@ -340,7 +340,7 @@ A <code>Task</code> is a base class of <code>Entity</code>.
   <td>Invoked at every frame while the task is running.</td></tr>
 </table>
 
-<a name="Entity"><h3>Entity : <a href="#Task">Task</a> (<code>entity.ts</code>)</h3></a>
+<a name="Entity"><h3>Entity : <a href="#Task">Task</a> (<code><a href="https://github.com/euske/euskit/blob/master/base/entity.ts">entity.ts</a></code>)</h3></a>
 <p>
 An <code>Entity</code> is a main object for game characters.
 Each Entity is a <code>Task</code> and has a <code>Collider</code> and one or more
@@ -384,7 +384,7 @@ Sprites.
   <td>Invoked when the entity collides another entity.</td></tr>
 </table>
 
-<a name="Sprite"><h3>Sprite (<code>sprite.ts</code>)</h3></a>
+<a name="Sprite"><h3>Sprite (<code><a href="https://github.com/euske/euskit/blob/master/base/sprite.ts">sprite.ts</a></code>)</h3></a>
 <p>
 A <code>Sprite</code> is something to be displayed.
 <table border>
@@ -410,7 +410,7 @@ A <code>Sprite</code> is something to be displayed.
 
 <a name="specialized-objects"><h2>Specialized Objects</h2></a>
 
-<a name="Particle"><h3>Particle : <a href="#Entity">Entity</a> (<code>entity.ts</code>)</h3></a>
+<a name="Particle"><h3>Particle : <a href="#Entity">Entity</a> (<code><a href="https://github.com/euske/euskit/blob/master/base/entity.ts">entity.ts</a></code>)</h3></a>
 <p>
 A <code>Particle</code> is an <code>Entity</code> that
 keeps moving towards a specific direction.
@@ -423,7 +423,7 @@ keeps moving towards a specific direction.
   <td>Returns the <code>Rect</code> where the entity is kept alive within.</td></tr>
 </table>
 
-<a name="TileMapEntity"><h3>TileMapEntity : <a href="#Entity">Entity</a> (<code>entity.ts</code>)</h3></a>
+<a name="TileMapEntity"><h3>TileMapEntity : <a href="#Entity">Entity</a> (<code><a href="https://github.com/euske/euskit/blob/master/base/entity.ts">entity.ts</a></code>)</h3></a>
 <p>
 A <code>TileMapEntity</code> is an <code>Entity</code> that
 interacts with a <code>TileMap</code>.
@@ -436,7 +436,7 @@ interacts with a <code>TileMap</code>.
   <td>Function that identifies an obstacle.</td></tr>
 </table>
 
-<a name="PhysicalEntity"><h3>PhysicalEntity : <a href="#Entity">Entity</a> (<code>entity.ts</code>)</h3></a>
+<a name="PhysicalEntity"><h3>PhysicalEntity : <a href="#Entity">Entity</a> (<code><a href="https://github.com/euske/euskit/blob/master/base/entity.ts">entity.ts</a></code>)</h3></a>
 <p>
 An <code>Entity</code> that is affected by gravity.
 <table border>
@@ -462,7 +462,7 @@ An <code>Entity</code> that is affected by gravity.
   <td>Invoked when the entity is landed.</td></tr>
 </table>
 
-<a name="GameScene"><h3>GameScene : <a href="#Scene">Scene</a> (<code>scene.ts</code>)</h3></a>
+<a name="GameScene"><h3>GameScene : <a href="#Scene">Scene</a> (<code><a href="https://github.com/euske/euskit/blob/master/base/scene.ts">scene.ts</a></code>)</h3></a>
 <p>
 A <code>Scene</code> that has a <code>World</code> and convenient methods.
 <table border>
@@ -589,31 +589,31 @@ A short-lived text particle.
 <p>
 TODO
 
-<a name="Animator"><h3>Animator : <a href="#Task">Task</a> (<code>animation.ts</code>)</h3></a>
+<a name="Animator"><h3>Animator : <a href="#Task">Task</a> (<code><a href="https://github.com/euske/euskit/blob/master/base/animation.ts">animation.ts</a></code>)</h3></a>
 
-<a name="Blinker"><h3>Blinker : <a href="#Entity">Entity</a> (<code>animation.ts</code>)</h3></a>
+<a name="Blinker"><h3>Blinker : <a href="#Entity">Entity</a> (<code><a href="https://github.com/euske/euskit/blob/master/base/animation.ts">animation.ts</a></code>)</h3></a>
 
-<a name="Tweener"><h3>Tweener : <a href="#Animator">Animator</a> (<code>animation.ts</code>)</h3></a>
-<a name="PolyTweener"><h3>PolyTweener : <a href="#Tweener">Tweener</a> (<code>animation.ts</code>)</h3></a>
-<a name="PolyTweenerIn"><h3>PolyTweenerIn : <a href="#PolyTweener">PolyTweener</a> (<code>animation.ts</code>)</h3></a>
-<a name="PolyTweenerOut"><h3>PolyTweenerOut : <a href="#PolyTweener">PolyTweener</a> (<code>animation.ts</code>)</h3></a>
-<a name="PolyTweenerInOut"><h3>PolyTweenerInOut : <a href="#PolyTweener">PolyTweener</a> (<code>animation.ts</code>)</h3></a>
+<a name="Tweener"><h3>Tweener : <a href="#Animator">Animator</a> (<code><a href="https://github.com/euske/euskit/blob/master/base/animation.ts">animation.ts</a></code>)</h3></a>
+<a name="PolyTweener"><h3>PolyTweener : <a href="#Tweener">Tweener</a> (<code><a href="https://github.com/euske/euskit/blob/master/base/animation.ts">animation.ts</a></code>)</h3></a>
+<a name="PolyTweenerIn"><h3>PolyTweenerIn : <a href="#PolyTweener">PolyTweener</a> (<code><a href="https://github.com/euske/euskit/blob/master/base/animation.ts">animation.ts</a></code>)</h3></a>
+<a name="PolyTweenerOut"><h3>PolyTweenerOut : <a href="#PolyTweener">PolyTweener</a> (<code><a href="https://github.com/euske/euskit/blob/master/base/animation.ts">animation.ts</a></code>)</h3></a>
+<a name="PolyTweenerInOut"><h3>PolyTweenerInOut : <a href="#PolyTweener">PolyTweener</a> (<code><a href="https://github.com/euske/euskit/blob/master/base/animation.ts">animation.ts</a></code>)</h3></a>
 
 <a name="pathfinding"><h2>Pathfinding Library</h2></a>
 
 <p>
 TODO
 
-<a name="PlanActor"><h3>PlanActor (<code>planmap.ts</code>)</h3></a>
-<a name="PlanAction"><h3>PlanAction (<code>planmap.ts</code>)</h3></a>
-<a name="PlanProfile"><h3>PlanProfile (<code>planmap.ts</code>)</h3></a>
-<a name="PlanMap"><h3>PlanMap (<code>planmap.ts</code>)</h3></a>
-<a name="PlanActionRunner"><h3>PlanActionRunner (<code>planrunner.ts</code>)</h3></a>
-<a name="PlanningEntity"><h3>PlanningEntity (<code>planrunner.ts</code>)</h3></a>
+<a name="PlanActor"><h3>PlanActor (<code><a href="https://github.com/euske/euskit/blob/master/base/pathfind.ts">pathfind.ts</a></code>)</h3></a>
+<a name="PlanAction"><h3>PlanAction (<code><a href="https://github.com/euske/euskit/blob/master/base/pathfind.ts">pathfind.ts</a></code>)</h3></a>
+<a name="PlanProfile"><h3>PlanProfile (<code><a href="https://github.com/euske/euskit/blob/master/base/pathfind.ts">pathfind.ts</a></code>)</h3></a>
+<a name="PlanMap"><h3>PlanMap (<code><a href="https://github.com/euske/euskit/blob/master/base/pathfind.ts">pathfind.ts</a></code>)</h3></a>
+<a name="PlanActionRunner"><h3>PlanActionRunner (<code><a href="https://github.com/euske/euskit/blob/master/base/pathfind.ts">pathfind.ts</a></code>)</h3></a>
+<a name="PlanningEntity"><h3>PlanningEntity (<code><a href="https://github.com/euske/euskit/blob/master/base/pathfind.ts">pathfind.ts</a></code>)</h3></a>
 
 <a name="utility-classes"><h2>Utility Classes</h2></a>
 
-<a name="Signal"><h3>Signal (<code>utils.ts</code>)</h3></a>
+<a name="Signal"><h3>Signal (<code><a href="https://github.com/euske/euskit/blob/master/base/utils.ts">utils.ts</a></code>)</h3></a>
 <p>
 A <code>Signal</code> represents an event that is attached to a
 certain object and other objects can get notified.
@@ -632,7 +632,7 @@ certain object and other objects can get notified.
     for arguments.</td></tr>
 </table>
 
-<a name="Color"><h3>Color (<code>utils.ts</code>)</h3></a>
+<a name="Color"><h3>Color (<code><a href="https://github.com/euske/euskit/blob/master/base/utils.ts">utils.ts</a></code>)</h3></a>
 <p>
 A <code>Color</code> represents an RGBA value.
 <table border>
@@ -656,7 +656,7 @@ A <code>Color</code> represents an RGBA value.
   <td>Creates a <code>Color</code> with a given hue.</td></tr>
 </table>
 
-<a name="Vec2"><h3>Vec2 (<code>geom.ts</code>)</h3></a>
+<a name="Vec2"><h3>Vec2 (<code><a href="https://github.com/euske/euskit/blob/master/base/geom.ts">geom.ts</a></code>)</h3></a>
 <p>
 A <code>Vec2</code> represents two-dimensional vector that has (x, y) elements.
 <table border>
@@ -700,7 +700,7 @@ A <code>Vec2</code> represents two-dimensional vector that has (x, y) elements.
   <td>Creates a <code>Rect</code> with the point as an anchor.</td></tr>
 </table>
 
-<a name="Vec3"><h3>Vec3 (<code>geom.ts</code>)</h3></a>
+<a name="Vec3"><h3>Vec3 (<code><a href="https://github.com/euske/euskit/blob/master/base/geom.ts">geom.ts</a></code>)</h3></a>
 <p>
 A <code>Vec3</code> represents three-dimensional vector that has (x, y, z) elements.
 <table border>
@@ -740,7 +740,7 @@ A <code>Vec3</code> represents three-dimensional vector that has (x, y, z) eleme
   <td>(<code>this*(1-t) + p*t)</code>.</td></tr>
 </table>
 
-<a name="Collider"><h3>Collider (<code>geom.ts</code>)</h3></a>
+<a name="Collider"><h3>Collider (<code><a href="https://github.com/euske/euskit/blob/master/base/geom.ts">geom.ts</a></code>)</h3></a>
 <p>
 A <code>Collider</code> is an abstract geometric object
 that can be used for hit detection.
@@ -763,7 +763,7 @@ that can be used for hit detection.
   <td>Returns the AABB of the collider.</td></tr>
 </table>
 
-<a name="Shape"><h3>Shape : <a href="#Collider">Collider</a> (<code>geom.ts</code>)</h3></a>
+<a name="Shape"><h3>Shape : <a href="#Collider">Collider</a> (<code><a href="https://github.com/euske/euskit/blob/master/base/geom.ts">geom.ts</a></code>)</h3></a>
 <p>
 A <code>Shape</code> is an abstract object that has a clear boundary and
 represents an enclosed shape.
@@ -780,7 +780,7 @@ represents an enclosed shape.
   <td>Returns a random point on the edge.</td></tr>
 </table>
 
-<a name="AALine"><h3>AALine : <a href="#Collider">Collider</a> (<code>geom.ts</code>)</h3></a>
+<a name="AALine"><h3>AALine : <a href="#Collider">Collider</a> (<code><a href="https://github.com/euske/euskit/blob/master/base/geom.ts">geom.ts</a></code>)</h3></a>
 <p>
 A <code>AALine</code> represents an axis-aligned (either horizontal or
 parpendicular) line.
@@ -797,7 +797,7 @@ parpendicular) line.
   <td>Bottom y value.</td></tr>
 </table>
 
-<a name="Rect"><h3>Rect : <a href="#Shape">Shape</a> (<code>geom.ts</code>)</h3></a>
+<a name="Rect"><h3>Rect : <a href="#Shape">Shape</a> (<code><a href="https://github.com/euske/euskit/blob/master/base/geom.ts">geom.ts</a></code>)</h3></a>
 <p>
 A <code>Rect</code> object is a 2D rectangle that
 has its position (x, y) and size (width, height).
@@ -1023,7 +1023,7 @@ has its position (x, y) and size (width, height).
   <td>Trims a vector so that <code>rect</code> is restricted inside this.</td></tr>
 </table>
 
-<a name="Circle"><h3>Circle : <a href="#Shape">Shape</a> (<code>geom.ts</code>)</h3></a>
+<a name="Circle"><h3>Circle : <a href="#Shape">Shape</a> (<code><a href="https://github.com/euske/euskit/blob/master/base/geom.ts">geom.ts</a></code>)</h3></a>
 <p>
 A <code>Circle</code> represents a circle that has its center and radius.
 <table border>
@@ -1051,7 +1051,7 @@ A <code>Circle</code> represents a circle that has its center and radius.
   <td>Trims a vector so that <code>circle</code> doesn't collide with this.</td></tr>
 </table>
 
-<a name="AAPlane"><h3>AAPlane (<code>geom.ts</code>)</h3></a>
+<a name="AAPlane"><h3>AAPlane (<code><a href="https://github.com/euske/euskit/blob/master/base/geom.ts">geom.ts</a></code>)</h3></a>
 <p>
 A <code>AAPlane</code> represents an axis-aligned plane.
 It is represented by two axis-aligned (either X, Y or Z) points.
@@ -1065,7 +1065,7 @@ If two points are not aligned by any axis, it is invalid.
   <td>Point 1.</td></tr>
 </table>
 
-<a name="Box"><h3>Box (<code>geom.ts</code>)</h3></a>
+<a name="Box"><h3>Box (<code><a href="https://github.com/euske/euskit/blob/master/base/geom.ts">geom.ts</a></code>)</h3></a>
 <p>
 A <code>Box</code> is a 3D cuboid that has its position and size
 both as <code>Vec3</code>.
@@ -1124,7 +1124,7 @@ both as <code>Vec3</code>.
   <td>Moves the box so that it fits <code>bounds</code>.</td></tr>
 </table>
 
-<a name="TileMap"><h3>TileMap (<code>tilemap.ts</code>)</h3></a>
+<a name="TileMap"><h3>TileMap (<code><a href="https://github.com/euske/euskit/blob/master/base/tilemap.ts">tilemap.ts</a></code>)</h3></a>
 <p>
 A <code>TileMap</code> represents a two-dimensional array that holds map tiles.
 <table border>
@@ -1174,7 +1174,7 @@ A <code>TileMap</code> represents a two-dimensional array that holds map tiles.
   <td>Renders the tiles from top right within a window.</td></tr>
 </table>
 
-<a name="RangeMap"><h3>RangeMap (<code>tilemap.ts</code>)</h3></a>
+<a name="RangeMap"><h3>RangeMap (<code><a href="https://github.com/euske/euskit/blob/master/base/tilemap.ts">tilemap.ts</a></code>)</h3></a>
 <p>
 A <code>RangeMap</code> is a partial copy of <code>TileMap</code>
 that allows range queries for specific tiles.<br>
@@ -1192,7 +1192,7 @@ and not explicitly created by a user.
   <td><code>true</code> if a specific tile exists within the given area.</td></tr>
 </table>
 
-<a name="SpriteSheet"><h3>SpriteSheet (<code>sprite.ts</code>)</h3></a>
+<a name="SpriteSheet"><h3>SpriteSheet (<code><a href="https://github.com/euske/euskit/blob/master/base/sprite.ts">sprite.ts</a></code>)</h3></a>
 <p>
 A set of <code>Sprite</code> objects indexed by a number.
 <table border>
@@ -1204,7 +1204,7 @@ A set of <code>Sprite</code> objects indexed by a number.
   <td>Returns the <code>i,j</code>-th <code>Sprite</code>.</td></tr>
 </table>
 
-<a name="PhysicsConfig"><h3>PhysicsConfig (<code>entity.ts</code>)</h3></a>
+<a name="PhysicsConfig"><h3>PhysicsConfig (<code><a href="https://github.com/euske/euskit/blob/master/base/entity.ts">entity.ts</a></code>)</h3></a>
 <p>
 <table border>
 <tr class=ctor><td><code>new PhysicsConfig()</code></td>
@@ -1221,7 +1221,7 @@ A set of <code>Sprite</code> objects indexed by a number.
   <td>Function <code>(c) =&gt; boolean</code> that returns true if the tile is stoppable.</td></tr>
 </table>
 
-<a name="TaskList"><h3>TaskList (<code>task.ts</code>)</h3></a>
+<a name="TaskList"><h3>TaskList (<code><a href="https://github.com/euske/euskit/blob/master/base/task.ts">task.ts</a></code>)</h3></a>
 <p>
 Manages a list of <code>Task</code>s.
 <table border>
@@ -1263,7 +1263,7 @@ Manages a list of <code>Task</code>s.
 &lt;div id="main" style="width:640px; height:480px"&gt;&lt;/div&gt;
 </pre></blockquote>
 
-<a name="misc"><h3>Misc. functions (<code>utils.ts</code>)</h3></a>
+<a name="misc"><h3>Misc. functions (<code><a href="https://github.com/euske/euskit/blob/master/base/utils.ts">utils.ts</a></code>)</h3></a>
 <table border>
 <tr><td><code>log(<u>msg</u>, ...)</code></td>
   <td>Displays the messages to the console.</td></tr>
@@ -1273,7 +1273,7 @@ Manages a list of <code>Task</code>s.
   <td>Configures a new class.</td></tr>
 </table>
 
-<a name="numeric"><h3>Numeric functions (<code>utils.ts</code>)</h3></a>
+<a name="numeric"><h3>Numeric functions (<code><a href="https://github.com/euske/euskit/blob/master/base/utils.ts">utils.ts</a></code>)</h3></a>
 <table border>
 <tr><td><code>fmod(<u>x</u>, <u>y</u>)</code></td>
   <td>Better <code>mod</code> function; i.e. <code>fmod(-3,2)=1</code>.</td></tr>
@@ -1299,7 +1299,7 @@ Manages a list of <code>Task</code>s.
   <td>Formats a number as a string.</td></tr>
 </table>
 
-<a name="array"><h3>Array functions (<code>utils.ts</code>)</h3></a>
+<a name="array"><h3>Array functions (<code><a href="https://github.com/euske/euskit/blob/master/base/utils.ts">utils.ts</a></code>)</h3></a>
 <table border>
 <tr><td><code>choice(<u>a</u>)</code></td>
   <td>Returns a random element of <code>a</code>.</td></tr>
@@ -1313,7 +1313,7 @@ Manages a list of <code>Task</code>s.
   <td>Creates a 2D matrix for a given size.</td></tr>
 </table>
 
-<a name="html5"><h3>HTML5 functions (<code>utils.ts</code>)</h3></a>
+<a name="html5"><h3>HTML5 functions (<code><a href="https://github.com/euske/euskit/blob/master/base/utils.ts">utils.ts</a></code>)</h3></a>
 <table border>
 <tr><td><code>removeChildren(<u>node</u>, <u>name</u>)</code></td>
   <td>Removes all child HTML nodes.</td></tr>
