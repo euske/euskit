@@ -17,6 +17,7 @@ Samples
  * <a href="https://euske.github.io/euskit/samples/platformer/index.html"><img src="https://euske.github.io/euskit/samples/platformer/gameplay.gif" width="160" height="120" alt="Platformer"> Platformer</a> <a href="https://github.com/euske/euskit/blob/master/samples/platformer/src/game.ts">(Code)</a>
  * <a href="https://euske.github.io/euskit/samples/pseudo3d/index.html"><img src="https://euske.github.io/euskit/samples/pseudo3d/gameplay.gif" width="160" height="120" alt="Pseudo3d"> Pseudo3d</a> <a href="https://github.com/euske/euskit/blob/master/samples/pseudo3d/src/game.ts">(Code)</a>
  * <a href="https://euske.github.io/euskit/samples/adventure/index.html"><img src="https://euske.github.io/euskit/samples/adventure/gameplay.gif" width="160" height="120" alt="Adventure"> Adventure</a> <a href="https://github.com/euske/euskit/blob/master/samples/adventure/src/game.ts">(Code)</a>
+ * <a href="https://euske.github.io/euskit/samples/scramble/index.html"><img src="https://euske.github.io/euskit/samples/scramble/gameplay.gif" width="160" height="120" alt="Scramble"> Scramble</a> <a href="https://github.com/euske/euskit/blob/master/samples/scramble/src/game.ts">(Code)</a>
 
 Documents
 ---------
