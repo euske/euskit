@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "noEmitOnError": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "outFile": "js/game.js"
+  },
+
+  "files": [
+    "src/game.ts"
+  ]
+}

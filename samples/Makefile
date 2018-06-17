@@ -8,6 +8,7 @@ all:
 	cd platformer; $(MAKE) $@
 	cd pseudo3d; $(MAKE) $@
 	cd adventure; $(MAKE) $@
+	cd scramble; $(MAKE) $@
 
 clean:
 	-cd pong; $(MAKE) $@
@@ -17,3 +18,4 @@ clean:
 	-cd platformer; $(MAKE) $@
 	-cd pseudo3d; $(MAKE) $@
 	-cd adventure; $(MAKE) $@
+	-cd scramble; $(MAKE) $@
