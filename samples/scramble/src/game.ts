@@ -270,6 +270,7 @@ class Player extends TileMapEntity {
 
     onTileCollided() {
 	APP.playSound('explosion');
+	this.chain(new Explosion(this.pos));
 	this.stop();
     }
 }

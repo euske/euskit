@@ -21,9 +21,9 @@ Samples
 
 Documents
 ---------
- * <a href="https://euske.github.io/euskit/docs/userguide.html">User Guide</a>.
- * <a href="https://euske.github.io/euskit/docs/quickref.html">Quick Reference</a>.
- * <a href="https://euske.github.io/euskit/docs/cheatsheet.html">Cheat Sheet</a>.
+ * <a href="https://euske.github.io/euskit/docs/userguide.html">User Guide</a>
+ * <a href="https://euske.github.io/euskit/docs/quickref.html">Quick Reference</a>
+ * <a href="https://euske.github.io/euskit/docs/cheatsheet.html">Cheat Sheet</a>
 
 Prerequisites
 -------------
