@@ -72,7 +72,7 @@ class Player extends Entity {
 	if (this.firing) {
 	    if (this.nextfire == 0) {
 		// Shoot a bullet at a certain interval.
-		var bullet = new Bullet(this.pos);
+		let bullet = new Bullet(this.pos);
 		this.world.add(bullet);
 		APP.playSound('pew');
 		this.nextfire = 4;

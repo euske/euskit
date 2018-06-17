@@ -529,7 +529,7 @@ class Game extends GameScene {
 class GameOver extends HTMLScene {
 
     constructor(score: number) {
-	var html = `<strong>Game Over!</strong><p>Score: ${score}`;
+	let html = `<strong>Game Over!</strong><p>Score: ${score}`;
 	super(html);
     }
 

@@ -390,7 +390,7 @@ class Game extends GameScene {
 class Ending extends HTMLScene {
 
     constructor() {
-	var html = '<strong>You Won!</strong><p>Yay!';
+	let html = '<strong>You Won!</strong><p>Yay!';
 	super(html);
     }
 
