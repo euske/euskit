@@ -259,8 +259,6 @@ class StarSprite implements Sprite {
 
     /** Renders this image in the given context. */
     render(ctx: CanvasRenderingContext2D) {
-	ctx.save();
-	ctx.translate(int(this.bounds.x), int(this.bounds.y));
 	for (let star of this._stars) {
 	    ctx.save();
 	    ctx.translate(star.p.x, star.p.y);
@@ -268,7 +266,6 @@ class StarSprite implements Sprite {
 	    star.sprite.render(ctx);
 	    ctx.restore();
 	}
-	ctx.restore();
     }
 
     /** Moves the stars by the given offset. */
