@@ -343,6 +343,7 @@ class GameScene extends Scene {
     onStart() {
 	super.onStart();
         this.world = new World(this.screen);
+        this.world.onStart();
     }
 
     onTick() {
