@@ -17,7 +17,7 @@ type TextAsset = {
     [index: string]: HTMLDivElement;
 }
 
-function getprops(a: NodeListOf<Element>) {
+function getprops(a: HTMLCollectionOf<Element>) {
     let d:any = {};
     for (let i = 0; i < a.length; i++) {
 	d[a[i].id] = a[i];
