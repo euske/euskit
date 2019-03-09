@@ -66,6 +66,16 @@ function phase(t: number, interval: number, n=2): number
     return int(n*t/interval) % n;
 }
 
+/** Linear interploation.
+ * @param t Current time.
+ * @param a Start value.
+ * @param b End value.
+ */
+function lerp(t:number, a:number, b:number): number
+{
+    return a + t*(b-a);
+}
+
 /** Generates a random number in [0,a) or [a,b). */
 function frnd(a: number, b=0): number
 {
@@ -481,4 +491,36 @@ class Color {
 	    this.b*(1-t) + color.b*t,
 	    this.a*(1-t) + color.a*t);
     }
+}
+
+
+/** Simplified Perlin Noise function.
+ */
+const PERMS = [
+    28, 25, 0, 12, 2, 33, 59, 26, 62, 7, 9, 39, 66, 10, 57, 1, 58,
+    15, 56, 77, 70, 47, 96, 93, 53, 84, 80, 76, 67, 64, 30, 92, 88, 91,
+    74, 51, 8, 86, 97, 82, 38, 65, 17, 18, 52, 81, 87, 21, 61, 34, 68, 35,
+    71, 3, 16, 4, 27, 19, 13, 37, 41, 60, 83, 43, 31, 23, 14, 32, 48, 98,
+    50, 99, 36, 5, 54, 20, 49, 45, 72, 29, 42, 75, 44, 89, 6, 46, 94, 78,
+    90, 73, 95, 79, 85, 63, 55, 24, 69, 22, 40, 11
+];
+function perm(t:number) { return PERMS[t % PERMS.length]; }
+function fade(t:number) { return t*t*t*(t*(t*6-15)+10); }
+function grad(h:number, p:number, q:number) {
+    return ((h&1)==0? p : -p) + ((h&2)==0? q : -q);
+}
+function noise2d(x:number, y:number) {
+    let bx = Math.floor(x);
+    let by = Math.floor(y);
+    let dx = x-bx;
+    let dy = y-by;
+    let u = fade(dx);
+    let v = fade(dy);
+    let a = perm(bx);
+    let b = perm(bx+1);
+    let s = lerp(v, lerp(u, grad(perm(a+by), dx, dy),
+                            grad(perm(b+by), dx-1, dy)),
+                    lerp(u, grad(perm(a+by+1), dx, dy-1),
+                            grad(perm(b+by+1), dx-1, dy-1)));
+    return (s+1)/2.0;
 }
