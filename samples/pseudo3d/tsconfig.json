@@ -1,9 +1,11 @@
 {
   "compilerOptions": {
+    "alwaysStrict": true,
     "noEmitOnError": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
+    "noImplicitThis": true,
     "outFile": "js/game.js"
   },
 
