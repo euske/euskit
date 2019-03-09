@@ -66,7 +66,7 @@ function phase(t: number, interval: number, n=2): number
     return int(n*t/interval) % n;
 }
 
-/** Linear interploation.
+/** Linear interpolation.
  * @param t Current time.
  * @param a Start value.
  * @param b End value.

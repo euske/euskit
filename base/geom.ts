@@ -94,8 +94,8 @@ class Vec2 {
      *          When t=0.0 the new vector would be the same as this.
      *          When t=1.0 the new vector would be the same as p.
      */
-    interpolate(p: Vec2, t: number): Vec2 {
-	return new Vec2((1.0-t)*this.x+t*p.x, (1.0-t)*this.y+t*p.y);
+    lerp(p: Vec2, t: number): Vec2 {
+	return new Vec2(lerp(t, this.x, p.x), lerp(t, this.y, p.y));
     }
 
     /** Returns a new vector rotated clockwise by d radian. */
@@ -228,11 +228,11 @@ class Vec3 {
      *          When t=0.0 the new vector would be the same as this.
      *          When t=1.0 the new vector would be the same as p.
      */
-    interpolate(p: Vec3, t: number): Vec3 {
+    lerp(p: Vec3, t: number): Vec3 {
 	return new Vec3(
-	    (1.0-t)*this.x+t*p.x,
-	    (1.0-t)*this.y+t*p.y,
-	    (1.0-t)*this.z+t*p.z);
+	    lerp(t, this.x, p.x),
+            lerp(t, this.y, p.y),
+            lerp(t, this.z, p.z));
     }
 
 }

@@ -58,7 +58,7 @@ class Tweener extends Animator {
     }
 
     getPos(t: number) {
-	return this.srcpos.interpolate(this.dstpos, t);
+	return this.srcpos.lerp(this.dstpos, t);
     }
 }
 
@@ -82,7 +82,7 @@ class PolyTweenerIn extends PolyTweener {
 
     getPos(t: number) {
 	t = Math.pow(t, this.n);
-	return this.srcpos.interpolate(this.dstpos, t);
+	return this.srcpos.lerp(this.dstpos, t);
     }
 }
 
@@ -93,7 +93,7 @@ class PolyTweenerOut extends PolyTweener {
 
     getPos(t: number) {
 	t = 1.0 - Math.pow(1.0-t, this.n)
-	return this.srcpos.interpolate(this.dstpos, t);
+	return this.srcpos.lerp(this.dstpos, t);
     }
 }
 
@@ -108,6 +108,6 @@ class PolyTweenerInOut extends PolyTweener {
 	} else {
 	    t = 0.5*(2.0 - Math.pow(2.0-2*t, this.n)); // out
 	}
-	return this.srcpos.interpolate(this.dstpos, t);
+	return this.srcpos.lerp(this.dstpos, t);
     }
 }

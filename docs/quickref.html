@@ -702,7 +702,7 @@ A <code>Vec2</code> represents two-dimensional vector that has (x, y) elements.
   <td>(<code>clamp(x)</code>, <code>clamp(y)</code>).</td></tr>
 <tr><td><code>.move(<u>dx</u>, <u>dy</u>)</code></td>
   <td>(<code>x+dx</code>, <code>y+dy</code>).</td></tr>
-<tr><td><code>.interpolate(<u>p</u>, <u>t</u>)</code></td>
+<tr><td><code>.lerp(<u>p</u>, <u>t</u>)</code></td>
   <td>(<code>this*(1-t) + p*t)</code>.</td></tr>
 <tr><td><code>.rotate(<u>d</u>)</code></td>
   <td>Creates a rotated vector in radian (clockwise...0&lt;<code>d</code>)</td></tr>
@@ -748,7 +748,7 @@ A <code>Vec3</code> represents three-dimensional vector that has (x, y, z) eleme
   <td>(<code>clamp(x)</code>, <code>clamp(y)</code>, <code>clamp(z)</code>).</td></tr>
 <tr><td><code>.move(<u>dx</u>, <u>dy</u>, <u>dz</u>)</code></td>
   <td>(<code>x+dx</code>, <code>y+dy</code>, <code>z+dz</code>).</td></tr>
-<tr><td><code>.interpolate(<u>p</u>, <u>t</u>)</code></td>
+<tr><td><code>.lerp(<u>p</u>, <u>t</u>)</code></td>
   <td>(<code>this*(1-t) + p*t)</code>.</td></tr>
 </table>
 
@@ -1302,6 +1302,8 @@ Manages a list of <code>Task</code>s.
   <td>Returns -1, 0 or +1 based on the sign of <code>v</code>.</td></tr>
 <tr><td><code>phase(<u>t</u>, <u>interval</u>, <u>n</u>=2)</code></td>
   <td>Returns the phase for time <code>t</code>.</td></tr>
+<tr><td><code>lerp(<u>t</u>, <u>a</u>, <u>b</u>)</code></td>
+  <td>Returns the interpolation of <code>t</code> for [<code>a</code>, <code>b</code>].</td></tr>
 <tr><td><code>frnd(<u>a</u>, <u>b</u>=0)</code></td>
   <td>Generates a value [0,<code>a</code>) or [<code>a</code>,<code>b</code>)</td></tr>
 <tr><td><code>rnd(<u>a</u>, <u>b</u>=0)</code></td>
@@ -1310,6 +1312,8 @@ Manages a list of <code>Task</code>s.
   <td>Returns the current time in seconds.</td></tr>
 <tr><td><code>format(<u>v</u>, <u>n</u>=3, <u>c</u>=' ')</code></td>
   <td>Formats a number as a string.</td></tr>
+<tr><td><code>noise2d(<u>x</u>, <u>y</u>)</code></td>
+  <td>Simplified Perlin Noise function.</td></tr>
 </table>
 
 <a name="array"><h3>Array functions (<code><a href="https://github.com/euske/euskit/blob/master/base/utils.ts">utils.ts</a></code>)</h3></a>
