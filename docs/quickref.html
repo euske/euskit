@@ -298,7 +298,7 @@ and <a href="cheatsheet.html#SpawnAnotherEntity">Spawn Another Entity</a>.
   <td>Moves the center of the window by <code>v</code>.</td></tr>
 <tr><td><code>.moveAll(v)</code></td>
   <td>Moves all the sprites by <code>v</code>.</td></tr>
-<tr><td><code>.getEntityColliders(<br>&nbsp; <u>(e:Entity)=&gt;boolean</u>, <br>&nbsp; <u>collider</u>=null)</code></td>
+<tr><td><code>.getEntityColliders(<br>&nbsp; <u>(e:Entity)=&gt;boolean</u>, <br>&nbsp; <u>range</u>=null)</code></td>
   <td>Returns a list of <code>Entity</code> colliders that overlaps with <code>range</code> (if given).</td></tr>
 <tr><td><code>.applyEntities(<br>&nbsp; <u>(e:Entity)=&gt;boolean</u>, <br>&nbsp; <u>collider</u>=null)</code></td>
   <td>Applies the function to each Entity <code>e</code> that overlaps with <code>collider</code> (if given).</td></tr>
@@ -928,7 +928,7 @@ has its position (x, y) and size (width, height).
     </div>
   </td></tr>
 <tr><td><code>.expand(<br>&nbsp; <u>dw</u>, <u>dh</u>, <u>anchor</u>='c')</code></td>
-  <td>Creates an expanded rectangle by (<code>dw&times;2</code>, <code>dh&times;2</code>).
+  <td>Creates an expanded rectangle by (<code>dw</code>, <code>dh</code>).
     <div style="margin-left:1em;">
       <svg xmlns="http://www.w3.org/2000/svg"
 	   xmlns:xlink="http://www.w3.org/1999/xlink"
