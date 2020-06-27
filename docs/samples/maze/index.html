@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Maze</title>
+<style>
+canvas {
+ cursor: none;
+ image-rendering: -moz-crisp-edges;
+ image-rendering: crisp-edges;
+ image-rendering: pixelated;
+}
+</style>
+<script language="javascript" src="js/game.js"></script>
+<body bgcolor="black" text="white" link="cyan" onload="main(Game);">
+<h1 align=center>Maze</h1>
+<div style="margin: 1em;" align=center>
+  <div id="game" style="position: relative; width: 640px; height: 480px;"></div>
+</div>
+<div style="display:none;">
+  <img id="font" src="assets/font.png">
+  <audio id="beep" src="assets/beep.mp3" crossorigin="anonymous" preload="auto"></audio>
+  <audio id="goal" src="assets/goal.mp3" crossorigin="anonymous" preload="auto"></audio>
+</div>
+</body>
