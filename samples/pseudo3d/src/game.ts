@@ -29,11 +29,11 @@ function getContact3(hitbox: Box, v: Vec3, obstacles: Box[])
 //
 class ShadowSprite3 implements Sprite {
 
-    shadow: HTMLSprite;
+    shadow: ImageSprite;
     dz: number = 0;
 
     constructor() {
-	this.shadow = SPRITES.get(S.SHADOW) as HTMLSprite;
+	this.shadow = SPRITES.get(S.SHADOW) as ImageSprite;
     }
 
     getBounds(): Rect {

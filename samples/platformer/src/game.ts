@@ -59,11 +59,11 @@ function findShadowPos(tilemap: TileMap, pos: Vec2) {
 //
 class ShadowSprite implements Sprite {
 
-    shadow: HTMLSprite;
+    shadow: ImageSprite;
     shadowPos: Vec2 = null;
 
     constructor() {
-	this.shadow = SPRITES.get(S.SHADOW) as HTMLSprite;
+	this.shadow = SPRITES.get(S.SHADOW) as ImageSprite;
     }
 
     getBounds(): Rect {

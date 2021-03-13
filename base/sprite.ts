@@ -122,7 +122,7 @@ class CanvasSprite implements Sprite {
 
 /** Sprite that uses a (part of) HTML <img> element.
  */
-class HTMLSprite implements Sprite {
+class ImageSprite implements Sprite {
 
     /** Source image. */
     image: HTMLImageElement;
@@ -354,6 +354,6 @@ class ImageSpriteSheet extends SpriteSheet {
 	let dstRect = new Rect(
             -origin.x, -origin.y,
             w*this.size.x, h*this.size.y);
-	return new HTMLSprite(this.image, srcRect, dstRect);
+	return new ImageSprite(this.image, srcRect, dstRect);
     }
 }
