@@ -561,9 +561,9 @@ class Rect implements Shape {
 	    return new Vec2(this.x+this.width/2, this.y);
 	case 's':
 	    return new Vec2(this.x+this.width/2, this.y+this.height);
-	case 'e':
-	    return new Vec2(this.x, this.y+this.height/2);
 	case 'w':
+	    return new Vec2(this.x, this.y+this.height/2);
+	case 'e':
 	    return new Vec2(this.x+this.width, this.y+this.height/2);
 	default:
 	    return new Vec2(this.x+this.width/2, this.y+this.height/2);
@@ -645,9 +645,9 @@ class Rect implements Shape {
 	    return new Rect(this.x+(this.width-w)/2, this.y, w, h);
 	case 's':
 	    return new Rect(this.x+(this.width-w)/2, this.y+this.height-h, w, h);
-	case 'e':
-	    return new Rect(this.x, this.y+(this.height-h)/2, w, h);
 	case 'w':
+	    return new Rect(this.x, this.y+(this.height-h)/2, w, h);
+	case 'e':
 	    return new Rect(this.x+this.width-w, this.y+(this.height-h)/2, w, h);
 	default:
 	    return new Rect(this.x+(this.width-w)/2,
