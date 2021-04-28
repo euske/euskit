@@ -357,3 +357,36 @@ class ImageSpriteSheet extends SpriteSheet {
 	return new ImageSprite(this.image, srcRect, dstRect);
     }
 }
+
+
+/** Renders sprites with the specific parameters.
+ * @param ctx CanvasRenderingContext2D.
+ * @param sprites Array of Sprites.
+ * @param pos Position Vec2.
+ * @param rotation Rotation.
+ * @param scale Scale Vec2.
+ * @param alpha Alpha.
+ */
+function renderSprites(
+    ctx: CanvasRenderingContext2D,
+    sprites: Sprite[],
+    pos: Vec2=null,
+    rotation: number=0,
+    scale: Vec2=null,
+    alpha: number=1.0) {
+    ctx.save();
+    if (pos !== null) {
+        ctx.translate(pos.x, pos.y);
+    }
+    if (rotation != 0) {
+	ctx.rotate(rotation);
+    }
+    if (scale !== null) {
+	ctx.scale(scale.x, scale.y);
+    }
+    ctx.globalAlpha = alpha;
+    for (let sprite of sprites) {
+        sprite.render(ctx);
+    }
+    ctx.restore();
+}

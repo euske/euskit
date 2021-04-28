@@ -33,21 +33,9 @@ class Entity extends Task {
     }
 
     render(ctx: CanvasRenderingContext2D) {
-        ctx.save();
-        if (this.pos !== null) {
-            ctx.translate(this.pos.x, this.pos.y);
-        }
-        if (this.rotation) {
-	    ctx.rotate(this.rotation);
-        }
-        if (this.scale !== null) {
-	    ctx.scale(this.scale.x, this.scale.y);
-        }
-	ctx.globalAlpha = this.alpha;
-        for (let sprite of this.sprites) {
-            sprite.render(ctx);
-        }
-        ctx.restore();
+        renderSprites(
+            ctx, this.sprites, this.pos,
+            this.rotation, this.scale, this.alpha);
     }
 
     movePos(v: Vec2) {
