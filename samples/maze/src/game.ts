@@ -65,9 +65,12 @@ class Player extends Entity {
         this.tilemap = tilemap;
         let sprite = new RectSprite('#0f0', new Rect(-8,-8,16,16));
 	this.sprites = [sprite];
-	this.collider = sprite.getBounds();
 	this.usermove = new Vec2();
         this.prevmove = this.usermove;
+    }
+
+    getCollider(pos: Vec2) {
+        return this.sprites[0].getBounds().add(pos);
     }
 
     onTick() {
@@ -79,7 +82,7 @@ class Player extends Entity {
             } else {
                 this.prevmove = this.usermove.copy();
             }
-            let bounds = this.getCollider() as Rect;
+            let bounds = this.getCollider(this.pos) as Rect;
             if (this.tilemap.findTileByCoord(isGoal, bounds) !== null) {
                 this.goaled.fire();
             }
@@ -111,8 +114,11 @@ class Enemy extends WalkerEntity {
         let allowance = 4;
 	super(tilemap, isObstacle, grid, speed, sprite.getBounds(), pos, allowance);
 	this.sprites = [sprite];
-	this.collider = sprite.getBounds();
         this.target = target;
+    }
+
+    getCollider(pos: Vec2) {
+        return this.sprites[0].getBounds().add(pos);
     }
 
     onTick() {
@@ -163,7 +169,7 @@ class Game extends GameScene {
 
     onTick() {
 	super.onTick();
-        let target = this.player.getCollider() as Rect
+        let target = this.player.getCollider(this.player.pos) as Rect
         this.world.setCenter(target.inflate(96,96), this.tilemap.bounds);
     }
 

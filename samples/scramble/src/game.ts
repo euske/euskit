@@ -43,11 +43,16 @@ class Explosion extends Entity {
 //
 class Enemy extends Particle {
 
+    bounds: Rect;
     killed: Signal;
 
     constructor(pos: Vec2) {
 	super(pos);
 	this.killed = new Signal(this);
+    }
+
+    getCollider(pos: Vec2) {
+        return this.bounds.add(pos);
     }
 
     getFrame() {
@@ -72,7 +77,7 @@ class Enemy1 extends Enemy {
 	super(pos);
         let sprite = SPRITES.get(2);
 	this.sprites = [sprite];
-	this.collider = sprite.getBounds().inflate(-2,-2);
+	this.bounds = sprite.getBounds().inflate(-2,-2);
 	this.movement = new Vec2(-rnd(1,8), rnd(3)-1);
     }
 }
@@ -84,8 +89,12 @@ class Enemy2 extends Enemy {
 	super(pos);
 	let sprite = SPRITES.get(3);
         this.sprites = [sprite];
-	this.collider = sprite.getBounds().inflate(-2,-2);
+	this.bounds = sprite.getBounds().inflate(-2,-2);
 	this.movement = new Vec2(-rnd(1,4), 0);
+    }
+
+    getCollider(pos: Vec2) {
+        return this.bounds.add(pos);
     }
 
     onTick() {
@@ -104,7 +113,7 @@ class Fuel extends Enemy {
 	super(pos);
         let sprite = SPRITES.get(4);
 	this.sprites = [sprite];
-	this.collider = sprite.getBounds();
+	this.bounds = sprite.getBounds();
     }
 }
 
@@ -117,7 +126,7 @@ class Missile extends Enemy {
 	super(pos);
         let sprite = SPRITES.get(5);
 	this.sprites = [sprite];
-	this.collider = sprite.getBounds();
+	this.bounds = sprite.getBounds();
         this.threshold = threshold;
     }
 
@@ -134,12 +143,16 @@ class Missile extends Enemy {
 //
 class Bullet extends Particle {
 
+    bounds = new Rect(-4, -1, 8, 2);
+
     constructor(pos: Vec2) {
 	super(pos);
-	let bounds = new Rect(-4, -1, 8, 2);
-	this.sprites = [new RectSprite('white', bounds)];
-	this.collider = bounds;
+	this.sprites = [new RectSprite('white', this.bounds)];
 	this.movement = new Vec2(8, 0);
+    }
+
+    getCollider(pos: Vec2) {
+        return this.bounds.add(pos);
     }
 
     getFrame() {
@@ -152,22 +165,25 @@ class Bullet extends Particle {
 //
 class Bomb extends TileMapEntity {
 
+    bounds = new Rect(-3, -2, 6, 4);
     movement: Vec2;
 
     constructor(tilemap: TileMap, pos: Vec2) {
 	super(tilemap, null, pos);
-	let bounds = new Rect(-3, -2, 6, 4);
-	this.sprites = [new RectSprite('cyan', bounds)];
-	this.collider = bounds;
+	this.sprites = [new RectSprite('cyan', this.bounds)];
 	this.movement = new Vec2(2, 0);
+    }
+
+    getCollider(pos: Vec2) {
+        return this.bounds.add(pos);
     }
 
     onTick() {
         super.onTick();
 	this.movePos(this.movement);
         this.movement.y = upperbound(6, this.movement.y+1);
-	let collider = this.getCollider();
-	if (this.hasTile(isTerrain) ||
+	let collider = this.getCollider(this.pos);
+	if (this.hasTile(isTerrain, this.pos) ||
             !collider.overlaps(this.world.area)) {
 	    this.stop();
 	}
@@ -179,6 +195,7 @@ class Bomb extends TileMapEntity {
 //
 class Player extends TileMapEntity {
 
+    bounds: Rect;
     usermove: Vec2 = new Vec2();
     goalpos: Vec2 = null;
     firing: boolean = false;
@@ -190,7 +207,11 @@ class Player extends TileMapEntity {
 	super(tilemap, null, pos);
         let sprite = SPRITES.get(0);
 	this.sprites = [sprite];
-	this.collider = sprite.getBounds().inflate(-2,-2);
+	this.bounds = sprite.getBounds().inflate(-2,-2);
+    }
+
+    getCollider(pos: Vec2) {
+        return this.bounds.add(pos);
     }
 
     onTick() {
@@ -222,7 +243,7 @@ class Player extends TileMapEntity {
 	    }
             this.nextdrop--;
         }
-        if (this.hasTile(isTerrain)) {
+        if (this.hasTile(isTerrain, this.pos)) {
             this.onTileCollided();
         }
     }

@@ -504,7 +504,7 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 	return this.planmap.grabbable.exists(this.tilemap.coord2map(hitbox));
     }
     canClimbDown(p: Vec2) {
-	let rect = this.collider.getAABB();
+	let rect = this.getCollider(new Vec2()) as Rect;
 	let hitbox = this.getGridBoxAt(p).move(0, rect.height);
 	return this.planmap.grabbable.exists(this.tilemap.coord2map(hitbox));
     }

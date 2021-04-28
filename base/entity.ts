@@ -12,9 +12,9 @@ class Entity extends Task {
     world: World = null;
 
     pos: Vec2;
-    collider: Collider = null;
     sprites: Sprite[] = [];
     order: number = 0;
+
     rotation: number = 0;
     scale: Vec2 = null;
     alpha: number = 1.0;
@@ -42,13 +42,8 @@ class Entity extends Task {
 	this.pos = this.pos.add(v);
     }
 
-    getCollider(pos: Vec2=null) {
-	if (this.collider === null) return null;
-	if (pos === null) {
-	    pos = this.pos;
-	    if (pos === null) return null;
-	}
-	return this.collider.add(pos);
+    getCollider(pos: Vec2): Collider {
+        return null;
     }
 
     canMove(v0: Vec2, context=null as string) {
@@ -57,8 +52,8 @@ class Entity extends Task {
     }
 
     getMove(pos: Vec2, v: Vec2, context=null as string) {
-	if (this.collider === null) return v;
-	let collider = this.collider.add(pos);
+        let collider = this.getCollider(pos);
+	if (collider === null) return v;
 	let hitbox0 = collider.getAABB();
 	let range = hitbox0.union(hitbox0.add(v));
 	let obstacles = this.getObstaclesFor(range, v, context);
@@ -115,7 +110,7 @@ class Particle extends Entity {
 	    this.movePos(this.movement);
             let frame = this.getFrame();
 	    if (frame !== null) {
-		let collider = this.getCollider();
+		let collider = this.getCollider(this.pos);
 		if (collider !== null && !collider.overlaps(frame)) {
 		    this.stop();
 		}
@@ -143,7 +138,7 @@ class TileMapEntity extends Entity {
 	this.isObstacle = isObstacle;
     }
 
-    hasTile(f: (c:number)=>boolean, pos: Vec2=null) {
+    hasTile(f: (c:number)=>boolean, pos: Vec2) {
 	let range = this.getCollider(pos).getAABB();
 	return (this.tilemap.findTileByCoord(f, range) !== null);
     }
@@ -263,7 +258,7 @@ class PlatformerEntity extends PhysicalEntity {
 	this.tilemap = tilemap;
     }
 
-    hasTile(f: (c:number)=>boolean, pos: Vec2=null) {
+    hasTile(f: (c:number)=>boolean, pos: Vec2) {
 	let range = this.getCollider(pos).getAABB();
 	return (this.tilemap.findTileByCoord(f, range) !== null);
     }

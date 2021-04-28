@@ -34,7 +34,10 @@ class Player extends Entity {
 	super(pos);
         let sprite = SPRITES.get(0, 0, 1, 1, new Vec2(8,8));
 	this.sprites = [sprite]
-	this.collider = sprite.getBounds();
+    }
+
+    getCollider(pos: Vec2) {
+	return this.sprites[0].getBounds().add(pos);
     }
 
     onTick() {
@@ -168,7 +171,8 @@ class Racing extends GameScene {
     onTick() {
 	super.onTick();
 	if (this.player.isRunning()) {
-	    let b = this.player.getCollider().move(0, this.track.offset) as Rect;
+            let collider = this.player.getCollider(this.player.pos);
+	    let b = collider.move(0, this.track.offset) as Rect;
 	    if (this.track.isFloor(b)) {
 		let speed = int((1.0-this.player.pos.y/this.screen.height)*16);
 		this.track.proceed(speed);

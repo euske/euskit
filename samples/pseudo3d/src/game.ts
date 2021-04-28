@@ -84,7 +84,7 @@ class Entity3d extends Entity {
 	this.z += v.z;
     }
 
-    getCollider3(pos3: Vec3=null) {
+    getCollider3(pos3: Vec3) {
 	let pos = (pos3 !== null)? new Vec2(pos3.x, pos3.y) : this.pos;
 	let z = (pos3 !== null)? pos3.z : this.z;
 	let bounds = this.getCollider(pos).getAABB();
@@ -270,13 +270,19 @@ addInitHook(() => {
 //
 class Thingy extends Entity3d {
 
+    bounds: Rect;
+
     constructor(pos: Vec2) {
 	super(pos);
         let sprite = SPRITES.get(S.THINGY);
 	this.sprites = [sprite];
-	this.collider = sprite.getBounds().inflate(-4, -4);
+	this.bounds = sprite.getBounds().inflate(-4, -4);
         this.shadow3 = new ShadowSprite3();
 	this.z = 4;
+    }
+
+    getCollider(pos: Vec2) {
+        return this.bounds.add(pos);
     }
 }
 
@@ -285,6 +291,7 @@ class Thingy extends Entity3d {
 //
 class Player extends Entity3d {
 
+    bounds: Rect;
     tilemap: TileMap;
     picked: Signal;
 
@@ -300,7 +307,7 @@ class Player extends Entity3d {
 	this.picked = new Signal(this);
 	let sprite = SPRITES.get(S.PLAYER);
 	this.sprites = [sprite];
-	this.collider = sprite.getBounds().inflate(-4, -4);
+	this.bounds = sprite.getBounds().inflate(-4, -4);
 	this.depth = this.tilemap.tilesize;
         this.shadow3 = new ShadowSprite3();
 	this.maxspeed3 = new Vec3(16, 16, 16);
@@ -308,6 +315,10 @@ class Player extends Entity3d {
 	    return (0<=t && t<=7)? 8 : vz-2;
 	};
 	this.usermove3 = new Vec3();
+    }
+
+    getCollider(pos: Vec2) {
+        return this.bounds.add(pos);
     }
 
     isFloating(): boolean {
@@ -368,12 +379,12 @@ class Player extends Entity3d {
 	}
         let z0 = 0;
 	if (this.isFloating() &&
-	    this.tilemap.findTileByCoord(isBlock, this.getCollider().getAABB())) {
+	    this.tilemap.findTileByCoord(isBlock, this.getCollider(this.pos).getAABB())) {
             z0 = this.tilemap.tilesize/2;
         }
 	this.shadow3.dz = this.z - z0;
 	let window = this.world3.window;
-	if (!window.overlaps(this.getCollider())) {
+	if (!window.overlaps(this.getCollider(this.pos))) {
 	    this.stop();
 	}
     }

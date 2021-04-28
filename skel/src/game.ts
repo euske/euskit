@@ -29,8 +29,11 @@ class Player extends Entity {
 	super(pos);
         let sprite = SPRITES.get(0);
 	this.sprites = [sprite];
-	this.collider = sprite.getBounds();
 	this.usermove = new Vec2();
+    }
+
+    getCollider(pos: Vec2) {
+        return this.sprites[0].getBounds().add(pos);
     }
 
     onTick() {

@@ -18,17 +18,20 @@
 //
 class Paddle extends Entity {
 
+    bounds = new Rect(-20,-5,40,10);
     screen: Rect;		// Screen bounds.
     vx: number;			// Moving direction.
 
     constructor(screen: Rect) {
 	// Initializes the position and shape.
 	super(screen.anchor('s').move(0,-20));
-	let bounds = new Rect(-20,-5,40,10);
-	this.sprites = [new RectSprite('green', bounds)];
-	this.collider = bounds;
+	this.sprites = [new RectSprite('green', this.bounds)];
 	this.screen = screen;
 	this.vx = 0;
+    }
+
+    getCollider(pos: Vec2) {
+        return this.bounds.add(pos);
     }
 
     onTick() {
@@ -47,17 +50,20 @@ class Paddle extends Entity {
 //
 class Ball extends Entity {
 
+    bounds = new Rect(-5,-5,10,10);
     screen: Rect;		// Screen bounds.
     v: Vec2;			// Moving direction.
 
     constructor(screen: Rect) {
 	// Initializes the position and shape.
 	super(screen.center());
-	let bounds = new Rect(-5,-5,10,10);
-	this.sprites = [new OvalSprite('white', bounds)];
-	this.collider = bounds;
+	this.sprites = [new OvalSprite('white', this.bounds)];
 	this.screen = screen;
 	this.v = new Vec2(rnd(2)*8-4, -4);
+    }
+
+    getCollider(pos: Vec2) {
+        return this.bounds.add(pos);
     }
 
     onTick() {

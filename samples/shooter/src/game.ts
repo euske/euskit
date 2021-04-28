@@ -26,12 +26,16 @@ addInitHook(() => {
 //
 class Bullet extends Particle {
 
+    bounds = new Rect(-4, -1, 8, 2);
+
     constructor(pos: Vec2) {
 	super(pos);
-	let bounds = new Rect(-4, -1, 8, 2);
-	this.sprites = [new RectSprite('white', bounds)];
-	this.collider = bounds;
+	this.sprites = [new RectSprite('white', this.bounds)];
 	this.movement = new Vec2(8, 0);
+    }
+
+    getCollider(pos: Vec2) {
+        return this.bounds.add(pos);
     }
 
     getFrame() {
@@ -63,7 +67,10 @@ class Player extends Entity {
 	super(pos);
         let sprite = SPRITES.get(0);
 	this.sprites = [sprite];
-	this.collider = sprite.getBounds();
+    }
+
+    getCollider(pos: Vec2) {
+        return this.sprites[0].getBounds().add(pos);
     }
 
     onTick() {
@@ -121,6 +128,10 @@ class EnemyBase extends Particle {
 	this.killed = new Signal(this);
     }
 
+    getCollider(pos: Vec2) {
+        return this.sprites[0].getBounds().add(pos);
+    }
+
     getFrame() {
 	return this.world.area;
     }
@@ -144,7 +155,6 @@ class Enemy1 extends EnemyBase {
 	super(pos);
         let sprite = SPRITES.get(1);
 	this.sprites = [sprite];
-	this.collider = sprite.getBounds();
 	this.movement = new Vec2(-rnd(1,8), rnd(3)-1);
     }
 }
@@ -158,7 +168,6 @@ class Enemy2 extends EnemyBase {
 	super(pos);
 	let sprite = SPRITES.get(2);
         this.sprites = [sprite];
-	this.collider = sprite.getBounds();
 	this.movement = new Vec2(-rnd(1,4), 0);
     }
 
