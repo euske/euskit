@@ -72,7 +72,7 @@ class App {
 	// WebAudio!
 	try {
 	    this.audioContext = new AudioContext();
-	} catch (e) {
+	} catch (error) {
 	    this.audioContext = null;
 	}
 
@@ -354,16 +354,22 @@ function main<T extends Scene>(
     let size = new Vec2(width, height);
     let app = new App(size, framerate, elem);
     let canvas = app.canvas;
+    let interval: number;
 
     function tick() {
-	if (app.active) {
+        if (!app.active) return;
+        try {
 	    app.tick();
 	    app.repaint();
-	}
+        } catch (error) {
+            teardown();
+            throw error;
+        }
     }
 
     function keydown(e: KeyboardEvent) {
-	if (app.active) {
+        if (!app.active) return;
+        try {
 	    switch (e.keyCode) {
 	    case 17:			// Control
 	    case 18:			// Meta
@@ -389,11 +395,15 @@ function main<T extends Scene>(
 		e.preventDefault();
 		break;
 	    }
-	}
+        } catch (error) {
+            teardown();
+            throw error;
+        }
     }
 
     function keyup(e: KeyboardEvent) {
-	if (app.active) {
+	if (!app.active) return;
+        try {
 	    switch (e.keyCode) {
 	    case 17:			// Control
 	    case 18:			// Meta
@@ -402,65 +412,105 @@ function main<T extends Scene>(
 		app.keyUp(e);
 		break;
 	    }
+        } catch (error) {
+            teardown();
+            throw error;
 	}
     }
 
     function keypress(e: KeyboardEvent) {
-	if (app.active) {
+	if (!app.active) return;
+        try {
 	    app.keyPress(e);
+        } catch (error) {
+            teardown();
+            throw error;
 	}
     }
 
     function mousedown(e: MouseEvent) {
-	if (app.active) {
+	if (!app.active) return;
+        try {
 	    app.mouseDown(e);
+        } catch (error) {
+            teardown();
+            throw error;
 	}
     }
 
     function mouseup(e: MouseEvent) {
-	if (app.active) {
+	if (!app.active) return;
+        try {
 	    app.mouseUp(e);
+        } catch (error) {
+            teardown();
+            throw error;
 	}
     }
 
     function mousemove(e: MouseEvent) {
-	if (app.active) {
+	if (!app.active) return;
+        try {
 	    app.mouseMove(e);
+        } catch (error) {
+            teardown();
+            throw error;
 	}
     }
 
     function touchstart(e: TouchEvent) {
-	if (app.active) {
+	if (!app.active) return;
+        try {
 	    app.touchStart(e);
 	    e.preventDefault();
+        } catch (error) {
+            teardown();
+            throw error;
 	}
     }
 
     function touchend(e: TouchEvent) {
-	if (app.active) {
+	if (!app.active) return;
+        try {
 	    app.touchEnd(e);
 	    e.preventDefault();
+        } catch (error) {
+            teardown();
+            throw error;
 	}
     }
 
     function touchmove(e: TouchEvent) {
-	if (app.active) {
+	if (!app.active) return;
+        try {
 	    app.touchMove(e);
 	    e.preventDefault();
+        } catch (error) {
+            teardown();
+            throw error;
 	}
     }
 
     function focus(e: FocusEvent) {
 	info("app.focus");
-	if (!app.active) {
+	if (app.active) return;
+        try {
 	    app.focus();
+        } catch (error) {
+            teardown();
+            throw error;
 	}
     }
 
     function blur(e: FocusEvent) {
 	info("app.blur");
 	if (app.active) {
-	    app.blur();
+            try {
+	        app.blur();
+            } catch (error) {
+                teardown();
+                throw error;
+            }
 	}
 	let size = Math.min(canvas.width, canvas.height)/8;
 	let ctx = canvas.getContext('2d');
@@ -494,6 +544,40 @@ function main<T extends Scene>(
 	canvas.style.height = ch+'px';
     }
 
+    function setup() {
+        console.info("app.setup");
+        elem.addEventListener('mousedown', mousedown, false);
+        elem.addEventListener('mouseup', mouseup, false);
+        elem.addEventListener('mousemove', mousemove, false);
+        elem.addEventListener('touchstart', touchstart, false);
+        elem.addEventListener('touchend', touchend, false);
+        elem.addEventListener('touchmove', touchmove, false);
+        window.addEventListener('focus', focus);
+        window.addEventListener('blur', blur);
+        window.addEventListener('keydown', keydown);
+        window.addEventListener('keyup', keyup);
+        window.addEventListener('keypress', keypress);
+        window.addEventListener('resize', resize);
+        interval = window.setInterval(tick, 1000/framerate);
+    }
+
+    function teardown() {
+        console.info("app.teardown");
+        elem.removeEventListener('mousedown', mousedown);
+        elem.removeEventListener('mouseup', mouseup);
+        elem.removeEventListener('mousemove', mousemove);
+        elem.removeEventListener('touchstart', touchstart);
+        elem.removeEventListener('touchend', touchend);
+        elem.removeEventListener('touchmove', touchmove);
+        window.removeEventListener('focus', focus);
+        window.removeEventListener('blur', blur);
+        window.removeEventListener('keydown', keydown);
+        window.removeEventListener('keyup', keyup);
+        window.removeEventListener('keypress', keypress);
+        window.removeEventListener('resize', resize);
+        window.clearInterval(interval);
+    }
+
     APP = app;
     if (APP.audioContext !== null) {
 	for (let id in APP.sounds) {
@@ -508,20 +592,8 @@ function main<T extends Scene>(
     app.init(new scene0());
     app.focus();
     elem.appendChild(canvas);
-    elem.addEventListener('mousedown', mousedown, false);
-    elem.addEventListener('mouseup', mouseup, false);
-    elem.addEventListener('mousemove', mousemove, false);
-    elem.addEventListener('touchstart', touchstart, false);
-    elem.addEventListener('touchend', touchend, false);
-    elem.addEventListener('touchmove', touchmove, false);
     elem.focus();
     resize(null);
-    window.addEventListener('focus', focus);
-    window.addEventListener('blur', blur);
-    window.addEventListener('keydown', keydown);
-    window.addEventListener('keyup', keyup);
-    window.addEventListener('keypress', keypress);
-    window.addEventListener('resize', resize);
-    window.setInterval(tick, 1000/framerate);
+    setup();
     window.focus();
 }
