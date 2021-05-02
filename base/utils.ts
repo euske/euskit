@@ -313,8 +313,7 @@ function drawImageScaled(
 
 /** Key Symbol */
 enum KeySym {
-    Unknown = -1,
-    Nop = 0,
+    Unknown = 0,
     Left,
     Right,
     Up,
@@ -330,13 +329,6 @@ enum KeySym {
 function getKeySym(keyCode: number): KeySym
 {
     switch (keyCode) {
-    case 9:			// Tab
-    case 14:			// Enter
-    case 33:			// PageUp
-    case 34:			// PageDown
-    case 35:			// End
-    case 36:			// Home
-        return KeySym.Nop;
     case 37:			// LEFT
     case 65:			// A
     case 72:			// H
