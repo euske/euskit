@@ -34,12 +34,14 @@ enum T {
     ENEMY = 8,
     PLAYER = 9,
 }
-addInitHook(() => {
+function main() {
+    APP = new App(640, 480);
     SPRITES = new ImageSpriteSheet(
 	APP.images['sprites'], new Vec2(32,32), new Vec2(16,16));
     TILES = new ImageSpriteSheet(
 	APP.images['tiles'], new Vec2(48,48), new Vec2(0,16));
-});
+    APP.init(new Game());
+}
 
 
 function findShadowPos(tilemap: TileMap, pos: Vec2) {

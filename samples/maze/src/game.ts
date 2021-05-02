@@ -202,3 +202,9 @@ class GoalScene extends HTMLScene {
 	this.changeScene(new Game());
     }
 }
+
+
+function main() {
+    APP = new App(320, 240);
+    APP.init(new Game());
+}

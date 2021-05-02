@@ -158,7 +158,7 @@ It does the basic pluming and resource management (images and sounds); it has
 an event loop and connect the game with all the external parts (i.e. a browser).
 Typically, you don't have to change this class.
 <table border>
-<tr class=ctor><td><code>new App(<u>size</u>, <u>framerate</u>, <u>elem</u>)</code></td>
+<tr class=ctor><td><code>new App(<br>&nbsp; <u>width</u>, <u>height</u>, <br>&nbsp; <u>elemId</u>="game", <br>&nbsp; <u>framerate</u>=30)</code></td>
   <td>Creates a new app with given HTML5 resources.</td></tr>
 <tr><td><code>.size</code></td>
   <td>Canvas size.</td></tr>
@@ -190,6 +190,12 @@ Typically, you don't have to change this class.
   <td>Current position of the mouse pointer.</td></tr>
 <tr><td><code>.mouseButton</code></td>
   <td>Current state of the mouse button.</td></tr>
+<tr><td><code>.init(<u>scene</u>)</code></td>
+  <td>Initializes the game with the first <code>Scene</code>.</td></tr>
+<tr><td><code>.start()</code></td>
+  <td>Starts the game.</td></tr>
+<tr><td><code>.stop()</code></td>
+  <td>Stops the game.</td></tr>
 <tr><td><code>.addElement(<u>bounds</u>)</code></td>
   <td>Adds a new <code>&lt;div&gt;</code> element to the canvas.</td></tr>
 <tr><td><code>.removeElement(<u>elem</u>)</code></td>
@@ -201,8 +207,8 @@ Typically, you don't have to change this class.
   <td>Starts playing the music. When name is <code>null</code>, it stops music.</td></tr>
 <tr><td><code>.playSound(<u>name</u>, <u>start</u>=0)</code></td>
   <td>Plays the specified sound.</td></tr>
-<tr><td><code>.init(scene)</code></td>
-  <td>Initializes the game with the first <code>Scene</code>.</td></tr>
+<tr><td><code>.setScene(<u>scene</u>)</code></td>
+  <td>Switches the game to the <code>scene</code>.</td></tr>
 <tr><td><code>.post(msg)</code></td>
   <td>Queues a function that is to be executed at the end of the frame.</td></tr>
 </table>

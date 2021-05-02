@@ -12,6 +12,36 @@
 //  pseudo-3d objects.
 //
 
+//  Initialize the resources.
+let FONT: Font;
+let SPRITES: SpriteSheet;
+let TILES: SpriteSheet;
+function main() {
+    APP = new App(320, 240);
+    FONT = new ShadowFont(APP.images['font'], 'white'),
+    SPRITES = new ImageSpriteSheet(
+	APP.images['sprites'], new Vec2(32,32), new Vec2(16,16));
+    TILES = new ImageSpriteSheet(
+	APP.images['tiles'], new Vec2(48,48), new Vec2(0,8));
+    APP.init(new Game());
+}
+
+// Define constants.
+enum T {
+    NONE = 0,
+    BLOCK = 1,
+    WALL = 2,
+    THINGY = 3,
+}
+enum S {
+    PLAYER = 0,
+    SHADOW = 1,
+    THINGY = 2,
+    YAY = 3,
+}
+let isBlock = (c:number) => { return c == T.BLOCK; };
+let isWall = (c:number) => { return c == T.WALL; };
+
 // getContact3: performs collision detection for given Boxes.
 const GROUND = new AAPlane(
     new Vec3(-Infinity, -Infinity, 0),
@@ -237,33 +267,6 @@ class World3 extends World {
         super.render(ctx);
     }
 }
-
-
-enum T {
-    NONE = 0,
-    BLOCK = 1,
-    WALL = 2,
-    THINGY = 3,
-}
-enum S {
-    PLAYER = 0,
-    SHADOW = 1,
-    THINGY = 2,
-    YAY = 3,
-}
-//  Initialize the resources.
-let FONT: Font;
-let SPRITES: SpriteSheet;
-let TILES: SpriteSheet;
-let isBlock = (c:number) => { return c == T.BLOCK; };
-let isWall = (c:number) => { return c == T.WALL; };
-addInitHook(() => {
-    FONT = new ShadowFont(APP.images['font'], 'white'),
-    SPRITES = new ImageSpriteSheet(
-	APP.images['sprites'], new Vec2(32,32), new Vec2(16,16));
-    TILES = new ImageSpriteSheet(
-	APP.images['tiles'], new Vec2(48,48), new Vec2(0,8));
-});
 
 
 //  Thingy

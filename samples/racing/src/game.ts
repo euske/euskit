@@ -17,11 +17,13 @@
 //  Initialize the resources.
 let FONT: Font;
 let SPRITES:ImageSpriteSheet;
-addInitHook(() => {
+function main() {
+    APP = new App(128, 160);
     FONT = new Font(APP.images['font'], 'white');
     SPRITES = new ImageSpriteSheet(
 	APP.images['sprites'], new Vec2(16,32), new Vec2(0,0));
-});
+    APP.init(new Racing());
+}
 
 
 //  Player

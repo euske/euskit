@@ -13,10 +13,12 @@
 //  Initialize the resources.
 let FONT: Font;
 let HIFONT: Font;
-addInitHook(() => {
+function main() {
+    APP = new App(320, 240);
     FONT = new Font(APP.images['font'], 'white');
     HIFONT = new InvertedFont(APP.images['font'], 'white');
-});
+    APP.init(new Adventure());
+}
 
 
 //  PictureScene

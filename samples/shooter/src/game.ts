@@ -15,11 +15,13 @@
 //  Initialize the resources.
 let FONT: Font;
 let SPRITES:ImageSpriteSheet;
-addInitHook(() => {
+function main() {
+    APP = new App(320, 240);
     FONT = new Font(APP.images['font'], 'white');
     SPRITES = new ImageSpriteSheet(
 	APP.images['sprites'], new Vec2(16,16), new Vec2(8,8));
-});
+    APP.init(new Shooter());
+}
 
 
 //  Bullet

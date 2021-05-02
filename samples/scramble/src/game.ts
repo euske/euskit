@@ -17,11 +17,13 @@ let FONT: Font;
 let SPRITES:ImageSpriteSheet;
 let TILES:SpriteSheet = new ArraySpriteSheet(
     [null, new RectSprite('red', new Rect(0,0,16,16))]);
-addInitHook(() => {
+function main() {
+    APP = new App(320, 240);
     FONT = new Font(APP.images['font'], 'white');
     SPRITES = new ImageSpriteSheet(
 	APP.images['sprites'], new Vec2(16,16), new Vec2(8,8));
-});
+    APP.init(new Scramble());
+}
 
 function isTerrain(c:number) {
     return (c != 0);

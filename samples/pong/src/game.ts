@@ -101,6 +101,7 @@ class Pong extends GameScene {
 
     onStart() {
 	super.onStart();
+        console.info("pong.start");
 	// Places the objects.
 	this.paddle = new Paddle(this.screen);
 	this.add(this.paddle);
@@ -128,4 +129,11 @@ class Pong extends GameScene {
 	// Paints everything else.
 	super.render(ctx);
     }
+}
+
+
+// main: sets up the browser interaction.
+function main() {
+    APP = new App(320, 240);
+    APP.init(new Pong());
 }

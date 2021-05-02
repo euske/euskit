@@ -32,13 +32,15 @@ function getprops(a: HTMLCollectionOf<Element>) {
 //
 class App {
 
-    size: Vec2;
+    width: number;
+    height: number;
     framerate: number;
     elem: HTMLElement;
 
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
     audioContext: AudioContext;
+    interval: number;
 
     images: ImageAsset;
     sounds: AudioAsset;
@@ -58,31 +60,187 @@ class App {
     private _loop_end: number = 0;
     private _touch_id: any = null;
 
-    constructor(size: Vec2,
-		framerate: number,
-		elem: HTMLElement) {
-	this.size = size;
+    constructor(width: number, height: number,
+		elemId='game', framerate=30) {
+	this.width = width;
+        this.height = height;
 	this.framerate = framerate;
-	this.elem = elem;
+	this.elem = document.getElementById(elemId);
 
 	// Initialize the off-screen bitmap.
-	this.canvas = createCanvas(this.size.x, this.size.y);
+	this.canvas = createCanvas(this.width, this.height);
 	this.ctx = getEdgeyContext(this.canvas);
-
-	// WebAudio!
-	try {
-	    this.audioContext = new AudioContext();
-	} catch (error) {
-	    this.audioContext = null;
-	}
+        this.elem.appendChild(this.canvas);
 
 	// Resources;
 	this.images = getprops(document.getElementsByTagName('img')) as ImageAsset;
 	this.sounds = getprops(document.getElementsByTagName('audio')) as AudioAsset;
 	this.labels = getprops(document.getElementsByClassName('label')) as TextAsset;
+
+	// Initialize WebAudio.
+	try {
+	    this.audioContext = new AudioContext();
+	    for (let id in this.sounds) {
+	        let source = this.audioContext.createMediaElementSource(this.sounds[id]);
+	        source.connect(this.audioContext.destination);
+	    }
+	} catch (error) {
+	    this.audioContext = null;
+	}
     }
 
     init(scene: Scene) {
+        let app = this;
+        function tick() {
+            try { app.tick(); } catch (e) { uninit(); throw e; }
+        }
+        function keydown(ev: KeyboardEvent) {
+            try { app.keyDown(ev); } catch (e) { uninit(); throw e; }
+        }
+        function keyup(ev: KeyboardEvent) {
+            try { app.keyUp(ev); } catch (e) { uninit(); throw e; }
+        }
+        function keypress(ev: KeyboardEvent) {
+            try { app.keyPress(ev); } catch (e) { uninit(); throw e; }
+	}
+        function mousedown(ev: MouseEvent) {
+            try { app.mouseDown(ev); } catch (e) { uninit(); throw e; }
+        }
+        function mouseup(ev: MouseEvent) {
+            try { app.mouseUp(ev); } catch (e) { uninit(); throw e; }
+	}
+        function mousemove(ev: MouseEvent) {
+            try { app.mouseMove(ev); } catch (e) { uninit(); throw e; }
+        }
+        function touchstart(ev: TouchEvent) {
+            try { app.touchStart(ev); } catch (e) { uninit(); throw e; }
+        }
+        function touchend(ev: TouchEvent) {
+            try { app.touchEnd(ev); } catch (e) { uninit(); throw e; }
+        }
+        function touchmove(ev: TouchEvent) {
+            try { app.touchMove(ev); } catch (e) { uninit(); throw e; }
+        }
+        function focus(ev: FocusEvent) {
+            try { app.start(); } catch (e) { uninit(); throw e; }
+        }
+        function blur(ev: FocusEvent) {
+            try { app.stop(); } catch (e) { uninit(); throw e; }
+	}
+        function resize(ev: Event) { app.resize(); }
+
+        function uninit() {
+            console.info("app.uninit");
+            app.elem.removeEventListener('mousedown', mousedown);
+            app.elem.removeEventListener('mouseup', mouseup);
+            app.elem.removeEventListener('mousemove', mousemove);
+            app.elem.removeEventListener('touchstart', touchstart);
+            app.elem.removeEventListener('touchend', touchend);
+            app.elem.removeEventListener('touchmove', touchmove);
+            window.removeEventListener('focus', focus);
+            window.removeEventListener('blur', blur);
+            window.removeEventListener('keydown', keydown);
+            window.removeEventListener('keyup', keyup);
+            window.removeEventListener('keypress', keypress);
+            window.removeEventListener('resize', resize);
+            window.clearInterval(app.interval);
+        }
+
+        this.resize();
+        this.elem.addEventListener('mousedown', mousedown, false);
+        this.elem.addEventListener('mouseup', mouseup, false);
+        this.elem.addEventListener('mousemove', mousemove, false);
+        this.elem.addEventListener('touchstart', touchstart, false);
+        this.elem.addEventListener('touchend', touchend, false);
+        this.elem.addEventListener('touchmove', touchmove, false);
+        window.addEventListener('focus', focus);
+        window.addEventListener('blur', blur);
+        window.addEventListener('keydown', keydown);
+        window.addEventListener('keyup', keyup);
+        window.addEventListener('keypress', keypress);
+        window.addEventListener('resize', resize);
+        window.focus();
+        this.interval = window.setInterval(tick, 1000/this.framerate);
+        console.info("app.init");
+
+        this.setScene(scene);
+        this.start();
+    }
+
+    start() {
+	if (this.active) return;
+        console.info("app.start");
+	this.active = true;
+        this.elem.focus();
+	if (this._music !== null && 0 < this._music.currentTime) {
+	    this._music.play();
+	}
+	this.scene.onFocus();
+    }
+
+    stop() {
+	if (!this.active) return;
+        console.info("app.stop");
+	this.active = false;
+	this.scene.onBlur();
+	if (this._music !== null) {
+	    this._music.pause();
+	}
+        let width = this.canvas.width;
+        let height = this.canvas.height;
+	let asize = Math.min(width, height)/8;
+	let ctx = this.canvas.getContext('2d');
+	ctx.save();
+	ctx.fillStyle = 'rgba(0,0,64, 0.5)'; // gray out.
+	ctx.fillRect(0, 0, width, height);
+	ctx.fillStyle = 'lightgray';
+	ctx.beginPath();		// draw a play button.
+	ctx.moveTo(width/2-asize, height/2-asize);
+	ctx.lineTo(width/2-asize, height/2+asize);
+	ctx.lineTo(width/2+asize, height/2);
+	ctx.fill();
+	ctx.restore();
+    }
+
+    resize() {
+	let bounds = this.elem.getBoundingClientRect();
+	// Center the canvas.
+	let cw = bounds.width, ch = bounds.height;
+	if (this.canvas.height*bounds.width < this.canvas.width*bounds.height) {
+	    ch = int(this.canvas.height * bounds.width / this.canvas.width);
+	} else {
+	    cw = int(this.canvas.width * bounds.height / this.canvas.height);
+	}
+	this.canvas.style.position = 'absolute';
+	this.canvas.style.padding = '0px';
+	this.canvas.style.left = ((bounds.width-cw)/2)+'px';
+	this.canvas.style.top = ((bounds.height-ch)/2)+'px';
+	this.canvas.style.width = cw+'px';
+	this.canvas.style.height = ch+'px';
+    }
+
+    tick() {
+        if (!this.active) return;
+        if (this.scene === null) return;
+	this.scene.onTick();
+	if (0 < this._keylock && this._keylock < getTime()) {
+	    this._keylock = 0;
+	}
+
+	if (this._music !== null &&
+	    this._loop_start < this._loop_end &&
+	    this._loop_end <= this._music.currentTime) {
+	    this._music.currentTime = this._loop_start;
+	}
+
+	while (0 < this._msgs.length) {
+	    let msg = this._msgs.shift();
+	    msg();
+	}
+        this.repaint();
+    }
+
+    setScene(scene: Scene) {
 	removeChildren(this.elem, 'div');
 	this.setMusic();
         if (this.scene !== null) {
@@ -90,6 +248,7 @@ class App {
         }
 	this.scene = scene;
 	this.scene.onStart();
+        console.info("app.setScene:", scene);
     }
 
     post(msg: Action) {
@@ -117,6 +276,21 @@ class App {
     }
 
     keyDown(ev: KeyboardEvent) {
+        switch (ev.keyCode) {
+        case 17:
+        case 18:
+            // Ignore Control or Meta;
+            return;
+        case 27:
+            // ESC to toggle.
+	    if (this.active) {
+		this.stop();
+	    } else {
+		this.start();
+	    }
+            return;
+        }
+        if (!this.active) return;
 	if (0 < this._keylock) return;
 	let keysym = getKeySym(ev.keyCode);
 	switch (keysym) {
@@ -143,25 +317,33 @@ class App {
 		this.scene.onButtonPressed(keysym);
 	    }
 	    break;
-	default:
-	    switch (ev.keyCode) {
-	    case 112:			// F1
-		break;
-	    case 27:			// ESC
-		if (this.active) {
-		    this.blur();
-		} else {
-		    this.focus();
-		}
-		break;
-	    }
-	    break;
 	}
 	this.keys[keysym] = true;
 	this.scene.onKeyDown(ev.keyCode);
+        // Prevent defaults.
+	switch (ev.keyCode) {
+	case 8:             // Backspace
+	case 9:             // Tab
+	case 13:            // Return
+	case 14:            // Enter
+	case 32:            // Space
+	case 33:            // PageUp
+	case 34:            // PageDown
+	case 35:            // End
+	case 36:            // Home
+	case 37:            // Left
+	case 38:            // Up
+	case 39:            // Right
+	case 40:            // Down
+	    ev.preventDefault();
+	    break;
+	}
     }
 
     keyUp(ev: KeyboardEvent) {
+	if (!this.active) return;
+        // Ignore Control or Meta;
+        if (ev.keyCode == 17 || ev.keyCode == 18) return;
 	let keysym = getKeySym(ev.keyCode);
 	switch (keysym) {
 	case KeySym.Left:
@@ -193,6 +375,7 @@ class App {
     }
 
     keyPress(ev: KeyboardEvent) {
+	if (!this.active) return;
 	this.scene.onKeyPress(ev.charCode);
     }
 
@@ -204,6 +387,7 @@ class App {
     }
 
     mouseDown(ev: MouseEvent) {
+	if (!this.active) return;
 	this.updateMousePos(ev);
 	switch (ev.button) {
 	case 0:
@@ -214,6 +398,7 @@ class App {
     }
 
     mouseUp(ev: MouseEvent) {
+	if (!this.active) return;
 	this.updateMousePos(ev);
 	switch (ev.button) {
 	case 0:
@@ -224,11 +409,13 @@ class App {
     }
 
     mouseMove(ev: MouseEvent) {
+	if (!this.active) return;
 	this.updateMousePos(ev);
 	this.scene.onMouseMove(this.mousePos);
     }
 
     touchStart(ev: TouchEvent) {
+	if (!this.active) return;
 	let touches = ev.changedTouches;
 	for (let i = 0; i < touches.length; i++) {
 	    let t = touches[i];
@@ -239,9 +426,11 @@ class App {
 		this.scene.onMouseDown(this.mousePos, 0);
 	    }
 	}
+	ev.preventDefault();
     }
 
     touchEnd(ev: TouchEvent) {
+	if (!this.active) return;
 	let touches = ev.changedTouches;
 	for (let i = 0; i < touches.length; i++) {
 	    let t = touches[i];
@@ -252,9 +441,11 @@ class App {
 		this.scene.onMouseUp(this.mousePos, 0);
 	    }
 	}
+	ev.preventDefault();
     }
 
     touchMove(ev: TouchEvent) {
+	if (!this.active) return;
 	let touches = ev.changedTouches;
 	for (let i = 0; i < touches.length; i++) {
 	    let t = touches[i];
@@ -263,40 +454,7 @@ class App {
 		this.scene.onMouseMove(this.mousePos);
 	    }
 	}
-    }
-
-    focus() {
-	this.active = true;
-	if (this._music !== null && 0 < this._music.currentTime) {
-	    this._music.play();
-	}
-	this.scene.onFocus();
-    }
-
-    blur() {
-	this.scene.onBlur();
-	if (this._music !== null) {
-	    this._music.pause();
-	}
-	this.active = false;
-    }
-
-    tick() {
-	this.scene.onTick();
-	if (0 < this._keylock && this._keylock < getTime()) {
-	    this._keylock = 0;
-	}
-
-	if (this._music !== null &&
-	    this._loop_start < this._loop_end &&
-	    this._loop_end <= this._music.currentTime) {
-	    this._music.currentTime = this._loop_start;
-	}
-
-	while (0 < this._msgs.length) {
-	    let msg = this._msgs.shift();
-	    msg();
-	}
+	ev.preventDefault();
     }
 
     repaint() {
@@ -336,264 +494,10 @@ class App {
 }
 
 
-//  Global hook.
-var HOOKS: (()=>any)[] = [];
-// addInitHook: adds an initialization hoook.
-function addInitHook(hook: ()=>any) {
-    HOOKS.push(hook);
-}
-
 var APP: App = null;
 
 // main: sets up the browser interaction.
-function main<T extends Scene>(
-    scene0: { new():T; },
-    width=320, height=240, elemId='game', framerate=30)
-{
-    let elem = document.getElementById(elemId);
-    let size = new Vec2(width, height);
-    let app = new App(size, framerate, elem);
-    let canvas = app.canvas;
-    let interval: number;
-
-    function tick() {
-        if (!app.active) return;
-        try {
-	    app.tick();
-	    app.repaint();
-        } catch (error) {
-            teardown();
-            throw error;
-        }
-    }
-
-    function keydown(e: KeyboardEvent) {
-        if (!app.active) return;
-        try {
-	    switch (e.keyCode) {
-	    case 17:			// Control
-	    case 18:			// Meta
-		break;
-	    default:
-		app.keyDown(e);
-		break;
-	    }
-	    switch (e.keyCode) {
-	    case 8:			// Backspace
-	    case 9:			// Tab
-	    case 13:			// Return
-	    case 14:			// Enter
-	    case 32:			// Space
-	    case 33:			// PageUp
-	    case 34:			// PageDown
-	    case 35:			// End
-	    case 36:			// Home
-	    case 37:			// Left
-	    case 38:			// Up
-	    case 39:			// Right
-	    case 40:			// Down
-		e.preventDefault();
-		break;
-	    }
-        } catch (error) {
-            teardown();
-            throw error;
-        }
-    }
-
-    function keyup(e: KeyboardEvent) {
-	if (!app.active) return;
-        try {
-	    switch (e.keyCode) {
-	    case 17:			// Control
-	    case 18:			// Meta
-		break;
-	    default:
-		app.keyUp(e);
-		break;
-	    }
-        } catch (error) {
-            teardown();
-            throw error;
-	}
-    }
-
-    function keypress(e: KeyboardEvent) {
-	if (!app.active) return;
-        try {
-	    app.keyPress(e);
-        } catch (error) {
-            teardown();
-            throw error;
-	}
-    }
-
-    function mousedown(e: MouseEvent) {
-	if (!app.active) return;
-        try {
-	    app.mouseDown(e);
-        } catch (error) {
-            teardown();
-            throw error;
-	}
-    }
-
-    function mouseup(e: MouseEvent) {
-	if (!app.active) return;
-        try {
-	    app.mouseUp(e);
-        } catch (error) {
-            teardown();
-            throw error;
-	}
-    }
-
-    function mousemove(e: MouseEvent) {
-	if (!app.active) return;
-        try {
-	    app.mouseMove(e);
-        } catch (error) {
-            teardown();
-            throw error;
-	}
-    }
-
-    function touchstart(e: TouchEvent) {
-	if (!app.active) return;
-        try {
-	    app.touchStart(e);
-	    e.preventDefault();
-        } catch (error) {
-            teardown();
-            throw error;
-	}
-    }
-
-    function touchend(e: TouchEvent) {
-	if (!app.active) return;
-        try {
-	    app.touchEnd(e);
-	    e.preventDefault();
-        } catch (error) {
-            teardown();
-            throw error;
-	}
-    }
-
-    function touchmove(e: TouchEvent) {
-	if (!app.active) return;
-        try {
-	    app.touchMove(e);
-	    e.preventDefault();
-        } catch (error) {
-            teardown();
-            throw error;
-	}
-    }
-
-    function focus(e: FocusEvent) {
-	info("app.focus");
-	if (app.active) return;
-        try {
-	    app.focus();
-        } catch (error) {
-            teardown();
-            throw error;
-	}
-    }
-
-    function blur(e: FocusEvent) {
-	info("app.blur");
-	if (app.active) {
-            try {
-	        app.blur();
-            } catch (error) {
-                teardown();
-                throw error;
-            }
-	}
-	let size = Math.min(canvas.width, canvas.height)/8;
-	let ctx = canvas.getContext('2d');
-	ctx.save();
-	ctx.fillStyle = 'rgba(0,0,64, 0.5)'; // gray out.
-	ctx.fillRect(0, 0, canvas.width, canvas.height);
-	ctx.fillStyle = 'lightgray';
-	ctx.beginPath();		// draw a play button.
-	ctx.moveTo(canvas.width/2-size, canvas.height/2-size);
-	ctx.lineTo(canvas.width/2-size, canvas.height/2+size);
-	ctx.lineTo(canvas.width/2+size, canvas.height/2);
-	ctx.fill();
-	ctx.restore();
-    }
-
-    function resize(e: Event) {
-	info("app.resize");
-	let bounds = elem.getBoundingClientRect();
-	// Center the canvas.
-	let cw = bounds.width, ch = bounds.height;
-	if (canvas.height*bounds.width < canvas.width*bounds.height) {
-	    ch = int(canvas.height * bounds.width / canvas.width);
-	} else {
-	    cw = int(canvas.width * bounds.height / canvas.height);
-	}
-	canvas.style.position = 'absolute';
-	canvas.style.padding = '0px';
-	canvas.style.left = ((bounds.width-cw)/2)+'px';
-	canvas.style.top = ((bounds.height-ch)/2)+'px';
-	canvas.style.width = cw+'px';
-	canvas.style.height = ch+'px';
-    }
-
-    function setup() {
-        console.info("app.setup");
-        elem.addEventListener('mousedown', mousedown, false);
-        elem.addEventListener('mouseup', mouseup, false);
-        elem.addEventListener('mousemove', mousemove, false);
-        elem.addEventListener('touchstart', touchstart, false);
-        elem.addEventListener('touchend', touchend, false);
-        elem.addEventListener('touchmove', touchmove, false);
-        window.addEventListener('focus', focus);
-        window.addEventListener('blur', blur);
-        window.addEventListener('keydown', keydown);
-        window.addEventListener('keyup', keyup);
-        window.addEventListener('keypress', keypress);
-        window.addEventListener('resize', resize);
-        interval = window.setInterval(tick, 1000/framerate);
-    }
-
-    function teardown() {
-        console.info("app.teardown");
-        elem.removeEventListener('mousedown', mousedown);
-        elem.removeEventListener('mouseup', mouseup);
-        elem.removeEventListener('mousemove', mousemove);
-        elem.removeEventListener('touchstart', touchstart);
-        elem.removeEventListener('touchend', touchend);
-        elem.removeEventListener('touchmove', touchmove);
-        window.removeEventListener('focus', focus);
-        window.removeEventListener('blur', blur);
-        window.removeEventListener('keydown', keydown);
-        window.removeEventListener('keyup', keyup);
-        window.removeEventListener('keypress', keypress);
-        window.removeEventListener('resize', resize);
-        window.clearInterval(interval);
-    }
-
-    APP = app;
-    if (APP.audioContext !== null) {
-	for (let id in APP.sounds) {
-	    let source = APP.audioContext.createMediaElementSource(APP.sounds[id]);
-	    source.connect(APP.audioContext.destination);
-	}
-    }
-    for (let hook of HOOKS) {
-	hook();
-    }
-
-    app.init(new scene0());
-    app.focus();
-    elem.appendChild(canvas);
-    elem.focus();
-    resize(null);
-    setup();
-    window.focus();
-}
+//function main() {
+//    APP = new App(320, 240);
+//    APP.init(new Scene());
+//}

@@ -217,7 +217,7 @@ class Scene {
     }
 
     changeScene(scene: Scene) {
-	APP.post(() => { APP.init(scene); });
+	APP.post(() => { APP.setScene(scene); });
     }
 
     reset() {
