@@ -51,29 +51,15 @@ class Entity extends Task {
 	return v1.equals(v0);
     }
 
-    getMove(pos: Vec2, v: Vec2, context=null as string) {
+    getMove(pos: Vec2, v0: Vec2, context=null as string) {
         let collider = this.getCollider(pos);
-	if (collider === null) return v;
-	let hitbox0 = collider.getAABB();
-	let range = hitbox0.union(hitbox0.add(v));
-	let obstacles = this.getObstaclesFor(range, v, context);
-	let fences = this.getFencesFor(range, v, context);
-	let d = getContact(collider, v, obstacles, fences);
-	v = v.sub(d);
-	collider = collider.add(d);
-	if (v.x != 0) {
-	    d = getContact(collider, new Vec2(v.x, 0), obstacles, fences);
-	    v = v.sub(d);
-	    collider = collider.add(d);
-	}
-	if (v.y != 0) {
-	    d = getContact(collider, new Vec2(0, v.y), obstacles, fences);
-	    v = v.sub(d);
-	    collider = collider.add(d);
-	}
-	let hitbox1 = collider.getAABB();
-	return new Vec2(hitbox1.x-hitbox0.x,
-			hitbox1.y-hitbox0.y);
+	if (collider === null) return v0;
+	let hitbox = collider.getAABB();
+	let range = hitbox.union(hitbox.add(v0));
+	let obstacles = this.getObstaclesFor(range, v0, context);
+	let fences = this.getFencesFor(range, v0, context);
+	let v = getContact(collider, v0, obstacles, fences);
+	return v;
     }
 
     moveIfPossible(v: Vec2, context=null as string) {

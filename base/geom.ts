@@ -1382,19 +1382,62 @@ class Box {
 
 // getContact: returns a motion vector that satisfies the given constraints.
 function getContact(
-    collider0: Collider, v: Vec2,
-    obstacles: Collider[],
-    fences: Rect[]=null): Vec2
+    collider: Collider, v0: Vec2,
+    obstacles: Collider[]=null,
+    fences: Rect[]=null,
+    checkxy=true): Vec2
 {
+    let bounds = collider.getAABB();
+    let d = v0;
     if (obstacles !== null) {
-	for (let collider1 of obstacles) {
-	    v = collider1.contact(v, collider0);
+	for (let obstacle of obstacles) {
+	    d = obstacle.contact(d, collider);
 	}
     }
     if (fences !== null) {
-	for (let rect of fences) {
-	    v = rect.boundRect(v, collider0.getAABB());
+	for (let fence of fences) {
+	    d = fence.boundRect(d, bounds);
 	}
+    }
+    let v = d;
+    if (checkxy && d !== v0) {
+        v0 = v0.sub(d);
+        collider = collider.add(d);
+        bounds = bounds.add(d);
+        if (v0.x != 0) {
+            d = new Vec2(v0.x, 0);
+            if (obstacles !== null) {
+	        for (let obstacle of obstacles) {
+	            d = obstacle.contact(d, collider);
+	        }
+            }
+            if (fences !== null) {
+	        for (let fence of fences) {
+	            d = fence.boundRect(d, bounds);
+	        }
+            }
+            v = v.add(d);
+            v0 = v0.sub(d);
+            collider = collider.add(d);
+            bounds = bounds.add(d);
+        }
+        if (v0.y != 0) {
+            d = new Vec2(0, v0.y);
+            if (obstacles !== null) {
+	        for (let obstacle of obstacles) {
+	            d = obstacle.contact(d, collider);
+	        }
+            }
+            if (fences !== null) {
+	        for (let fence of fences) {
+	            d = fence.boundRect(d, bounds);
+	        }
+            }
+            v = v.add(d);
+            v0 = v0.sub(d);
+            collider = collider.add(d);
+            bounds = bounds.add(d);
+        }
     }
     return v;
 }
