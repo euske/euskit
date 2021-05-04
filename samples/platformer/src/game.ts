@@ -97,8 +97,10 @@ class ShadowSprite implements Sprite {
 
 //  Player
 //
-class Player extends PlatformerEntity {
+class Player extends PhysicalEntity {
 
+    tilemap: TileMap;
+    collider: Collider;
     scene: Game;
     shadow: ShadowSprite = new ShadowSprite();
     usermove: Vec2 = new Vec2();
@@ -106,15 +108,17 @@ class Player extends PlatformerEntity {
     picked: Signal;
 
     constructor(scene: Game, pos: Vec2) {
-	super(scene.tilemap, scene.physics, pos);
+	super(scene.physics, pos);
+        this.tilemap = scene.tilemap;
         let sprite = SPRITES.get(S.PLAYER);
 	this.sprites = [this.shadow, sprite];
+        this.collider = sprite.getBounds();
 	this.scene = scene;
 	this.picked = new Signal(this);
     }
 
-    getCollider(pos: Vec2) {
-        return this.sprites[1].getBounds().add(pos);
+    getCollider() {
+        return this.collider.add(this.pos);
     }
 
     onJumped() {
@@ -130,7 +134,8 @@ class Player extends PlatformerEntity {
     }
 
     hasLadder() {
-	return this.hasTile(this.physics.isGrabbable, this.pos);
+	let range = this.getCollider().getAABB();
+	return (this.tilemap.findTileByCoord(this.physics.isGrabbable, range) !== null);
     }
 
     canFall() {
@@ -141,7 +146,10 @@ class Player extends PlatformerEntity {
 	if (!this.holding) {
 	    return this.tilemap.getTileRects(this.physics.isObstacle, range);
 	}
-	return super.getObstaclesFor(range, v, context);
+	let f = ((context == 'fall')?
+		 this.physics.isStoppable :
+		 this.physics.isObstacle);
+	return this.tilemap.getTileRects(f, range);
     }
 
     getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
@@ -156,7 +164,7 @@ class Player extends PlatformerEntity {
 	} else if (!this.hasLadder()) {
 	    v = new Vec2(v.x, lowerbound(0, v.y));
 	}
-        v = this.getMove(this.pos, v);
+        v = this.getMove(v);
         this.pos = this.pos.add(v);
 	this.shadow.shadowPos = findShadowPos(this.tilemap, this.pos);
     }
@@ -196,22 +204,24 @@ class Player extends PlatformerEntity {
 //
 class Monster extends PlanningEntity {
 
+    collider: Collider;
     scene: Game;
     shadow: ShadowSprite = new ShadowSprite();
     target: Entity;
 
     constructor(scene: Game, pos: Vec2, target: Entity) {
-	super(scene.tilemap, scene.physics,
+	super(scene.physics, scene.tilemap,
 	      scene.grid, scene.caps, SPRITES.get(S.MONSTER).getBounds(),
 	      pos, 4);
 	let sprite = SPRITES.get(S.MONSTER);
 	this.sprites = [this.shadow, sprite];
+        this.collider = sprite.getBounds();
 	this.scene = scene;
         this.target = target;
     }
 
-    getCollider(pos: Vec2) {
-        return this.sprites[0].getBounds().add(pos);
+    getCollider() {
+        return this.collider.add(this.pos);
     }
 
     onTick() {
@@ -258,8 +268,8 @@ class Thingy extends Entity {
         this.bounds = sprite.getBounds().inflate(-4, -4);
     }
 
-    getCollider(pos: Vec2) {
-        return this.bounds.add(pos);
+    getCollider() {
+        return this.bounds.add(this.pos);
     }
 }
 

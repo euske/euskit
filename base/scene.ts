@@ -75,7 +75,7 @@ class World extends ParallelTaskList {
         let found: Entity = null;
         for (let entity of this.entities) {
 	    if (!entity.isVisible()) continue;
-            let collider = entity.getCollider(entity.pos);
+            let collider = entity.getCollider();
             if (collider instanceof Rect) {
                 if (collider.containsPt(p)) {
                     if (found === null || entity.order < found.order) {
@@ -149,7 +149,7 @@ class World extends ParallelTaskList {
 	for (let entity1 of this.entities) {
 	    if (!entity1.isRunning()) continue;
             if (collider0 !== null) {
-	        let collider1 = entity1.getCollider(entity1.pos);
+	        let collider1 = entity1.getCollider();
                 if (collider1 !== null && !collider1.overlaps(collider0)) continue;
             }
             if (f(entity1)) {
@@ -167,7 +167,7 @@ class World extends ParallelTaskList {
         let a = [] as Collider[];
         let f = (entity: Entity) => {
             if (f0(entity)) {
-                let collider = entity.getCollider(entity.pos);
+                let collider = entity.getCollider();
                 if (collider != null) {
                     a.push(collider);
                 }
@@ -190,12 +190,12 @@ class World extends ParallelTaskList {
 	for (let i = 0; i < this.entities.length; i++) {
 	    let entity0 = this.entities[i];
 	    if (!entity0.isRunning()) continue;
-	    let collider0 = entity0.getCollider(entity0.pos);
+	    let collider0 = entity0.getCollider();
 	    if (collider0 === null) continue;
             for (let j = i+1; j < this.entities.length; j++) {
                 let entity1 = this.entities[j];
 	        if (!entity1.isRunning()) continue;
-	        let collider1 = entity1.getCollider(entity1.pos);
+	        let collider1 = entity1.getCollider();
 	        if (collider1 === null) continue;
                 if (collider0.overlaps(collider1)) {
                     f(entity0, entity1)

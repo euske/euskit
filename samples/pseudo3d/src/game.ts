@@ -100,31 +100,25 @@ class Entity3d extends Entity {
     velocity3: Vec3 = new Vec3();
     maxspeed3: Vec3 = new Vec3();
 
-    getPos3() {
-	return new Vec3(this.pos.x, this.pos.y, this.z);
-    }
-
     isFloating(): boolean {
 	// [OVERRIDE]
 	return false;
     }
 
-    getCollider3(pos3: Vec3) {
-	let pos = (pos3 !== null)? new Vec2(pos3.x, pos3.y) : this.pos;
-	let z = (pos3 !== null)? pos3.z : this.z;
-	let bounds = this.getCollider(pos).getAABB();
+    getCollider3() {
+	let bounds = this.getCollider().getAABB();
 	return new Box(
-	    new Vec3(bounds.x, bounds.y, z),
+	    new Vec3(bounds.x, bounds.y, this.z),
 	    new Vec3(bounds.width, bounds.height, this.depth));
     }
 
     canMove3(v0: Vec3, context=null as string) {
-	let v1 = this.getMove3(this.getPos3(), v0, context);
+	let v1 = this.getMove3(v0, context);
 	return v1.equals(v0);
     }
 
-    getMove3(pos: Vec3, v: Vec3, context=null as string) {
-	let collider0 = this.getCollider3(pos);
+    getMove3(v: Vec3, context=null as string) {
+	let collider0 = this.getCollider3();
 	let collider1 = collider0;
 	let range = collider1.union(collider1.add(v));
 	let obstacles = this.getObstaclesFor3(range, v, context);
@@ -151,13 +145,6 @@ class Entity3d extends Entity {
 
     getObstaclesFor3(range: Box, v: Vec3, context: string): Box[] {
 	return null;
-    }
-
-    moveIfPossible3(v: Vec3, context=null as string) {
-	v = this.getMove3(this.getPos3(), v, context);
-	this.pos = this.pos.move(v.x, v.y);
-	this.z += v.z;
-	return v;
     }
 
     render(ctx: CanvasRenderingContext2D) {
@@ -280,8 +267,8 @@ class Thingy extends Entity3d {
 	this.z = 4;
     }
 
-    getCollider(pos: Vec2) {
-        return this.bounds.add(pos);
+    getCollider() {
+        return this.bounds.add(this.pos);
     }
 }
 
@@ -316,8 +303,8 @@ class Player extends Entity3d {
 	this.usermove3 = new Vec3();
     }
 
-    getCollider(pos: Vec2) {
-        return this.bounds.add(pos);
+    getCollider() {
+        return this.bounds.add(this.pos);
     }
 
     isFloating(): boolean {
@@ -369,7 +356,7 @@ class Player extends Entity3d {
 
     onTick() {
 	super.onTick();
-        let v = this.getMove3(this.getPos3(), this.usermove3);
+        let v = this.getMove3(this.usermove3);
         this.pos = this.pos.move(v.x, v.y);
         this.z += v.z;
 	this.fall();
@@ -380,12 +367,12 @@ class Player extends Entity3d {
 	}
         let z0 = 0;
 	if (this.isFloating() &&
-	    this.tilemap.findTileByCoord(isBlock, this.getCollider(this.pos).getAABB())) {
+	    this.tilemap.findTileByCoord(isBlock, this.getCollider().getAABB())) {
             z0 = this.tilemap.tilesize/2;
         }
 	this.shadow3.dz = this.z - z0;
 	let window = this.world3.window;
-	if (!window.overlaps(this.getCollider(this.pos))) {
+	if (!window.overlaps(this.getCollider())) {
 	    this.stop();
 	}
     }
@@ -394,7 +381,7 @@ class Player extends Entity3d {
 	if (this.canFall3()) {
 	    let vz = this.jumpfunc3(this.velocity3.z, this._jumpt);
 	    let v = new Vec3(this.velocity3.x, this.velocity3.y, vz);
-	    v = this.getMove3(this.getPos3(), v, 'fall');
+	    v = this.getMove3(v, 'fall');
 	    this.pos = this.pos.move(v.x, v.y);
 	    this.z += v.z;
 	    this.velocity3 = v.clamp(this.maxspeed3);
@@ -507,7 +494,7 @@ class Game extends GameScene {
 	}
 	if (this.player.isRunning()) {
             let vv = new Vec3(v.x, v.y, 0);
-	    vv = this.player.getMove3(this.player.getPos3(), vv, 'fall');
+	    vv = this.player.getMove3(vv, 'fall');
 	    this.player.pos = this.player.pos.move(vv.x, vv.y);
 	    this.player.z += vv.z;
 	}

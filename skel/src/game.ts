@@ -25,22 +25,24 @@ function main() {
 //
 class Player extends Entity {
 
+    collider: Collider;
     usermove: Vec2;
 
     constructor(pos: Vec2) {
 	super(pos);
         let sprite = SPRITES.get(0);
 	this.sprites = [sprite];
+        this.collider = sprite.getBounds();
 	this.usermove = new Vec2();
     }
 
-    getCollider(pos: Vec2) {
-        return this.sprites[0].getBounds().add(pos);
+    getCollider() {
+        return this.collider.add(this.pos);
     }
 
     onTick() {
 	super.onTick();
-        let v = this.getMove(this.pos, this.usermove);
+        let v = this.getMove(this.usermove);
         this.pos = this.pos.add(v);
     }
 

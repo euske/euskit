@@ -5,6 +5,69 @@
 /// <reference path="tilemap.ts" />
 
 
+// getContact: returns a motion vector that satisfies the given constraints.
+function getContact(
+    collider: Collider, v0: Vec2,
+    obstacles: Collider[]=null,
+    fences: Rect[]=null,
+    checkxy=true): Vec2
+{
+    let bounds = collider.getAABB();
+    let d = v0;
+    if (obstacles !== null) {
+	for (let obstacle of obstacles) {
+	    d = obstacle.contact(d, collider);
+	}
+    }
+    if (fences !== null) {
+	for (let fence of fences) {
+	    d = fence.boundRect(d, bounds);
+	}
+    }
+    let v = d;
+    if (checkxy && d !== v0) {
+        v0 = v0.sub(d);
+        collider = collider.add(d);
+        bounds = bounds.add(d);
+        if (v0.x != 0) {
+            d = new Vec2(v0.x, 0);
+            if (obstacles !== null) {
+	        for (let obstacle of obstacles) {
+	            d = obstacle.contact(d, collider);
+	        }
+            }
+            if (fences !== null) {
+	        for (let fence of fences) {
+	            d = fence.boundRect(d, bounds);
+	        }
+            }
+            v = v.add(d);
+            v0 = v0.sub(d);
+            collider = collider.add(d);
+            bounds = bounds.add(d);
+        }
+        if (v0.y != 0) {
+            d = new Vec2(0, v0.y);
+            if (obstacles !== null) {
+	        for (let obstacle of obstacles) {
+	            d = obstacle.contact(d, collider);
+	        }
+            }
+            if (fences !== null) {
+	        for (let fence of fences) {
+	            d = fence.boundRect(d, bounds);
+	        }
+            }
+            v = v.add(d);
+            v0 = v0.sub(d);
+            collider = collider.add(d);
+            bounds = bounds.add(d);
+        }
+    }
+    return v;
+}
+
+
 /** Entity: a thing that can interact with other things.
  */
 class Entity extends Task {
@@ -38,7 +101,7 @@ class Entity extends Task {
             this.rotation, this.scale, this.alpha);
     }
 
-    getCollider(pos: Vec2): Collider {
+    getCollider(): Collider {
         return null;
     }
 
@@ -46,8 +109,8 @@ class Entity extends Task {
 	// [OVERRIDE]
     }
 
-    getMove(pos: Vec2, v0: Vec2, context=null as string) {
-        let collider = this.getCollider(pos);
+    getMove(v0: Vec2, context=null as string) {
+        let collider = this.getCollider();
 	if (collider === null) return v0;
 	let hitbox = collider.getAABB();
 	let range = hitbox.union(hitbox.add(v0));
@@ -81,7 +144,7 @@ class Particle extends Entity {
             this.pos = this.pos.add(this.movement);
             let frame = this.getFrame();
 	    if (frame !== null) {
-		let collider = this.getCollider(this.pos);
+		let collider = this.getCollider();
 		if (collider !== null && !collider.overlapsRect(frame)) {
 		    this.stop();
 		}
@@ -92,30 +155,6 @@ class Particle extends Entity {
     getFrame(): Rect {
         // [OVERRIDE]
         return null;
-    }
-}
-
-
-//  TileMapEntity
-//
-class TileMapEntity extends Entity {
-
-    tilemap: TileMap;
-    isObstacle: (c:number)=>boolean;
-
-    constructor(tilemap: TileMap, isObstacle: (c:number)=>boolean, pos: Vec2) {
-	super(pos);
-	this.tilemap = tilemap;
-	this.isObstacle = isObstacle;
-    }
-
-    hasTile(f: (c:number)=>boolean, pos: Vec2) {
-	let range = this.getCollider(pos).getAABB();
-	return (this.tilemap.findTileByCoord(f, range) !== null);
-    }
-
-    getObstaclesFor(range: Rect, v: Vec2, context: string): Rect[] {
-	return this.tilemap.getTileRects(this.isObstacle, range);
     }
 }
 
@@ -176,7 +215,7 @@ class PhysicalEntity extends Entity {
 	if (this.canFall()) {
 	    let vy = this.physics.jumpfunc(this.velocity.y, t);
 	    let v = new Vec2(this.velocity.x, vy);
-            v = this.getMove(this.pos, v, 'fall');
+            v = this.getMove(v, 'fall');
             this.pos = this.pos.add(v);
 	    this.velocity = v.clamp(this.physics.maxspeed);
 	    let landed = (0 < vy && this.velocity.y == 0);
@@ -194,7 +233,7 @@ class PhysicalEntity extends Entity {
     }
 
     canMove(v: Vec2) {
-	return v === this.getMove(this.pos, v);
+	return v === this.getMove(v);
     }
 
     canJump() {
@@ -219,30 +258,5 @@ class PhysicalEntity extends Entity {
 
     onLanded() {
 	// [OVERRIDE]
-    }
-}
-
-
-//  PlatformerEntity
-//
-class PlatformerEntity extends PhysicalEntity {
-
-    tilemap: TileMap;
-
-    constructor(tilemap: TileMap, physics: PhysicsConfig, pos: Vec2) {
-	super(physics, pos);
-	this.tilemap = tilemap;
-    }
-
-    hasTile(f: (c:number)=>boolean, pos: Vec2) {
-	let range = this.getCollider(pos).getAABB();
-	return (this.tilemap.findTileByCoord(f, range) !== null);
-    }
-
-    getObstaclesFor(range: Rect, v: Vec2, context: string): Rect[] {
-	let f = ((context == 'fall')?
-		 this.physics.isStoppable :
-		 this.physics.isObstacle);
-	return this.tilemap.getTileRects(f, range);
     }
 }

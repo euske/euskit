@@ -53,8 +53,8 @@ class Enemy extends Particle {
 	this.killed = new Signal(this);
     }
 
-    getCollider(pos: Vec2) {
-        return this.bounds.add(pos);
+    getCollider() {
+        return this.bounds.add(this.pos);
     }
 
     getFrame() {
@@ -95,8 +95,8 @@ class Enemy2 extends Enemy {
 	this.movement = new Vec2(-rnd(1,4), 0);
     }
 
-    getCollider(pos: Vec2) {
-        return this.bounds.add(pos);
+    getCollider() {
+        return this.bounds.add(this.pos);
     }
 
     onTick() {
@@ -153,12 +153,30 @@ class Bullet extends Particle {
 	this.movement = new Vec2(8, 0);
     }
 
-    getCollider(pos: Vec2) {
-        return this.bounds.add(pos);
+    getCollider() {
+        return this.bounds.add(this.pos);
     }
 
     getFrame() {
 	return this.world.area;
+    }
+}
+
+
+//  TileMapEntity
+//
+class TileMapEntity extends Entity {
+
+    tilemap: TileMap;
+
+    constructor(tilemap: TileMap, pos: Vec2) {
+	super(pos);
+	this.tilemap = tilemap;
+    }
+
+    collideTerrain() {
+	let range = this.getCollider().getAABB();
+	return (this.tilemap.findTileByCoord(isTerrain, range) !== null);
     }
 }
 
@@ -171,21 +189,21 @@ class Bomb extends TileMapEntity {
     movement: Vec2;
 
     constructor(tilemap: TileMap, pos: Vec2) {
-	super(tilemap, null, pos);
+	super(tilemap, pos);
 	this.sprites = [new RectSprite('cyan', this.bounds)];
 	this.movement = new Vec2(2, 0);
     }
 
-    getCollider(pos: Vec2) {
-        return this.bounds.add(pos);
+    getCollider() {
+        return this.bounds.add(this.pos);
     }
 
     onTick() {
         super.onTick();
 	this.pos = this.pos.add(this.movement);
         this.movement.y = upperbound(6, this.movement.y+1);
-	let collider = this.getCollider(this.pos);
-	if (this.hasTile(isTerrain, this.pos) ||
+	let collider = this.getCollider();
+	if (this.collideTerrain() ||
             !collider.overlaps(this.world.area)) {
 	    this.stop();
 	}
@@ -206,14 +224,14 @@ class Player extends TileMapEntity {
     nextdrop: number = 0;	// Droping counter
 
     constructor(tilemap: TileMap, pos: Vec2) {
-	super(tilemap, null, pos);
+	super(tilemap, pos);
         let sprite = SPRITES.get(0);
 	this.sprites = [sprite];
 	this.bounds = sprite.getBounds().inflate(-2,-2);
     }
 
-    getCollider(pos: Vec2) {
-        return this.bounds.add(pos);
+    getCollider() {
+        return this.bounds.add(this.pos);
     }
 
     onTick() {
@@ -224,7 +242,7 @@ class Player extends TileMapEntity {
             if (Math.abs(v.x) < 8) { v.x = 0; }
             if (Math.abs(v.y) < 8) { v.y = 0; }
         }
-        v = this.getMove(this.pos, v.sign().scale(4));
+        v = this.getMove(v.sign().scale(4));
         this.pos = this.pos.add(v);
 	if (this.firing) {
 	    if (this.nextfire == 0) {
@@ -246,7 +264,7 @@ class Player extends TileMapEntity {
 	    }
             this.nextdrop--;
         }
-        if (this.hasTile(isTerrain, this.pos)) {
+        if (this.collideTerrain()) {
             this.onTileCollided();
         }
     }

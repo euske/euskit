@@ -419,8 +419,9 @@ class PlatformerActionRunner extends ActionRunner {
 
 //  PlanningEntity
 //
-class PlanningEntity extends PlatformerEntity implements PlatformerActor {
+class PlanningEntity extends PhysicalEntity implements PlatformerActor {
 
+    tilemap: TileMap;
     grid: GridConfig;
     caps: PlatformerCaps;
     gridbox: Rect;
@@ -429,10 +430,11 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 
     runner: ActionRunner = null;
 
-    constructor(tilemap: TileMap, physics: PhysicsConfig,
+    constructor(physics: PhysicsConfig, tilemap: TileMap,
 		grid: GridConfig, caps: PlatformerCaps, hitbox: Rect,
 		pos: Vec2, allowance=0) {
-	super(tilemap, physics, pos);
+	super(physics, pos);
+        this.tilemap = tilemap;
 	this.grid = grid;
 	this.caps = caps;
 	let gs = grid.gridsize;
@@ -470,6 +472,13 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 	return this.grid.grid2coord(p).distance(this.pos) < this.allowance;
     }
 
+    getObstaclesFor(range: Rect, v: Vec2, context: string): Rect[] {
+	let f = ((context == 'fall')?
+		 this.physics.isStoppable :
+		 this.physics.isObstacle);
+	return this.tilemap.getTileRects(f, range);
+    }
+
     // PlatformerActor methods
 
     getJumpPoints() {
@@ -504,7 +513,7 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 	return this.planmap.grabbable.exists(this.tilemap.coord2map(hitbox));
     }
     canClimbDown(p: Vec2) {
-	let rect = this.getCollider(new Vec2()) as Rect;
+	let rect = this.getCollider() as Rect;
 	let hitbox = this.getGridBoxAt(p).move(0, rect.height);
 	return this.planmap.grabbable.exists(this.tilemap.coord2map(hitbox));
     }
@@ -572,7 +581,7 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 	let speed = this.caps.speed;
 	v.x = clamp(-speed.x, v.x, +speed.x);
 	v.y = clamp(-speed.y, v.y, +speed.y);
-	v = this.getMove(this.pos, v);
+	v = this.getMove(v);
         this.pos = this.pos.add(v);
     }
 

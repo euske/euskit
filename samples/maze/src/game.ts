@@ -56,6 +56,7 @@ class Player extends Entity {
 
     goaled: Signal;
     tilemap: TileMap;
+    collider: Collider;
     usermove: Vec2;
     prevmove: Vec2;
 
@@ -65,25 +66,26 @@ class Player extends Entity {
         this.tilemap = tilemap;
         let sprite = new RectSprite('#0f0', new Rect(-8,-8,16,16));
 	this.sprites = [sprite];
+        this.collider = sprite.getBounds();
 	this.usermove = new Vec2();
         this.prevmove = this.usermove;
     }
 
-    getCollider(pos: Vec2) {
-        return this.sprites[0].getBounds().add(pos);
+    getCollider() {
+        return this.collider.add(this.pos);
     }
 
     onTick() {
 	super.onTick();
         if (!this.usermove.isZero()) {
-            let v = this.getMove(this.pos, this.usermove);
+            let v = this.getMove(this.usermove);
             if (v.isZero()) {
-                v = this.getMove(this.pos, this.prevmove);
+                v = this.getMove(this.prevmove);
             } else {
                 this.prevmove = this.usermove.copy();
             }
             this.pos = this.pos.add(v);
-            let bounds = this.getCollider(this.pos) as Rect;
+            let bounds = this.getCollider() as Rect;
             if (this.tilemap.findTileByCoord(isGoal, bounds) !== null) {
                 this.goaled.fire();
             }
@@ -106,6 +108,7 @@ class Player extends Entity {
 //
 class Enemy extends WalkerEntity {
 
+    collider: Collider;
     target: Entity;
 
     constructor(tilemap: TileMap, target: Entity, pos: Vec2) {
@@ -115,11 +118,12 @@ class Enemy extends WalkerEntity {
         let allowance = 4;
 	super(tilemap, isObstacle, grid, speed, sprite.getBounds(), pos, allowance);
 	this.sprites = [sprite];
+        this.collider = sprite.getBounds();
         this.target = target;
     }
 
-    getCollider(pos: Vec2) {
-        return this.sprites[0].getBounds().add(pos);
+    getCollider() {
+        return this.collider.add(this.pos);
     }
 
     onTick() {
@@ -170,7 +174,7 @@ class Game extends GameScene {
 
     onTick() {
 	super.onTick();
-        let target = this.player.getCollider(this.player.pos) as Rect
+        let target = this.player.getCollider() as Rect
         this.world.setCenter(target.inflate(96,96), this.tilemap.bounds);
     }
 

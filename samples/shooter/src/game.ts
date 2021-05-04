@@ -36,8 +36,8 @@ class Bullet extends Particle {
 	this.movement = new Vec2(8, 0);
     }
 
-    getCollider(pos: Vec2) {
-        return this.bounds.add(pos);
+    getCollider() {
+        return this.bounds.add(this.pos);
     }
 
     getFrame() {
@@ -61,6 +61,7 @@ class Explosion extends Entity {
 //
 class Player extends Entity {
 
+    collider: Collider;
     usermove: Vec2 = new Vec2();
     firing: boolean = false;
     nextfire: number = 0;	// Firing counter
@@ -69,15 +70,16 @@ class Player extends Entity {
 	super(pos);
         let sprite = SPRITES.get(0);
 	this.sprites = [sprite];
+        this.collider = sprite.getBounds();
     }
 
-    getCollider(pos: Vec2) {
-        return this.sprites[0].getBounds().add(pos);
+    getCollider() {
+        return this.collider.add(this.pos);
     }
 
     onTick() {
 	super.onTick();
-        let v = this.getMove(this.pos, this.usermove);
+        let v = this.getMove(this.usermove);
         this.pos = this.pos.add(v);
 	if (this.firing) {
 	    if (this.nextfire == 0) {
@@ -124,6 +126,7 @@ class Player extends Entity {
 //
 class EnemyBase extends Particle {
 
+    collider: Collider;
     killed: Signal;
 
     constructor(pos: Vec2) {
@@ -131,8 +134,8 @@ class EnemyBase extends Particle {
 	this.killed = new Signal(this);
     }
 
-    getCollider(pos: Vec2) {
-        return this.sprites[0].getBounds().add(pos);
+    getCollider() {
+        return this.collider.add(this.pos);
     }
 
     getFrame() {
@@ -158,6 +161,7 @@ class Enemy1 extends EnemyBase {
 	super(pos);
         let sprite = SPRITES.get(1);
 	this.sprites = [sprite];
+        this.collider = sprite.getBounds();
 	this.movement = new Vec2(-rnd(1,8), rnd(3)-1);
     }
 }
@@ -171,6 +175,7 @@ class Enemy2 extends EnemyBase {
 	super(pos);
 	let sprite = SPRITES.get(2);
         this.sprites = [sprite];
+        this.collider = sprite.getBounds();
 	this.movement = new Vec2(-rnd(1,4), 0);
     }
 

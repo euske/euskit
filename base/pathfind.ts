@@ -352,8 +352,10 @@ class WalkerActionRunner extends ActionRunner {
 
 //  WalkerEntity
 //
-class WalkerEntity extends TileMapEntity implements WalkerActor {
+class WalkerEntity extends Entity implements WalkerActor {
 
+    tilemap: TileMap;
+    isObstacle: (c:number)=>boolean;
     grid: GridConfig;
     speed: Vec2;
     gridbox: Rect;
@@ -365,7 +367,9 @@ class WalkerEntity extends TileMapEntity implements WalkerActor {
     constructor(tilemap: TileMap, isObstacle: (c:number)=>boolean,
 		grid: GridConfig, speed: Vec2, hitbox: Rect,
 		pos: Vec2, allowance=0) {
-	super(tilemap, isObstacle, pos);
+	super(pos);
+        this.tilemap = tilemap;
+        this.isObstacle = isObstacle;
 	this.grid = grid;
         this.speed = speed;
 	let gs = grid.gridsize;
@@ -400,6 +404,10 @@ class WalkerEntity extends TileMapEntity implements WalkerActor {
 	// [OVERRIDE]
     }
 
+    getObstaclesFor(range: Rect, v: Vec2, context: string): Rect[] {
+	return this.tilemap.getTileRects(this.isObstacle, range);
+    }
+
     // WalkerActor methods
 
     canMoveTo(p: Vec2) {
@@ -414,7 +422,7 @@ class WalkerEntity extends TileMapEntity implements WalkerActor {
 	let speed = this.speed;
 	v.x = clamp(-speed.x, v.x, +speed.x);
 	v.y = clamp(-speed.y, v.y, +speed.y);
-        v = this.getMove(this.pos, v);
+        v = this.getMove(v);
         this.pos = this.pos.add(v);
     }
 

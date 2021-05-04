@@ -50,7 +50,6 @@ body { margin: 0; padding: 0; }
 <div class=list>
 <div class=head>Specialized Classes:</div>
 <a href="#Particle">Particle</a>,
-<a href="#TileMapEntity">TileMapEntity</a>,
 <a href="#PhysicalEntity">PhysicalEntity</a>,
 <a href="#GameScene">GameScene</a>
 </div>
@@ -427,20 +426,6 @@ keeps moving towards a specific direction.
   <td>Velocity of the object.</td></tr>
 <tr><td><code>.getFrame()</code></td>
   <td>Returns the <code>Rect</code> where the entity is kept alive within.</td></tr>
-</table>
-
-<a name="TileMapEntity"><h3>TileMapEntity : <a href="#Entity">Entity</a> (<code><a href="https://github.com/euske/euskit/blob/master/base/entity.ts">entity.ts</a></code>)</h3></a>
-<p>
-A <code>TileMapEntity</code> is an <code>Entity</code> that
-interacts with a <code>TileMap</code>.
-See <a href="cheatsheet.html#CreateTileMap">Create TileMap</a>.
-<table border>
-<tr class=ctor><td><code>new TileMapEntity(<br>&nbsp; <u>tilemap</u>, <br>&nbsp; <u>(e:Entity)=&gt;boolean</u>)</code></td>
-  <td>Creates a new entity that interacts with a tilemap.</td></tr>
-<tr><td><code>.tilemap</code></td>
-  <td>TileMap to be interacted with.</td></tr>
-<tr><td><code>.isObstacle</code></td>
-  <td>Function that identifies an obstacle.</td></tr>
 </table>
 
 <a name="PhysicalEntity"><h3>PhysicalEntity : <a href="#Entity">Entity</a> (<code><a href="https://github.com/euske/euskit/blob/master/base/entity.ts">entity.ts</a></code>)</h3></a>

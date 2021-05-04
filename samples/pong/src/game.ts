@@ -30,15 +30,15 @@ class Paddle extends Entity {
 	this.vx = 0;
     }
 
-    getCollider(pos: Vec2) {
-        return this.bounds.add(pos);
+    getCollider() {
+        return this.bounds.add(this.pos);
     }
 
     onTick() {
         super.onTick();
 	// Updates the position.
 	let pos = this.pos.move(this.vx*4, 0);
-	let bounds = this.getCollider(pos).getAABB();
+	let bounds = this.bounds.add(pos);
 	if (0 <= bounds.x && bounds.x1() <= this.screen.x1()) {
 	    this.pos = pos;
 	}
@@ -62,15 +62,15 @@ class Ball extends Entity {
 	this.v = new Vec2(rnd(2)*8-4, -4);
     }
 
-    getCollider(pos: Vec2) {
-        return this.bounds.add(pos);
+    getCollider() {
+        return this.bounds.add(this.pos);
     }
 
     onTick() {
         super.onTick();
 	// Updates the position.
 	let pos = this.pos.add(this.v);
-	let bounds = this.getCollider(pos).getAABB();
+	let bounds = this.bounds.add(pos);
 	if (bounds.x < 0 || this.screen.x1() < bounds.x1()) {
 	    APP.playSound('beep');
 	    this.v.x = -this.v.x;
