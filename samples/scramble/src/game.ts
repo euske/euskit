@@ -182,7 +182,7 @@ class Bomb extends TileMapEntity {
 
     onTick() {
         super.onTick();
-	this.movePos(this.movement);
+	this.pos = this.pos.add(this.movement);
         this.movement.y = upperbound(6, this.movement.y+1);
 	let collider = this.getCollider(this.pos);
 	if (this.hasTile(isTerrain, this.pos) ||
@@ -224,7 +224,8 @@ class Player extends TileMapEntity {
             if (Math.abs(v.x) < 8) { v.x = 0; }
             if (Math.abs(v.y) < 8) { v.y = 0; }
         }
-	this.moveIfPossible(v.sign().scale(4));
+        v = this.getMove(this.pos, v.sign().scale(4));
+        this.pos = this.pos.add(v);
 	if (this.firing) {
 	    if (this.nextfire == 0) {
 		// Fire a bullet at a certain interval.
@@ -343,7 +344,7 @@ class Scramble extends GameScene {
 
     onTick() {
 	super.onTick();
-        this.player.movePos(new Vec2(this.speed, 0));
+        this.player.pos = this.player.pos.add(new Vec2(this.speed, 0));
         this.world.moveAll(new Vec2(-this.speed, 0));
         this.tx += this.speed;
         let d = int(this.tx/this.tilesize);

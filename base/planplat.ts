@@ -572,7 +572,8 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 	let speed = this.caps.speed;
 	v.x = clamp(-speed.x, v.x, +speed.x);
 	v.y = clamp(-speed.y, v.y, +speed.y);
-	this.moveIfPossible(v);
+	v = this.getMove(this.pos, v);
+        this.pos = this.pos.add(v);
     }
 
     jumpToward(p: Vec2) {

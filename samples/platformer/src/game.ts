@@ -156,7 +156,8 @@ class Player extends PlatformerEntity {
 	} else if (!this.hasLadder()) {
 	    v = new Vec2(v.x, lowerbound(0, v.y));
 	}
-	this.moveIfPossible(v);
+        v = this.getMove(this.pos, v);
+        this.pos = this.pos.add(v);
 	this.shadow.shadowPos = findShadowPos(this.tilemap, this.pos);
     }
 

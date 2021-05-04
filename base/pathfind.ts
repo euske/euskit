@@ -414,7 +414,8 @@ class WalkerEntity extends TileMapEntity implements WalkerActor {
 	let speed = this.speed;
 	v.x = clamp(-speed.x, v.x, +speed.x);
 	v.y = clamp(-speed.y, v.y, +speed.y);
-	this.moveIfPossible(v);
+        v = this.getMove(this.pos, v);
+        this.pos = this.pos.add(v);
     }
 
     isCloseTo(p: Vec2) {

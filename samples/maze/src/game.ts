@@ -76,12 +76,13 @@ class Player extends Entity {
     onTick() {
 	super.onTick();
         if (!this.usermove.isZero()) {
-            let v = this.moveIfPossible(this.usermove);
+            let v = this.getMove(this.pos, this.usermove);
             if (v.isZero()) {
-                this.moveIfPossible(this.prevmove);
+                v = this.getMove(this.pos, this.prevmove);
             } else {
                 this.prevmove = this.usermove.copy();
             }
+            this.pos = this.pos.add(v);
             let bounds = this.getCollider(this.pos) as Rect;
             if (this.tilemap.findTileByCoord(isGoal, bounds) !== null) {
                 this.goaled.fire();

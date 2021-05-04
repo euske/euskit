@@ -115,7 +115,7 @@ class World extends ParallelTaskList {
 	for (let entity of this.entities) {
 	    if (!entity.isRunning()) continue;
             if (entity.pos === null) continue;
-	    entity.movePos(v);
+	    entity.pos = entity.pos.add(v);
 	}
     }
 

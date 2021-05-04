@@ -77,7 +77,8 @@ class Player extends Entity {
 
     onTick() {
 	super.onTick();
-	this.moveIfPossible(this.usermove);
+        let v = this.getMove(this.pos, this.usermove);
+        this.pos = this.pos.add(v);
 	if (this.firing) {
 	    if (this.nextfire == 0) {
 		// Shoot a bullet at a certain interval.

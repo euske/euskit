@@ -390,7 +390,7 @@ class TextParticle extends BannerBox {
     onTick() {
 	super.onTick();
         if (this.movement !== null) {
-            this.movePos(this.movement);
+            this.pos = this.pos.add(this.movement);
         }
     }
 }

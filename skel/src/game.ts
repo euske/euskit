@@ -40,7 +40,8 @@ class Player extends Entity {
 
     onTick() {
 	super.onTick();
-	this.moveIfPossible(this.usermove);
+        let v = this.getMove(this.pos, this.usermove);
+        this.pos = this.pos.add(v);
     }
 
     setMove(v: Vec2) {

@@ -38,17 +38,12 @@ class Entity extends Task {
             this.rotation, this.scale, this.alpha);
     }
 
-    movePos(v: Vec2) {
-	this.pos = this.pos.add(v);
-    }
-
     getCollider(pos: Vec2): Collider {
         return null;
     }
 
-    canMove(v0: Vec2, context=null as string) {
-	let v1 = this.getMove(this.pos, v0, context);
-	return v1.equals(v0);
+    onCollided(entity: Entity) {
+	// [OVERRIDE]
     }
 
     getMove(pos: Vec2, v0: Vec2, context=null as string) {
@@ -62,12 +57,6 @@ class Entity extends Task {
 	return v;
     }
 
-    moveIfPossible(v: Vec2, context=null as string) {
-	v = this.getMove(this.pos, v, context);
-	this.movePos(v);
-	return v;
-    }
-
     getObstaclesFor(range: Rect, v: Vec2, context: string): Collider[] {
 	// [OVERRIDE]
 	return null;
@@ -76,10 +65,6 @@ class Entity extends Task {
     getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
 	// [OVERRIDE]
 	return null;
-    }
-
-    onCollided(entity: Entity) {
-	// [OVERRIDE]
     }
 }
 
@@ -93,7 +78,7 @@ class Particle extends Entity {
     onTick() {
 	super.onTick();
 	if (this.movement !== null) {
-	    this.movePos(this.movement);
+            this.pos = this.pos.add(this.movement);
             let frame = this.getFrame();
 	    if (frame !== null) {
 		let collider = this.getCollider(this.pos);
@@ -191,7 +176,8 @@ class PhysicalEntity extends Entity {
 	if (this.canFall()) {
 	    let vy = this.physics.jumpfunc(this.velocity.y, t);
 	    let v = new Vec2(this.velocity.x, vy);
-	    v = this.moveIfPossible(v, 'fall');
+            v = this.getMove(this.pos, v, 'fall');
+            this.pos = this.pos.add(v);
 	    this.velocity = v.clamp(this.physics.maxspeed);
 	    let landed = (0 < vy && this.velocity.y == 0);
 	    if (!this._landed && landed) {
@@ -205,6 +191,10 @@ class PhysicalEntity extends Entity {
 	    }
 	    this._landed = true;
 	}
+    }
+
+    canMove(v: Vec2) {
+	return v === this.getMove(this.pos, v);
     }
 
     canJump() {

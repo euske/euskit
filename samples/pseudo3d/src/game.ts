@@ -109,11 +109,6 @@ class Entity3d extends Entity {
 	return false;
     }
 
-    movePos3(v: Vec3) {
-	this.pos = this.pos.move(v.x, v.y);
-	this.z += v.z;
-    }
-
     getCollider3(pos3: Vec3) {
 	let pos = (pos3 !== null)? new Vec2(pos3.x, pos3.y) : this.pos;
 	let z = (pos3 !== null)? pos3.z : this.z;
@@ -160,7 +155,8 @@ class Entity3d extends Entity {
 
     moveIfPossible3(v: Vec3, context=null as string) {
 	v = this.getMove3(this.getPos3(), v, context);
-	this.movePos3(v);
+	this.pos = this.pos.move(v.x, v.y);
+	this.z += v.z;
 	return v;
     }
 
@@ -373,7 +369,9 @@ class Player extends Entity3d {
 
     onTick() {
 	super.onTick();
-	this.moveIfPossible3(this.usermove3);
+        let v = this.getMove3(this.getPos3(), this.usermove3);
+        this.pos = this.pos.move(v.x, v.y);
+        this.z += v.z;
 	this.fall();
 	if (this._jumpt < this._jumpend) {
 	    this._jumpt++;
@@ -396,7 +394,10 @@ class Player extends Entity3d {
 	if (this.canFall3()) {
 	    let vz = this.jumpfunc3(this.velocity3.z, this._jumpt);
 	    let v = new Vec3(this.velocity3.x, this.velocity3.y, vz);
-	    this.velocity3 = this.moveIfPossible3(v, 'fall').clamp(this.maxspeed3);
+	    v = this.getMove3(this.getPos3(), v, 'fall');
+	    this.pos = this.pos.move(v.x, v.y);
+	    this.z += v.z;
+	    this.velocity3 = v.clamp(this.maxspeed3);
 	}
     }
 
@@ -505,7 +506,10 @@ class Game extends GameScene {
 	    this.world3.moveAll(vw);
 	}
 	if (this.player.isRunning()) {
-	    this.player.moveIfPossible3(new Vec3(v.x, v.y, 0), 'fall');
+            let vv = new Vec3(v.x, v.y, 0);
+	    vv = this.player.getMove3(this.player.getPos3(), vv, 'fall');
+	    this.player.pos = this.player.pos.move(vv.x, vv.y);
+	    this.player.z += vv.z;
 	}
     }
 
