@@ -254,8 +254,12 @@ interface Collider {
     equals(collider: Collider): boolean;
     /** Returns true if the given object is overlapping with this object. */
     overlaps(collider: Collider): boolean;
+    overlapsRect(rect: Rect): boolean;
+    overlapsCircle(circle: Circle): boolean;
     /** Trims a vector so that the given object does not collide with this object. */
     contact(v: Vec2, collider: Collider): Vec2;
+    contactRect(v: Vec2, rect: Rect): Vec2;
+    contactCircle(v: Vec2, circle: Circle): Vec2;
     /** Returns an AABB (Axis-Aligned Boundary Box) of this object. */
     getAABB(): Rect;
 }
@@ -676,6 +680,16 @@ class Rect implements Shape {
 		rect.y+rect.height <= this.y+this.height);
     }
 
+    overlaps(collider: Collider): boolean {
+	if (collider instanceof Rect) {
+	    return this.overlapsRect(collider);
+	} else if (collider instanceof Circle) {
+	    return this.overlapsCircle(collider);
+	} else {
+	    return false;
+	}
+    }
+
     overlapsRect(rect: Rect): boolean {
 	return (rect.x < this.x+this.width &&
 		rect.y < this.y+this.height &&
@@ -760,6 +774,16 @@ class Rect implements Shape {
 			this.y+fmod(p.y-this.y, this.height));
     }
 
+    contact(v: Vec2, collider: Collider): Vec2 {
+	if (collider instanceof Rect) {
+	    return this.contactRect(v, collider);
+	} else if (collider instanceof Circle) {
+	    return this.contactCircle(v, collider);
+	} else {
+	    return v;
+	}
+    }
+
     contactRect(v: Vec2, rect: Rect): Vec2 {
 	if (this.overlapsRect(rect)) {
 	    return new Vec2();
@@ -817,26 +841,6 @@ class Rect implements Shape {
 	let y = (v.y < 0)? this.y : this.y+this.height;
 	v = new AALine(-Infinity, y, +Infinity, y).contactRect(v, rect);
 	return v;
-    }
-
-    overlaps(collider: Collider): boolean {
-	if (collider instanceof Rect) {
-	    return this.overlapsRect(collider);
-	} else if (collider instanceof Circle) {
-	    return this.overlapsCircle(collider);
-	} else {
-	    return false;
-	}
-    }
-
-    contact(v: Vec2, collider: Collider): Vec2 {
-	if (collider instanceof Rect) {
-	    return this.contactRect(v, collider);
-	} else if (collider instanceof Circle) {
-	    return this.contactCircle(v, collider);
-	} else {
-	    return v;
-	}
     }
 
     getAABB(): Rect {
@@ -907,6 +911,16 @@ class Circle implements Shape {
 	return d+circle.radius < this.radius;
     }
 
+    overlaps(collider: Collider): boolean {
+	if (collider instanceof Circle) {
+	    return this.overlapsCircle(collider);
+	} else if (collider instanceof Rect) {
+	    return this.overlapsRect(collider);
+	} else {
+	    return false;
+	}
+    }
+
     overlapsCircle(circle: Circle): boolean {
 	let d = this.distance(circle.center);
 	return d < this.radius+circle.radius;
@@ -941,6 +955,20 @@ class Circle implements Shape {
 	return this.edgePt(t);
     }
 
+    contact(v: Vec2, collider: Collider): Vec2 {
+	if (collider instanceof Circle) {
+	    return this.contactCircle(v, collider);
+	} else if (collider instanceof Rect) {
+	    return this.contactRect(v, collider);
+	} else {
+	    return v;
+	}
+    }
+
+    contactRect(v: Vec2, rect: Rect): Vec2 {
+	return rect.contactCircle(v.scale(-1), this).scale(-1);
+    }
+
     contactCircle(v: Vec2, circle: Circle): Vec2 {
 	if (this.overlapsCircle(circle)) {
 	    return new Vec2();
@@ -965,26 +993,6 @@ class Circle implements Shape {
 	    }
 	}
 	return v;
-    }
-
-    overlaps(collider: Collider): boolean {
-	if (collider instanceof Circle) {
-	    return this.overlapsCircle(collider);
-	} else if (collider instanceof Rect) {
-	    return this.overlapsRect(collider);
-	} else {
-	    return false;
-	}
-    }
-
-    contact(v: Vec2, collider: Collider): Vec2 {
-	if (collider instanceof Circle) {
-	    return this.contactCircle(v, collider);
-	} else if (collider instanceof Rect) {
-	    return collider.contactCircle(v.scale(-1), this).scale(-1);
-	} else {
-	    return v;
-	}
     }
 
     getAABB(): Rect {

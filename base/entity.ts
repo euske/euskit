@@ -111,7 +111,7 @@ class Particle extends Entity {
             let frame = this.getFrame();
 	    if (frame !== null) {
 		let collider = this.getCollider(this.pos);
-		if (collider !== null && !collider.overlaps(frame)) {
+		if (collider !== null && !collider.overlapsRect(frame)) {
 		    this.stop();
 		}
 	    }
