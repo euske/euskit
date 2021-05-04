@@ -282,47 +282,44 @@ interface Shape extends Collider {
 }
 
 
-/**  AALine
+/**  HLine, VLine
  *   Axis-aligned line
  */
-class AALine implements Collider {
+class HLine implements Collider {
 
     x0: number;
-    y0: number;
     x1: number;
-    y1: number;
+    y: number;
 
-    constructor(x0: number, y0: number, x1: number, y1: number) {
+    constructor(x0: number, x1: number, y: number) {
 	this.x0 = x0;
-	this.y0 = y0;
 	this.x1 = x1;
-	this.y1 = y1;
+	this.y = y;
     }
 
     /** Returns a copy of the object. */
-    copy(): AALine {
-	return new AALine(this.x0, this.y0, this.x1, this.y1);
+    copy(): HLine {
+	return new HLine(this.x0, this.x1, this.y);
     }
 
     /** Returns true if line is equivalent to the object. */
-    equals(line: AALine): boolean {
-	return (this.x0 == line.x0 && this.y0 == line.y0 &&
-		this.x1 == line.x1 && this.y1 == line.y1);
+    equals(line: HLine): boolean {
+	return (this.x0 == line.x0 && this.x1 == line.x1 && this.y == line.y);
     }
 
-    /** Returns a new AALine that is moved by (dx, dy). */
-    move(dx: number, dy: number): AALine {
-	return new AALine(this.x0+dx, this.y0+dy, this.x1+dx, this.y1+dy);
+    /** Returns a new HLine that is moved by (dx, dy). */
+    move(dx: number, dy: number): HLine {
+	return new HLine(this.x0+dx, this.x1+dx, this.y+dy);
     }
 
-    /** Returns a new AALine that is moved by v. */
-    add(v: Vec2): AALine {
-	return new AALine(this.x0+v.x, this.y0+v.y, this.x1+v.x, this.y1+v.y);
+    /** Returns a new HLine that is moved by v. */
+    add(v: Vec2): HLine {
+	return new HLine(this.x0+v.x, this.x1+v.x, this.y+v.y);
     }
 
-    /** Returns a new AALine that is moved by -v. */
-    sub(v: Vec2): AALine {
-	return new AALine(this.x0-v.x, this.y0-v.y, this.x1-v.x, this.y1-v.y);
+    /** Returns a new HLine that is moved by -v. */
+    sub(v: Vec2): HLine {
+	return new HLine(this.x0-v.x, this.x1-v.x, this.y-v.y);
     }
 
     /** Returns true if the given object is overlapping with this line. */
@@ -338,22 +335,22 @@ class AALine implements Collider {
 
     /** Returns true if the rect is overlapping with this line. */
     overlapsRect(rect: Rect): boolean {
-	return !(this.x1 < rect.x || this.y1 < rect.y ||
-		 rect.x1() < this.x0 || rect.y1() < this.y0);
+	return !(this.x1 < rect.x || this.y < rect.y ||
+		 rect.x1() < this.x0 || rect.y1() < this.y);
     }
 
     /** Returns true if the circle is overlapping with this line. */
     overlapsCircle(circle: Circle): boolean {
 	if (this.x1 <= circle.center.x-circle.radius ||
-	    this.y1 <= circle.center.y-circle.radius ||
+	    this.y <= circle.center.y-circle.radius ||
 	    circle.center.x+circle.radius <= this.x0 ||
-	    circle.center.y+circle.radius <= this.y0) {
+	    circle.center.y+circle.radius <= this.y) {
 	    return false;
 	}
 	return (this.x0 < circle.center.x && circle.center.x < this.x1 ||
-		this.y0 < circle.center.y && circle.center.y < this.y1 ||
-		circle.containsPt(new Vec2(this.x0, this.y0)) ||
-		circle.containsPt(new Vec2(this.x1, this.y1)));
+		this.y < circle.center.y && circle.center.y < this.y ||
+		circle.containsPt(new Vec2(this.x0, this.y)) ||
+		circle.containsPt(new Vec2(this.x1, this.y)));
     }
 
     /** Trims a vector so that the given object does not collide with this line. */
@@ -369,17 +366,7 @@ class AALine implements Collider {
 
     /** Trims a vector so that the rect does not collide with this line. */
     contactRect(v: Vec2, rect: Rect): Vec2 {
-	if (this.y0 == this.y1) {
-	    return this.contactRectH(v, rect, this.y0);
-	} else if (this.x0 == this.x1) {
-	    return this.contactRectV(v, rect, this.x0);
-	} else {
-	    return v;
-	}
-    }
-
-    /** Calculate a contact point when this line is horizontal. */
-    private contactRectH(v: Vec2, rect: Rect, y: number): Vec2 {
+        let y = this.y;
 	let y0 = rect.y;
 	let y1 = y0+rect.height;
 	let dy: number;
@@ -401,8 +388,114 @@ class AALine implements Collider {
 	return new Vec2(dx, dy);
     }
 
-    /** Calculate a contact point when this line is vertical. */
-    private contactRectV(v: Vec2, rect: Rect, x: number): Vec2 {
+    /** Trims a vector so that the circle does not collide with this line. */
+    contactCircle(v: Vec2, circle: Circle): Vec2 {
+        let y = this.y;
+	let x = circle.center.x + v.x;
+	if (this.x0 < x && x < this.x1) {
+	    y += (v.y < 0)? circle.radius : -circle.radius;
+	    let dy = y - circle.center.y;
+	    let dt = dy / v.y;
+	    if (0 <= dt && dt <= 1) {
+		return new Vec2(v.x*dt, dy);
+	    }
+	}
+	return v;
+    }
+
+    /** Returns the boundary box of this line. */
+    getAABB(): Rect {
+	return new Rect(this.x0, this.y, this.x1-this.x0, 0);
+    }
+
+    /** Returns a random point on the line. */
+    rndPt(): Vec2 {
+	return new Vec2(rnd(this.x0, this.x1), this.y);
+    }
+}
+
+class VLine implements Collider {
+
+    x: number;
+    y0: number;
+    y1: number;
+
+    constructor(x: number, y0: number, y1: number) {
+	this.x = x;
+	this.y0 = y0;
+	this.y1 = y1;
+    }
+
+    /** Returns a copy of the object. */
+    copy(): VLine {
+	return new VLine(this.x, this.y0, this.y1);
+    }
+
+    /** Returns true if line is equivalent to the object. */
+    equals(line: VLine): boolean {
+	return (this.x == line.x && this.y0 == line.y0 && this.y1 == line.y1);
+    }
+
+    /** Returns a new VLine that is moved by (dx, dy). */
+    move(dx: number, dy: number): VLine {
+	return new VLine(this.x+dx, this.y0+dy, this.y1+dy);
+    }
+
+    /** Returns a new VLine that is moved by v. */
+    add(v: Vec2): VLine {
+	return new VLine(this.x+v.x, this.y0+v.y, this.y1+v.y);
+    }
+
+    /** Returns a new VLine that is moved by -v. */
+    sub(v: Vec2): VLine {
+	return new VLine(this.x-v.x, this.y0-v.y, this.y1-v.y);
+    }
+
+    /** Returns true if the given object is overlapping with this line. */
+    overlaps(collider: Collider): boolean {
+	if (collider instanceof Rect) {
+	    return this.overlapsRect(collider);
+	} else if (collider instanceof Circle) {
+	    return this.overlapsCircle(collider);
+	} else {
+	    return false;
+	}
+    }
+
+    /** Returns true if the rect is overlapping with this line. */
+    overlapsRect(rect: Rect): boolean {
+	return !(this.x < rect.x || this.y1 < rect.y ||
+		 rect.x1() < this.x || rect.y1() < this.y0);
+    }
+
+    /** Returns true if the circle is overlapping with this line. */
+    overlapsCircle(circle: Circle): boolean {
+	if (this.x <= circle.center.x-circle.radius ||
+	    this.y1 <= circle.center.y-circle.radius ||
+	    circle.center.x+circle.radius <= this.x ||
+	    circle.center.y+circle.radius <= this.y0) {
+	    return false;
+	}
+	return (this.x < circle.center.x && circle.center.x < this.x ||
+		this.y0 < circle.center.y && circle.center.y < this.y1 ||
+		circle.containsPt(new Vec2(this.x, this.y0)) ||
+		circle.containsPt(new Vec2(this.x, this.y1)));
+    }
+
+    /** Trims a vector so that the given object does not collide with this line. */
+    contact(v: Vec2, collider: Collider): Vec2 {
+	if (collider instanceof Rect) {
+	    return this.contactRect(v, collider);
+	} else if (collider instanceof Circle) {
+	    return this.contactCircle(v, collider);
+	} else {
+	    return v;
+	}
+    }
+
+    /** Trims a vector so that the rect does not collide with this line. */
+    contactRect(v: Vec2, rect: Rect): Vec2 {
+        let x = this.x;
 	let x0 = rect.x;
 	let x1 = x0+rect.width;
 	let dx: number;
@@ -426,31 +519,7 @@ class AALine implements Collider {
 
     /** Trims a vector so that the circle does not collide with this line. */
     contactCircle(v: Vec2, circle: Circle): Vec2 {
-	if (this.y0 == this.y1) {
-	    return this.contactCircleH(v, circle, this.y0);
-	} else if (this.x0 == this.x1) {
-	    return this.contactCircleV(v, circle, this.x0);
-	} else {
-	    return v;
-	}
-    }
-
-    /** Calculate a contact point when this line is horizontal. */
-    private contactCircleH(v: Vec2, circle: Circle, y: number): Vec2 {
-	let x = circle.center.x + v.x;
-	if (this.x0 < x && x < this.x1) {
-	    y += (v.y < 0)? circle.radius : -circle.radius;
-	    let dy = y - circle.center.y;
-	    let dt = dy / v.y;
-	    if (0 <= dt && dt <= 1) {
-		return new Vec2(v.x*dt, dy);
-	    }
-	}
-	return v;
-    }
-
-    /** Calculate a contact point when this line is vertical. */
-    private contactCircleV(v: Vec2, circle: Circle, x: number): Vec2 {
+        let x = this.x;
 	let y = circle.center.y + v.y;
 	if (this.y0 < y && y < this.y1) {
 	    x += (v.x < 0)? circle.radius : -circle.radius;
@@ -465,12 +534,12 @@ class AALine implements Collider {
 
     /** Returns the boundary box of this line. */
     getAABB(): Rect {
-	return new Rect(this.x0, this.y0, this.x1-this.x0, this.y1-this.y0);
+	return new Rect(this.x, this.y0, 0, this.y1-this.y0);
     }
 
     /** Returns a random point on the line. */
     rndPt(): Vec2 {
-	return new Vec2(rnd(this.x0, this.x1), rnd(this.y0, this.y1));
+	return new Vec2(this.x, rnd(this.y0, this.y1));
     }
 }
 
@@ -575,18 +644,16 @@ class Rect implements Shape {
     }
 
     /** Returns an edge of the rectangle. */
-    edge(direction: string): AALine {
+    edge(direction: string): Collider {
 	switch (direction) {
         case 'w':
-	    return new AALine(this.x, this.y, this.x, this.y+this.height);
+	    return new VLine(this.x, this.y, this.y+this.height);
         case 'e':
-	    return new AALine(this.x+this.width, this.y,
-                              this.x+this.width, this.y+this.height);
+	    return new VLine(this.x+this.width, this.y, this.y+this.height);
         case 'n':
-	    return new AALine(this.x, this.y, this.x+this.width, this.y);
+	    return new HLine(this.x, this.x+this.width, this.y);
         case 's':
-	    return new AALine(this.x, this.y+this.height,
-                              this.x+this.width, this.y+this.height);
+	    return new HLine(this.x, this.x+this.width, this.y+this.height);
         default:
 	    return null;
 	}
@@ -837,9 +904,9 @@ class Rect implements Shape {
 	    return new Vec2();
 	}
 	let x = (v.x < 0)? this.x : this.x+this.width;
-	v = new AALine(x, -Infinity, x, +Infinity).contactRect(v, rect);
+	v = new VLine(x, -Infinity, +Infinity).contactRect(v, rect);
 	let y = (v.y < 0)? this.y : this.y+this.height;
-	v = new AALine(-Infinity, y, +Infinity, y).contactRect(v, rect);
+	v = new HLine(-Infinity, +Infinity, y).contactRect(v, rect);
 	return v;
     }
 
