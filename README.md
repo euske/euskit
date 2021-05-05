@@ -2,8 +2,8 @@ Euskit
 ======
 
 Euskit is a game engine designed for game jams.
-It is suitable for quick prototyping 2D games.
-The name was suggested by Mr. Rat King.
+It is suitable for quick prototyping of 2D games.
+This engine was named by Mr. Rat King.
 
  * HTML5 + TypeScript.
  * Good for old-school pixel art games.
