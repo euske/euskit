@@ -1,10 +1,12 @@
 Euskit
 ======
 
-A minimalistic HTML5 framework for 2D games written in TypeScript.
-(The name was suggested by Mr. Rat King)
+Euskit is a game engine designed for game jams.
+It is suitable for quick prototyping 2D games.
+The name was suggested by Mr. Rat King.
 
- * Suitable for old-school pixel art games.
+ * HTML5 + TypeScript.
+ * Good for old-school pixel art games.
  * <a href="https://euske.github.io/euskit/quickref.html">Simple and straightforward API</a>.
 
 Samples
