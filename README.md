@@ -21,7 +21,7 @@ absolutely no magic OH GOD I HATE MAGIC.  A compiled game is just one
 `.js` file and one `.html` file (and pngs and mp3s when you need
 them).  There's no `node_modules` or webpack crap either. I've created
 more than 50 games with this thing, so this isn't entirely a pipe
-dream. Yes, you can do it too.
+dream. And you can do it too.
 
 This engine was named by Mr. Rat King.
 
