@@ -12,7 +12,11 @@ on a browser. Plus it's written in TypeScript, so you don't have to
 sweat in the last minutes while you're making a tiny change which has
 a typo and causes the entire program flooded with `NaN` or
 `undefined`.  It only supports old-timey 2D games, but hey, I can be
-opinionated, right? By the way, I've created more than 50 games with
+opinionated, right? By the way, there's no special "editor" here, so
+you only need Emacs (or vim) for developing a game (other than `tsc`
+of course). Everything is simple and straightforward.  A compiled game
+is just one `.js` file and one `.html` file (and assets).  There's no
+`node_modules` or webpack hell. I've created more than 50 games with
 this thing, so this isn't entirely a pipe dream either.
 
 This engine was named by Mr. Rat King.
@@ -23,6 +27,10 @@ This engine was named by Mr. Rat King.
 
 Samples
 -------
+
+These games are actually playable.
+Click the "(Code)" to see the actual source code.
+Be amazed at how it's simple and straightforward.
 
  * <a href="https://euske.github.io/euskit/samples/pong/index.html"><img src="https://euske.github.io/euskit/samples/pong/gameplay.gif" width="160" height="120" alt="Pong"> Pong</a> <a href="https://github.com/euske/euskit/blob/master/samples/pong/src/game.ts">(Code)</a>
  * <a href="https://euske.github.io/euskit/samples/shooter/index.html"><img src="https://euske.github.io/euskit/samples/shooter/gameplay.gif" width="160" height="120" alt="Shoter"> Shooter</a> <a href="https://github.com/euske/euskit/blob/master/samples/shooter/src/game.ts">(Code)</a>
@@ -35,6 +43,8 @@ Samples
 
 Documents
 ---------
+Still work in progress...
+
  * <a href="https://euske.github.io/euskit/userguide.html">User Guide</a>
  * <a href="https://euske.github.io/euskit/quickref.html">Quick Reference</a>
  * <a href="https://euske.github.io/euskit/cheatsheet.html">Cheat Sheet</a>
