@@ -59,13 +59,13 @@ class Player extends TileMapEntity {
     prevmove: Vec2;
 
     constructor(tilemap: TileMap, pos: Vec2) {
-	super(tilemap, pos);
+        super(tilemap, pos);
         this.goaled = new Signal(this);
         let sprite = new RectSprite('#0f0', new Rect(-8,-8,16,16));
-	this.sprites = [sprite];
+        this.sprites = [sprite];
         this.collider = sprite.getBounds();
         this.isObstacle = isObstacle;
-	this.usermove = new Vec2();
+        this.usermove = new Vec2();
         this.prevmove = this.usermove;
     }
 
@@ -76,7 +76,7 @@ class Player extends TileMapEntity {
     }
 
     onTick() {
-	super.onTick();
+        super.onTick();
         if (!this.usermove.isZero()) {
             let v = this.getMove(this.usermove);
             if (v.isZero()) {
@@ -103,28 +103,28 @@ class Enemy extends WalkerEntity {
 
     constructor(grid: GridConfig, objmap: RangeMap,
                 sprite: Sprite, target: Entity, pos: Vec2) {
-	super(grid, objmap, sprite.getBounds(), pos, 4);
-	this.sprites = [sprite];
+        super(grid, objmap, sprite.getBounds(), pos, 4);
+        this.sprites = [sprite];
         this.collider = sprite.getBounds();
         this.target = target;
     }
 
     onTick() {
-	super.onTick();
+        super.onTick();
         let start = this.grid.coord2grid(this.pos);
-	let goal = this.grid.coord2grid(this.target.pos);
-	if (this.runner instanceof WalkerActionRunner) {
-	    if (!this.runner.goal.equals(goal)) {
-		// abandon an obsolete plan.
-		this.setRunner(null);
-	    }
-	}
-	if (this.runner === null) {
-	    let action = this.buildPlan(goal, start, 0, 40);
-	    if (action !== null) {
-		this.setRunner(new WalkerActionRunner(this, action, goal));
-	    }
-	}
+        let goal = this.grid.coord2grid(this.target.pos);
+        if (this.runner instanceof WalkerActionRunner) {
+            if (!this.runner.goal.equals(goal)) {
+                // abandon an obsolete plan.
+                this.setRunner(null);
+            }
+        }
+        if (this.runner === null) {
+            let action = this.buildPlan(goal, start, 0, 40);
+            if (action !== null) {
+                this.setRunner(new WalkerActionRunner(this, action, goal));
+            }
+        }
     }
 
     getMove(v: Vec2) {
@@ -142,15 +142,15 @@ class Game extends GameScene {
     player: Player;
 
     onStart() {
-	super.onStart();
+        super.onStart();
         this.tilemap = new TileMap(16, 39, 29);
         this.tilemap.fill(1);
         makeMaze(this.tilemap, 0, 0.1);
         this.tilemap.set(this.tilemap.width-2, this.tilemap.height-2, 2);
         let rect = this.tilemap.map2coord(new Vec2(1,1));
-	this.player = new Player(this.tilemap, rect.center());
+        this.player = new Player(this.tilemap, rect.center());
         this.player.goaled.subscribe((e) => { this.changeScene(new GoalScene()); });
-	this.add(this.player);
+        this.add(this.player);
         let grid = new GridConfig(this.tilemap);
         let objmap = this.tilemap.getRangeMap('obstacle', isObstacle);
         let sprite = new RectSprite('#f80', new Rect(-8,-8,16,16));
@@ -164,21 +164,21 @@ class Game extends GameScene {
     }
 
     onTick() {
-	super.onTick();
+        super.onTick();
         let target = this.player.getCollider() as Rect
         this.world.setCenter(target.inflate(96,96), this.tilemap.bounds);
     }
 
     onDirChanged(v: Vec2) {
-	this.player.usermove = v.scale(4);
+        this.player.usermove = v.scale(4);
     }
 
     render(ctx: CanvasRenderingContext2D) {
-	ctx.fillStyle = 'rgb(0,0,64)';
-	fillRect(ctx, this.screen);
-	this.tilemap.renderWindowFromBottomLeft(
+        ctx.fillStyle = 'rgb(0,0,64)';
+        fillRect(ctx, this.screen);
+        this.tilemap.renderWindowFromBottomLeft(
             ctx, this.world.window, (x,y,c)=>{return TILES[(c<0)? 1 : c];});
-	super.render(ctx);
+        super.render(ctx);
     }
 }
 
@@ -195,7 +195,7 @@ class GoalScene extends HTMLScene {
     }
 
     change() {
-	this.changeScene(new Game());
+        this.changeScene(new Game());
     }
 }
 

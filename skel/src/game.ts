@@ -16,7 +16,7 @@ function main() {
     APP = new App(320, 240);
     FONT = new Font(APP.images['font'], 'white');
     SPRITES = new ImageSpriteSheet(
-	APP.images['sprites'], new Vec2(16,16), new Vec2(8,8));
+        APP.images['sprites'], new Vec2(16,16), new Vec2(8,8));
     APP.init(new Game());
 }
 
@@ -28,11 +28,11 @@ class Player extends Entity {
     usermove: Vec2;
 
     constructor(pos: Vec2) {
-	super(pos);
+        super(pos);
         let sprite = SPRITES.get(0);
-	this.sprites = [sprite];
+        this.sprites = [sprite];
         this.collider = sprite.getBounds();
-	this.usermove = new Vec2();
+        this.usermove = new Vec2();
     }
 
     getCollider() {
@@ -40,13 +40,13 @@ class Player extends Entity {
     }
 
     onTick() {
-	super.onTick();
+        super.onTick();
         let v = this.getMove(this.usermove);
         this.pos = this.pos.add(v);
     }
 
     setMove(v: Vec2) {
-	this.usermove = v.scale(4);
+        this.usermove = v.scale(4);
     }
 }
 
@@ -60,32 +60,32 @@ class Game extends GameScene {
     score: number;
 
     onStart() {
-	super.onStart();
-	this.scoreBox = new TextBox(this.screen.inflate(-8,-8), FONT);
-	this.player = new Player(this.world.area.center());
+        super.onStart();
+        this.scoreBox = new TextBox(this.screen.inflate(-8,-8), FONT);
+        this.player = new Player(this.world.area.center());
         this.player.fences = [this.world.area];
-	this.add(this.player);
-	this.score = 0;
-	this.updateScore();
+        this.add(this.player);
+        this.score = 0;
+        this.updateScore();
     }
 
     onTick() {
-	super.onTick();
+        super.onTick();
     }
 
     onDirChanged(v: Vec2) {
-	this.player.setMove(v);
+        this.player.setMove(v);
     }
 
     render(ctx: CanvasRenderingContext2D) {
-	ctx.fillStyle = 'rgb(0,0,0)';
-	fillRect(ctx, this.screen);
-	super.render(ctx);
-	this.scoreBox.render(ctx);
+        ctx.fillStyle = 'rgb(0,0,0)';
+        fillRect(ctx, this.screen);
+        super.render(ctx);
+        this.scoreBox.render(ctx);
     }
 
     updateScore() {
-	this.scoreBox.clear();
-	this.scoreBox.putText(['SCORE: '+this.score]);
+        this.scoreBox.clear();
+        this.scoreBox.putText(['SCORE: '+this.score]);
     }
 }

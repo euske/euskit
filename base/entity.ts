@@ -15,14 +15,14 @@ function limitMotion(
     let bounds = collider.getAABB();
     let d = v0;
     if (fences !== null) {
-	for (let fence of fences) {
-	    d = fence.boundRect(d, bounds);
-	}
+        for (let fence of fences) {
+            d = fence.boundRect(d, bounds);
+        }
     }
     if (obstacles !== null) {
-	for (let obstacle of obstacles) {
-	    d = obstacle.contact(d, collider);
-	}
+        for (let obstacle of obstacles) {
+            d = obstacle.contact(d, collider);
+        }
     }
     let v = d;
     if (checkxy && d !== v0) {
@@ -32,14 +32,14 @@ function limitMotion(
         if (v0.x != 0) {
             d = new Vec2(v0.x, 0);
             if (fences !== null) {
-	        for (let fence of fences) {
-	            d = fence.boundRect(d, bounds);
-	        }
+                for (let fence of fences) {
+                    d = fence.boundRect(d, bounds);
+                }
             }
             if (obstacles !== null) {
-	        for (let obstacle of obstacles) {
-	            d = obstacle.contact(d, collider);
-	        }
+                for (let obstacle of obstacles) {
+                    d = obstacle.contact(d, collider);
+                }
             }
             v = v.add(d);
             v0 = v0.sub(d);
@@ -49,14 +49,14 @@ function limitMotion(
         if (v0.y != 0) {
             d = new Vec2(0, v0.y);
             if (fences !== null) {
-	        for (let fence of fences) {
-	            d = fence.boundRect(d, bounds);
-	        }
+                for (let fence of fences) {
+                    d = fence.boundRect(d, bounds);
+                }
             }
             if (obstacles !== null) {
-	        for (let obstacle of obstacles) {
-	            d = obstacle.contact(d, collider);
-	        }
+                for (let obstacle of obstacles) {
+                    d = obstacle.contact(d, collider);
+                }
             }
             v = v.add(d);
             //v0 = v0.sub(d);
@@ -85,12 +85,12 @@ class Entity extends Task {
     alpha: number = 1.0;
 
     constructor(pos: Vec2) {
-	super();
-	this.pos = (pos !== null)? pos.copy() : pos;
+        super();
+        this.pos = (pos !== null)? pos.copy() : pos;
     }
 
     toString() {
-	return '<Entity: '+this.pos+'>';
+        return '<Entity: '+this.pos+'>';
     }
 
     isVisible() {
@@ -111,12 +111,12 @@ class Entity extends Task {
     }
 
     onCollided(entity: Entity) {
-	// [OVERRIDE]
+        // [OVERRIDE]
     }
 
     getMove(v: Vec2) {
         let collider = this.getCollider();
-	return limitMotion(collider, v, this.fences);
+        return limitMotion(collider, v, this.fences);
     }
 }
 
@@ -128,17 +128,17 @@ class Particle extends Entity {
     movement: Vec2 = null;
 
     onTick() {
-	super.onTick();
-	if (this.movement !== null) {
+        super.onTick();
+        if (this.movement !== null) {
             this.pos = this.pos.add(this.movement);
             let frame = this.getFrame();
-	    if (frame !== null) {
-		let collider = this.getCollider();
-		if (collider !== null && !collider.overlapsRect(frame)) {
-		    this.stop();
-		}
-	    }
-	}
+            if (frame !== null) {
+                let collider = this.getCollider();
+                if (collider !== null && !collider.overlapsRect(frame)) {
+                    this.stop();
+                }
+            }
+        }
     }
 
     getFrame(): Rect {
@@ -156,7 +156,7 @@ class TileMapEntity extends Entity {
     isObstacle: (c:number)=>boolean = ((c:number) => { return false; });
 
     constructor(tilemap: TileMap, pos: Vec2) {
-	super(pos);
+        super(pos);
         this.tilemap = tilemap;
     }
 
@@ -176,7 +176,7 @@ class PhysicsConfig {
 
     jumpfunc: (vy:number,t:number)=>number =
         ((vy:number, t:number) => {
-	    return (0 <= t && t <= 5)? -4 : vy+1;
+            return (0 <= t && t <= 5)? -4 : vy+1;
         });
     maxspeed: Vec2 = new Vec2(6,6);
 
@@ -198,91 +198,91 @@ class PlatformerEntity extends TileMapEntity {
     protected _landed: boolean = false;
 
     constructor(physics: PhysicsConfig, tilemap: TileMap, pos: Vec2) {
-	super(tilemap, pos);
-	this.physics = physics;
+        super(tilemap, pos);
+        this.physics = physics;
     }
 
     onTick() {
-	super.onTick();
-	this.fall(this._jumpt);
-	if (this.isJumping()) {
-	    this._jumpt++;
-	} else {
-	    this._jumpt = Infinity;
-	}
+        super.onTick();
+        this.fall(this._jumpt);
+        if (this.isJumping()) {
+            this._jumpt++;
+        } else {
+            this._jumpt = Infinity;
+        }
     }
 
     getMove(v0: Vec2, context=null as string) {
         let collider = this.getCollider();
-	let hitbox = collider.getAABB();
-	let range = hitbox.union(hitbox.add(v0));
-	let obstacles = this.getObstaclesFor(range, v0, context);
-	return limitMotion(collider, v0, this.fences, obstacles);
+        let hitbox = collider.getAABB();
+        let range = hitbox.union(hitbox.add(v0));
+        let obstacles = this.getObstaclesFor(range, v0, context);
+        return limitMotion(collider, v0, this.fences, obstacles);
     }
 
     getObstaclesFor(range: Rect, v: Vec2, context: string): Rect[] {
-	let f = ((context == 'fall')?
-		 this.physics.isStoppable :
-		 this.physics.isObstacle);
-	return this.tilemap.getTileRects(f, range);
+        let f = ((context == 'fall')?
+                 this.physics.isStoppable :
+                 this.physics.isObstacle);
+        return this.tilemap.getTileRects(f, range);
     }
 
     setJump(jumpend: number) {
-	if (0 < jumpend) {
-	    if (this.canJump()) {
-		this._jumpt = 0;
-		this.onJumped();
-	    }
-	}
-	this._jumpend = jumpend;
+        if (0 < jumpend) {
+            if (this.canJump()) {
+                this._jumpt = 0;
+                this.onJumped();
+            }
+        }
+        this._jumpend = jumpend;
     }
 
     fall(t: number) {
-	if (this.canFall()) {
-	    let vy = this.physics.jumpfunc(this.velocity.y, t);
-	    let v = new Vec2(this.velocity.x, vy);
+        if (this.canFall()) {
+            let vy = this.physics.jumpfunc(this.velocity.y, t);
+            let v = new Vec2(this.velocity.x, vy);
             v = this.getMove(v, 'fall');
             this.pos = this.pos.add(v);
-	    this.velocity = v.clamp(this.physics.maxspeed);
-	    let landed = (0 < vy && this.velocity.y == 0);
-	    if (!this._landed && landed) {
-		this.onLanded();
-	    }
-	    this._landed = landed;
-	} else {
-	    this.velocity = new Vec2();
-	    if (!this._landed) {
-		this.onLanded();
-	    }
-	    this._landed = true;
-	}
+            this.velocity = v.clamp(this.physics.maxspeed);
+            let landed = (0 < vy && this.velocity.y == 0);
+            if (!this._landed && landed) {
+                this.onLanded();
+            }
+            this._landed = landed;
+        } else {
+            this.velocity = new Vec2();
+            if (!this._landed) {
+                this.onLanded();
+            }
+            this._landed = true;
+        }
     }
 
     canMove(v: Vec2) {
-	return v === this.getMove(v);
+        return v === this.getMove(v);
     }
 
     canJump() {
-	return this.isLanded();
+        return this.isLanded();
     }
 
     canFall() {
-	return true;
+        return true;
     }
 
     isJumping() {
-	return (this._jumpt < this._jumpend);
+        return (this._jumpt < this._jumpend);
     }
 
     isLanded() {
-	return this._landed;
+        return this._landed;
     }
 
     onJumped() {
-	// [OVERRIDE]
+        // [OVERRIDE]
     }
 
     onLanded() {
-	// [OVERRIDE]
+        // [OVERRIDE]
     }
 }

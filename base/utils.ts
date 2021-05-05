@@ -11,9 +11,9 @@ const assert = window.console.assert.bind(window.console);
 /** Creates a mixin class. */
 function applyMixins(derivedCtor: any, baseCtors: any[]) {
     baseCtors.forEach(baseCtor => {
-	Object.getOwnPropertyNames(baseCtor.prototype).forEach(name => {
-	    derivedCtor.prototype[name] = baseCtor.prototype[name];
-	});
+        Object.getOwnPropertyNames(baseCtor.prototype).forEach(name => {
+            derivedCtor.prototype[name] = baseCtor.prototype[name];
+        });
     });
 }
 
@@ -47,11 +47,11 @@ function clamp(v0: number, v: number, v1: number): number
 function sign(v: number): number
 {
     if (v < 0) {
-	return -1;
+        return -1;
     } else if (0 < v) {
-	return +1;
+        return +1;
     } else {
-	return 0;
+        return 0;
     }
 }
 
@@ -80,9 +80,9 @@ function lerp(t:number, a:number, b:number): number
 function frnd(a: number, b=0): number
 {
     if (b < a) {
-	let c = a;
-	a = b;
-	b = c;
+        let c = a;
+        a = b;
+        b = c;
     }
     return a+(Math.random()*(b-a));
 }
@@ -108,12 +108,12 @@ function format(v: number, n=3, c=' '): string
 {
     let s = '';
     while (s.length < n) {
-	s = (v % 10)+s;
-	v = int(v/10);
-	if (v <= 0) break;
+        s = (v % 10)+s;
+        v = int(v/10);
+        if (v <= 0) break;
     }
     while (s.length < n) {
-	s = c+s;
+        s = c+s;
     }
     return s;
 }
@@ -129,7 +129,7 @@ function removeElement<T>(a: T[], obj: T): T[]
 {
     let i = a.indexOf(obj);
     if (0 <= i) {
-	a.splice(i, 1);
+        a.splice(i, 1);
     }
     return a;
 }
@@ -149,7 +149,7 @@ function str2array(s: string, f: (c:string)=>number=parseInt): Int32Array
 {
     let a = new Int32Array(s.length);
     for (let i = 0; i < s.length; i++) {
-	a[i] = f(s[i]);
+        a[i] = f(s[i]);
     }
     return a;
 }
@@ -161,7 +161,7 @@ function str2array(s: string, f: (c:string)=>number=parseInt): Int32Array
  */
 function makeMatrix(rows: number, cols: number, value=0): Int32Array[] {
     return range(rows).map(() => {
-	return new Int32Array(cols).fill(value);
+        return new Int32Array(cols).fill(value);
     });
 }
 
@@ -174,10 +174,10 @@ function removeChildren(node: Node, name: string)
     name = name.toLowerCase();
     // Iterate backwards to simplify array removal. (thanks to @the31)
     for (let i = node.childNodes.length-1; 0 <= i; i--) {
-	let c = node.childNodes[i];
-	if (c.nodeName.toLowerCase() === name) {
-	    node.removeChild(c);
-	}
+        let c = node.childNodes[i];
+        if (c.nodeName.toLowerCase() === name) {
+            node.removeChild(c);
+        }
     }
 }
 
@@ -218,24 +218,24 @@ function image2array(img: HTMLImageElement, header=0): Int32Array[]
     let i = 0;
     let c2v: { [index:number]: number } = null;
     if (0 < header) {
-	c2v = {}
-	for (let y = 0; y < header; y++) {
-	    for (let x = 0; x < width; x++, i+=4) {
-		let c = ((data[i] << 16) | (data[i+1] << 8) | data[i+2]); // RGBA
-		if (!c2v.hasOwnProperty(c.toString())) {
-		    c2v[c] = y*width + x;
-		}
-	    }
-	}
+        c2v = {}
+        for (let y = 0; y < header; y++) {
+            for (let x = 0; x < width; x++, i+=4) {
+                let c = ((data[i] << 16) | (data[i+1] << 8) | data[i+2]); // RGBA
+                if (!c2v.hasOwnProperty(c.toString())) {
+                    c2v[c] = y*width + x;
+                }
+            }
+        }
     }
     let map = new Array(height-header);
     for (let y = 0; y < height-header; y++) {
-	let a = new Int32Array(width);
-	for (let x = 0; x < width; x++, i+=4) {
-	    let c = ((data[i] << 16) | (data[i+1] << 8) | data[i+2]); // RGBA
-	    a[x] = (c2v !== null)? c2v[c] : c;
-	}
-	map[y] = a;
+        let a = new Int32Array(width);
+        for (let x = 0; x < width; x++, i+=4) {
+            let c = ((data[i] << 16) | (data[i+1] << 8) | data[i+2]); // RGBA
+            a[x] = (c2v !== null)? c2v[c] : c;
+        }
+        map[y] = a;
     }
     return map;
 }
@@ -273,9 +273,9 @@ function ellipse(
     ctx.save();
     ctx.translate(cx, cy);
     if (ry < rx) {
-	ctx.scale(1, ry/rx);
+        ctx.scale(1, ry/rx);
     } else {
-	ctx.scale(rx/ry, 1);
+        ctx.scale(rx/ry, 1);
     }
     ctx.arc(0, 0, Math.max(rx, ry), 0, Math.PI*2);
     ctx.restore();
@@ -303,11 +303,11 @@ function drawImageScaled(
 {
     ctx.save();
     ctx.translate(dx+((0 < dw)? 0 : -dw),
-		  dy+((0 < dh)? 0 : -dh));
+                  dy+((0 < dh)? 0 : -dh));
     ctx.scale((0 < dw)? 1 : -1,
-	      (0 < dh)? 1 : -1);
+              (0 < dh)? 1 : -1);
     ctx.drawImage(src, sx, sy, sw, sh, 0, 0,
-		  Math.abs(dw), Math.abs(dh));
+                  Math.abs(dw), Math.abs(dh));
     ctx.restore();
 }
 
@@ -329,37 +329,37 @@ enum KeySym {
 function getKeySym(keyCode: number): KeySym
 {
     switch (keyCode) {
-    case 37:			// LEFT
-    case 65:			// A
-    case 72:			// H
-    case 81:			// Q (AZERTY)
-	return KeySym.Left;
-    case 39:			// RIGHT
-    case 68:			// D
-    case 76:			// L
-	return KeySym.Right;
-    case 38:			// UP
-    case 87:			// W
-    case 75:			// K
-    case 90:			// Z (AZERTY)
-	return KeySym.Up;
-    case 40:			// DOWN
-    case 83:			// S
-    case 74:			// J
-	return KeySym.Down;
-    case 16:			// SHIFT
-    case 32:			// SPACE
-    case 88:			// X
-	return KeySym.Action1;
-    case 13:			// ENTER
-    case 69:			// E
-    case 67:			// C
-	return KeySym.Action2;
-    case 8:			// BACKSPACE
-    case 27:			// ESCAPE
-	return KeySym.Cancel;
+    case 37:                    // LEFT
+    case 65:                    // A
+    case 72:                    // H
+    case 81:                    // Q (AZERTY)
+        return KeySym.Left;
+    case 39:                    // RIGHT
+    case 68:                    // D
+    case 76:                    // L
+        return KeySym.Right;
+    case 38:                    // UP
+    case 87:                    // W
+    case 75:                    // K
+    case 90:                    // Z (AZERTY)
+        return KeySym.Up;
+    case 40:                    // DOWN
+    case 83:                    // S
+    case 74:                    // J
+        return KeySym.Down;
+    case 16:                    // SHIFT
+    case 32:                    // SPACE
+    case 88:                    // X
+        return KeySym.Action1;
+    case 13:                    // ENTER
+    case 69:                    // E
+    case 67:                    // C
+        return KeySym.Action2;
+    case 8:                     // BACKSPACE
+    case 27:                    // ESCAPE
+        return KeySym.Cancel;
     default:
-	return KeySym.Unknown;
+        return KeySym.Unknown;
     }
 }
 
@@ -382,35 +382,35 @@ class Signal {
      * @param params Base arguments.
      */
     constructor(...params: any[]) {
-	this.baseargs = Array.prototype.slice.call(arguments);
+        this.baseargs = Array.prototype.slice.call(arguments);
     }
 
     toString() {
-	return ('<Signal('+this.baseargs+') '+this.receivers+'>');
+        return ('<Signal('+this.baseargs+') '+this.receivers+'>');
     }
 
     /** Adds a receiver function for the signal.
      * @param recv Receiver function to add.
      */
     subscribe(recv: Action) {
-	this.receivers.push(recv);
+        this.receivers.push(recv);
     }
 
     /** Removes a receiver function for the signal.
      * @param recv Receiver function to remove.
      */
     unsubscribe(recv: Action) {
-	removeElement(this.receivers, recv);
+        removeElement(this.receivers, recv);
     }
 
     /** Notifies all the receivers with the given arguments.
      * @param params Extra arguments.
      */
     fire(...params: any[]) {
-	for (let receiver of this.receivers) {
-	    let args = Array.prototype.slice.call(arguments);
-	    receiver.apply(null, this.baseargs.concat(args));
-	}
+        for (let receiver of this.receivers) {
+            let args = Array.prototype.slice.call(arguments);
+            receiver.apply(null, this.baseargs.concat(args));
+        }
     }
 }
 
@@ -433,13 +433,13 @@ class Color {
      * @param v Brightness.
      */
     static generate(h: number, v: number=1.0) {
-	h *= 2*Math.PI;
-	v *= 0.5;
-	return new Color(
-	    (Math.sin(h)+1)*v,
-	    (Math.sin(h+2*Math.PI/3)+1)*v,
-	    (Math.sin(h+4*Math.PI/3)+1)*v,
-	    1.0);
+        h *= 2*Math.PI;
+        v *= 0.5;
+        return new Color(
+            (Math.sin(h)+1)*v,
+            (Math.sin(h+2*Math.PI/3)+1)*v,
+            (Math.sin(h+4*Math.PI/3)+1)*v,
+            1.0);
     }
 
     /** Creates a new Color.
@@ -449,35 +449,35 @@ class Color {
      * @param a Alpha.
      */
     constructor(r: number, g: number, b: number, a=1.0) {
-	this.r = r;
-	this.g = g;
-	this.b = b;
-	this.a = a;
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.a = a;
     }
 
     toString() {
-	if (0 <= this.a) {
-	    return ('rgba('+
-		    int(255*clamp(0,this.r,1))+','+
-		    int(255*clamp(0,this.g,1))+','+
-		    int(255*clamp(0,this.b,1))+','+
-		    clamp(0,this.a,1)+')');
-	} else {
-	    return ('rgb('+
-		    int(255*clamp(0,this.r,1))+','+
-		    int(255*clamp(0,this.g,1))+','+
-		    int(255*clamp(0,this.b,1))+')');
-	}
+        if (0 <= this.a) {
+            return ('rgba('+
+                    int(255*clamp(0,this.r,1))+','+
+                    int(255*clamp(0,this.g,1))+','+
+                    int(255*clamp(0,this.b,1))+','+
+                    clamp(0,this.a,1)+')');
+        } else {
+            return ('rgb('+
+                    int(255*clamp(0,this.r,1))+','+
+                    int(255*clamp(0,this.g,1))+','+
+                    int(255*clamp(0,this.b,1))+')');
+        }
     }
 
     /** Changes the alpha value. */
     setAlpha(a: number): Color {
-	return new Color(this.r, this.g, this.b, a);
+        return new Color(this.r, this.g, this.b, a);
     }
 
     /** Multiplies the brightness. */
     multiply(t: number): Color {
-	return new Color(this.r*t, this.g*t, this.b*t, this.a);
+        return new Color(this.r*t, this.g*t, this.b*t, this.a);
     }
 
     /** Blends with another Color.
@@ -485,11 +485,11 @@ class Color {
      * @param t Blending ratio.
      */
     blend(color: Color, t: number): Color {
-	return new Color(
-	    this.r*(1-t) + color.r*t,
-	    this.g*(1-t) + color.g*t,
-	    this.b*(1-t) + color.b*t,
-	    this.a*(1-t) + color.a*t);
+        return new Color(
+            this.r*(1-t) + color.r*t,
+            this.g*(1-t) + color.g*t,
+            this.b*(1-t) + color.b*t,
+            this.a*(1-t) + color.a*t);
     }
 }
 

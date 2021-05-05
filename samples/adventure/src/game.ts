@@ -31,80 +31,80 @@ class PictureScene extends GameScene {
     alpha: number = 0;
 
     constructor() {
-	super();
-	let lineHeight = 8;
-	let lineSpace = 4;
-	let padding = 8;
-	let width = this.screen.width-16;
-	let height = (lineHeight+lineSpace)*6-lineSpace+padding*2;
-	let rect = this.screen.resize(width, height, 's').move(0,-8);
-	let textbox = new TextBox(rect, FONT);
-	textbox.padding = padding;
-	textbox.lineSpace = lineSpace;
-	textbox.background = 'rgba(0,0,0,0.5)'
-	this.dialogBox = new DialogBox(textbox, HIFONT);
+        super();
+        let lineHeight = 8;
+        let lineSpace = 4;
+        let padding = 8;
+        let width = this.screen.width-16;
+        let height = (lineHeight+lineSpace)*6-lineSpace+padding*2;
+        let rect = this.screen.resize(width, height, 's').move(0,-8);
+        let textbox = new TextBox(rect, FONT);
+        textbox.padding = padding;
+        textbox.lineSpace = lineSpace;
+        textbox.background = 'rgba(0,0,0,0.5)'
+        this.dialogBox = new DialogBox(textbox, HIFONT);
     }
 
     onStart() {
-	super.onStart();
-	this.add(this.dialogBox);
+        super.onStart();
+        this.add(this.dialogBox);
     }
 
     onTick() {
-	super.onTick();
-	if (this.alpha < 1.0) {
-	    this.alpha = upperbound(1.0, this.alpha+0.05);
-	}
+        super.onTick();
+        if (this.alpha < 1.0) {
+            this.alpha = upperbound(1.0, this.alpha+0.05);
+        }
     }
 
     onKeyDown(key: number) {
-	super.onKeyDown(key);
-	this.dialogBox.onKeyDown(key);
+        super.onKeyDown(key);
+        this.dialogBox.onKeyDown(key);
     }
 
     onMouseDown(p: Vec2, button: number) {
-	super.onMouseDown(p, button);
-	this.dialogBox.onMouseDown(p, button);
+        super.onMouseDown(p, button);
+        this.dialogBox.onMouseDown(p, button);
     }
 
     onMouseUp(p: Vec2, button: number) {
-	super.onMouseUp(p, button);
-	this.dialogBox.onMouseUp(p, button);
+        super.onMouseUp(p, button);
+        this.dialogBox.onMouseUp(p, button);
     }
 
     onMouseMove(p: Vec2) {
-	super.onMouseMove(p);
-	this.dialogBox.onMouseMove(p);
+        super.onMouseMove(p);
+        this.dialogBox.onMouseMove(p);
     }
 
     render(ctx: CanvasRenderingContext2D) {
-	ctx.fillStyle = 'rgb(0,0,0)';
-	fillRect(ctx, this.screen);
-	ctx.save();
-	if (this.image0 !== null) {
-	    ctx.globalAlpha = 1.0-this.alpha;
-	    ctx.drawImage(this.image0, this.screen.x, this.screen.y,
-			  this.screen.width, this.screen.height);
-	}
-	if (this.image1 !== null) {
-	    ctx.globalAlpha = this.alpha;
-	    ctx.drawImage(this.image1, this.screen.x, this.screen.y,
-			  this.screen.width, this.screen.height);
-	}
-	ctx.restore();
-	super.render(ctx);
-	// draw a textbox border.
-	let rect = this.dialogBox.textbox.frame.inflate(-2,-2);
-	ctx.strokeStyle = 'white';
-	ctx.lineWidth = 2;
-	strokeRect(ctx, rect);
+        ctx.fillStyle = 'rgb(0,0,0)';
+        fillRect(ctx, this.screen);
+        ctx.save();
+        if (this.image0 !== null) {
+            ctx.globalAlpha = 1.0-this.alpha;
+            ctx.drawImage(this.image0, this.screen.x, this.screen.y,
+                          this.screen.width, this.screen.height);
+        }
+        if (this.image1 !== null) {
+            ctx.globalAlpha = this.alpha;
+            ctx.drawImage(this.image1, this.screen.x, this.screen.y,
+                          this.screen.width, this.screen.height);
+        }
+        ctx.restore();
+        super.render(ctx);
+        // draw a textbox border.
+        let rect = this.dialogBox.textbox.frame.inflate(-2,-2);
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 2;
+        strokeRect(ctx, rect);
     }
 
     changeScene(scene: Scene) {
-	if (scene instanceof PictureScene) {
-	    scene.image0 = this.image1;
-	}
-	super.changeScene(scene);
+        if (scene instanceof PictureScene) {
+            scene.image0 = this.image1;
+        }
+        super.changeScene(scene);
     }
 }
 
@@ -113,21 +113,21 @@ class PictureScene extends GameScene {
 //
 class Scene1 extends PictureScene {
     constructor() {
-	super();
-	this.image1 = APP.images['scene1'];
+        super();
+        this.image1 = APP.images['scene1'];
     }
     onStart() {
-	super.onStart();
-	this.dialogBox.addDisplay(
-	    'It was a perfect sunny day. '+
-	    'I was driving a sleepy countryside.', 10);
-	let menu = this.dialogBox.addMenu();
-	menu.addItem(new Vec2(20,30), 'I like an eggplant.');
-	menu.addItem(new Vec2(20,40), 'This is nuts.');
-	menu.addItem(new Vec2(20,50), 'Gimme a cucumber.');
-	menu.selected.subscribe(() => {
-	    this.changeScene(new Scene2());
-	});
+        super.onStart();
+        this.dialogBox.addDisplay(
+            'It was a perfect sunny day. '+
+            'I was driving a sleepy countryside.', 10);
+        let menu = this.dialogBox.addMenu();
+        menu.addItem(new Vec2(20,30), 'I like an eggplant.');
+        menu.addItem(new Vec2(20,40), 'This is nuts.');
+        menu.addItem(new Vec2(20,50), 'Gimme a cucumber.');
+        menu.selected.subscribe(() => {
+            this.changeScene(new Scene2());
+        });
     }
 }
 
@@ -135,21 +135,21 @@ class Scene1 extends PictureScene {
 //
 class Scene2 extends PictureScene {
     constructor() {
-	super();
-	this.image1 = APP.images['scene2'];
+        super();
+        this.image1 = APP.images['scene2'];
     }
     onStart() {
-	super.onStart();
-	this.dialogBox.addDisplay(
-	    'I was fed up with cities. The beauty of '+
-	    'a city makes everyone anonymous.', 10);
-	let menu = this.dialogBox.addMenu();
-	menu.addItem(new Vec2(20,40), 'O RLY?');
-	menu.addItem(new Vec2(20,50), 'Beautiful quote.');
-	menu.addItem(new Vec2(20,60), '43914745.');
-	menu.selected.subscribe(() => {
-	    this.changeScene(new Scene3());
-	});
+        super.onStart();
+        this.dialogBox.addDisplay(
+            'I was fed up with cities. The beauty of '+
+            'a city makes everyone anonymous.', 10);
+        let menu = this.dialogBox.addMenu();
+        menu.addItem(new Vec2(20,40), 'O RLY?');
+        menu.addItem(new Vec2(20,50), 'Beautiful quote.');
+        menu.addItem(new Vec2(20,60), '43914745.');
+        menu.selected.subscribe(() => {
+            this.changeScene(new Scene3());
+        });
     }
 }
 
@@ -157,21 +157,21 @@ class Scene2 extends PictureScene {
 //
 class Scene3 extends PictureScene {
     constructor() {
-	super();
-	this.image1 = APP.images['scene3'];
+        super();
+        this.image1 = APP.images['scene3'];
     }
     onStart() {
-	super.onStart();
-	this.dialogBox.addDisplay(
-	    'But eventually, people can\'t really '+
-	    'forget about their loved ones.', 10);
-	let menu = this.dialogBox.addMenu();
-	menu.addItem(new Vec2(20,30), 'ZZzzz.');
-	menu.addItem(new Vec2(20,40), 'Only if what I think is what you think.');
-	menu.addItem(new Vec2(20,50), 'xxThisSucks1729xx');
-	menu.selected.subscribe(() => {
-	    this.changeScene(new Scene1());
-	});
+        super.onStart();
+        this.dialogBox.addDisplay(
+            'But eventually, people can\'t really '+
+            'forget about their loved ones.', 10);
+        let menu = this.dialogBox.addMenu();
+        menu.addItem(new Vec2(20,30), 'ZZzzz.');
+        menu.addItem(new Vec2(20,40), 'Only if what I think is what you think.');
+        menu.addItem(new Vec2(20,50), 'xxThisSucks1729xx');
+        menu.selected.subscribe(() => {
+            this.changeScene(new Scene1());
+        });
     }
 }
 
@@ -181,7 +181,7 @@ class Scene3 extends PictureScene {
 class Adventure extends Scene {
 
     onStart() {
-	super.onStart();
-	this.changeScene(new Scene1());
+        super.onStart();
+        this.changeScene(new Scene1());
     }
 }

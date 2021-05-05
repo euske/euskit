@@ -29,35 +29,35 @@ class Task {
     stopped: Signal;
 
     constructor() {
-	this.stopped = new Signal(this);
+        this.stopped = new Signal(this);
     }
 
     toString() {
-	return '<Task: time='+this.getTime()+'>';
+        return '<Task: time='+this.getTime()+'>';
     }
 
     /** Returns the number of seconds elapsed since
      * this task has started. */
     getTime() {
-	return (getTime() - this.startTime);
+        return (getTime() - this.startTime);
     }
 
     /** Returns true if the task is scheduled but not yet running. */
     isScheduled() {
-	return (this.state == TaskState.Scheduled);
+        return (this.state == TaskState.Scheduled);
     }
 
     /** Returns true if the task is running. */
     isRunning() {
-	return (this.state == TaskState.Running);
+        return (this.state == TaskState.Running);
     }
 
     /** Invoked when the task is started. */
     onStart() {
-	if (this.state == TaskState.Scheduled) {
-	    this.state = TaskState.Running;
-	    this.startTime = getTime();
-	}
+        if (this.state == TaskState.Scheduled) {
+            this.state = TaskState.Running;
+            this.startTime = getTime();
+        }
     }
 
     /** Invoked when the task is stopped. */
@@ -66,40 +66,40 @@ class Task {
 
     /** Invoked at every frame while the task is running. */
     onTick() {
-	if (this.lifetime <= this.getTime()) {
-	    this.stop();
-	}
+        if (this.lifetime <= this.getTime()) {
+            this.stop();
+        }
     }
 
     /** Terminates the task. */
     stop() {
-	if (this.state == TaskState.Running) {
-	    this.state = TaskState.Finished;
-	    this.stopped.fire();
-	}
+        if (this.state == TaskState.Running) {
+            this.state = TaskState.Finished;
+            this.stopped.fire();
+        }
     }
 
     /** Schedules another task right after this task.
      * @param next Next Task.
      */
     chain(next: Task, signal: Signal=null): Task {
-	switch (this.state) {
-	case TaskState.Scheduled:
-	case TaskState.Running:
-	    signal = (signal !== null)? signal : this.stopped;
-	    signal.subscribe(() => {
-		if (this.parent !== null) {
-		    this.parent.add(next);
-		}
-	    });
-	    break;
-	case TaskState.Finished:
+        switch (this.state) {
+        case TaskState.Scheduled:
+        case TaskState.Running:
+            signal = (signal !== null)? signal : this.stopped;
+            signal.subscribe(() => {
+                if (this.parent !== null) {
+                    this.parent.add(next);
+                }
+            });
+            break;
+        case TaskState.Finished:
             // Start immediately if this task has already finished.
-	    if (this.parent !== null) {
-		this.parent.add(next);
-	    }
-	}
-	return next;
+            if (this.parent !== null) {
+                this.parent.add(next);
+            }
+        }
+        return next;
     }
 }
 
@@ -120,36 +120,36 @@ class SoundTask extends Task {
      * @param soundStart Start time of the sound.
      */
     constructor(sound: HTMLAudioElement, soundStart=MP3_GAP, soundEnd=0) {
-	super();
-	this.sound = sound;
-	this.soundStart = soundStart;
-	this.soundEnd = soundEnd;
+        super();
+        this.sound = sound;
+        this.soundStart = soundStart;
+        this.soundEnd = soundEnd;
     }
 
     /** Invoked when the task is started. */
     onStart() {
-	super.onStart();
+        super.onStart();
         // Start playing.
-	this.sound.currentTime = this.soundStart;
-	this.sound.play();
+        this.sound.currentTime = this.soundStart;
+        this.sound.play();
     }
 
     /** Invoked when the task is stopped. */
     onStop() {
         // Stop playing.
-	this.sound.pause();
-	super.onStop();
+        this.sound.pause();
+        super.onStop();
     }
 
     /** Invoked at every frame while the task is running. */
     onTick() {
-	super.onTick();
+        super.onTick();
         // Check if the playing is finished.
-	if (0 < this.soundEnd && this.soundEnd <= this.sound.currentTime) {
-	    this.stop();
-	} else if (this.sound.ended) {
-	    this.stop();
-	}
+        if (0 < this.soundEnd && this.soundEnd <= this.sound.currentTime) {
+            this.stop();
+        } else if (this.sound.ended) {
+            this.stop();
+        }
     }
 }
 
@@ -177,25 +177,25 @@ class ParallelTaskList extends Task implements TaskList {
     stopWhenEmpty: boolean = true;
 
     toString() {
-	return ('<ParalellTaskList: tasks='+this.tasks+'>');
+        return ('<ParalellTaskList: tasks='+this.tasks+'>');
     }
 
     /** Empties the task list. */
     onStart() {
         super.onStart();
-	this.tasks = [];
+        this.tasks = [];
     }
 
     /** Invoked at every frame. Update the current tasks. */
     onTick() {
-	for (let task of this.tasks) {
-	    if (task.isScheduled()) {
-		task.onStart();
-	    }
-	    if (task.isRunning()) {
-		task.onTick();
-	    }
-	}
+        for (let task of this.tasks) {
+            if (task.isScheduled()) {
+                task.onStart();
+            }
+            if (task.isRunning()) {
+                task.onTick();
+            }
+        }
 
         // Remove the finished tasks from the list.
         let removed = this.tasks.filter((task: Task) => { return !task.isRunning(); });
@@ -204,9 +204,9 @@ class ParallelTaskList extends Task implements TaskList {
         }
 
         // Terminates itself then the list is empty.
-	if (this.stopWhenEmpty && this.tasks.length == 0) {
-	    this.stop();
-	}
+        if (this.stopWhenEmpty && this.tasks.length == 0) {
+            this.stop();
+        }
     }
 
     /** Add a new Task to the list.
@@ -214,17 +214,17 @@ class ParallelTaskList extends Task implements TaskList {
      */
     add(task: Task) {
         task.parent = this;
-	this.tasks.push(task);
+        this.tasks.push(task);
     }
 
     /** Remove an existing Task from the list.
      * @param task Task to remove.
      */
     remove(task: Task) {
-	if (!task.isScheduled()) {
+        if (!task.isScheduled()) {
             task.onStop();
         }
-	removeElement(this.tasks, task);
+        removeElement(this.tasks, task);
     }
 }
 
@@ -242,15 +242,15 @@ class SequentialTaskList extends Task implements TaskList {
      * @param tasks List of tasks. (optional)
      */
     constructor(tasks: Task[]=null) {
-	super();
-	this.tasks = tasks;
+        super();
+        this.tasks = tasks;
     }
 
     /** Empties the task list. */
     onStart() {
         super.onStart();
         if (this.tasks === null) {
-	    this.tasks = [];
+            this.tasks = [];
         }
     }
 
@@ -259,43 +259,43 @@ class SequentialTaskList extends Task implements TaskList {
      */
     add(task: Task) {
         task.parent = this;
-	this.tasks.push(task);
+        this.tasks.push(task);
     }
 
     /** Remove an existing Task from the list.
      * @param task Task to remove.
      */
     remove(task: Task) {
-	removeElement(this.tasks, task);
+        removeElement(this.tasks, task);
     }
 
     /** Returns the task that is currently running
      * (or null if empty) */
     getCurrentTask() {
-	return (0 < this.tasks.length)? this.tasks[0] : null;
+        return (0 < this.tasks.length)? this.tasks[0] : null;
     }
 
     /** Invoked at every frame. Update the current tasks. */
     onTick() {
-	let task:Task = null;
-	while (true) {
-	    task = this.getCurrentTask();
-	    if (task === null) break;
+        let task:Task = null;
+        while (true) {
+            task = this.getCurrentTask();
+            if (task === null) break;
             // Starts the next task.
-	    if (task.isScheduled()) {
-		task.onStart();
-	    }
-	    if (task.isRunning()) {
-		task.onTick();
-		break;
-	    }
+            if (task.isScheduled()) {
+                task.onStart();
+            }
+            if (task.isRunning()) {
+                task.onTick();
+                break;
+            }
             // Finishes the current task.
-	    this.remove(task);
-	}
+            this.remove(task);
+        }
 
         // Terminates itself then the list is empty.
-	if (this.stopWhenEmpty && task === null) {
-	    this.stop();
-	}
+        if (this.stopWhenEmpty && task === null) {
+            this.stop();
+        }
     }
 }

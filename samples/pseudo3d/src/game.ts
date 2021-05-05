@@ -20,9 +20,9 @@ function main() {
     APP = new App(320, 240);
     FONT = new ShadowFont(APP.images['font'], 'white'),
     SPRITES = new ImageSpriteSheet(
-	APP.images['sprites'], new Vec2(32,32), new Vec2(16,16));
+        APP.images['sprites'], new Vec2(32,32), new Vec2(16,16));
     TILES = new ImageSpriteSheet(
-	APP.images['tiles'], new Vec2(48,48), new Vec2(0,8));
+        APP.images['tiles'], new Vec2(48,48), new Vec2(0,8));
     APP.init(new Game());
 }
 
@@ -49,7 +49,7 @@ const GROUND = new AAPlane(
 function getContact3(hitbox: Box, v: Vec3, obstacles: Box[])
 {
     for (let box of obstacles) {
-	v = box.contactBox(v, hitbox);
+        v = box.contactBox(v, hitbox);
     }
     return GROUND.contactBox(v, hitbox);
 }
@@ -63,7 +63,7 @@ class ShadowSprite3 implements Sprite {
     dz: number = 0;
 
     constructor() {
-	this.shadow = SPRITES.get(S.SHADOW) as ImageSprite;
+        this.shadow = SPRITES.get(S.SHADOW) as ImageSprite;
     }
 
     getBounds(): Rect {
@@ -71,18 +71,18 @@ class ShadowSprite3 implements Sprite {
     }
 
     render(ctx: CanvasRenderingContext2D) {
-	let shadow = this.shadow;
-	let srcRect = shadow.srcRect;
-	let dstRect = shadow.getBounds();
-	let d = this.dz/4;
-	if (d*2 <= dstRect.width && d*2 <= dstRect.height) {
-	    ctx.drawImage(
-		shadow.image,
-		srcRect.x, srcRect.y, srcRect.width, srcRect.height,
-		dstRect.x+d,
-		dstRect.y+d+this.dz/2,
-		dstRect.width-d*2, dstRect.height-d*2);
-	}
+        let shadow = this.shadow;
+        let srcRect = shadow.srcRect;
+        let dstRect = shadow.getBounds();
+        let d = this.dz/4;
+        if (d*2 <= dstRect.width && d*2 <= dstRect.height) {
+            ctx.drawImage(
+                shadow.image,
+                srcRect.x, srcRect.y, srcRect.width, srcRect.height,
+                dstRect.x+d,
+                dstRect.y+d+this.dz/2,
+                dstRect.width-d*2, dstRect.height-d*2);
+        }
     }
 }
 
@@ -101,50 +101,50 @@ class Entity3d extends Entity {
     maxspeed3: Vec3 = new Vec3();
 
     isFloating(): boolean {
-	// [OVERRIDE]
-	return false;
+        // [OVERRIDE]
+        return false;
     }
 
     getCollider3() {
-	let bounds = this.getCollider().getAABB();
-	return new Box(
-	    new Vec3(bounds.x, bounds.y, this.z),
-	    new Vec3(bounds.width, bounds.height, this.depth));
+        let bounds = this.getCollider().getAABB();
+        return new Box(
+            new Vec3(bounds.x, bounds.y, this.z),
+            new Vec3(bounds.width, bounds.height, this.depth));
     }
 
     canMove3(v0: Vec3, context=null as string) {
-	let v1 = this.getMove3(v0, context);
-	return v1.equals(v0);
+        let v1 = this.getMove3(v0, context);
+        return v1.equals(v0);
     }
 
     getMove3(v: Vec3, context=null as string) {
-	let collider0 = this.getCollider3();
-	let collider1 = collider0;
-	let range = collider1.union(collider1.add(v));
-	let obstacles = this.getObstaclesFor3(range, v, context);
-	let d = getContact3(collider1, v, obstacles);
-	v = v.sub(d);
-	collider1 = collider1.add(d);
-	if (v.x != 0) {
-	    d = getContact3(collider1, new Vec3(v.x,0,0), obstacles);
-	    v = v.sub(d);
-	    collider1 = collider1.add(d);
-	}
-	if (v.y != 0) {
-	    d = getContact3(collider1, new Vec3(0,v.y,0), obstacles);
-	    v = v.sub(d);
-	    collider1 = collider1.add(d);
-	}
-	if (v.z != 0) {
-	    d = getContact3(collider1, new Vec3(0,0,v.z), obstacles);
-	    v = v.sub(d);
-	    collider1 = collider1.add(d);
-	}
-	return collider1.origin.sub(collider0.origin);
+        let collider0 = this.getCollider3();
+        let collider1 = collider0;
+        let range = collider1.union(collider1.add(v));
+        let obstacles = this.getObstaclesFor3(range, v, context);
+        let d = getContact3(collider1, v, obstacles);
+        v = v.sub(d);
+        collider1 = collider1.add(d);
+        if (v.x != 0) {
+            d = getContact3(collider1, new Vec3(v.x,0,0), obstacles);
+            v = v.sub(d);
+            collider1 = collider1.add(d);
+        }
+        if (v.y != 0) {
+            d = getContact3(collider1, new Vec3(0,v.y,0), obstacles);
+            v = v.sub(d);
+            collider1 = collider1.add(d);
+        }
+        if (v.z != 0) {
+            d = getContact3(collider1, new Vec3(0,0,v.z), obstacles);
+            v = v.sub(d);
+            collider1 = collider1.add(d);
+        }
+        return collider1.origin.sub(collider0.origin);
     }
 
     getObstaclesFor3(range: Box, v: Vec3, context: string): Box[] {
-	return null;
+        return null;
     }
 
     render(ctx: CanvasRenderingContext2D) {
@@ -152,9 +152,9 @@ class Entity3d extends Entity {
     }
 
     render3(ctx: CanvasRenderingContext2D, floating: boolean) {
-	if (this.isFloating() != floating) return;
+        if (this.isFloating() != floating) return;
         ctx.save();
-	ctx.translate(this.pos.x, this.pos.y-this.z/2);
+        ctx.translate(this.pos.x, this.pos.y-this.z/2);
         if (this.shadow3 !== null) {
             this.shadow3.render(ctx);
         }
@@ -176,77 +176,77 @@ class World3 extends World {
 
     reset() {
         super.reset();
-	this.entities3 = [];
+        this.entities3 = [];
     }
 
     add(task: Task) {
-	super.add(task);
-	if (task instanceof Entity3d) {
-	    task.world3 = this;
+        super.add(task);
+        if (task instanceof Entity3d) {
+            task.world3 = this;
             this.entities3.push(task);
-	}
+        }
     }
 
     remove(task: Task) {
-	if (task instanceof Entity) {
-	    removeElement(this.entities3, task);
+        if (task instanceof Entity) {
+            removeElement(this.entities3, task);
         }
-	super.remove(task);
+        super.remove(task);
     }
 
     render(ctx: CanvasRenderingContext2D) {
-	let ts = this.tilemap.tilesize;
-	let window = this.window;
+        let ts = this.tilemap.tilesize;
+        let window = this.window;
 
-	// Set the drawing order.
-	let ents: { [index:string]: Entity3d[] } = {};
-	for (let entity3 of this.entities3) {
-	    if (!entity3.isVisible()) continue;
-	    let pos = entity3.pos;
-	    if (pos !== null) {
-		let x = int(pos.x/ts);
-		let y = int(pos.y/ts);
-		let k = x+','+y;
-		if (!ents.hasOwnProperty(k)) {
-		    ents[k] = [];
-		}
-		ents[k].push(entity3);
+        // Set the drawing order.
+        let ents: { [index:string]: Entity3d[] } = {};
+        for (let entity3 of this.entities3) {
+            if (!entity3.isVisible()) continue;
+            let pos = entity3.pos;
+            if (pos !== null) {
+                let x = int(pos.x/ts);
+                let y = int(pos.y/ts);
+                let k = x+','+y;
+                if (!ents.hasOwnProperty(k)) {
+                    ents[k] = [];
+                }
+                ents[k].push(entity3);
             }
-	}
+        }
 
-	ctx.save();
-	ctx.translate(-ts, 0);
+        ctx.save();
+        ctx.translate(-ts, 0);
         // Render the background tiles.
-	this.tilemap.renderWindowFromTopRight(
-	    ctx, window,
-	    (x,y,c) => { return (c == 0)? this.tiles.get(c) : null; });
+        this.tilemap.renderWindowFromTopRight(
+            ctx, window,
+            (x,y,c) => { return (c == 0)? this.tiles.get(c) : null; });
         // Render the tiles and landed objects.
-	this.tilemap.renderWindowFromTopRight(
-	    ctx, window,
-	    (x,y,c) => {
-		let k = x+','+y;
-		if (ents.hasOwnProperty(k)) {
-		    for (let entity3 of ents[k]) {
-			entity3.render3(ctx, false);
-		    }
-		}
-		return (c == 0)? null : this.tiles.get(c);
-	    });
+        this.tilemap.renderWindowFromTopRight(
+            ctx, window,
+            (x,y,c) => {
+                let k = x+','+y;
+                if (ents.hasOwnProperty(k)) {
+                    for (let entity3 of ents[k]) {
+                        entity3.render3(ctx, false);
+                    }
+                }
+                return (c == 0)? null : this.tiles.get(c);
+            });
         // Render the floating objects.
-	this.tilemap.renderWindowFromTopRight(
-	    ctx, window,
-	    (x,y,c) => {
-		let k = x+','+y;
-		if (ents.hasOwnProperty(k)) {
-		    for (let entity3 of ents[k]) {
-			entity3.render3(ctx, true);
-		    }
-		}
-		return null;
-	    });
+        this.tilemap.renderWindowFromTopRight(
+            ctx, window,
+            (x,y,c) => {
+                let k = x+','+y;
+                if (ents.hasOwnProperty(k)) {
+                    for (let entity3 of ents[k]) {
+                        entity3.render3(ctx, true);
+                    }
+                }
+                return null;
+            });
         ctx.restore();
 
-	// Draw ordinary 2D objects.
+        // Draw ordinary 2D objects.
         super.render(ctx);
     }
 }
@@ -259,12 +259,12 @@ class Thingy extends Entity3d {
     bounds: Rect;
 
     constructor(pos: Vec2) {
-	super(pos);
+        super(pos);
         let sprite = SPRITES.get(S.THINGY);
-	this.sprites = [sprite];
-	this.bounds = sprite.getBounds().inflate(-4, -4);
+        this.sprites = [sprite];
+        this.bounds = sprite.getBounds().inflate(-4, -4);
         this.shadow3 = new ShadowSprite3();
-	this.z = 4;
+        this.z = 4;
     }
 
     getCollider() {
@@ -288,19 +288,19 @@ class Player extends Entity3d {
     _jumpend: number;
 
     constructor(tilemap: TileMap, pos: Vec2) {
-	super(pos);
-	this.tilemap = tilemap;
-	this.picked = new Signal(this);
-	let sprite = SPRITES.get(S.PLAYER);
-	this.sprites = [sprite];
-	this.bounds = sprite.getBounds().inflate(-4, -4);
-	this.depth = this.tilemap.tilesize;
+        super(pos);
+        this.tilemap = tilemap;
+        this.picked = new Signal(this);
+        let sprite = SPRITES.get(S.PLAYER);
+        this.sprites = [sprite];
+        this.bounds = sprite.getBounds().inflate(-4, -4);
+        this.depth = this.tilemap.tilesize;
         this.shadow3 = new ShadowSprite3();
-	this.maxspeed3 = new Vec3(16, 16, 16);
-	this.jumpfunc3 = (vz:number,t:number) => {
-	    return (0<=t && t<=7)? 8 : vz-2;
-	};
-	this.usermove3 = new Vec3();
+        this.maxspeed3 = new Vec3(16, 16, 16);
+        this.jumpfunc3 = (vz:number,t:number) => {
+            return (0<=t && t<=7)? 8 : vz-2;
+        };
+        this.usermove3 = new Vec3();
     }
 
     getCollider() {
@@ -308,92 +308,92 @@ class Player extends Entity3d {
     }
 
     isFloating(): boolean {
-	return (this.tilemap.tilesize/2 < this.z);
+        return (this.tilemap.tilesize/2 < this.z);
     }
 
     getObstaclesFor3(range: Box, v: Vec3, context: string) {
-	let window = this.world3.window;
-	let ts = this.tilemap.tilesize;
-	let bs = new Vec3(ts, ts, ts);
-	let ws = new Vec3(ts, ts, Infinity);
-	let boxes = [new Box(new Vec3(window.x1()-ts,0,0),
-			     new Vec3(ts, window.height, Infinity))];
-	let f = (x:number, y:number, c:number) => {
-	    if (isBlock(c)) {
-		boxes.push(new Box(new Vec3(x*ts, y*ts, 0), bs));
-	    } else if (isWall(c)) {
-		boxes.push(new Box(new Vec3(x*ts, y*ts, 0), ws));
-	    }
-	    return false;
-	}
-	let area = new Rect(range.origin.x, range.origin.y,
-			    range.size.x, range.size.y);
-	this.tilemap.apply(f, this.tilemap.coord2map(area));
-	return boxes;
+        let window = this.world3.window;
+        let ts = this.tilemap.tilesize;
+        let bs = new Vec3(ts, ts, ts);
+        let ws = new Vec3(ts, ts, Infinity);
+        let boxes = [new Box(new Vec3(window.x1()-ts,0,0),
+                             new Vec3(ts, window.height, Infinity))];
+        let f = (x:number, y:number, c:number) => {
+            if (isBlock(c)) {
+                boxes.push(new Box(new Vec3(x*ts, y*ts, 0), bs));
+            } else if (isWall(c)) {
+                boxes.push(new Box(new Vec3(x*ts, y*ts, 0), ws));
+            }
+            return false;
+        }
+        let area = new Rect(range.origin.x, range.origin.y,
+                            range.size.x, range.size.y);
+        this.tilemap.apply(f, this.tilemap.coord2map(area));
+        return boxes;
     }
 
     canJump3() {
-	return (0 <= this.velocity3.z && !this.canMove3(new Vec3(0,0,-1)));
+        return (0 <= this.velocity3.z && !this.canMove3(new Vec3(0,0,-1)));
     }
 
     canFall3() {
-	return true;
+        return true;
     }
 
     setMove(v: Vec2) {
-	this.usermove3 = new Vec3(v.x*4, v.y*4, 0);
+        this.usermove3 = new Vec3(v.x*4, v.y*4, 0);
     }
 
     setJump(jumpend: number) {
-	if (0 < jumpend) {
-	    if (this.canJump3()) {
-		this._jumpt = 0;
-		APP.playSound('jump');
-	    }
-	}
-	this._jumpend = jumpend;
+        if (0 < jumpend) {
+            if (this.canJump3()) {
+                this._jumpt = 0;
+                APP.playSound('jump');
+            }
+        }
+        this._jumpend = jumpend;
     }
 
     onTick() {
-	super.onTick();
+        super.onTick();
         let v = this.getMove3(this.usermove3);
         this.pos = this.pos.move(v.x, v.y);
         this.z += v.z;
-	this.fall();
-	if (this._jumpt < this._jumpend) {
-	    this._jumpt++;
-	} else {
-	    this._jumpt = Infinity;
-	}
+        this.fall();
+        if (this._jumpt < this._jumpend) {
+            this._jumpt++;
+        } else {
+            this._jumpt = Infinity;
+        }
         let z0 = 0;
-	if (this.isFloating() &&
-	    this.tilemap.findTileByCoord(isBlock, this.getCollider().getAABB())) {
+        if (this.isFloating() &&
+            this.tilemap.findTileByCoord(isBlock, this.getCollider().getAABB())) {
             z0 = this.tilemap.tilesize/2;
         }
-	this.shadow3.dz = this.z - z0;
-	let window = this.world3.window;
-	if (!window.overlaps(this.getCollider())) {
-	    this.stop();
-	}
+        this.shadow3.dz = this.z - z0;
+        let window = this.world3.window;
+        if (!window.overlaps(this.getCollider())) {
+            this.stop();
+        }
     }
 
     fall() {
-	if (this.canFall3()) {
-	    let vz = this.jumpfunc3(this.velocity3.z, this._jumpt);
-	    let v = new Vec3(this.velocity3.x, this.velocity3.y, vz);
-	    v = this.getMove3(v, 'fall');
-	    this.pos = this.pos.move(v.x, v.y);
-	    this.z += v.z;
-	    this.velocity3 = v.clamp(this.maxspeed3);
-	}
+        if (this.canFall3()) {
+            let vz = this.jumpfunc3(this.velocity3.z, this._jumpt);
+            let v = new Vec3(this.velocity3.x, this.velocity3.y, vz);
+            v = this.getMove3(v, 'fall');
+            this.pos = this.pos.move(v.x, v.y);
+            this.z += v.z;
+            this.velocity3 = v.clamp(this.maxspeed3);
+        }
     }
 
     onCollided(entity: Entity) {
-	if (entity instanceof Thingy) {
-	    APP.playSound('pick');
-	    entity.stop();
-	    this.picked.fire(entity);
-	}
+        if (entity instanceof Thingy) {
+            APP.playSound('pick');
+            entity.stop();
+            this.picked.fire(entity);
+        }
     }
 }
 
@@ -409,34 +409,34 @@ class Game extends GameScene {
     speed: Vec2;
 
     onStart() {
-	super.onStart();
-	let ROWS = [T.WALL,0,0,0,0,0,T.WALL];
-	this.tilemap = new TileMap(32, 12, 7, ROWS.map(
-	    (c:number) => { return new Int32Array(12).fill(c); }
-	));
-	this.world3 = new World3(this.tilemap.bounds);
-	this.world3.tilemap = this.tilemap;
-	this.world3.tiles = TILES;
-	this.score = 0;
-	this.speed = new Vec2(2, 0);
-	this.player = new Player(this.tilemap, this.world3.area.center());
-	this.player.picked.subscribe((player:Entity, entity:Entity) => {
-	    this.onPicked(entity);
-	});
-	this.player.stopped.subscribe(() => {
-	    APP.lockKeys();
-	    APP.playSound('bomb');
-	    this.changeScene(new GameOver(this.score));
-	});
-	this.add(this.player);
+        super.onStart();
+        let ROWS = [T.WALL,0,0,0,0,0,T.WALL];
+        this.tilemap = new TileMap(32, 12, 7, ROWS.map(
+            (c:number) => { return new Int32Array(12).fill(c); }
+        ));
+        this.world3 = new World3(this.tilemap.bounds);
+        this.world3.tilemap = this.tilemap;
+        this.world3.tiles = TILES;
+        this.score = 0;
+        this.speed = new Vec2(2, 0);
+        this.player = new Player(this.tilemap, this.world3.area.center());
+        this.player.picked.subscribe((player:Entity, entity:Entity) => {
+            this.onPicked(entity);
+        });
+        this.player.stopped.subscribe(() => {
+            APP.lockKeys();
+            APP.playSound('bomb');
+            this.changeScene(new GameOver(this.score));
+        });
+        this.add(this.player);
 
-	// show a banner.
-	let banner = new BannerBox(
-	    this.screen, FONT,
-	    ['GET ALL TEH DAMN THINGIES!']);
-	banner.lifetime = 2.0;
-	banner.interval = 0.5;
-	this.world.add(banner);
+        // show a banner.
+        let banner = new BannerBox(
+            this.screen, FONT,
+            ['GET ALL TEH DAMN THINGIES!']);
+        banner.lifetime = 2.0;
+        banner.interval = 0.5;
+        this.world.add(banner);
     }
 
     add(task: Task) {
@@ -444,86 +444,86 @@ class Game extends GameScene {
     }
 
     onTick() {
-	super.onTick();
-	this.world3.onTick();
-	this.moveAll(this.speed);
+        super.onTick();
+        this.world3.onTick();
+        this.moveAll(this.speed);
     }
 
     onDirChanged(v: Vec2) {
-	this.player.setMove(v);
+        this.player.setMove(v);
     }
     onButtonPressed(keysym: KeySym) {
-	this.player.setJump(Infinity);
+        this.player.setJump(Infinity);
     }
     onButtonReleased(keysym: KeySym) {
-	this.player.setJump(0);
+        this.player.setJump(0);
     }
 
     onPicked(entity: Entity) {
-	this.score += 1;
-	this.speed.x += 1;
-	let yay = new Particle(this.player.pos.move(-32,-16));
-	yay.sprites = [SPRITES.get(S.YAY)];
-	yay.movement = new Vec2(0,-4);
-	yay.lifetime = 0.5;
-	this.world.add(yay);
+        this.score += 1;
+        this.speed.x += 1;
+        let yay = new Particle(this.player.pos.move(-32,-16));
+        yay.sprites = [SPRITES.get(S.YAY)];
+        yay.movement = new Vec2(0,-4);
+        yay.lifetime = 0.5;
+        this.world.add(yay);
     }
 
     render(ctx: CanvasRenderingContext2D) {
-	ctx.fillStyle = 'rgb(0,128,224)';
-	fillRect(ctx, this.screen);
-	ctx.save();
-	ctx.translate(0, (this.screen.height-this.world3.window.height)/2);
-	this.world3.render(ctx);
-	ctx.restore();
-	super.render(ctx);
+        ctx.fillStyle = 'rgb(0,128,224)';
+        fillRect(ctx, this.screen);
+        ctx.save();
+        ctx.translate(0, (this.screen.height-this.world3.window.height)/2);
+        this.world3.render(ctx);
+        ctx.restore();
+        super.render(ctx);
     }
 
     moveAll(v: Vec2) {
-	this.world3.moveCenter(v);
-	let ts = this.tilemap.tilesize;
-	let window = this.world3.window;
-	let x0 = int(window.x/ts);
-	let y0 = int(window.y/ts);
-	if (x0 !== 0 || y0 !== 0) {
-	    // warp all the tiles and characters.
-	    this.shiftTiles(x0, y0);
-	    let vw = new Vec2(-x0*ts, -y0*ts);
-	    this.world3.moveCenter(vw);
-	    this.world3.moveAll(vw);
-	}
-	if (this.player.isRunning()) {
+        this.world3.moveCenter(v);
+        let ts = this.tilemap.tilesize;
+        let window = this.world3.window;
+        let x0 = int(window.x/ts);
+        let y0 = int(window.y/ts);
+        if (x0 !== 0 || y0 !== 0) {
+            // warp all the tiles and characters.
+            this.shiftTiles(x0, y0);
+            let vw = new Vec2(-x0*ts, -y0*ts);
+            this.world3.moveCenter(vw);
+            this.world3.moveAll(vw);
+        }
+        if (this.player.isRunning()) {
             let vv = new Vec3(v.x, v.y, 0);
-	    vv = this.player.getMove3(vv, 'fall');
-	    this.player.pos = this.player.pos.move(vv.x, vv.y);
-	    this.player.z += vv.z;
-	}
+            vv = this.player.getMove3(vv, 'fall');
+            this.player.pos = this.player.pos.move(vv.x, vv.y);
+            this.player.z += vv.z;
+        }
     }
 
     shiftTiles(vx: number, vy: number) {
-	// Generate tiles for horizontal scrolling.
-	// Leftmost objects are scrolled out and rotated from right.
-	for (let x = 0; x < vx; x++) {
-	    for (let y = 1; y < this.tilemap.height-1; y++) {
-		this.tilemap.set(x, y, T.NONE);
-	    }
-	    if (rnd(3) === 0) {
-		let y = rnd(1, this.tilemap.height-1);
-		this.tilemap.set(x, y, T.BLOCK);
-	    }
-	    if (rnd(10) === 0) {
-		let y = rnd(1, this.tilemap.height-1);
-		this.tilemap.set(x, y, T.WALL);
-	    }
-	    if (rnd(3) === 0) {
-		let y = rnd(1, this.tilemap.height-1);
-		let p = new Vec2(x+this.tilemap.width, y);
-		let rect = this.tilemap.map2coord(p);
-		this.add(new Thingy(rect.center()));
-		this.tilemap.set(x, y, T.NONE);
-	    }
-	}
-	this.tilemap.shift(-vx, -vy);
+        // Generate tiles for horizontal scrolling.
+        // Leftmost objects are scrolled out and rotated from right.
+        for (let x = 0; x < vx; x++) {
+            for (let y = 1; y < this.tilemap.height-1; y++) {
+                this.tilemap.set(x, y, T.NONE);
+            }
+            if (rnd(3) === 0) {
+                let y = rnd(1, this.tilemap.height-1);
+                this.tilemap.set(x, y, T.BLOCK);
+            }
+            if (rnd(10) === 0) {
+                let y = rnd(1, this.tilemap.height-1);
+                this.tilemap.set(x, y, T.WALL);
+            }
+            if (rnd(3) === 0) {
+                let y = rnd(1, this.tilemap.height-1);
+                let p = new Vec2(x+this.tilemap.width, y);
+                let rect = this.tilemap.map2coord(p);
+                this.add(new Thingy(rect.center()));
+                this.tilemap.set(x, y, T.NONE);
+            }
+        }
+        this.tilemap.shift(-vx, -vy);
     }
 
 }
@@ -534,11 +534,11 @@ class Game extends GameScene {
 class GameOver extends HTMLScene {
 
     constructor(score: number) {
-	let html = `<strong>Game Over!</strong><p>Score: ${score}`;
-	super(html);
+        let html = `<strong>Game Over!</strong><p>Score: ${score}`;
+        super(html);
     }
 
     change() {
-	this.changeScene(new Game());
+        this.changeScene(new Game());
     }
 }
