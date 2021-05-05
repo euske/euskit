@@ -5,63 +5,63 @@
 /// <reference path="tilemap.ts" />
 
 
-// getContact: returns a motion vector that satisfies the given constraints.
-function getContact(
+// limitMotion: returns a motion vector that satisfies the given constraints.
+function limitMotion(
     collider: Collider, v0: Vec2,
-    obstacles: Collider[]=null,
     fences: Rect[]=null,
+    obstacles: Collider[]=null,
     checkxy=true): Vec2
 {
     let bounds = collider.getAABB();
     let d = v0;
-    if (obstacles !== null) {
-	for (let obstacle of obstacles) {
-	    d = obstacle.contact(d, collider);
-	}
-    }
     if (fences !== null) {
 	for (let fence of fences) {
 	    d = fence.boundRect(d, bounds);
 	}
     }
+    if (obstacles !== null) {
+	for (let obstacle of obstacles) {
+	    d = obstacle.contact(d, collider);
+	}
+    }
     let v = d;
     if (checkxy && d !== v0) {
         v0 = v0.sub(d);
-        collider = collider.add(d);
         bounds = bounds.add(d);
+        collider = collider.add(d);
         if (v0.x != 0) {
             d = new Vec2(v0.x, 0);
-            if (obstacles !== null) {
-	        for (let obstacle of obstacles) {
-	            d = obstacle.contact(d, collider);
-	        }
-            }
             if (fences !== null) {
 	        for (let fence of fences) {
 	            d = fence.boundRect(d, bounds);
 	        }
             }
+            if (obstacles !== null) {
+	        for (let obstacle of obstacles) {
+	            d = obstacle.contact(d, collider);
+	        }
+            }
             v = v.add(d);
             v0 = v0.sub(d);
-            collider = collider.add(d);
             bounds = bounds.add(d);
+            collider = collider.add(d);
         }
         if (v0.y != 0) {
             d = new Vec2(0, v0.y);
-            if (obstacles !== null) {
-	        for (let obstacle of obstacles) {
-	            d = obstacle.contact(d, collider);
-	        }
-            }
             if (fences !== null) {
 	        for (let fence of fences) {
 	            d = fence.boundRect(d, bounds);
 	        }
             }
+            if (obstacles !== null) {
+	        for (let obstacle of obstacles) {
+	            d = obstacle.contact(d, collider);
+	        }
+            }
             v = v.add(d);
-            v0 = v0.sub(d);
-            collider = collider.add(d);
-            bounds = bounds.add(d);
+            //v0 = v0.sub(d);
+            //bounds = bounds.add(d);
+            //collider = collider.add(d);
         }
     }
     return v;
@@ -109,26 +109,6 @@ class Entity extends Task {
 	// [OVERRIDE]
     }
 
-    getMove(v0: Vec2, context=null as string) {
-        let collider = this.getCollider();
-	if (collider === null) return v0;
-	let hitbox = collider.getAABB();
-	let range = hitbox.union(hitbox.add(v0));
-	let obstacles = this.getObstaclesFor(range, v0, context);
-	let fences = this.getFencesFor(range, v0, context);
-	let v = getContact(collider, v0, obstacles, fences);
-	return v;
-    }
-
-    getObstaclesFor(range: Rect, v: Vec2, context: string): Collider[] {
-	// [OVERRIDE]
-	return null;
-    }
-
-    getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
-	// [OVERRIDE]
-	return null;
-    }
 }
 
 
@@ -175,20 +155,24 @@ class PhysicsConfig {
 }
 
 
-//  PhysicalEntity
+//  PlatformerEntity
 //
-class PhysicalEntity extends Entity {
+class PlatformerEntity extends Entity {
 
     physics: PhysicsConfig;
+    tilemap: TileMap;
+    fence: Rect;
     velocity: Vec2 = new Vec2();
 
     protected _jumpt: number = Infinity;
     protected _jumpend: number = 0;
     protected _landed: boolean = false;
 
-    constructor(physics: PhysicsConfig, pos: Vec2) {
+    constructor(physics: PhysicsConfig, tilemap: TileMap, fence: Rect, pos: Vec2) {
 	super(pos);
 	this.physics = physics;
+        this.tilemap = tilemap;
+        this.fence = fence;
     }
 
     onTick() {
@@ -199,6 +183,22 @@ class PhysicalEntity extends Entity {
 	} else {
 	    this._jumpt = Infinity;
 	}
+    }
+
+    getMove(v0: Vec2, context=null as string) {
+        let collider = this.getCollider();
+	let hitbox = collider.getAABB();
+	let range = hitbox.union(hitbox.add(v0));
+	let obstacles = this.getObstaclesFor(range, v0, context);
+	let fences = (this.fence !== null)? [this.fence] : null;
+	return limitMotion(collider, v0, fences, obstacles);
+    }
+
+    getObstaclesFor(range: Rect, v: Vec2, context: string): Rect[] {
+	let f = ((context == 'fall')?
+		 this.physics.isStoppable :
+		 this.physics.isObstacle);
+	return this.tilemap.getTileRects(f, range);
     }
 
     setJump(jumpend: number) {

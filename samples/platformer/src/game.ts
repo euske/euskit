@@ -97,9 +97,8 @@ class ShadowSprite implements Sprite {
 
 //  Player
 //
-class Player extends PhysicalEntity {
+class Player extends PlatformerEntity {
 
-    tilemap: TileMap;
     collider: Collider;
     scene: Game;
     shadow: ShadowSprite = new ShadowSprite();
@@ -108,8 +107,7 @@ class Player extends PhysicalEntity {
     picked: Signal;
 
     constructor(scene: Game, pos: Vec2) {
-	super(scene.physics, pos);
-        this.tilemap = scene.tilemap;
+	super(scene.physics, scene.tilemap, scene.world.area, pos);
         let sprite = SPRITES.get(S.PLAYER);
 	this.sprites = [this.shadow, sprite];
         this.collider = sprite.getBounds();
@@ -146,14 +144,7 @@ class Player extends PhysicalEntity {
 	if (!this.holding) {
 	    return this.tilemap.getTileRects(this.physics.isObstacle, range);
 	}
-	let f = ((context == 'fall')?
-		 this.physics.isStoppable :
-		 this.physics.isObstacle);
-	return this.tilemap.getTileRects(f, range);
-    }
-
-    getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
-	return [this.world.area];
+        return super.getObstaclesFor(range, v, context);
     }
 
     onTick() {
@@ -210,7 +201,7 @@ class Monster extends PlanningEntity {
     target: Entity;
 
     constructor(scene: Game, pos: Vec2, target: Entity) {
-	super(scene.physics, scene.tilemap,
+	super(scene.physics, scene.tilemap, scene.world.area,
 	      scene.grid, scene.caps, SPRITES.get(S.MONSTER).getBounds(),
 	      pos, 4);
 	let sprite = SPRITES.get(S.MONSTER);
@@ -247,10 +238,6 @@ class Monster extends PlanningEntity {
         if (action !== null && !(action instanceof NullAction)) {
 	    info("setAction: "+action);
         }
-    }
-
-    getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
-	return [this.world.area];
     }
 }
 

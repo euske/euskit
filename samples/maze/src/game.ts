@@ -49,6 +49,14 @@ function makeMaze(tilemap: TileMap, tile=0, ratio=0)
     }
 }
 
+function limitMotionWithTiles(entity: Entity, tilemap: TileMap, v: Vec2) {
+    let collider = entity.getCollider();
+    let hitbox = collider.getAABB();
+    let range = hitbox.union(hitbox.add(v));
+    let obstacles = tilemap.getTileRects(isObstacle, range);
+    return limitMotion(collider, v, null, obstacles);
+}
+
 
 //  Player
 //
@@ -75,12 +83,18 @@ class Player extends Entity {
         return this.collider.add(this.pos);
     }
 
+    onCollided(entity: Entity) {
+        if (entity instanceof Enemy) {
+            APP.playSound('beep');
+        }
+    }
+
     onTick() {
 	super.onTick();
         if (!this.usermove.isZero()) {
-            let v = this.getMove(this.usermove);
+            let v = limitMotionWithTiles(this, this.tilemap, this.usermove);
             if (v.isZero()) {
-                v = this.getMove(this.prevmove);
+                v = limitMotionWithTiles(this, this.tilemap, this.prevmove);
             } else {
                 this.prevmove = this.usermove.copy();
             }
@@ -91,16 +105,6 @@ class Player extends Entity {
             }
         }
     }
-
-    getObstaclesFor(range: Rect, v: Vec2, context: string): Rect[] {
-	return this.tilemap.getTileRects(isObstacle, range);
-    }
-
-    onCollided(entity: Entity) {
-        if (entity instanceof Enemy) {
-            APP.playSound('beep');
-        }
-    }
 }
 
 
@@ -108,15 +112,13 @@ class Player extends Entity {
 //
 class Enemy extends WalkerEntity {
 
+    speedlimit = new Vec2(2,2);
     collider: Collider;
     target: Entity;
 
-    constructor(tilemap: TileMap, target: Entity, pos: Vec2) {
-        let grid = new GridConfig(tilemap);
-        let sprite = new RectSprite('#f80', new Rect(-8,-8,16,16));
-        let speed = new Vec2(2,2);
-        let allowance = 4;
-	super(tilemap, isObstacle, grid, speed, sprite.getBounds(), pos, allowance);
+    constructor(grid: GridConfig, objmap: RangeMap,
+                sprite: Sprite, target: Entity, pos: Vec2) {
+	super(grid, objmap, sprite.getBounds(), pos, 4);
 	this.sprites = [sprite];
         this.collider = sprite.getBounds();
         this.target = target;
@@ -143,6 +145,14 @@ class Enemy extends WalkerEntity {
 	    }
 	}
     }
+
+    move(v: Vec2) {
+	let lim = this.speedlimit;
+	v.x = clamp(-lim.x, v.x, +lim.x);
+	v.y = clamp(-lim.y, v.y, +lim.y);
+        v = limitMotionWithTiles(this, this.grid.tilemap, v);
+        this.pos = this.pos.add(v);
+    }
 }
 
 
@@ -163,11 +173,14 @@ class Game extends GameScene {
 	this.player = new Player(this.tilemap, rect.center());
         this.player.goaled.subscribe((e) => { this.changeScene(new GoalScene()); });
 	this.add(this.player);
+        let grid = new GridConfig(this.tilemap);
+        let objmap = this.tilemap.getRangeMap('obstacle', isObstacle);
+        let sprite = new RectSprite('#f80', new Rect(-8,-8,16,16));
         for (let i = 0; i < 10; i++) {
             let x = 3+2*rnd(int((this.tilemap.width-5)/2));
             let y = 3+2*rnd(int((this.tilemap.height-5)/2));
             let r = this.tilemap.map2coord(new Vec2(x,y));
-            let enemy = new Enemy(this.tilemap, this.player, r.center());
+            let enemy = new Enemy(grid, objmap, sprite, this.player, r.center());
             this.add(enemy);
         }
     }

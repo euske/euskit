@@ -419,9 +419,8 @@ class PlatformerActionRunner extends ActionRunner {
 
 //  PlanningEntity
 //
-class PlanningEntity extends PhysicalEntity implements PlatformerActor {
+class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 
-    tilemap: TileMap;
     grid: GridConfig;
     caps: PlatformerCaps;
     gridbox: Rect;
@@ -430,11 +429,10 @@ class PlanningEntity extends PhysicalEntity implements PlatformerActor {
 
     runner: ActionRunner = null;
 
-    constructor(physics: PhysicsConfig, tilemap: TileMap,
+    constructor(physics: PhysicsConfig, tilemap: TileMap, fence: Rect,
 		grid: GridConfig, caps: PlatformerCaps, hitbox: Rect,
 		pos: Vec2, allowance=0) {
-	super(physics, pos);
-        this.tilemap = tilemap;
+	super(physics, tilemap, fence, pos);
 	this.grid = grid;
 	this.caps = caps;
 	let gs = grid.gridsize;
@@ -470,13 +468,6 @@ class PlanningEntity extends PhysicalEntity implements PlatformerActor {
 
     isCloseTo(p: Vec2) {
 	return this.grid.grid2coord(p).distance(this.pos) < this.allowance;
-    }
-
-    getObstaclesFor(range: Rect, v: Vec2, context: string): Rect[] {
-	let f = ((context == 'fall')?
-		 this.physics.isStoppable :
-		 this.physics.isObstacle);
-	return this.tilemap.getTileRects(f, range);
     }
 
     // PlatformerActor methods

@@ -354,37 +354,29 @@ class WalkerActionRunner extends ActionRunner {
 //
 class WalkerEntity extends Entity implements WalkerActor {
 
-    tilemap: TileMap;
-    isObstacle: (c:number)=>boolean;
     grid: GridConfig;
-    speed: Vec2;
     gridbox: Rect;
     planmap: WalkerPlanMap;
     allowance: number;
 
     runner: ActionRunner = null;
 
-    constructor(tilemap: TileMap, isObstacle: (c:number)=>boolean,
-		grid: GridConfig, speed: Vec2, hitbox: Rect,
-		pos: Vec2, allowance=0) {
+    constructor(grid: GridConfig, objmap: RangeMap,
+		hitbox: Rect, pos: Vec2, allowance=0) {
 	super(pos);
-        this.tilemap = tilemap;
-        this.isObstacle = isObstacle;
 	this.grid = grid;
-        this.speed = speed;
 	let gs = grid.gridsize;
 	this.gridbox = new Rect(
 	    0, 0,
 	    Math.ceil(hitbox.width/gs)*gs,
 	    Math.ceil(hitbox.height/gs)*gs);
-	let obstacle = this.tilemap.getRangeMap('obstacle', this.isObstacle);
-	this.planmap = new WalkerPlanMap(this.grid, obstacle);
+	this.planmap = new WalkerPlanMap(this.grid, objmap);
 	this.allowance = (allowance !== 0)? allowance : grid.gridsize/2;
     }
 
     buildPlan(goal: Vec2, start: Vec2=null, size=0, maxcost=20) {
 	start = (start !== null)? start : this.getGridPos();
-	let range = (size == 0)? this.tilemap.bounds : goal.inflate(size, size);
+	let range = (size == 0)? this.grid.tilemap.bounds : goal.inflate(size, size);
 	range = this.grid.clip(range);
 	return this.planmap.build(this, goal, range, start, maxcost) as WalkerAction;
     }
@@ -404,26 +396,22 @@ class WalkerEntity extends Entity implements WalkerActor {
 	// [OVERRIDE]
     }
 
-    getObstaclesFor(range: Rect, v: Vec2, context: string): Rect[] {
-	return this.tilemap.getTileRects(this.isObstacle, range);
+    move(v: Vec2) {
+	// [OVERRIDE]
     }
 
     // WalkerActor methods
 
     canMoveTo(p: Vec2) {
 	let hitbox = this.getGridBoxAt(p);
-	return !this.planmap.obstacle.exists(this.tilemap.coord2map(hitbox));
+	return !this.planmap.obstacle.exists(this.grid.tilemap.coord2map(hitbox));
     }
 
     moveToward(p: Vec2) {
 	let p0 = this.pos;
 	let p1 = this.getGridBoxAt(p).center();
 	let v = p1.sub(p0);
-	let speed = this.speed;
-	v.x = clamp(-speed.x, v.x, +speed.x);
-	v.y = clamp(-speed.y, v.y, +speed.y);
-        v = this.getMove(v);
-        this.pos = this.pos.add(v);
+        this.move(v);
     }
 
     isCloseTo(p: Vec2) {

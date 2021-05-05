@@ -50,7 +50,7 @@ body { margin: 0; padding: 0; }
 <div class=list>
 <div class=head>Specialized Classes:</div>
 <a href="#Particle">Particle</a>,
-<a href="#PhysicalEntity">PhysicalEntity</a>,
+<a href="#PlatformerEntity">PlatformerEntity</a>,
 <a href="#GameScene">GameScene</a>
 </div>
 
@@ -72,10 +72,8 @@ body { margin: 0; padding: 0; }
 <a href="#Vec3">Vec3</a>,
 <a href="#Collider">Collider</a>,
 <a href="#Shape">Shape</a>,
-<a href="#AALine">AALine</a>,
 <a href="#Rect">Rect</a>,
 <a href="#Circle">Circle</a>,
-<a href="#AAPlane">AAPlane</a>,
 <a href="#Box">Box</a>,
 <a href="#TileMap">TileMap</a>,
 <a href="#RangeMap">RangeMap</a>,
@@ -91,7 +89,7 @@ body { margin: 0; padding: 0; }
 <a href="#misc">Misc.</a>,
 <a href="#numeric">Numeric</a>,
 <a href="#array">Array</a>,
-<a href="#html5">HTML5</a>
+<a href="#graphics">Graphics</a>
 </div>
 
 </div>
@@ -377,14 +375,8 @@ and <a href="cheatsheet.html#SpawnAnotherEntity">Spawn Another Entity</a>.
   <td>Returns <code>true</code> if the entity sprite is visible.</td></tr>
 <tr><td><code>.render(<u>ctx</u>)</code></td>
   <td>Render the entity.</td></tr>
-<tr><td><code>.getCollider(<u>pos</u>)</code></td>
-  <td>Returns the collider for the given <code>pos</code>.</td></tr>
-<tr><td><code>.getMove(<u>pos</u>, <u>v</u>, <br>&nbsp; <u>context</u>=null)</code></td>
-  <td>Trims the vector <code>v</code> so that it doesn't collide.</td></tr>
-<tr><td><code>.getObstaclesFor(<br>&nbsp; <u>range</u>, <u>v</u>, <u>context</u>)</code></td>
-  <td>Returns a list of <code>Shape</code>s within <code>range</code>.</td></tr>
-<tr><td><code>.getFencesFor(<br>&nbsp; <u>range</u>, <u>v</u>, <u>context</u>)</code></td>
-  <td>Returns a list of bounding rectangles that limits the entity within.</td></tr>
+<tr><td><code>.getCollider()</code></td>
+  <td>Returns the collider for the current position.</td></tr>
 <tr class=overridable><td><code>.onCollided(<u>entity</u>)</code></td>
   <td>Invoked when the entity collides another entity.</td></tr>
 </table>
@@ -428,14 +420,12 @@ keeps moving towards a specific direction.
   <td>Returns the <code>Rect</code> where the entity is kept alive within.</td></tr>
 </table>
 
-<a name="PhysicalEntity"><h3>PhysicalEntity : <a href="#Entity">Entity</a> (<code><a href="https://github.com/euske/euskit/blob/master/base/entity.ts">entity.ts</a></code>)</h3></a>
+<a name="PlatformerEntity"><h3>PlatformerEntity : <a href="#Entity">Entity</a> (<code><a href="https://github.com/euske/euskit/blob/master/base/entity.ts">entity.ts</a></code>)</h3></a>
 <p>
 An <code>Entity</code> that is affected by gravity.
 <table border>
-<tr class=ctor><td><code>new PhysicalEntity(<br>&nbsp; <u>physics</u>, <u>pos</u>)</code></td>
+<tr class=ctor><td><code>new PlatformerEntity(<br>&nbsp; <u>physics</u>, <u>tilemap</u>, <u>fence</u>, <u>pos</u>)</code></td>
   <td>Creates a new entity that is affected by gravity.</td></tr>
-<tr class=ctor><td><code>new PlatformerEntity(<br>&nbsp; <u>tilemap</u>, <u>physics</u>, <u>pos</u>)</code></td>
-  <td>Creates a new <code>PhysicalEntity</code> + <code>TileMapEntity</code>.</td></tr>
 <tr><td><code>.setJump(<u>jumpend</u>)</code></td>
   <td>Starts a jump maneuver that ends at <code>t=jumpend</code>.</td></tr>
 <tr><td><code>.fall()</code></td>
@@ -777,23 +767,6 @@ represents an enclosed shape.
   <td>Returns a random point on the edge.</td></tr>
 </table>
 
-<a name="AALine"><h3>AALine : <a href="#Collider">Collider</a> (<code><a href="https://github.com/euske/euskit/blob/master/base/geom.ts">geom.ts</a></code>)</h3></a>
-<p>
-A <code>AALine</code> represents an axis-aligned (either horizontal or
-parpendicular) line.
-<table border>
-<tr class=ctor><td><code>new AALine(<u>x0</u>, <u>y0</u>, <u>x1</u>, <u>y1</u>)</code></td>
-  <td>New AALine.</td></tr>
-<tr><td><code>.x0</code></td>
-  <td>Left x value.</td></tr>
-<tr><td><code>.y0</code></td>
-  <td>Top y value.</td></tr>
-<tr><td><code>.x1</code></td>
-  <td>Right x value.</td></tr>
-<tr><td><code>.y1</code></td>
-  <td>Bottom y value.</td></tr>
-</table>
-
 <a name="Rect"><h3>Rect : <a href="#Shape">Shape</a> (<code><a href="https://github.com/euske/euskit/blob/master/base/geom.ts">geom.ts</a></code>)</h3></a>
 <p>
 A <code>Rect</code> object is a 2D rectangle that
@@ -1048,20 +1021,6 @@ A <code>Circle</code> represents a circle that has its center and radius.
   <td>Trims a vector so that <code>circle</code> doesn't collide with this.</td></tr>
 </table>
 
-<a name="AAPlane"><h3>AAPlane (<code><a href="https://github.com/euske/euskit/blob/master/base/geom.ts">geom.ts</a></code>)</h3></a>
-<p>
-A <code>AAPlane</code> represents an axis-aligned plane.
-It is represented by two axis-aligned (either X, Y or Z) points.
-If two points are not aligned by any axis, it is invalid.
-<table border>
-<tr class=ctor><td><code>new AAPlane(<u>p0</u>, <u>p1</u>)</code></td>
-  <td>New AAPlane for the given points.</td></tr>
-<tr><td><code>.p0</code></td>
-  <td>Point 0.</td></tr>
-<tr><td><code>.p1</code></td>
-  <td>Point 1.</td></tr>
-</table>
-
 <a name="Box"><h3>Box (<code><a href="https://github.com/euske/euskit/blob/master/base/geom.ts">geom.ts</a></code>)</h3></a>
 <p>
 A <code>Box</code> is a 3D cuboid that has its position and size
@@ -1082,7 +1041,7 @@ both as <code>Vec3</code>.
 <tr><td><code>.center()</code></td>
   <td>Center of the box.</td></tr>
 <tr><td><code>.surface(<u>vx</u>, <u>vy</u>, <u>vz</u>)</code></td>
-  <td>Returns the <code>AAPlane</code> of the given surface.</td></tr>
+  <td>Returns the plane of the given surface.</td></tr>
 <tr><td><code>.anchor(<u>vx</u>=0, <u>vy</u>=0, <u>vz</u>=0)</code></td>
   <td>Anchor point of the box.</td></tr>
 <tr><td><code>.move(<u>dx</u>, <u>dy</u>, <u>dz</u>)</code></td>
@@ -1269,6 +1228,8 @@ Manages a list of <code>Task</code>s.
   <td>Throws an exception when the condition is not met.</td></tr>
 <tr><td><code>applyMixins(<u>ctor</u>, <u>bases</u>)</code></td>
   <td>Configures a new class.</td></tr>
+<tr><td><code>removeChildren(<u>node</u>, <u>name</u>)</code></td>
+  <td>Removes all child HTML nodes.</td></tr>
 </table>
 
 <a name="numeric"><h3>Numeric functions (<code><a href="https://github.com/euske/euskit/blob/master/base/utils.ts">utils.ts</a></code>)</h3></a>
@@ -1315,10 +1276,8 @@ Manages a list of <code>Task</code>s.
   <td>Creates a 2D matrix for a given size.</td></tr>
 </table>
 
-<a name="html5"><h3>HTML5 functions (<code><a href="https://github.com/euske/euskit/blob/master/base/utils.ts">utils.ts</a></code>)</h3></a>
+<a name="graphics"><h3>Graphics functions (<code><a href="https://github.com/euske/euskit/blob/master/base/utils.ts">utils.ts</a></code>)</h3></a>
 <table border>
-<tr><td><code>removeChildren(<u>node</u>, <u>name</u>)</code></td>
-  <td>Removes all child HTML nodes.</td></tr>
 <tr><td><code>createCanvas(<u>width</u>, <u>height</u>)</code></td>
   <td>Creates a <code>&lt;canvas&gt;</code> element.</td></tr>
 <tr><td><code>getEdgeyContext(<u>canvas</u>)</code></td>

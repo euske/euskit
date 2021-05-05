@@ -242,7 +242,10 @@ class Player extends TileMapEntity {
             if (Math.abs(v.x) < 8) { v.x = 0; }
             if (Math.abs(v.y) < 8) { v.y = 0; }
         }
-        v = this.getMove(v.sign().scale(4));
+        // Disallows diagonal move.
+        v = v.sign().scale(4);
+	// Restrict its position within the screen.
+        v = limitMotion(this.getCollider(), v, [this.world.area]);
         this.pos = this.pos.add(v);
 	if (this.firing) {
 	    if (this.nextfire == 0) {
@@ -291,15 +294,6 @@ class Player extends TileMapEntity {
     }
     setGoal(p: Vec2) {
         this.goalpos = p.copy();
-    }
-
-    getObstaclesFor(range: Rect, v: Vec2, context: string): Rect[] {
-        return [];
-    }
-
-    getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
-	// Restrict its position within the screen.
-	return [this.world.area];
     }
 
     onCollided(entity: Entity) {

@@ -77,9 +77,18 @@ class Player extends Entity {
         return this.collider.add(this.pos);
     }
 
+    onCollided(entity: Entity) {
+	if (entity instanceof EnemyBase) {
+	    APP.playSound('explosion');
+	    this.chain(new Explosion(this.pos));
+	    this.stop();
+	}
+    }
+
     onTick() {
 	super.onTick();
-        let v = this.getMove(this.usermove);
+	// Restrict its position within the screen.
+        let v = limitMotion(this.getCollider(), this.usermove, [this.world.area]);
         this.pos = this.pos.add(v);
 	if (this.firing) {
 	    if (this.nextfire == 0) {
@@ -103,19 +112,6 @@ class Player extends Entity {
 
     setMove(v: Vec2) {
 	this.usermove = v.scale(4);
-    }
-
-    getFencesFor(range: Rect, v: Vec2, context: string): Rect[] {
-	// Restrict its position within the screen.
-	return [this.world.area];
-    }
-
-    onCollided(entity: Entity) {
-	if (entity instanceof EnemyBase) {
-	    APP.playSound('explosion');
-	    this.chain(new Explosion(this.pos));
-	    this.stop();
-	}
     }
 }
 
