@@ -1,23 +1,27 @@
 Euskit
 ======
 
-Euskit is a game engine designed for game jams.  When participating a
-jam, you don't wanna spend the first three hours for basic plumbing
-stuff, and your finished game gotta be lean and playable with a
-minimal requirement.
+Euskit is a game engine designed for game jams.
+It is suitable for quick prototyping of 2D games.
 
-With Euskit, you can get a simple game up and running with just 200
-lines of code. And it's pretty darn lightweight. Everyone can play it
-on a browser. Plus it's written in TypeScript, so you don't have to
-sweat in the last minutes while you're making a tiny change which has
-a typo and causes the entire program flooded with `NaN` or
-`undefined`.  It only supports old-timey 2D games, but hey, I can be
-opinionated, right? By the way, there's no special "editor" here, so
-you only need Emacs (or vim) for developing a game (other than `tsc`
-of course). Everything is simple and straightforward.  A compiled game
-is just one `.js` file and one `.html` file (and assets).  There's no
-`node_modules` or webpack hell. I've created more than 50 games with
-this thing, so this isn't entirely a pipe dream either.
+When participating a jam, you don't wanna spend the first three hours
+for basic plumbing stuff, and your finished game gotta be lean and
+playable with a minimal requirement. With Euskit, you can get a simple
+game up and running with just 200 lines of code. And it's pretty darn
+lightweight. Everyone can play it on a browser. Plus it's written in
+TypeScript, so you don't have to sweat in the last minutes while
+you're making a tiny change which has a typo and causes the entire
+program flooded with `NaN` or `undefined`.  It only supports old-timey
+2D games, but hey, I can be opinionated, right?
+
+By the way, there's no special editor or metadata needed.  You only
+need Emacs (or vim) for writing a game (other than `tsc` of course).
+Everything is simple and straightforward and transparent, and there's
+absolutely no magic OH GOD I HATE MAGIC.  A compiled game is just one
+`.js` file and one `.html` file (and pngs and mp3s when you need
+them).  There's no `node_modules` or webpack crap either. I've created
+more than 50 games with this thing, so this isn't entirely a pipe
+dream. Yes, you can do it too.
 
 This engine was named by Mr. Rat King.
 
