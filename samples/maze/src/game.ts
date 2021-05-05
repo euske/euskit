@@ -49,38 +49,24 @@ function makeMaze(tilemap: TileMap, tile=0, ratio=0)
     }
 }
 
-function limitMotionWithTiles(entity: Entity, tilemap: TileMap, v: Vec2) {
-    let collider = entity.getCollider();
-    let hitbox = collider.getAABB();
-    let range = hitbox.union(hitbox.add(v));
-    let obstacles = tilemap.getTileRects(isObstacle, range);
-    return limitMotion(collider, v, null, obstacles);
-}
-
 
 //  Player
 //
-class Player extends Entity {
+class Player extends TileMapEntity {
 
     goaled: Signal;
-    tilemap: TileMap;
-    collider: Collider;
     usermove: Vec2;
     prevmove: Vec2;
 
     constructor(tilemap: TileMap, pos: Vec2) {
-	super(pos);
+	super(tilemap, pos);
         this.goaled = new Signal(this);
-        this.tilemap = tilemap;
         let sprite = new RectSprite('#0f0', new Rect(-8,-8,16,16));
 	this.sprites = [sprite];
         this.collider = sprite.getBounds();
+        this.isObstacle = isObstacle;
 	this.usermove = new Vec2();
         this.prevmove = this.usermove;
-    }
-
-    getCollider() {
-        return this.collider.add(this.pos);
     }
 
     onCollided(entity: Entity) {
@@ -92,9 +78,9 @@ class Player extends Entity {
     onTick() {
 	super.onTick();
         if (!this.usermove.isZero()) {
-            let v = limitMotionWithTiles(this, this.tilemap, this.usermove);
+            let v = this.getMove(this.usermove);
             if (v.isZero()) {
-                v = limitMotionWithTiles(this, this.tilemap, this.prevmove);
+                v = this.getMove(this.prevmove);
             } else {
                 this.prevmove = this.usermove.copy();
             }
@@ -113,7 +99,6 @@ class Player extends Entity {
 class Enemy extends WalkerEntity {
 
     speedlimit = new Vec2(2,2);
-    collider: Collider;
     target: Entity;
 
     constructor(grid: GridConfig, objmap: RangeMap,
@@ -122,10 +107,6 @@ class Enemy extends WalkerEntity {
 	this.sprites = [sprite];
         this.collider = sprite.getBounds();
         this.target = target;
-    }
-
-    getCollider() {
-        return this.collider.add(this.pos);
     }
 
     onTick() {
@@ -146,12 +127,9 @@ class Enemy extends WalkerEntity {
 	}
     }
 
-    move(v: Vec2) {
-	let lim = this.speedlimit;
-	v.x = clamp(-lim.x, v.x, +lim.x);
-	v.y = clamp(-lim.y, v.y, +lim.y);
-        v = limitMotionWithTiles(this, this.grid.tilemap, v);
-        this.pos = this.pos.add(v);
+    getMove(v: Vec2) {
+        v = super.getMove(v);
+        return v.clamp(this.speedlimit);
     }
 }
 

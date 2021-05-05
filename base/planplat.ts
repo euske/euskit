@@ -429,10 +429,10 @@ class PlanningEntity extends PlatformerEntity implements PlatformerActor {
 
     runner: ActionRunner = null;
 
-    constructor(physics: PhysicsConfig, tilemap: TileMap, fence: Rect,
+    constructor(physics: PhysicsConfig, tilemap: TileMap,
 		grid: GridConfig, caps: PlatformerCaps, hitbox: Rect,
 		pos: Vec2, allowance=0) {
-	super(physics, tilemap, fence, pos);
+	super(physics, tilemap, pos);
 	this.grid = grid;
 	this.caps = caps;
 	let gs = grid.gridsize;

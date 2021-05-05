@@ -33,11 +33,8 @@ class Bullet extends Particle {
     constructor(pos: Vec2) {
 	super(pos);
 	this.sprites = [new RectSprite('white', this.bounds)];
+        this.collider = this.bounds;
 	this.movement = new Vec2(8, 0);
-    }
-
-    getCollider() {
-        return this.bounds.add(this.pos);
     }
 
     getFrame() {
@@ -61,7 +58,6 @@ class Explosion extends Entity {
 //
 class Player extends Entity {
 
-    collider: Collider;
     usermove: Vec2 = new Vec2();
     firing: boolean = false;
     nextfire: number = 0;	// Firing counter
@@ -71,10 +67,6 @@ class Player extends Entity {
         let sprite = SPRITES.get(0);
 	this.sprites = [sprite];
         this.collider = sprite.getBounds();
-    }
-
-    getCollider() {
-        return this.collider.add(this.pos);
     }
 
     onCollided(entity: Entity) {
@@ -88,7 +80,7 @@ class Player extends Entity {
     onTick() {
 	super.onTick();
 	// Restrict its position within the screen.
-        let v = limitMotion(this.getCollider(), this.usermove, [this.world.area]);
+        let v = this.getMove(this.usermove);
         this.pos = this.pos.add(v);
 	if (this.firing) {
 	    if (this.nextfire == 0) {
@@ -122,16 +114,11 @@ class Player extends Entity {
 //
 class EnemyBase extends Particle {
 
-    collider: Collider;
     killed: Signal;
 
     constructor(pos: Vec2) {
 	super(pos);
 	this.killed = new Signal(this);
-    }
-
-    getCollider() {
-        return this.collider.add(this.pos);
     }
 
     getFrame() {
@@ -203,6 +190,7 @@ class Shooter extends GameScene {
     onStart() {
 	super.onStart();
 	this.player = new Player(this.world.area.center());
+        this.player.fences = [this.world.area];
         let task = new Task();
         task.lifetime = 2;
         task.stopped.subscribe(() => { this.reset(); });

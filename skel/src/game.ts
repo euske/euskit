@@ -25,7 +25,6 @@ function main() {
 //
 class Player extends Entity {
 
-    collider: Collider;
     usermove: Vec2;
 
     constructor(pos: Vec2) {
@@ -42,7 +41,7 @@ class Player extends Entity {
 
     onTick() {
 	super.onTick();
-        let v = limitMotion(this.getCollider(), this.usermove, [this.world.area]);
+        let v = this.getMove(this.usermove);
         this.pos = this.pos.add(v);
     }
 
@@ -64,6 +63,7 @@ class Game extends GameScene {
 	super.onStart();
 	this.scoreBox = new TextBox(this.screen.inflate(-8,-8), FONT);
 	this.player = new Player(this.world.area.center());
+        this.player.fences = [this.world.area];
 	this.add(this.player);
 	this.score = 0;
 	this.updateScore();

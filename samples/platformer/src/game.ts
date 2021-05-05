@@ -99,24 +99,17 @@ class ShadowSprite implements Sprite {
 //
 class Player extends PlatformerEntity {
 
-    collider: Collider;
-    scene: Game;
     shadow: ShadowSprite = new ShadowSprite();
     usermove: Vec2 = new Vec2();
     holding: boolean = true;
     picked: Signal;
 
     constructor(scene: Game, pos: Vec2) {
-	super(scene.physics, scene.tilemap, scene.world.area, pos);
+	super(scene.physics, scene.tilemap, pos);
         let sprite = SPRITES.get(S.PLAYER);
 	this.sprites = [this.shadow, sprite];
         this.collider = sprite.getBounds();
-	this.scene = scene;
 	this.picked = new Signal(this);
-    }
-
-    getCollider() {
-        return this.collider.add(this.pos);
     }
 
     onJumped() {
@@ -195,24 +188,16 @@ class Player extends PlatformerEntity {
 //
 class Monster extends PlanningEntity {
 
-    collider: Collider;
-    scene: Game;
     shadow: ShadowSprite = new ShadowSprite();
     target: Entity;
 
     constructor(scene: Game, pos: Vec2, target: Entity) {
-	super(scene.physics, scene.tilemap, scene.world.area,
-	      scene.grid, scene.caps, SPRITES.get(S.MONSTER).getBounds(),
-	      pos, 4);
+	super(scene.physics, scene.tilemap, scene.grid, scene.caps,
+	      SPRITES.get(S.MONSTER).getBounds(), pos, 4);
 	let sprite = SPRITES.get(S.MONSTER);
 	this.sprites = [this.shadow, sprite];
         this.collider = sprite.getBounds();
-	this.scene = scene;
         this.target = target;
-    }
-
-    getCollider() {
-        return this.collider.add(this.pos);
     }
 
     onTick() {
@@ -246,17 +231,11 @@ class Monster extends PlanningEntity {
 //
 class Thingy extends Entity {
 
-    bounds: Rect;
-
     constructor(pos: Vec2) {
 	super(pos);
 	let sprite = SPRITES.get(S.THINGY);
         this.sprites = [sprite];
-        this.bounds = sprite.getBounds().inflate(-4, -4);
-    }
-
-    getCollider() {
-        return this.bounds.add(this.pos);
+        this.collider = sprite.getBounds().inflate(-4, -4);
     }
 }
 
@@ -315,6 +294,7 @@ class Game extends GameScene {
 	// Place the player.
 	let p = this.tilemap.findTile((c:number) => { return c == T.PLAYER; });
 	this.player = new Player(this, this.tilemap.map2coord(p).center());
+        this.player.fences = [this.world.area];
 	this.player.picked.subscribe((entity:Entity) => {
 	    this.onPicked(entity);
 	});
@@ -332,6 +312,7 @@ class Game extends GameScene {
 		break;
 	    case T.ENEMY:
 		let monster = new Monster(this, rect.center(), this.player);
+                monster.fences = [this.world.area];
 		this.add(monster);
 		this.watch = monster;
 		break;

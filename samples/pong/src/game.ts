@@ -26,12 +26,9 @@ class Paddle extends Entity {
 	// Initializes the position and shape.
 	super(screen.anchor('s').move(0,-20));
 	this.sprites = [new RectSprite('green', this.bounds)];
+        this.collider = this.bounds;
 	this.screen = screen;
 	this.vx = 0;
-    }
-
-    getCollider() {
-        return this.bounds.add(this.pos);
     }
 
     onTick() {
@@ -58,12 +55,9 @@ class Ball extends Entity {
 	// Initializes the position and shape.
 	super(screen.center());
 	this.sprites = [new OvalSprite('white', this.bounds)];
+        this.collider = this.bounds;
 	this.screen = screen;
 	this.v = new Vec2(rnd(2)*8-4, -4);
-    }
-
-    getCollider() {
-        return this.bounds.add(this.pos);
     }
 
     onTick() {

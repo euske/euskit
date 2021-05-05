@@ -30,7 +30,6 @@ function main() {
 //
 class Player extends Entity {
 
-    collider: Collider;
     usermove: Vec2 = new Vec2();
 
     constructor(pos: Vec2) {
@@ -40,14 +39,10 @@ class Player extends Entity {
         this.collider = sprite.getBounds();
     }
 
-    getCollider() {
-        return this.collider.add(this.pos);
-    }
-
     onTick() {
 	super.onTick();
 	// Restrict its position within the screen.
-        let v = limitMotion(this.getCollider(), this.usermove, [this.world.area]);
+        let v = this.getMove(this.usermove);
         this.pos = this.pos.add(v);
     }
 
@@ -159,6 +154,7 @@ class Racing extends GameScene {
 	super.onStart();
 
 	this.player = new Player(this.world.area.center());
+        this.player.fences = [this.world.area];
 	this.add(this.player);
 
 	this.track = new Track(int(this.screen.width/16),

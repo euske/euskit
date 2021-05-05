@@ -352,7 +352,7 @@ class WalkerActionRunner extends ActionRunner {
 
 //  WalkerEntity
 //
-class WalkerEntity extends Entity implements WalkerActor {
+class WalkerEntity extends TileMapEntity implements WalkerActor {
 
     grid: GridConfig;
     gridbox: Rect;
@@ -363,7 +363,7 @@ class WalkerEntity extends Entity implements WalkerActor {
 
     constructor(grid: GridConfig, objmap: RangeMap,
 		hitbox: Rect, pos: Vec2, allowance=0) {
-	super(pos);
+	super(grid.tilemap, pos);
 	this.grid = grid;
 	let gs = grid.gridsize;
 	this.gridbox = new Rect(
@@ -396,10 +396,6 @@ class WalkerEntity extends Entity implements WalkerActor {
 	// [OVERRIDE]
     }
 
-    move(v: Vec2) {
-	// [OVERRIDE]
-    }
-
     // WalkerActor methods
 
     canMoveTo(p: Vec2) {
@@ -411,7 +407,8 @@ class WalkerEntity extends Entity implements WalkerActor {
 	let p0 = this.pos;
 	let p1 = this.getGridBoxAt(p).center();
 	let v = p1.sub(p0);
-        this.move(v);
+        v = this.getMove(v);
+        this.pos = this.pos.add(v);
     }
 
     isCloseTo(p: Vec2) {

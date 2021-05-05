@@ -75,7 +75,9 @@ class Entity extends Task {
     world: World = null;
 
     pos: Vec2;
-    sprites: Sprite[] = [];
+    collider: Collider = null;
+    sprites: Sprite[] = null;
+    fences: Rect[] = null;
     order: number = 0;
 
     rotation: number = 0;
@@ -96,19 +98,26 @@ class Entity extends Task {
     }
 
     render(ctx: CanvasRenderingContext2D) {
-        renderSprites(
-            ctx, this.sprites, this.pos,
-            this.rotation, this.scale, this.alpha);
+        if (this.sprites !== null && this.pos !== null) {
+            renderSprites(
+                ctx, this.sprites, this.pos,
+                this.rotation, this.scale, this.alpha);
+        }
     }
 
     getCollider(): Collider {
-        return null;
+        if (this.pos === null || this.collider === null) return null;
+        return this.collider.add(this.pos);
     }
 
     onCollided(entity: Entity) {
 	// [OVERRIDE]
     }
 
+    getMove(v: Vec2) {
+        let collider = this.getCollider();
+	return limitMotion(collider, v, this.fences);
+    }
 }
 
 
@@ -139,6 +148,28 @@ class Particle extends Entity {
 }
 
 
+//  TileMapEntity
+//
+class TileMapEntity extends Entity {
+
+    tilemap: TileMap;
+    isObstacle: (c:number)=>boolean = ((c:number) => { return false; });
+
+    constructor(tilemap: TileMap, pos: Vec2) {
+	super(pos);
+        this.tilemap = tilemap;
+    }
+
+    getMove(v: Vec2) {
+        let collider = this.getCollider();
+        let hitbox = collider.getAABB();
+        let range = hitbox.union(hitbox.add(v));
+        let obstacles = this.tilemap.getTileRects(this.isObstacle, range);
+        return limitMotion(collider, v, this.fences, obstacles);
+    }
+}
+
+
 //  PhysicsConfig
 //
 class PhysicsConfig {
@@ -157,22 +188,18 @@ class PhysicsConfig {
 
 //  PlatformerEntity
 //
-class PlatformerEntity extends Entity {
+class PlatformerEntity extends TileMapEntity {
 
     physics: PhysicsConfig;
-    tilemap: TileMap;
-    fence: Rect;
     velocity: Vec2 = new Vec2();
 
     protected _jumpt: number = Infinity;
     protected _jumpend: number = 0;
     protected _landed: boolean = false;
 
-    constructor(physics: PhysicsConfig, tilemap: TileMap, fence: Rect, pos: Vec2) {
-	super(pos);
+    constructor(physics: PhysicsConfig, tilemap: TileMap, pos: Vec2) {
+	super(tilemap, pos);
 	this.physics = physics;
-        this.tilemap = tilemap;
-        this.fence = fence;
     }
 
     onTick() {
@@ -190,8 +217,7 @@ class PlatformerEntity extends Entity {
 	let hitbox = collider.getAABB();
 	let range = hitbox.union(hitbox.add(v0));
 	let obstacles = this.getObstaclesFor(range, v0, context);
-	let fences = (this.fence !== null)? [this.fence] : null;
-	return limitMotion(collider, v0, fences, obstacles);
+	return limitMotion(collider, v0, this.fences, obstacles);
     }
 
     getObstaclesFor(range: Rect, v: Vec2, context: string): Rect[] {
