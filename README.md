@@ -17,11 +17,12 @@ program flooded with `NaN` or `undefined`.  It only supports old-timey
 By the way, there's no special editor or metadata needed.  You only
 need Emacs (or vim) for writing a game (other than `tsc` of course).
 Everything is simple and straightforward and transparent, and there's
-absolutely no magic OH GOD I HATE MAGIC.  A compiled game is just one
-`.js` file and one `.html` file (and pngs and mp3s when you need
-them).  There's no `node_modules` or webpack crap either. I've created
-more than 50 games with this thing, so this isn't entirely a pipe
-dream. And you can do it too.
+absolutely no magic OH GOD I HATE MAGIC. The library is standalone,
+i.e. there's no external dependency, no `node_modules` hell or webpack
+crap either. A compiled game is just one `.js` file and one `.html`
+file (and pngs and mp3s when you need them).  I've created more than
+50 games with this thing, so this isn't entirely a pipe dream. And you
+can do it too.
 
 This engine was named by Mr. Rat King.
 
