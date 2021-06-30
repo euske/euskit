@@ -23,10 +23,17 @@ class Animator extends Task {
 class Blinker extends Entity {
 
     interval: number = 1.0;
+    target: Entity;
 
     constructor(entity: Entity) {
         super(entity.pos);
-        this.sprites = entity.sprites;
+        this.target = entity;
+    }
+
+    onTick() {
+        super.onTick();
+        this.pos = this.target.pos;
+        this.sprites = this.target.sprites;
     }
 
     isVisible() {
