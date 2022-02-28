@@ -277,6 +277,7 @@ function ellipse(
     } else {
         ctx.scale(rx/ry, 1);
     }
+    ctx.beginPath();
     ctx.arc(0, 0, Math.max(rx, ry), 0, Math.PI*2);
     ctx.restore();
 }
