@@ -79,6 +79,7 @@ class App {
 
         // Initialize WebAudio.
         try {
+            var AudioContext = window.AudioContext || (window as any).webkitAudioContext;
             this.audioContext = new AudioContext();
             for (let id in this.sounds) {
                 let source = this.audioContext.createMediaElementSource(this.sounds[id]);
