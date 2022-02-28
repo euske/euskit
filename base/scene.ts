@@ -145,6 +145,17 @@ class World extends ParallelTaskList {
         }
     }
 
+    findEntities(collider0: Collider): Entity[] {
+        let found = [] as Entity[];
+        for (let entity1 of this.entities) {
+            if (!entity1.isRunning()) continue;
+            let collider1 = entity1.getCollider();
+            if (collider1 !== null && !collider1.overlaps(collider0)) continue;
+            found.push(entity1);
+        }
+        return found;
+    }
+
     applyEntities(f: (e:Entity)=>boolean, collider0: Collider=null): Entity {
         for (let entity1 of this.entities) {
             if (!entity1.isRunning()) continue;

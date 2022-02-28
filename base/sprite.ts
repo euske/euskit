@@ -136,10 +136,10 @@ class ImageSprite implements Sprite {
         if (srcRect === null) {
             srcRect = new Rect(0, 0, image.width, image.height);
         }
-        this.srcRect = srcRect;
         if (dstRect === null) {
-            dstRect = new Rect(-image.width/2, -image.height/2, image.width, image.height);
+            dstRect = new Rect(-srcRect.width/2, -srcRect.height/2, srcRect.width, srcRect.height);
         }
+        this.srcRect = srcRect;
         this.dstRect = dstRect;
     }
 
