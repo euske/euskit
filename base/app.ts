@@ -39,7 +39,6 @@ class App {
 
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
-    audioContext: AudioContext;
     interval: number;
 
     images: ImageAsset;
@@ -78,15 +77,10 @@ class App {
         this.labels = getprops(document.getElementsByClassName('label')) as TextAsset;
 
         // Initialize WebAudio.
-        try {
-            var AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-            this.audioContext = new AudioContext();
-            for (let id in this.sounds) {
-                let source = this.audioContext.createMediaElementSource(this.sounds[id]);
-                source.connect(this.audioContext.destination);
-            }
-        } catch (error) {
-            this.audioContext = null;
+        for (let id in this.sounds) {
+            let sound = this.sounds[id];
+            sound.autoplay = true;
+            sound.muted = false;
         }
     }
 
